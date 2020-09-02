@@ -1,0 +1,52 @@
+servicecomb-config-order: 1
+APPLICATION_ID: openMec
+service_description:
+  name: mec-atp
+  version: 1.1.0
+  environment: development
+servicecomb:
+  service:
+    registry:
+      address: ${SC_ADDRESS}
+    publishAddress: 159.138.37.234
+  rest:
+    address: ${LISTEN_IP:0.0.0.0}:8099
+    servlet:
+      urlPattern: /cse/*
+  uploads:
+#    directory: /home/appstore
+    directory: c:\appstore
+    maxSize: -1
+#  request:
+#    timeout: 18000000
+###pgsql config######
+server:
+  port: 8099
+  ssl:
+    enabled: ${SSL_ENABLED:false}
+    key-store: ${SSL_KEY_STORE_PATH:}
+    key-store-password: ${SSL_KEY_STORE_PASSWORD:}
+    key-store-type: ${SSL_KEY_STORE_TYPE:}
+    key-alias: ${SSL_KEY_ALIAS:}
+spring:
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_IP:appstore-be-postgres-svc}:${POSTGRES_PORT:5432}/${POSTGRES_DB_NAME:appstoredb}
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  main:
+    allow-bean-definition-overriding: true
+  servlet:
+    multipart:
+      max-file-size: 1MB
+      max-request-size: 1MB
+
+###mybtis####
+mybatis:
+  mapper-locations: classpath:mybatis/sql/*.xml
+
+#security:
+#  oauth2:
+#    resource:
+#      jwt:
+#        key-uri: ${AUTH_SERVER_ADDRESS:http://user-mgmt-svc:8067}/oauth/token_key
