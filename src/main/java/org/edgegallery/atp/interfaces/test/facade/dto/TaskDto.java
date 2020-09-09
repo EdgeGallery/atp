@@ -6,7 +6,7 @@ import org.edgegallery.atp.domain.model.test.TaskStatus;
 
 @Getter
 @Setter
-public class StatusDto {
+public class TaskDto {
 
     private String id;
 
@@ -18,20 +18,15 @@ public class StatusDto {
 
     private String result;
 
-    private String userId;
+    private TaskDto[] subTaskStatus;
 
-    private String userName;
-
-    private StatusDto[] subTaskStatus;
-
-    public StatusDto() {
+    public TaskDto() {
     }
 
-    public static StatusDto of(TaskStatus status) {
-        StatusDto build = new StatusDto();
+    public static TaskDto of(TaskStatus status) {
+        TaskDto build = new TaskDto();
         build.setId(status.getId());
-        build.setDesc(status.getDesc());
-        build.setDesc(status.getDesc());
+        build.setStartTime(status.getStartTime());
         build.setEndTime(status.getEndTime());
         return build;
     }

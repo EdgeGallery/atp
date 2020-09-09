@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.edgegallery.atp.domain.shared.PageCriteria;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,5 +18,9 @@ public interface TaskMapper {
 
     List<TaskStatusPO> findAllWithAppPagination(PageCriteria pageCriteria);
 
-    void insert(TaskStatusPO taskStatusPO);
+    void store(TaskStatusPO taskStatusPO);
+
+    List<TaskStatusPO> queryAllRunningTasks();
+
+    List<TaskStatusPO> queryAllSunTasksByTaskId(String taskId);
 }

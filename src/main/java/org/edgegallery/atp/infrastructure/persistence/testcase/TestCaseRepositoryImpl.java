@@ -48,10 +48,4 @@ public class TestCaseRepositoryImpl implements TestCaseRepository {
         Optional<TestCase> testCase = testCaseMapper.findByTestCaseId(taskCaseId).map(TestCasePO::toDomainModel);
         return testCase;
     }
-
-    @Override
-    public List<TestCase> queryAllTestCases() {
-        List<TestCase> testCase = testCaseMapper.findAll().stream().map(TestCasePO::toDomainModel).collect(Collectors.toList());
-        return testCase;
-    }
 }

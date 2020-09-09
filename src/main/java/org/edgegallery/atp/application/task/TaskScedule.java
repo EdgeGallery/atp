@@ -1,5 +1,7 @@
-package org.edgegallery.atp.application;
+package org.edgegallery.atp.application.task;
 
+import org.edgegallery.atp.domain.model.test.TaskRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -10,12 +12,16 @@ import org.springframework.stereotype.Component;
 @Configurable
 @EnableScheduling
 @EnableAsync
-public class TaskRunner {
+class TestSchedule {
 
-    @Scheduled(cron = "0/5 * *  * * ? ")
+    @Autowired
+    TaskRepository taskRepository;
+
+    @Scheduled(cron = "0/30 * *  * * ? ")
     public void startSchedule() {
         System.out.println("===========1=>");
         try {
+            taskRepository.queryAllRunningTasks();
             for(int i=1;i<=10;i++){
                 System.out.println("=1==>"+i);
                 Thread.sleep(1000);
@@ -24,5 +30,4 @@ public class TaskRunner {
             e.printStackTrace();
         }
     }
-
 }
