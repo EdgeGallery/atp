@@ -1,19 +1,21 @@
 package org.edgegallery.atp.interfaces.test.facade;
 
+import java.io.File;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.edgegallery.atp.domain.model.test.TaskStatus;
+import org.edgegallery.atp.infrastructure.persistence.test.TaskStatusPO;
+import org.edgegallery.atp.interfaces.test.facade.dto.TaskDto;
 import org.edgegallery.atp.application.TaskService;
 import org.edgegallery.atp.domain.model.releases.PackageChecker;
 import org.edgegallery.atp.domain.model.releases.UnAuthorizedExecption;
-import org.edgegallery.atp.domain.model.test.TaskStatus;
 import org.edgegallery.atp.domain.model.user.User;
 import org.edgegallery.atp.domain.shared.PageCriteria;
-import org.edgegallery.atp.interfaces.test.facade.dto.StatusDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.File;
-import java.util.List;
 
 @Service("TaskServiceFacade")
 public class TaskServiceFacade {
@@ -26,10 +28,9 @@ public class TaskServiceFacade {
     }
 
 
-    public ResponseEntity<List<StatusDto>> getAllTasks(User user) {
-        return ResponseEntity.ok(taskService.queryAll(new PageCriteria(100, 0, ""))
-                .map(StatusDto::of)
-                .getResults());
+    public ResponseEntity<List<TaskDto>> getAllTasks(User user) {
+        return ResponseEntity.ok( taskService.queryAllRunningTasks(user.getUserId()).stream().map(TaskDto::of)
+                .collect(Collectors.toList()));
     }
 
 
@@ -39,16 +40,17 @@ public class TaskServiceFacade {
         if(null == tempFile) {
             throw new IllegalArgumentException("file is null");
         }
-        return taskService.startTest(user, tempFile);
+        return taskService.startTask(user, tempFile);
     }
 
-    public ResponseEntity<StatusDto> getStatusByTaskId(String taskid) {
-        return ResponseEntity.ok(StatusDto.of(taskService.find(taskid)));
+    public ResponseEntity<TaskDto> getStatusByTaskId(String taskid) {
+        return ResponseEntity.ok(TaskDto.of(taskService.find(taskid)));
     }
 
-    public ResponseEntity<StatusDto> getTaskById(User user, String taskid) {
-        StatusDto dto = StatusDto.of(taskService.find(taskid));
-        if(!dto.getUserId().equals(user.getUserId())) {
+    public ResponseEntity<TaskDto> getTaskById(User user, String taskid) {
+        TaskStatus status = taskService.find(taskid);
+        TaskDto dto = TaskDto.of(status);
+        if(!status.getUser().getUserId().equals(user.getUserId())) {
             throw new UnAuthorizedExecption(taskid);
         }
         return ResponseEntity.ok(dto);

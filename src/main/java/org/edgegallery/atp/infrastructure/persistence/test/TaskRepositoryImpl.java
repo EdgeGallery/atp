@@ -16,11 +16,10 @@
 
 package org.edgegallery.atp.infrastructure.persistence.test;
 
-import org.edgegallery.atp.domain.model.test.TaskStatus;
 import org.edgegallery.atp.domain.model.test.TaskRepository;
-import org.edgegallery.atp.domain.model.testcase.TestCase;
-import org.edgegallery.atp.domain.shared.Page;
+import org.edgegallery.atp.domain.model.test.TaskStatus;
 import org.edgegallery.atp.domain.shared.PageCriteria;
+import org.edgegallery.atp.domain.shared.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -59,7 +58,28 @@ public class TaskRepositoryImpl implements TaskRepository {
     }
 
     @Override
-    public void storeTask(List<TestCase> testCases) {
+    public void storeTask(TaskStatus status) {
+        taskMapper.store(TaskStatusPO.of(status));
+        if(null != status.getStatus() && status.getSubTaskStatus().length > 0){
+            for(TaskStatus s : status.getSubTaskStatus()) {
+                taskMapper.store(TaskStatusPO.of(s));
+            }
+        }
+    }
 
+    @Override
+    public List<TaskStatus> queryAllRunningTasks() {
+        return taskMapper.queryAllRunningTasks()
+                .stream()
+                .map(TaskStatusPO::toDomainModel)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<TaskStatus> queryAllSubTasksByTaskId(String taskId) {
+        return taskMapper.queryAllSunTasksByTaskId(taskId)
+                .stream()
+                .map(TaskStatusPO::toDomainModel)
+                .collect(Collectors.toList());
     }
 }
