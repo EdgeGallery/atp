@@ -25,13 +25,13 @@
     </select>
 
     <select id="findByAppName"
-            resultType="org.edgegallery.atp.infrastructure.persistence.app.AppPO"
+            resultType="org.edgegallery.atp.infrastructure.persistence.test.TaskStatusPO"
             parameterType="String">
         select * from app_table where appname = #{appName}
     </select>
 
     <update id="update"
-            parameterType="org.edgegallery.atp.infrastructure.persistence.app.AppPO">
+            parameterType="org.edgegallery.atp.infrastructure.persistence.test.TaskStatusPO">
         update app_table
         SET modifytime = (select now()), shortdesc=#{shortDesc}, provider =#{provider}, appname=
         #{appName}, applicationType=#{applicationType}, appIntroduction=#{appIntroduction},
@@ -40,7 +40,7 @@
     </update>
 
     <insert id="insert"
-            parameterType="org.edgegallery.atp.infrastructure.persistence.app.AppPO">
+            parameterType="org.edgegallery.atp.infrastructure.persistence.test.TaskStatusPO">
         insert into
         app_table
         (appid, createtime, modifytime, shortdesc, provider, appname, applicationType, appIntroduction,
@@ -84,7 +84,7 @@
 
 
     <select id="findAllWithAppPagination"
-            resultType="org.edgegallery.atp.infrastructure.persistence.app.AppPO"
+            resultType="org.edgegallery.atp.infrastructure.persistence.test.TaskStatusPO"
             parameterType="java.util.Map">
         select * from app_table
         <where>
@@ -110,38 +110,12 @@
         limit #{limit} offset #{offset}
     </select>
 
-    <insert id="insertRelease"
-            parameterType="org.edgegallery.atp.infrastructure.persistence.app.AppReleasePO">
-        insert into catalog_package_table
-        (versionID, packageAddress,iconAddress, size, fileStructure, CREATETIME, SHORTDESC,
-        appName, version, applicationType, markdowncontent, affinity, industry, contact, appid, userid)
-        VALUES
-        (#{versionID}, #{packageAddress}, #{iconAddress}, #{size}, #{fileStructure},(select now()),#{shortDesc},
-        #{appName}, #{version}, #{applicationType},
-        #{markDownContent},#{affinity}, #{industry}, #{contact}, #{appId},#{userId})
-    </insert>
-
     <delete id="removeReleasesByAppId" parameterType="String">
         delete from
         catalog_package_table
         where
         appid=#{appId}
     </delete>
-
-    <select id="findAllByAppId" resultType="org.edgegallery.atp.infrastructure.persistence.app.AppReleasePO">
-        select
-        *
-        from
-        catalog_package_table
-        where
-        appid=#{appId}
-    </select>
-
-    <select id="findAllWithPagination"
-            resultType="org.edgegallery.atp.infrastructure.persistence.app.AppReleasePO"
-            parameterType="java.util.Map">
-        select * from catalog_package_table where appid = #{appId} limit #{limit} offset #{offset}
-    </select>
 
     <select id="countTotalForReleases" resultType="java.lang.Integer"
             parameterType="java.util.Map">
