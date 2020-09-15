@@ -1,9 +1,9 @@
 package org.edgegallery.atp.infrastructure.persistence.testcase;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.edgegallery.atp.domain.model.testcase.TestCase;
 import org.edgegallery.atp.domain.shared.Page;
 import org.edgegallery.atp.domain.shared.PageCriteria;
+import org.edgegallery.atp.model.TestCase;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

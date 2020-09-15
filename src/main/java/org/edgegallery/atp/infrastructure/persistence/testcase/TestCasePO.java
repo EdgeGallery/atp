@@ -3,8 +3,9 @@ package org.edgegallery.atp.infrastructure.persistence.testcase;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
-import org.edgegallery.atp.domain.model.testcase.TestCase;
+
 import org.edgegallery.atp.infrastructure.persistence.PersistenceObject;
+import org.edgegallery.atp.model.TestCase;
 
 import javax.persistence.Entity;
 

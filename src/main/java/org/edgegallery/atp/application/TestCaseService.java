@@ -1,10 +1,10 @@
 package org.edgegallery.atp.application;
 
-import org.edgegallery.atp.domain.model.testcase.TestCase;
-import org.edgegallery.atp.domain.model.testcase.TestCaseRepository;
 import org.edgegallery.atp.domain.shared.Page;
 import org.edgegallery.atp.domain.shared.PageCriteria;
 import org.edgegallery.atp.domain.shared.exceptions.EntityNotFoundException;
+import org.edgegallery.atp.model.TestCase;
+import org.edgegallery.atp.repository.TestCaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
