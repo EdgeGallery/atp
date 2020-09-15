@@ -17,10 +17,10 @@
 package org.edgegallery.atp.interfaces;
 
 import javax.validation.ConstraintViolationException;
+
 import org.apache.servicecomb.swagger.invocation.Response;
 import org.apache.servicecomb.swagger.invocation.SwaggerInvocation;
 import org.apache.servicecomb.swagger.invocation.exception.ExceptionToProducerResponseConverter;
-import org.edgegallery.atp.domain.model.comment.CannotCreateCommentExecption;
 import org.edgegallery.atp.domain.model.releases.UnAuthorizedExecption;
 import org.edgegallery.atp.domain.model.releases.UnknownReleaseExecption;
 import org.edgegallery.atp.domain.shared.exceptions.EntityNotFoundException;
@@ -45,9 +45,6 @@ public class ExceptionConverter implements ExceptionToProducerResponseConverter<
         }
         if (e instanceof UnAuthorizedExecption) {
             return Response.status(javax.ws.rs.core.Response.Status.UNAUTHORIZED);
-        }
-        if (e instanceof CannotCreateCommentExecption) {
-            return Response.status(javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR);
         }
         if (e instanceof ConstraintViolationException) {
             return Response.status(javax.ws.rs.core.Response.Status.BAD_REQUEST);
