@@ -1,8 +1,9 @@
 package org.edgegallery.atp.interfaces.testcase.facade.dto;
 
+import org.edgegallery.atp.model.TestCase;
+
 import lombok.Getter;
 import lombok.Setter;
-import org.edgegallery.atp.domain.model.testcase.TestCase;
 
 @Setter
 @Getter

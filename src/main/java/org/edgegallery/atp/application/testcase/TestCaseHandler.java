@@ -1,35 +1,28 @@
 package org.edgegallery.atp.application.testcase;
 
-import lombok.Getter;
-import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Getter
-@Setter
 public class TestCaseHandler {
 
-    public static final String TYPE_TEST_CASE_ANTIVIRUS = "Antivirus";
+	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseHandler.class);
 
-    public static final String TYPE_TEST_CASE_COMPLIANCE = "Compliance";
+	private static final String METHOD_NAME = "execute";
 
-    public static final String TYPE_TEST_CASE_SANDBOX = "SandBox";
+	/**
+	 * 
+	 * @param pkgPth   org.appstore.mec.domain.model.testcase.draft.SuffixTestCase
+	 * @param filePath filePath
+	 * @return
+	 */
+	public boolean testCaseHandler(String pkgPth, String filePath) {
+		try {
+			Class<?> clazz = Class.forName(pkgPth);
+			return (boolean) clazz.getMethod(METHOD_NAME, String.class).invoke(clazz.newInstance(), filePath);
+		} catch (Exception e) {
+			LOGGER.error("testCaseHandler failed. {}", e.getMessage());
+			return false;
+		}
+	}
 
-    public static final String STATUS_RUNNING = "running";
-
-    public static final String STATUS_WAITING = "waiting";
-
-    public static final String STATUS_FAILED = "failed";
-
-    public static final String STATUS_PASS = "pass";
-
-    private String testCaseId;
-
-    private String testCaseName;
-
-    private String result;
-
-    private String type;
-
-    public boolean check(String filePath) {
-        return true;
-    }
 }

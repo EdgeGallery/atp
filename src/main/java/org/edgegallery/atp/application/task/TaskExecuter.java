@@ -1,11 +1,11 @@
 package org.edgegallery.atp.application.task;
 
-import org.edgegallery.atp.application.testcase.TestCaseHandler;
-
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.edgegallery.atp.application.testcase.TestCaseHandler;
 
 public class TaskExecuter {
 
@@ -31,14 +31,14 @@ public class TaskExecuter {
             subTaskSet.add(generateId);
             taskAndSubTaskMap.put(taskId, subTaskSet);
         }
-        if(TestCaseHandler.TYPE_TEST_CASE_ANTIVIRUS.equals(handler.getType())) {
-            antVirusTaskStatusMap.put(generateId, TestCaseHandler.STATUS_WAITING);
-        }
-        else if(TestCaseHandler.TYPE_TEST_CASE_COMPLIANCE.equals(handler.getType())) {
-            complianceTaskStatusMap.put(generateId, TestCaseHandler.STATUS_WAITING);
-        }
-        else if(TestCaseHandler.TYPE_TEST_CASE_SANDBOX.equals(handler.getType())) {
-            sandBoxTaskStatusMap.put(generateId, TestCaseHandler.STATUS_WAITING);
-        }
+//        if(TestCaseHandler.TYPE_TEST_CASE_ANTIVIRUS.equals(handler.getType())) {
+//            antVirusTaskStatusMap.put(generateId, TestCaseHandler.STATUS_WAITING);
+//        }
+//        else if(TestCaseHandler.TYPE_TEST_CASE_COMPLIANCE.equals(handler.getType())) {
+//            complianceTaskStatusMap.put(generateId, TestCaseHandler.STATUS_WAITING);
+//        }
+//        else if(TestCaseHandler.TYPE_TEST_CASE_SANDBOX.equals(handler.getType())) {
+//            sandBoxTaskStatusMap.put(generateId, TestCaseHandler.STATUS_WAITING);
+//        }
     }
 }

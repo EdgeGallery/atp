@@ -1,25 +1,21 @@
 package org.edgegallery.atp.application;
 
-import org.edgegallery.atp.application.testcase.TestCaseHandler;
-import org.edgegallery.atp.application.testcase.TestCaseManager;
-import org.edgegallery.atp.domain.model.test.TaskStatus;
-import org.edgegallery.atp.application.task.TaskExecuter;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
 import org.edgegallery.atp.domain.model.test.TaskRepository;
-import org.edgegallery.atp.domain.model.testcase.TestCaseRepository;
+import org.edgegallery.atp.domain.model.test.TaskStatus;
 import org.edgegallery.atp.domain.model.user.User;
 import org.edgegallery.atp.domain.shared.Page;
 import org.edgegallery.atp.domain.shared.PageCriteria;
 import org.edgegallery.atp.domain.shared.exceptions.EntityNotFoundException;
+import org.edgegallery.atp.repository.TestCaseRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 
 @Service("TaskService")
 public class TaskService {
@@ -58,35 +54,9 @@ public class TaskService {
         status.setId(taskId);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         status.setStartTime(simpleDateFormat.format(new Date()));
-        List<TestCaseHandler> testCases = queryAllTestCases();
-        try {
-            status.setSubTaskStatus(startSubTask(taskId, testCases, tempFile.getCanonicalPath()));
-        } catch (IOException e) {
-            LOGGER.info("IOException occurs.");
-        }
+		// TODO START TASK
         taskRepository.storeTask(status);
         return new TaskStatus();
     }
 
-    private List<TestCaseHandler> queryAllTestCases() {
-        return TestCaseManager.getInstance().getAllTestCases();
-    }
-
-    private TaskStatus[] startSubTask(String taskId, List<TestCaseHandler> testCases, String filePath) {
-        synchronized (lock) {
-            TaskStatus[] subTaskStatus = new TaskStatus[testCases.size()];
-            int i = 0;
-            String subTaskId = taskRepository.generateId();
-            for(TestCaseHandler handler : testCases) {
-                TaskExecuter.getInstance().addSubTask(handler, taskId, subTaskId);
-                TaskStatus sub = new TaskStatus();
-                sub.setId(subTaskId);
-                sub.setStatus(TestCaseHandler.STATUS_WAITING);
-                sub.setFileName(filePath);
-                taskRepository.storeTask(sub);
-                i++;
-            }
-            return subTaskStatus;
-        }
-    }
 }
