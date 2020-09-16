@@ -8,9 +8,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.edgegallery.atp.application.testcase.TestCase;
-import org.edgegallery.atp.config.Constant;
-import org.edgegallery.atp.config.ExceptionConstant;
-import org.edgegallery.atp.model.TestCaseResult;
+import org.edgegallery.atp.constant.Constant;
+import org.edgegallery.atp.constant.ExceptionConstant;
+import org.edgegallery.atp.model.testcase.TestCaseResult;
 import org.edgegallery.atp.utils.TestCaseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

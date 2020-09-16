@@ -1,6 +1,6 @@
 package org.edgegallery.atp.application.testcase;
 
-import org.edgegallery.atp.model.TestCaseResult;
+import org.edgegallery.atp.model.testcase.TestCaseResult;
 
 public abstract class TestCase {
 

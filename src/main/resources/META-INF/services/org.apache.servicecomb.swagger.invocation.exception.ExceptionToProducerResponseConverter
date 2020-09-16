@@ -14,4 +14,4 @@
 #    limitations under the License.
 #
 
-org.edgegallery.atp.interfaces.ExceptionConverter
+org.edgegallery.atp.interfaces.exception.ExceptionConverter

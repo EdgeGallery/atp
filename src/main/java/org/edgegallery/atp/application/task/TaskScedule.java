@@ -1,6 +1,6 @@
 package org.edgegallery.atp.application.task;
 
-import org.edgegallery.atp.domain.model.test.TaskRepository;
+import org.edgegallery.atp.repository.task.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.scheduling.annotation.EnableAsync;
