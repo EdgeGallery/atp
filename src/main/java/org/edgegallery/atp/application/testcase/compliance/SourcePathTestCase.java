@@ -20,41 +20,42 @@ import org.slf4j.LoggerFactory;
  */
 public class SourcePathTestCase extends TestCase {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(SourcePathTestCase.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SourcePathTestCase.class);
 
-	private static Set<String> pathSet = new HashSet<String>();
+    private static Set<String> pathSet = new HashSet<String>();
 
-	private TestCaseResult testCaseResult = new TestCaseResult();
+    private TestCaseResult testCaseResult = new TestCaseResult();
 
-	@Override
-	public TestCaseResult execute(String filePath) {
-		Set<String> sourcePathSet = new HashSet<String>();
-		try (ZipFile zipFile = new ZipFile(filePath)) {
-			Enumeration<? extends ZipEntry> entries = zipFile.entries();
-			while (entries.hasMoreElements()) {
-				ZipEntry entry = entries.nextElement();
-				String entryName = entry.getName();
+    @Override
+    public TestCaseResult execute(String filePath) {
+        Set<String> sourcePathSet = new HashSet<String>();
+        try (ZipFile zipFile = new ZipFile(filePath)) {
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = entries.nextElement();
+                String entryName = entry.getName();
 
-				String path = entryName.substring(entryName.indexOf("/") + 1).trim();
-				pathSet.add(TestCaseUtil.removeLastSlash(path));
+                String path = entryName.substring(entryName.indexOf("/") + 1).trim();
+                pathSet.add(TestCaseUtil.removeLastSlash(path));
 
-				// root directory and file is end of mf
-				if (entry.getName().split("/").length == 2 && TestCaseUtil.fileSuffixValidate("mf", entry.getName())) {
-					Set<String> prefix = new HashSet<String>() {
-						{
-							add("Source");
-						}
-					};
-					sourcePathSet = TestCaseUtil.getPathSet(zipFile, entry, prefix);
-				}
-			}
-		} catch (IOException e) {
-			LOGGER.error("SourcePathTestCase execute failed. {}", e.getMessage());
-			return setTestCaseResult(Constant.Result.FAILED, ExceptionConstant.INNER_EXCEPTION, testCaseResult);
-		}
-		return pathSet.containsAll(sourcePathSet)?setTestCaseResult(Constant.Result.SUCCESS, Constant.EMPTY, testCaseResult)
-				: setTestCaseResult(Constant.Result.FAILED, ExceptionConstant.SourcePathTestCase.SOURCE_PATH_FILE_NOT_EXISTS,
-						testCaseResult);
-	}
+                // root directory and file is end of mf
+                if (entry.getName().split("/").length == 2 && TestCaseUtil.fileSuffixValidate("mf", entry.getName())) {
+                    Set<String> prefix = new HashSet<String>() {
+                        {
+                            add("Source");
+                        }
+                    };
+                    sourcePathSet = TestCaseUtil.getPathSet(zipFile, entry, prefix);
+                }
+            }
+        } catch (IOException e) {
+            LOGGER.error("SourcePathTestCase execute failed. {}", e.getMessage());
+            return setTestCaseResult(Constant.Result.FAILED, ExceptionConstant.INNER_EXCEPTION, testCaseResult);
+        }
+        return pathSet.containsAll(sourcePathSet)
+                ? setTestCaseResult(Constant.Result.SUCCESS, Constant.EMPTY, testCaseResult)
+                : setTestCaseResult(Constant.Result.FAILED,
+                        ExceptionConstant.SourcePathTestCase.SOURCE_PATH_FILE_NOT_EXISTS, testCaseResult);
+    }
 
 }

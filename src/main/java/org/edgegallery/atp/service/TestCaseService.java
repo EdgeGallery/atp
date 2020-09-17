@@ -16,35 +16,35 @@ import org.springframework.web.multipart.MultipartFile;
 @Service("TestCaseService")
 public class TestCaseService {
 
-	@Autowired
-	TestCaseRepository testCaseRepository;
+    @Autowired
+    TestCaseRepository testCaseRepository;
 
-	public void testCaseUpload(User user, List<MultipartFile> uploadFiles) {
+    public void testCaseUpload(User user, List<MultipartFile> uploadFiles) {
 
-	}
+    }
 
-	public ResponseEntity<List<TestCase>> queryAll() {
-		return ResponseEntity.ok(queryAll(new PageCriteria(100, 0, "")).getResults());
-	}
+    public ResponseEntity<List<TestCase>> queryAll() {
+        return ResponseEntity.ok(queryAll(new PageCriteria(100, 0, "")).getResults());
+    }
 
-	public ResponseEntity<TestCase> queryByTestCaseId(String testCaseId) {
-		return ResponseEntity.ok(queryById(testCaseId));
-	}
+    public ResponseEntity<TestCase> queryByTestCaseId(String testCaseId) {
+        return ResponseEntity.ok(queryById(testCaseId));
+    }
 
-	public void deleteTestCase(String testCaseId, User user) {
-		deleteTestCase(testCaseId, user.getUserId());
-	}
+    public void deleteTestCase(String testCaseId, User user) {
+        deleteTestCase(testCaseId, user.getUserId());
+    }
 
-	private Page<TestCase> queryAll(PageCriteria pageCriteria) {
-		return testCaseRepository.queryAll(pageCriteria);
-	}
+    private Page<TestCase> queryAll(PageCriteria pageCriteria) {
+        return testCaseRepository.queryAll(pageCriteria);
+    }
 
-	private TestCase queryById(String testCaseId) {
-		return testCaseRepository.find(testCaseId)
-				.orElseThrow(() -> new EntityNotFoundException(TestCase.class, testCaseId));
-	}
+    private TestCase queryById(String testCaseId) {
+        return testCaseRepository.find(testCaseId)
+                .orElseThrow(() -> new EntityNotFoundException(TestCase.class, testCaseId));
+    }
 
-	private void deleteTestCase(String testCaseId, String userId) {
+    private void deleteTestCase(String testCaseId, String userId) {
 
-	}
+    }
 }

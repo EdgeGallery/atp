@@ -20,41 +20,41 @@ import org.slf4j.LoggerFactory;
  */
 public class MFContentTestCase extends TestCase {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(MFContentTestCase.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MFContentTestCase.class);
 
-	private TestCaseResult testCaseResult = new TestCaseResult();
+    private TestCaseResult testCaseResult = new TestCaseResult();
 
-	private static Set<String> field = new HashSet<String>() {
-		{
-			add("app_name");
-			add("app_provider");
-			add("app_archive_version");
-			add("app_release_date_time");
-			add("app_contact");
-		}
-	};
+    private static Set<String> field = new HashSet<String>() {
+        {
+            add("app_name");
+            add("app_provider");
+            add("app_archive_version");
+            add("app_release_date_time");
+            add("app_contact");
+        }
+    };
 
-	@Override
-	public TestCaseResult execute(String filePath) {
-		try (ZipFile zipFile = new ZipFile(filePath)) {
-			Enumeration<? extends ZipEntry> entries = zipFile.entries();
-			while (entries.hasMoreElements()) {
-				ZipEntry entry = entries.nextElement();
-				if (entry.getName().split("/").length == 2 && TestCaseUtil.fileSuffixValidate("mf", entry.getName())) {
-					// some fields not exist in tosca.meta file
-					return TestCaseUtil.isExistAll(zipFile, entry, field)
-							? setTestCaseResult(Constant.Result.SUCCESS, Constant.EMPTY, testCaseResult)
-							: setTestCaseResult(Constant.Result.FAILED, ExceptionConstant.MFContentTestCase.LOSS_FIELD,
-									testCaseResult);
-				}
-			}
-		} catch (IOException e) {
-			LOGGER.error("TOSCAFileTestCase execute failed. {}", e.getMessage());
-			return setTestCaseResult(Constant.Result.FAILED, ExceptionConstant.INNER_EXCEPTION, testCaseResult);
-		}
+    @Override
+    public TestCaseResult execute(String filePath) {
+        try (ZipFile zipFile = new ZipFile(filePath)) {
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = entries.nextElement();
+                if (entry.getName().split("/").length == 2 && TestCaseUtil.fileSuffixValidate("mf", entry.getName())) {
+                    // some fields not exist in tosca.meta file
+                    return TestCaseUtil.isExistAll(zipFile, entry, field)
+                            ? setTestCaseResult(Constant.Result.SUCCESS, Constant.EMPTY, testCaseResult)
+                            : setTestCaseResult(Constant.Result.FAILED, ExceptionConstant.MFContentTestCase.LOSS_FIELD,
+                                    testCaseResult);
+                }
+            }
+        } catch (IOException e) {
+            LOGGER.error("TOSCAFileTestCase execute failed. {}", e.getMessage());
+            return setTestCaseResult(Constant.Result.FAILED, ExceptionConstant.INNER_EXCEPTION, testCaseResult);
+        }
 
-		return setTestCaseResult(Constant.Result.FAILED, ExceptionConstant.MFContentTestCase.FILE_NOT_EXIST,
-				testCaseResult);
-	}
+        return setTestCaseResult(Constant.Result.FAILED, ExceptionConstant.MFContentTestCase.FILE_NOT_EXIST,
+                testCaseResult);
+    }
 
 }

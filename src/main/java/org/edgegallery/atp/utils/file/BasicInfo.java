@@ -1,17 +1,15 @@
 /*
- *    Copyright 2020 Huawei Technologies Co., Ltd.
+ * Copyright 2020 Huawei Technologies Co., Ltd.
  *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  */
 
 package org.edgegallery.atp.utils.file;
@@ -127,8 +125,8 @@ public class BasicInfo {
                     createDirectory(file.getParentFile().getAbsolutePath());
                 }
                 try (InputStream input = zipFile.getInputStream(entry);
-                    FileOutputStream out = FileUtils.openOutputStream(file);
-                    BufferedOutputStream bos = new BufferedOutputStream(out)) {
+                        FileOutputStream out = FileUtils.openOutputStream(file);
+                        BufferedOutputStream bos = new BufferedOutputStream(out)) {
                     int length = 0;
                     while ((length = input.read(buffer)) != -1) {
                         bos.write(buffer, 0, length);
@@ -250,7 +248,7 @@ public class BasicInfo {
             BoundedInputStream boundedInput = new BoundedInputStream(FileUtils.openInputStream(file), 8192);
             isr = new InputStreamReader(boundedInput, "UTF-8");
             reader = new BufferedReader(isr, 2048);
-            for (String tempString; (tempString = readLine(reader)) != null; ) {
+            for (String tempString; (tempString = readLine(reader)) != null;) {
                 // If line is empty, ignore
                 if ("".equals(tempString)) {
                     continue;
@@ -331,7 +329,7 @@ public class BasicInfo {
             if (list != null && list.length > 0) {
                 for (File subFile : list) {
                     current.addChild(
-                        buildFileStructure(subFile.getAbsolutePath(), base + File.separator + rootfile.getName()));
+                            buildFileStructure(subFile.getAbsolutePath(), base + File.separator + rootfile.getName()));
                 }
             }
             return current;
@@ -358,6 +356,5 @@ public class BasicInfo {
         return contact;
     }
 
-    public BasicInfo() {
-    }
+    public BasicInfo() {}
 }

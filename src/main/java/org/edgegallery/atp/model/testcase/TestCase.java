@@ -9,11 +9,11 @@ import lombok.Setter;
 @Getter
 public class TestCase implements Entity {
 
-	/**
-	 * test case id
-	 */
+    /**
+     * test case id
+     */
     private String id;
-    
+
     /**
      * test case name
      */

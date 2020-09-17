@@ -25,58 +25,58 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service("TaskService")
 public class TaskService {
-	private static final Logger LOGGER = LoggerFactory.getLogger(TaskService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TaskService.class);
 
-	@Autowired
-	TaskRepository taskRepository;
+    @Autowired
+    TaskRepository taskRepository;
 
-	@Autowired
-	TestCaseRepository testCaseRepository;
+    @Autowired
+    TestCaseRepository testCaseRepository;
 
-	public ResponseEntity<List<TaskDto>> getAllTasks(User user) {
-		return ResponseEntity
-				.ok(queryAllRunningTasks(user.getUserId()).stream().map(TaskDto::of).collect(Collectors.toList()));
-	}
+    public ResponseEntity<List<TaskDto>> getAllTasks(User user) {
+        return ResponseEntity
+                .ok(queryAllRunningTasks(user.getUserId()).stream().map(TaskDto::of).collect(Collectors.toList()));
+    }
 
-	public String startTest(User user, MultipartFile packages) {
-		File tempFile = FileChecker.check(packages);
-		if (null == tempFile) {
-			throw new IllegalArgumentException("file is null");
-		}
+    public String startTest(User user, MultipartFile packages) {
+        File tempFile = FileChecker.check(packages);
+        if (null == tempFile) {
+            throw new IllegalArgumentException("file is null");
+        }
 
-		String taskId = taskRepository.generateId();
-		TaskRequest status = new TaskRequest();
-		status.setId(taskId);
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		status.setCreateTime(simpleDateFormat.format(new Date()));
-		// TODO START TASK
-		taskRepository.storeTask(status);
-		// TODO
-		return "taskID";
-	}
+        String taskId = taskRepository.generateId();
+        TaskRequest status = new TaskRequest();
+        status.setId(taskId);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        status.setCreateTime(simpleDateFormat.format(new Date()));
+        // TODO START TASK
+        taskRepository.storeTask(status);
+        // TODO
+        return "taskID";
+    }
 
-	public ResponseEntity<TaskDto> getStatusByTaskId(String taskid) {
-		return ResponseEntity.ok(TaskDto.of(findTask(taskid)));
-	}
+    public ResponseEntity<TaskDto> getStatusByTaskId(String taskid) {
+        return ResponseEntity.ok(TaskDto.of(findTask(taskid)));
+    }
 
-	public ResponseEntity<TaskDto> getTaskById(User user, String taskid) {
-		TaskRequest status = findTask(taskid);
-		TaskDto dto = TaskDto.of(status);
-		if (!status.getUser().getUserId().equals(user.getUserId())) {
-			throw new UnAuthorizedExecption(taskid);
-		}
-		return ResponseEntity.ok(dto);
-	}
+    public ResponseEntity<TaskDto> getTaskById(User user, String taskid) {
+        TaskRequest status = findTask(taskid);
+        TaskDto dto = TaskDto.of(status);
+        if (!status.getUser().getUserId().equals(user.getUserId())) {
+            throw new UnAuthorizedExecption(taskid);
+        }
+        return ResponseEntity.ok(dto);
+    }
 
-	private Page<TaskRequest> queryAllTask(PageCriteria pageCriteria) {
-		return taskRepository.queryAll(pageCriteria);
-	}
+    private Page<TaskRequest> queryAllTask(PageCriteria pageCriteria) {
+        return taskRepository.queryAll(pageCriteria);
+    }
 
-	private TaskRequest findTask(String taskId) {
-		return taskRepository.find(taskId).orElseThrow(() -> new EntityNotFoundException(TaskRequest.class, taskId));
-	}
+    private TaskRequest findTask(String taskId) {
+        return taskRepository.find(taskId).orElseThrow(() -> new EntityNotFoundException(TaskRequest.class, taskId));
+    }
 
-	private List<TaskRequest> queryAllRunningTasks(String userId) {
-		return taskRepository.queryAllRunningTasks();
-	}
+    private List<TaskRequest> queryAllRunningTasks(String userId) {
+        return taskRepository.queryAllRunningTasks();
+    }
 }

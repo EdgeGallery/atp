@@ -23,54 +23,54 @@ import lombok.Setter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TaskPO implements PersistenceObject<TaskRequest> {
 
-	@Column(name = "id")
-	private String id;
+    @Column(name = "id")
+    private String id;
 
-	@Column(name = "appName")
-	private String appName;
+    @Column(name = "appName")
+    private String appName;
 
-	@Column(name = "appVersion")
-	private String appVersion;
+    @Column(name = "appVersion")
+    private String appVersion;
 
-	@Column(name = "status")
-	private String status;
+    @Column(name = "status")
+    private String status;
 
-	@Column(name = "createTime")
-	private String createTime;
+    @Column(name = "createTime")
+    private String createTime;
 
-	@Column(name = "endTime")
-	private String endTime;
+    @Column(name = "endTime")
+    private String endTime;
 
-	@Column(name = "userId")
-	private String userId;
+    @Column(name = "userId")
+    private String userId;
 
-	@Column(name = "userName")
-	private String userName;
+    @Column(name = "userName")
+    private String userName;
 
-	@Column(name = "testCaseDetail")
-	private String testCaseDetail;
+    @Column(name = "testCaseDetail")
+    private String testCaseDetail;
 
-	public TaskPO() {
+    public TaskPO() {
 
-	}
+    }
 
-	public static TaskPO of(TaskRequest startTest) {
-		TaskPO build = new TaskPO();
-		return build;
-	}
+    public static TaskPO of(TaskRequest startTest) {
+        TaskPO build = new TaskPO();
+        return build;
+    }
 
-	@Override
-	public TaskRequest toDomainModel() {
-		Logger logger = LoggerFactory.getLogger(TaskPO.class);
-		try {
-			return TaskRequest.builder().setAppName(appName).setAppVersion(appVersion).setCreateTime(createTime)
-					.setEndTime(endTime).setId(id).setStatus(status)
-					.setTestCaseDetail(JSONUtil.unMarshal(testCaseDetail, TestCaseDetail.class))
-					.setUser(new User(userId, userName)).build();
-		} catch (IOException e) {
-			logger.error("taskPO JSONUtil unmarshal testcaseDetail failed. {}", testCaseDetail);
-			return new TaskRequest();
-		}
+    @Override
+    public TaskRequest toDomainModel() {
+        Logger logger = LoggerFactory.getLogger(TaskPO.class);
+        try {
+            return TaskRequest.builder().setAppName(appName).setAppVersion(appVersion).setCreateTime(createTime)
+                    .setEndTime(endTime).setId(id).setStatus(status)
+                    .setTestCaseDetail(JSONUtil.unMarshal(testCaseDetail, TestCaseDetail.class))
+                    .setUser(new User(userId, userName)).build();
+        } catch (IOException e) {
+            logger.error("taskPO JSONUtil unmarshal testcaseDetail failed. {}", testCaseDetail);
+            return new TaskRequest();
+        }
 
-	}
+    }
 }
