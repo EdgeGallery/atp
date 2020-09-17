@@ -17,5 +17,5 @@
 package org.edgegallery.atp.repository;
 
 public interface PersistenceObject<T> {
-    T toDomainModel();
+	T toDomainModel();
 }

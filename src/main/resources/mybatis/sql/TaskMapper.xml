@@ -16,22 +16,22 @@
   -->
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.edgegallery.atp.model.task.TaskMapper">
+<mapper namespace="org.edgegallery.atp.repository.task.TaskMapper">
 
     <select id="findByAppId"
-            resultType="org.edgegallery.atp.model.task.TaskStatusPO"
+            resultType="org.edgegallery.atp.model.task.TaskPO"
             parameterType="String">
         select * from app_table where appid = #{appId}
     </select>
 
     <select id="findByAppName"
-            resultType="org.edgegallery.atp.model.task.TaskStatusPO"
+            resultType="org.edgegallery.atp.model.task.TaskPO"
             parameterType="String">
         select * from app_table where appname = #{appName}
     </select>
 
     <update id="update"
-            parameterType="org.edgegallery.atp.model.task.TaskStatusPO">
+            parameterType="org.edgegallery.atp.model.task.TaskPO">
         update app_table
         SET modifytime = (select now()), shortdesc=#{shortDesc}, provider =#{provider}, appname=
         #{appName}, applicationType=#{applicationType}, appIntroduction=#{appIntroduction},
@@ -40,7 +40,7 @@
     </update>
 
     <insert id="insert"
-            parameterType="org.edgegallery.atp.model.task.TaskStatusPO">
+            parameterType="org.edgegallery.atp.model.task.TaskPO">
         insert into
         app_table
         (appid, createtime, modifytime, shortdesc, provider, appname, applicationType, appIntroduction,
@@ -84,7 +84,7 @@
 
 
     <select id="findAllWithAppPagination"
-            resultType="org.edgegallery.atp.model.task.TaskStatusPO"
+            resultType="org.edgegallery.atp.model.task.TaskPO"
             parameterType="java.util.Map">
         select * from app_table
         <where>

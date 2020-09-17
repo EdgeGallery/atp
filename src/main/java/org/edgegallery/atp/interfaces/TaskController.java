@@ -16,12 +16,15 @@
 
 package org.edgegallery.atp.interfaces;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.constraints.Pattern;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.servicecomb.provider.rest.common.RestSchema;
+import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.interfaces.dto.TaskDto;
 import org.edgegallery.atp.model.user.User;
 import org.edgegallery.atp.service.TaskService;
@@ -47,67 +50,61 @@ import io.swagger.annotations.ApiResponses;
 @Controller
 @RestSchema(schemaId = "test")
 @RequestMapping("/mec/atp/v1")
-@Api(tags = {"APT Test Controller"})
+@Api(tags = { "APT Test Controller" })
 @Validated
 public class TaskController {
 
-    private static final String REG_USER_ID = "[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}";
+	private static final String REG_USER_ID = "[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}";
 
-    private static final String REG_USER_NAME = "^[a-zA-Z][a-zA-Z0-9_]{5,29}$";
+	private static final String REG_USER_NAME = "^[a-zA-Z][a-zA-Z0-9_]{5,29}$";
 
-    private static final String REG_ID = "[0-9a-f]{32}";
+	private static final String REG_ID = "[0-9a-f]{32}";
 
-    @Autowired
+	@Autowired
 	private TaskService taskService;
 
-    /**
-     * test task.
-     */
-    @PostMapping(value = "/task", produces = MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "start test", response = String.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 404, message = "microservice not found", response = String.class),
-            @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
-            @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)
-    })
-    @PreAuthorize("hasRole('APPSTORE_TENANT')")
-    public ResponseEntity<TaskDto> startTest(@RequestParam("userId") @Pattern(regexp = REG_USER_ID) String userId,
-                                             @RequestParam("userName") @Pattern(regexp = REG_USER_NAME) String userName,
-                                             @ApiParam(value = "test yaml files", required = true) @RequestPart("file") MultipartFile packages) {
-		return ResponseEntity.ok(TaskDto.of(taskService.startTest(new User(userId, userName), packages)));
-    }
+	/**
+	 * test task.
+	 */
+	@PostMapping(value = "/task", produces = MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "start test", response = String.class)
+	@ApiResponses(value = { @ApiResponse(code = 404, message = "microservice not found", response = String.class),
+			@ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
+			@ApiResponse(code = 500, message = "resource grant " + "error", response = String.class) })
+	@PreAuthorize("hasRole('APPSTORE_TENANT')")
+	public ResponseEntity<Map<String, String>> startTest(
+			@RequestParam("userId") @Pattern(regexp = REG_USER_ID) String userId,
+			@RequestParam("userName") @Pattern(regexp = REG_USER_NAME) String userName,
+			@ApiParam(value = "test yaml files", required = true) @RequestPart("file") MultipartFile packages) {
+		Map<String, String> result = new HashMap<String, String>();
+		result.put(Constant.TASK_ID, taskService.startTest(new User(userId, userName), packages));
+		return ResponseEntity.ok(result);
+	}
 
-    @GetMapping(value = "/task", produces = MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "get all tasks.", response = TaskDto.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 404, message = "microservice not found", response = String.class),
-            @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
-            @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)
-    })
-    @PreAuthorize("hasRole('APPSTORE_TENANT')")
-    public ResponseEntity<List<TaskDto>> getAllTasks(
-            @RequestParam("userId") @Pattern(regexp = REG_USER_ID) String userId,
-            @RequestParam("userName") @Pattern(regexp = REG_USER_NAME) String userName,
-            @ApiParam(value = "task id") @PathVariable("taskid")
-            @Pattern(regexp = REG_ID) String taskid) {
+	@GetMapping(value = "/task", produces = MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "get all tasks.", response = TaskDto.class)
+	@ApiResponses(value = { @ApiResponse(code = 404, message = "microservice not found", response = String.class),
+			@ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
+			@ApiResponse(code = 500, message = "resource grant " + "error", response = String.class) })
+	@PreAuthorize("hasRole('APPSTORE_TENANT')")
+	public ResponseEntity<List<TaskDto>> getAllTasks(
+			@RequestParam("userId") @Pattern(regexp = REG_USER_ID) String userId,
+			@RequestParam("userName") @Pattern(regexp = REG_USER_NAME) String userName,
+			@ApiParam(value = "task id") @PathVariable("taskid") @Pattern(regexp = REG_ID) String taskid) {
 		return taskService.getAllTasks(new User(userId, userName));
-    }
+	}
 
-    @GetMapping(value = "/task/{taskid}", produces = MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "get all tasks.", response = TaskDto.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 404, message = "microservice not found", response = String.class),
-            @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
-            @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)
-    })
-    @PreAuthorize("hasRole('APPSTORE_TENANT')")
-    public ResponseEntity<TaskDto> getTaskById(
-            @RequestParam("userId") @Pattern(regexp = REG_USER_ID) String userId,
-            @RequestParam("userName") @Pattern(regexp = REG_USER_NAME) String userName,
-            @ApiParam(value = "task id") @PathVariable("taskid")
-            @Pattern(regexp = REG_ID) String taskid) {
+	@GetMapping(value = "/task/{taskid}", produces = MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "get all tasks.", response = TaskDto.class)
+	@ApiResponses(value = { @ApiResponse(code = 404, message = "microservice not found", response = String.class),
+			@ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
+			@ApiResponse(code = 500, message = "resource grant " + "error", response = String.class) })
+	@PreAuthorize("hasRole('APPSTORE_TENANT')")
+	public ResponseEntity<TaskDto> getTaskById(@RequestParam("userId") @Pattern(regexp = REG_USER_ID) String userId,
+			@RequestParam("userName") @Pattern(regexp = REG_USER_NAME) String userName,
+			@ApiParam(value = "task id") @PathVariable("taskid") @Pattern(regexp = REG_ID) String taskid) {
 		return taskService.getTaskById(new User(userId, userName), taskid);
-    }
+	}
 //
 //    @GetMapping(value = "task/{taskid}/status", produces = MediaType.APPLICATION_JSON)
 //    @ApiOperation(value = "get test status list by task id.", response = TaskDto.class)
