@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import org.edgegallery.atp.interfaces.dto.TaskDto;
 import org.edgegallery.atp.model.page.Page;
 import org.edgegallery.atp.model.page.PageCriteria;
-import org.edgegallery.atp.model.task.TaskStatus;
+import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.user.User;
 import org.edgegallery.atp.repository.task.TaskRepository;
 import org.edgegallery.atp.repository.testcase.TestCaseRepository;
@@ -30,53 +30,53 @@ public class TaskService {
 	@Autowired
 	TaskRepository taskRepository;
 
-    @Autowired
+	@Autowired
 	TestCaseRepository testCaseRepository;
 
-    public ResponseEntity<List<TaskDto>> getAllTasks(User user) {
-		return ResponseEntity.ok(queryAllRunningTasks(user.getUserId()).stream().map(TaskDto::of)
-                .collect(Collectors.toList()));
-    }
+	public ResponseEntity<List<TaskDto>> getAllTasks(User user) {
+		return ResponseEntity
+				.ok(queryAllRunningTasks(user.getUserId()).stream().map(TaskDto::of).collect(Collectors.toList()));
+	}
 
-    public TaskStatus startTest(User user, MultipartFile packages) {
+	public String startTest(User user, MultipartFile packages) {
 		File tempFile = FileChecker.check(packages);
-        if(null == tempFile) {
-            throw new IllegalArgumentException("file is null");
-        }
+		if (null == tempFile) {
+			throw new IllegalArgumentException("file is null");
+		}
 
 		String taskId = taskRepository.generateId();
-		TaskStatus status = new TaskStatus();
+		TaskRequest status = new TaskRequest();
 		status.setId(taskId);
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		status.setStartTime(simpleDateFormat.format(new Date()));
+		status.setCreateTime(simpleDateFormat.format(new Date()));
 		// TODO START TASK
 		taskRepository.storeTask(status);
 		// TODO
-		return new TaskStatus();
-    }
+		return "taskID";
+	}
 
-    public ResponseEntity<TaskDto> getStatusByTaskId(String taskid) {
+	public ResponseEntity<TaskDto> getStatusByTaskId(String taskid) {
 		return ResponseEntity.ok(TaskDto.of(findTask(taskid)));
-    }
+	}
 
-    public ResponseEntity<TaskDto> getTaskById(User user, String taskid) {
-		TaskStatus status = findTask(taskid);
-        TaskDto dto = TaskDto.of(status);
-        if(!status.getUser().getUserId().equals(user.getUserId())) {
-            throw new UnAuthorizedExecption(taskid);
-        }
-        return ResponseEntity.ok(dto);
-    }
+	public ResponseEntity<TaskDto> getTaskById(User user, String taskid) {
+		TaskRequest status = findTask(taskid);
+		TaskDto dto = TaskDto.of(status);
+		if (!status.getUser().getUserId().equals(user.getUserId())) {
+			throw new UnAuthorizedExecption(taskid);
+		}
+		return ResponseEntity.ok(dto);
+	}
 
-	private Page<TaskStatus> queryAllTask(PageCriteria pageCriteria) {
+	private Page<TaskRequest> queryAllTask(PageCriteria pageCriteria) {
 		return taskRepository.queryAll(pageCriteria);
 	}
 
-	private TaskStatus findTask(String taskId) {
-		return taskRepository.find(taskId).orElseThrow(() -> new EntityNotFoundException(TaskStatus.class, taskId));
+	private TaskRequest findTask(String taskId) {
+		return taskRepository.find(taskId).orElseThrow(() -> new EntityNotFoundException(TaskRequest.class, taskId));
 	}
 
-	private List<TaskStatus> queryAllRunningTasks(String userId) {
+	private List<TaskRequest> queryAllRunningTasks(String userId) {
 		return taskRepository.queryAllRunningTasks();
 	}
 }

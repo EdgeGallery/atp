@@ -2,22 +2,22 @@ package org.edgegallery.atp.repository.task;
 
 import org.edgegallery.atp.model.page.Page;
 import org.edgegallery.atp.model.page.PageCriteria;
-import org.edgegallery.atp.model.task.TaskStatus;
+import org.edgegallery.atp.model.task.TaskRequest;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface TaskRepository {
 
-    Optional<TaskStatus> find(String taskId);
+    Optional<TaskRequest> find(String taskId);
 
-    Page<TaskStatus> queryAll(PageCriteria pageCriteria);
+    Page<TaskRequest> queryAll(PageCriteria pageCriteria);
 
     String generateId();
 
-    void storeTask(TaskStatus tatus);
+    void storeTask(TaskRequest tatus);
 
-    List<TaskStatus> queryAllRunningTasks();
+    List<TaskRequest> queryAllRunningTasks();
 
-    List<TaskStatus> queryAllSubTasksByTaskId(String taskId);
+    List<TaskRequest> queryAllSubTasksByTaskId(String taskId);
 }
