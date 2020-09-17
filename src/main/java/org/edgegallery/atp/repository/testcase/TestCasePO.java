@@ -27,8 +27,7 @@ public class TestCasePO implements PersistenceObject<TestCase> {
     // type means
     private String types;
 
-    public TestCasePO() {
-    }
+    public TestCasePO() {}
 
     public TestCasePO(String id, String type, String name, String desc, String content) {
         this.id = id;

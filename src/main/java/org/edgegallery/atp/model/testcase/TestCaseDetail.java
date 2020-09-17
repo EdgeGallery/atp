@@ -10,9 +10,9 @@ import lombok.Setter;
 @Setter
 public class TestCaseDetail {
 
-	List<Map<String, TestCaseResult>> virusScanningTest;
+    List<Map<String, TestCaseResult>> virusScanningTest;
 
-	List<Map<String, TestCaseResult>> complianceTest;
+    List<Map<String, TestCaseResult>> complianceTest;
 
-	List<Map<String, TestCaseResult>> sandboxTest;
+    List<Map<String, TestCaseResult>> sandboxTest;
 }

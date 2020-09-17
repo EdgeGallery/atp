@@ -4,12 +4,12 @@ import org.edgegallery.atp.model.testcase.TestCaseResult;
 
 public abstract class TestCase {
 
-	public abstract TestCaseResult execute(String filePath);
+    public abstract TestCaseResult execute(String filePath);
 
-	public TestCaseResult setTestCaseResult(String result, String reason, TestCaseResult testCaseresult) {
-		testCaseresult.setReason(reason);
-		testCaseresult.setResult(result);
-		return testCaseresult;
-	}
+    public TestCaseResult setTestCaseResult(String result, String reason, TestCaseResult testCaseresult) {
+        testCaseresult.setReason(reason);
+        testCaseresult.setResult(result);
+        return testCaseresult;
+    }
 
 }

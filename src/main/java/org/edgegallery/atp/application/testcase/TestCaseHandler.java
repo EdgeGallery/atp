@@ -8,24 +8,24 @@ import org.slf4j.LoggerFactory;
 
 public class TestCaseHandler {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseHandler.class);
 
-	private static final String METHOD_NAME = "execute";
+    private static final String METHOD_NAME = "execute";
 
-	/**
-	 * 
-	 * @param pkgPth   org.appstore.mec.domain.model.testcase.draft.SuffixTestCase
-	 * @param filePath filePath
-	 * @return
-	 */
-	public TestCaseResult testCaseHandler(String pkgPth, String filePath) {
-		try {
-			Class<?> clazz = Class.forName(pkgPth);
-			return (TestCaseResult) clazz.getMethod(METHOD_NAME, String.class).invoke(clazz.newInstance(), filePath);
-		} catch (Exception e) {
-			LOGGER.error("testCaseHandler failed. {}", e.getMessage());
-			return new TestCaseResult(Constant.Result.FAILED, ExceptionConstant.INNER_EXCEPTION);
-		}
-	}
+    /**
+     * 
+     * @param pkgPth org.appstore.mec.domain.model.testcase.draft.SuffixTestCase
+     * @param filePath filePath
+     * @return
+     */
+    public TestCaseResult testCaseHandler(String pkgPth, String filePath) {
+        try {
+            Class<?> clazz = Class.forName(pkgPth);
+            return (TestCaseResult) clazz.getMethod(METHOD_NAME, String.class).invoke(clazz.newInstance(), filePath);
+        } catch (Exception e) {
+            LOGGER.error("testCaseHandler failed. {}", e.getMessage());
+            return new TestCaseResult(Constant.Result.FAILED, ExceptionConstant.INNER_EXCEPTION);
+        }
+    }
 
 }

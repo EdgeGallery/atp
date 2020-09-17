@@ -9,11 +9,11 @@ public class TestCaseManager {
         return instance;
     }
 
-//    public List<TestCaseHandler> getAllTestCases() {
-//        return testCaseHandlers;
-//    }
-//
-//    public List<TestCase> getAllTestCasesExecutor() {
-//        return testCaseList;
-//    }
+    // public List<TestCaseHandler> getAllTestCases() {
+    // return testCaseHandlers;
+    // }
+    //
+    // public List<TestCase> getAllTestCasesExecutor() {
+    // return testCaseList;
+    // }
 }

@@ -12,12 +12,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ATPApplicationTest.class)
 public class JSONUtilTest {
-	@Test
-	public void marshalUnmarshalTest() throws IOException {
-		TestCaseResult result = new TestCaseResult("sucess", "ok");
-		JSONUtil.marshal(result);
+    @Test
+    public void marshalUnmarshalTest() throws IOException {
+        TestCaseResult result = new TestCaseResult("sucess", "ok");
+        JSONUtil.marshal(result);
 
-		String testCase = "{\"result\":\"success\",\"reason\":\"ok\"}";
-		JSONUtil.unMarshal(testCase, TestCaseResult.class);
-	}
+        String testCase = "{\"result\":\"success\",\"reason\":\"ok\"}";
+        JSONUtil.unMarshal(testCase, TestCaseResult.class);
+    }
 }

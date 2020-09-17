@@ -18,27 +18,27 @@ import org.slf4j.LoggerFactory;
  */
 public class SuffixTestCase extends TestCase {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(SuffixTestCase.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SuffixTestCase.class);
 
-	private TestCaseResult testCaseResult = new TestCaseResult();
+    private TestCaseResult testCaseResult = new TestCaseResult();
 
-	@Override
-	public TestCaseResult execute(String filePath) {
-		try (ZipFile zipFile = new ZipFile(filePath)) {
-			Enumeration<? extends ZipEntry> entries = zipFile.entries();
-			while (entries.hasMoreElements()) {
-				ZipEntry entry = entries.nextElement();
-				// root directory and file is end of mf
-				if (entry.getName().split("/").length == 2 && TestCaseUtil.fileSuffixValidate("mf", entry.getName())) {
-					return setTestCaseResult(Constant.Result.SUCCESS, Constant.EMPTY, testCaseResult);
-				}
-			}
-		} catch (IOException e) {
-			LOGGER.error("SuffixTestCase execute failed. {}", e.getMessage());
-			return setTestCaseResult(Constant.Result.FAILED, ExceptionConstant.INNER_EXCEPTION, testCaseResult);
-		}
-		return setTestCaseResult(Constant.Result.FAILED, ExceptionConstant.MFContentTestCase.FILE_NOT_EXIST,
-				testCaseResult);
-	}
+    @Override
+    public TestCaseResult execute(String filePath) {
+        try (ZipFile zipFile = new ZipFile(filePath)) {
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = entries.nextElement();
+                // root directory and file is end of mf
+                if (entry.getName().split("/").length == 2 && TestCaseUtil.fileSuffixValidate("mf", entry.getName())) {
+                    return setTestCaseResult(Constant.Result.SUCCESS, Constant.EMPTY, testCaseResult);
+                }
+            }
+        } catch (IOException e) {
+            LOGGER.error("SuffixTestCase execute failed. {}", e.getMessage());
+            return setTestCaseResult(Constant.Result.FAILED, ExceptionConstant.INNER_EXCEPTION, testCaseResult);
+        }
+        return setTestCaseResult(Constant.Result.FAILED, ExceptionConstant.MFContentTestCase.FILE_NOT_EXIST,
+                testCaseResult);
+    }
 
 }

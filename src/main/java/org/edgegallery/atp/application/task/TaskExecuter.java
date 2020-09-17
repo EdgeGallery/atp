@@ -24,21 +24,21 @@ public class TaskExecuter {
     }
 
     public void addSubTask(TestCaseHandler handler, String taskId, String generateId) {
-        if(taskAndSubTaskMap.get(taskId) != null) {
+        if (taskAndSubTaskMap.get(taskId) != null) {
             taskAndSubTaskMap.get(taskId).add(generateId);
         } else {
             Set<String> subTaskSet = new HashSet<>();
             subTaskSet.add(generateId);
             taskAndSubTaskMap.put(taskId, subTaskSet);
         }
-//        if(TestCaseHandler.TYPE_TEST_CASE_ANTIVIRUS.equals(handler.getType())) {
-//            antVirusTaskStatusMap.put(generateId, TestCaseHandler.STATUS_WAITING);
-//        }
-//        else if(TestCaseHandler.TYPE_TEST_CASE_COMPLIANCE.equals(handler.getType())) {
-//            complianceTaskStatusMap.put(generateId, TestCaseHandler.STATUS_WAITING);
-//        }
-//        else if(TestCaseHandler.TYPE_TEST_CASE_SANDBOX.equals(handler.getType())) {
-//            sandBoxTaskStatusMap.put(generateId, TestCaseHandler.STATUS_WAITING);
-//        }
+        // if(TestCaseHandler.TYPE_TEST_CASE_ANTIVIRUS.equals(handler.getType())) {
+        // antVirusTaskStatusMap.put(generateId, TestCaseHandler.STATUS_WAITING);
+        // }
+        // else if(TestCaseHandler.TYPE_TEST_CASE_COMPLIANCE.equals(handler.getType())) {
+        // complianceTaskStatusMap.put(generateId, TestCaseHandler.STATUS_WAITING);
+        // }
+        // else if(TestCaseHandler.TYPE_TEST_CASE_SANDBOX.equals(handler.getType())) {
+        // sandBoxTaskStatusMap.put(generateId, TestCaseHandler.STATUS_WAITING);
+        // }
     }
 }

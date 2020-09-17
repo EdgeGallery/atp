@@ -22,8 +22,8 @@ class TestSchedule {
         System.out.println("===========1=>");
         try {
             taskRepository.queryAllRunningTasks();
-            for(int i=1;i<=10;i++){
-                System.out.println("=1==>"+i);
+            for (int i = 1; i <= 10; i++) {
+                System.out.println("=1==>" + i);
                 Thread.sleep(1000);
             }
         } catch (InterruptedException e) {
