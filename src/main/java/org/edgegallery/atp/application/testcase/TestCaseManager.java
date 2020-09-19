@@ -1,19 +1,17 @@
 package org.edgegallery.atp.application.testcase;
 
-public class TestCaseManager {
+import org.edgegallery.atp.model.task.TaskRequest;
 
-    private static TestCaseManager instance = new TestCaseManager();
-
-
-    public static TestCaseManager getInstance() {
-        return instance;
-    }
-
-    // public List<TestCaseHandler> getAllTestCases() {
-    // return testCaseHandlers;
-    // }
-    //
-    // public List<TestCase> getAllTestCasesExecutor() {
-    // return testCaseList;
-    // }
+/**
+ * test case schedule class.
+ *
+ */
+public interface TestCaseManager {
+    /**
+     * execute test case asynchronously
+     * 
+     * @param task test task
+     * @param filePath scar file path
+     */
+    public void executeTestCase(TaskRequest task, String filePath);
 }

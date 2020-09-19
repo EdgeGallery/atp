@@ -17,10 +17,8 @@ package org.edgegallery.atp.interfaces;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.validation.constraints.Pattern;
 import javax.ws.rs.core.MediaType;
-
 import org.apache.servicecomb.provider.rest.common.RestSchema;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.interfaces.dto.TaskDto;
@@ -38,7 +36,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -64,7 +61,7 @@ public class TaskController {
     /**
      * test task.
      */
-    @PostMapping(value = "/task", produces = MediaType.APPLICATION_JSON)
+    @PostMapping(value = "/tasks", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "start test", response = String.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
@@ -75,11 +72,11 @@ public class TaskController {
             @RequestParam("userName") @Pattern(regexp = REG_USER_NAME) String userName,
             @ApiParam(value = "test yaml files", required = true) @RequestPart("file") MultipartFile packages) {
         Map<String, String> result = new HashMap<String, String>();
-        result.put(Constant.TASK_ID, taskService.startTest(new User(userId, userName), packages));
+        result.put(Constant.TASK_ID, taskService.createTask(new User(userId, userName), packages));
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping(value = "/task", produces = MediaType.APPLICATION_JSON)
+    @GetMapping(value = "/tasks", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "get all tasks.", response = TaskDto.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
@@ -92,29 +89,15 @@ public class TaskController {
         return taskService.getAllTasks(new User(userId, userName));
     }
 
-    @GetMapping(value = "/task/{taskid}", produces = MediaType.APPLICATION_JSON)
+    @GetMapping(value = "/tasks/{taskid}", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "get all tasks.", response = TaskDto.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('APPSTORE_TENANT')")
     public ResponseEntity<TaskDto> getTaskById(@RequestParam("userId") @Pattern(regexp = REG_USER_ID) String userId,
-            @RequestParam("userName") @Pattern(regexp = REG_USER_NAME) String userName,
+            @RequestParam("xi") @Pattern(regexp = REG_USER_NAME) String userName,
             @ApiParam(value = "task id") @PathVariable("taskid") @Pattern(regexp = REG_ID) String taskid) {
         return taskService.getTaskById(new User(userId, userName), taskid);
     }
-    //
-    // @GetMapping(value = "task/{taskid}/status", produces = MediaType.APPLICATION_JSON)
-    // @ApiOperation(value = "get test status list by task id.", response = TaskDto.class)
-    // @ApiResponses(value = {
-    // @ApiResponse(code = 404, message = "microservice not found", response = String.class),
-    // @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response =
-    // String.class),
-    // @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)
-    // })
-    // @PreAuthorize("hasRole('APPSTORE_TENANT')")
-    // public ResponseEntity<TaskDto> getStatus(@ApiParam(value = "task id") @PathVariable("taskid")
-    // @Pattern(regexp = REG_ID) String taskid) {
-    // return testServiceFacade.getStatusByTaskId(taskid);
-    // }
 }

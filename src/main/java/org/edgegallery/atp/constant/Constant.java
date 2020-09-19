@@ -1,10 +1,22 @@
 package org.edgegallery.atp.constant;
 
 import java.io.File;
-
 import org.edgegallery.atp.utils.file.FileChecker;
 
 public interface Constant {
+    
+    String EMPTY = "";
+
+    String TASK_ID = "taskId";
+
+    String UNDER_LINE = "_";
+
+    int MAX_TASK_THREAD_NUM = 5;
+    
+    String APP_NAME = "app_name";
+
+    String APP_VERSION = "app_archive_version";
+
     interface Result {
         String SUCCESS = "success";
 
@@ -41,7 +53,13 @@ public interface Constant {
         int TOO_MANY = 1024; // max number of files
     }
 
-    String EMPTY = "";
+    interface testCaseType {
+        String VIRUS_SCAN_TEST = "virusScanningTest";
 
-    String TASK_ID = "taskId";
+        String COMPLIANCE_TEST = "compliancesTest";
+
+        String SANDBOX_TEST = "sandboxTest";
+
+    }
+    
 }
