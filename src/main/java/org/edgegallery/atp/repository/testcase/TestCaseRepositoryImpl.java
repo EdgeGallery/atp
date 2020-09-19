@@ -14,15 +14,14 @@
 
 package org.edgegallery.atp.repository.testcase;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import org.edgegallery.atp.model.page.Page;
 import org.edgegallery.atp.model.page.PageCriteria;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Repository
 public class TestCaseRepositoryImpl implements TestCaseRepository {
@@ -33,14 +32,20 @@ public class TestCaseRepositoryImpl implements TestCaseRepository {
     @Override
     public Page<TestCase> queryAll(PageCriteria pageCriteria) {
         long total = testCaseMapper.countTotal(pageCriteria).longValue();
-        List<TestCase> releases = testCaseMapper.findAllWithAppPagination(pageCriteria).stream()
-                .map(TestCasePO::toDomainModel).collect(Collectors.toList());
+        List<TestCase> releases =
+                testCaseMapper.findAllWithAppPagination(pageCriteria).stream().collect(Collectors.toList());
         return new Page<>(releases, pageCriteria.getLimit(), pageCriteria.getOffset(), total);
     }
 
     @Override
     public Optional<TestCase> find(String taskCaseId) {
-        Optional<TestCase> testCase = testCaseMapper.findByTestCaseId(taskCaseId).map(TestCasePO::toDomainModel);
+        Optional<TestCase> testCase = testCaseMapper.findByTestCaseId(taskCaseId);
+        return testCase;
+    }
+
+    @Override
+    public Optional<TestCase> findByNameAndType(String name, String type) {
+        Optional<TestCase> testCase = testCaseMapper.findByNameAndType(name, type);
         return testCase;
     }
 }

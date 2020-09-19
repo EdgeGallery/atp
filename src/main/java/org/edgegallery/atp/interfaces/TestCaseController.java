@@ -16,10 +16,8 @@ package org.edgegallery.atp.interfaces;
 
 import java.io.IOException;
 import java.util.List;
-
 import javax.validation.constraints.Pattern;
 import javax.ws.rs.core.MediaType;
-
 import org.apache.servicecomb.provider.rest.common.RestSchema;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.model.user.User;
@@ -38,7 +36,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;

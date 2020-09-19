@@ -6,11 +6,21 @@ import org.edgegallery.atp.model.testcase.TestCaseResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * execute test case dynamically
+ *
+ */
 public class TestCaseHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseHandler.class);
 
     private static final String METHOD_NAME = "execute";
+
+    private static TestCaseHandler instance = new TestCaseHandler();
+
+    public static TestCaseHandler getInstantce() {
+        return instance;
+    }
 
     /**
      * 

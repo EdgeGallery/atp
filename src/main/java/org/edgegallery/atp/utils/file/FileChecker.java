@@ -27,12 +27,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.google.common.io.Files;
 
 public class FileChecker {
@@ -81,7 +79,7 @@ public class FileChecker {
      * 
      * @param file object.
      */
-    public static File check(MultipartFile file) {
+    public static File check(MultipartFile file,String taskId) {
         String originalFilename = file.getOriginalFilename();
 
         // file name should not contains blank.
@@ -104,8 +102,10 @@ public class FileChecker {
             throw new IllegalArgumentException("Package File name is null.");
         }
 
+        // temp/taskId_fileName
         String tempFileAddress = new StringBuilder().append(FileChecker.getDir()).append(File.separator).append("temp")
-                .append(File.separator).append(file.getOriginalFilename()).toString();
+                .append(File.separator).append(taskId).append(Constant.UNDER_LINE).append(file.getOriginalFilename())
+                .toString();
         try {
             createFile(tempFileAddress);
             result = new File(tempFileAddress);
@@ -126,9 +126,9 @@ public class FileChecker {
      */
     public static String getDir() {
         if (System.getProperty("os.name").toLowerCase().contains("windows")) {
-            return "C:\\appstore";
+            return "C:\\atp";
         } else {
-            return "/home/appstore";
+            return "/home/atp";
         }
     }
 
@@ -220,6 +220,7 @@ public class FileChecker {
     }
 
     private static long getMaxFileSize() {
+        // 50MB
         return 50 * 1024 * 1024;
     }
 

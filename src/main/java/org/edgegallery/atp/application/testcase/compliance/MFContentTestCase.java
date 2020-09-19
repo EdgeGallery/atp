@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import org.edgegallery.atp.application.testcase.TestCase;
+import org.edgegallery.atp.application.testcase.TestCaseAbs;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ExceptionConstant;
 import org.edgegallery.atp.model.testcase.TestCaseResult;
@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Implementation of validating .mf file content.
  */
-public class MFContentTestCase extends TestCase {
+public class MFContentTestCase extends TestCaseAbs {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MFContentTestCase.class);
 
