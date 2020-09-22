@@ -14,11 +14,11 @@
 
 package org.edgegallery.atp.repository.task;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 import org.edgegallery.atp.model.page.Page;
 import org.edgegallery.atp.model.page.PageCriteria;
 import org.edgegallery.atp.model.task.TaskPO;
@@ -54,13 +54,8 @@ public class TaskRepositoryImpl implements TaskRepository {
     }
 
     @Override
-    public void storeTask(TaskRequest status) {
-        taskMapper.store(TaskPO.of(status));
-        // if(null != status.getStatus() && status.getSubTaskStatus().length > 0){
-        // for(TaskRequest s : status.getSubTaskStatus()) {
-        // taskMapper.store(TaskPO.of(s));
-        // }
-        // }
+    public void insert(TaskRequest task) {
+        taskMapper.insert(TaskPO.of(task));
     }
 
     @Override
@@ -69,8 +64,17 @@ public class TaskRepositoryImpl implements TaskRepository {
     }
 
     @Override
-    public List<TaskRequest> queryAllSubTasksByTaskId(String taskId) {
-        return taskMapper.queryAllSunTasksByTaskId(taskId).stream().map(TaskPO::toDomainModel)
-                .collect(Collectors.toList());
+    public void update(TaskRequest task) {
+        taskMapper.update(TaskPO.of(task));;
+    }
+
+    @Override
+    public Date getCurrentDates() {
+        return taskMapper.getCurrentDates();
+    }
+
+    @Override
+    public void delHisTask() {
+        taskMapper.delHisTask();
     }
 }

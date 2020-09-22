@@ -1,11 +1,11 @@
 package org.edgegallery.atp.repository.task;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import org.edgegallery.atp.model.page.Page;
 import org.edgegallery.atp.model.page.PageCriteria;
 import org.edgegallery.atp.model.task.TaskRequest;
-
-import java.util.List;
-import java.util.Optional;
 
 public interface TaskRepository {
 
@@ -15,9 +15,13 @@ public interface TaskRepository {
 
     String generateId();
 
-    void storeTask(TaskRequest tatus);
+    void insert(TaskRequest task);
 
     List<TaskRequest> queryAllRunningTasks();
 
-    List<TaskRequest> queryAllSubTasksByTaskId(String taskId);
+    void update(TaskRequest task);
+
+    Date getCurrentDates();
+
+    void delHisTask();
 }

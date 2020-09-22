@@ -18,115 +18,56 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.edgegallery.atp.repository.task.TaskMapper">
 
-    <select id="findByAppId"
-            resultType="org.edgegallery.atp.model.task.TaskPO"
-            parameterType="String">
-        select * from app_table where appid = #{appId}
-    </select>
-
-    <select id="findByAppName"
-            resultType="org.edgegallery.atp.model.task.TaskPO"
-            parameterType="String">
-        select * from app_table where appname = #{appName}
-    </select>
-
-    <update id="update"
-            parameterType="org.edgegallery.atp.model.task.TaskPO">
-        update app_table
-        SET modifytime = (select now()), shortdesc=#{shortDesc}, provider =#{provider}, appname=
-        #{appName}, applicationType=#{applicationType}, appIntroduction=#{appIntroduction},
-        downloadcount=#{downloadCount},AFFINITY=#{affinity},INDUSTRY=#{industry},contact=#{contact},USERID=#{userId}
-        WHERE APPID = #{appId}
-    </update>
-
     <insert id="insert"
             parameterType="org.edgegallery.atp.model.task.TaskPO">
         insert into
-        app_table
-        (appid, createtime, modifytime, shortdesc, provider, appname, applicationType, appIntroduction,
-        downloadcount, affinity, industry, contact, userid, username, score)
+        task_table
+        (id, appName, appVersion, status, createTime, endTime, userId, userName,
+        testCaseDetail)
         VALUES
-        (#{appId}, (select now()), (select now()), #{shortDesc},#{provider}, #{appName},
-        #{applicationType},
-        #{appIntroduction}, #{downloadCount}, #{affinity}, #{industry},#{contact}, #{userId}, #{userName}, 5.0)
+        (#{id}, #{appName}, #{appVersion},
+        #{status},
+        #{createTime}, #{endTime}, #{userId}, #{userName},#{testCaseDetail})
+    </insert>
+    
+    <insert id="update"
+            parameterType="org.edgegallery.atp.model.task.TaskPO">
+        update
+        task_table 
+        SET status = #{status}, endTime = #{endTime}, testCaseDetail = #{testCaseDetail}
+        WHERE id = #{id}
     </insert>
 
-    <delete id="remove" parameterType="String">
+    <select id="findByTaskId"
+            resultType="org.edgegallery.atp.model.task.TaskPO"
+            parameterType="String">
+        select * from task_table where id = #{taskId}
+    </select>
+
+
+    <delete id="delHisTask">
         delete from
-        app_table
+        task_table
         where
-        appid=#{appId}
+        date('now','-30 day') >= date(createTime)
     </delete>
 
 
     <select id="countTotal" resultType="java.lang.Integer"
             parameterType="java.util.Map">
-        select count(*) from app_table
+        select count(*) from task_table
         <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
             <if test="appName != null">
-                and appname = #{appName}
+                and appName = #{appName}
             </if>
-            <if test="provider != null">
-                and provider = #{provider}
-            </if>
-            <if test="applicationType != null">
-                and applicationtype = #{applicationType}
-            </if>
-            <if test="affinity != null">
-                and affinity = #{affinity}
-            </if>
-            <if test="userId != null">
-                and userid = #{userId}
+            <if test="appVersion != null">
+                and appVersion = #{appVersion}
             </if>
         </where>
         limit #{limit} offset #{offset}
     </select>
 
-
-    <select id="findAllWithAppPagination"
-            resultType="org.edgegallery.atp.model.task.TaskPO"
-            parameterType="java.util.Map">
-        select * from app_table
-        <where>
-            <if test="appId != null">
-                and appid = #{appId}
-            </if>
-            <if test="appName != null">
-                and appname = #{appName}
-            </if>
-            <if test="provider != null">
-                and provider = #{provider}
-            </if>
-            <if test="applicationType != null">
-                and applicationtype = #{applicationType}
-            </if>
-            <if test="affinity != null">
-                and affinity = #{affinity}
-            </if>
-            <if test="userId != null">
-                and userid = #{userId}
-            </if>
-        </where>
-        limit #{limit} offset #{offset}
-    </select>
-
-    <delete id="removeReleasesByAppId" parameterType="String">
-        delete from
-        catalog_package_table
-        where
-        appid=#{appId}
-    </delete>
-
-    <select id="countTotalForReleases" resultType="java.lang.Integer"
-            parameterType="java.util.Map">
-        select count(*) FROM catalog_package_table where appid = #{appId} limit #{limit} offset
-        #{offset}
-    </select>
-
-    <delete id="removeByVersionId" parameterType="String">
-        delete from
-        catalog_package_table
-        where
-        versionId=#{versionId}
-    </delete>
 </mapper>

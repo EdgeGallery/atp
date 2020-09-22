@@ -1,27 +1,54 @@
 package org.edgegallery.atp.repository.task;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import org.apache.ibatis.annotations.Mapper;
 import org.edgegallery.atp.model.page.PageCriteria;
 import org.edgegallery.atp.model.task.TaskPO;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
 @Component
 @Mapper
 public interface TaskMapper {
 
+    /**
+     * get task info by taskId
+     * 
+     * @param taskId taskId
+     * @return taskInfo
+     */
     Optional<TaskPO> findByTaskId(String taskId);
 
     Number countTotal(PageCriteria pageCriteria);
 
     List<TaskPO> findAllWithAppPagination(PageCriteria pageCriteria);
 
-    void store(TaskPO taskStatusPO);
+    /**
+     * create task info
+     * 
+     * @param taskPO
+     */
+    void insert(TaskPO taskPO);
 
     List<TaskPO> queryAllRunningTasks();
 
-    List<TaskPO> queryAllSunTasksByTaskId(String taskId);
+    /**
+     * update task info.
+     * 
+     * @param taskPO
+     */
+    void update(TaskPO taskPO);
+
+    /**
+     * get current db time
+     * 
+     * @return current time
+     */
+    Date getCurrentDates();
+
+    /**
+     * delete task created before one month
+     */
+    void delHisTask();
 }

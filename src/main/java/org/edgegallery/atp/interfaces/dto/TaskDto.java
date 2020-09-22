@@ -1,7 +1,7 @@
 package org.edgegallery.atp.interfaces.dto;
 
+import java.util.Date;
 import org.edgegallery.atp.model.task.TaskRequest;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,9 +13,9 @@ public class TaskDto {
 
     private String desc;
 
-    private String startTime;
+    private Date startTime;
 
-    private String endTime;
+    private Date endTime;
 
     private String result;
 
@@ -23,11 +23,11 @@ public class TaskDto {
 
     public TaskDto() {}
 
-    public static TaskDto of(TaskRequest status) {
+    public static TaskDto of(TaskRequest task) {
         TaskDto build = new TaskDto();
-        build.setId(status.getId());
-        build.setStartTime(status.getCreateTime());
-        build.setEndTime(status.getEndTime());
+        build.setId(task.getId());
+        build.setStartTime(task.getCreateTime());
+        build.setEndTime(task.getEndTime());
         return build;
     }
 }

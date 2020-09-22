@@ -19,7 +19,6 @@ import org.edgegallery.atp.model.testcase.TestCaseResult;
 import org.edgegallery.atp.model.user.User;
 import org.edgegallery.atp.repository.task.TaskRepository;
 import org.edgegallery.atp.repository.testcase.TestCaseRepository;
-import org.edgegallery.atp.utils.CommonUtil;
 import org.edgegallery.atp.utils.TestCaseUtil;
 import org.edgegallery.atp.utils.exception.EntityNotFoundException;
 import org.edgegallery.atp.utils.exception.UnAuthorizedExecption;
@@ -68,7 +67,7 @@ public class TaskServiceImpl implements TaskService {
             String filePath = tempFile.getCanonicalPath();
 
             initTaskRequset(task, filePath);
-            taskRepository.storeTask(task);
+            taskRepository.insert(task);
             testCaseManager.executeTestCase(task, filePath);
         } catch (IOException e) {
             LOGGER.error("create task failed.");
@@ -95,7 +94,7 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     private TaskRequest initTaskRequset(TaskRequest task, String filePath) {
-        task.setCreateTime(CommonUtil.getFormatDate());
+        task.setCreateTime(taskRepository.getCurrentDates());
         task.setStatus(Constant.Result.RUNNING);
 
         List<TestCase> testCaseList = testCaseRepository.queryAll(new PageCriteria(100, 0, "")).getResults();
@@ -107,7 +106,7 @@ public class TaskServiceImpl implements TaskService {
         Map<String, String> appNameAndVersion = TestCaseUtil.getAppNameAndVersion(filePath);
         task.setAppName(appNameAndVersion.get(Constant.APP_NAME));
         task.setAppVersion(appNameAndVersion.get(Constant.APP_VERSION));
-        
+
         return task;
     }
 
@@ -119,10 +118,10 @@ public class TaskServiceImpl implements TaskService {
      */
     private TestCaseDetail initTestCaseDetail(List<TestCase> testCaseList) {
         TestCaseDetail testCaseDetail = new TestCaseDetail();
-        List<Map<String, TestCaseResult>> virusList = new ArrayList<Map<String,TestCaseResult>>();
+        List<Map<String, TestCaseResult>> virusList = new ArrayList<Map<String, TestCaseResult>>();
         List<Map<String, TestCaseResult>> complianceList = new ArrayList<Map<String, TestCaseResult>>();
         List<Map<String, TestCaseResult>> sandboxList = new ArrayList<Map<String, TestCaseResult>>();
-        Map<String, TestCaseResult> virusMap = new HashMap<String,TestCaseResult>();
+        Map<String, TestCaseResult> virusMap = new HashMap<String, TestCaseResult>();
         Map<String, TestCaseResult> complianceMap = new HashMap<String, TestCaseResult>();
         Map<String, TestCaseResult> sandboxMap = new HashMap<String, TestCaseResult>();
 
