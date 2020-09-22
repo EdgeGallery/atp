@@ -1,7 +1,7 @@
 package org.edgegallery.atp.service;
 
 import java.util.List;
-import org.edgegallery.atp.interfaces.dto.TaskDto;
+import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.user.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,7 +16,7 @@ public interface TaskService {
      * @return taskId
      */
     public String createTask(User user, MultipartFile packages);
-    
+
     /**
      * get task info by taskId
      * 
@@ -24,7 +24,7 @@ public interface TaskService {
      * @param taskid taskId
      * @return task information
      */
-    public ResponseEntity<TaskDto> getTaskById(User user, String taskid);
+    public ResponseEntity<TaskRequest> getTaskById(String userId, String taskId);
 
     /**
      * get all task info
@@ -32,5 +32,5 @@ public interface TaskService {
      * @param user userInfo
      * @return taskInformation list
      */
-    public ResponseEntity<List<TaskDto>> getAllTasks(User user);
+    public ResponseEntity<List<TaskRequest>> getAllTasks(String userId);
 }

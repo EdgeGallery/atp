@@ -21,7 +21,7 @@ import javax.validation.constraints.Pattern;
 import javax.ws.rs.core.MediaType;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
 import org.edgegallery.atp.constant.Constant;
-import org.edgegallery.atp.interfaces.dto.TaskDto;
+import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.user.User;
 import org.edgegallery.atp.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +59,12 @@ public class TaskController {
     private TaskService taskService;
 
     /**
-     * test task.
+     * create test task
+     * 
+     * @param userId userId
+     * @param userName userName
+     * @param packages csar package
+     * @return taskId
      */
     @PostMapping(value = "/tasks", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "start test", response = String.class)
@@ -76,28 +81,39 @@ public class TaskController {
         return ResponseEntity.ok(result);
     }
 
+    /**
+     * get all tasks according userId
+     * 
+     * @param userId userId
+     * @return task list
+     */
     @GetMapping(value = "/tasks", produces = MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "get all tasks.", response = TaskDto.class)
+    @ApiOperation(value = "get all tasks.", response = TaskRequest.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('APPSTORE_TENANT')")
-    public ResponseEntity<List<TaskDto>> getAllTasks(
-            @RequestParam("userId") @Pattern(regexp = REG_USER_ID) String userId,
-            @RequestParam("userName") @Pattern(regexp = REG_USER_NAME) String userName,
-            @ApiParam(value = "task id") @PathVariable("taskid") @Pattern(regexp = REG_ID) String taskid) {
-        return taskService.getAllTasks(new User(userId, userName));
+    public ResponseEntity<List<TaskRequest>> getAllTasks(
+            @RequestParam("userId") @Pattern(regexp = REG_USER_ID) String userId) {
+        return taskService.getAllTasks(userId);
     }
 
+    /**
+     * get task by taskId and userId
+     * 
+     * @param userId userId
+     * @param userName userName
+     * @param taskid taskid
+     * @return task info
+     */
     @GetMapping(value = "/tasks/{taskid}", produces = MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "get all tasks.", response = TaskDto.class)
+    @ApiOperation(value = "get all tasks.", response = TaskRequest.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('APPSTORE_TENANT')")
-    public ResponseEntity<TaskDto> getTaskById(@RequestParam("userId") @Pattern(regexp = REG_USER_ID) String userId,
-            @RequestParam("xi") @Pattern(regexp = REG_USER_NAME) String userName,
-            @ApiParam(value = "task id") @PathVariable("taskid") @Pattern(regexp = REG_ID) String taskid) {
-        return taskService.getTaskById(new User(userId, userName), taskid);
+    public ResponseEntity<TaskRequest> getTaskById(@RequestParam("userId") @Pattern(regexp = REG_USER_ID) String userId,
+            @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId) {
+        return taskService.getTaskById(userId, taskId);
     }
 }

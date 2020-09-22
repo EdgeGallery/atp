@@ -6,7 +6,6 @@ import org.edgegallery.atp.model.page.PageCriteria;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.model.user.User;
 import org.edgegallery.atp.repository.testcase.TestCaseRepository;
-import org.edgegallery.atp.utils.exception.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -30,7 +29,8 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     @Override
     public ResponseEntity<TestCase> queryByTestCaseId(String testCaseId) {
-        return ResponseEntity.ok(queryById(testCaseId));
+        // TODO
+        return ResponseEntity.ok(null);
     }
 
     @Override
@@ -40,11 +40,6 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     private Page<TestCase> queryAll(PageCriteria pageCriteria) {
         return testCaseRepository.queryAll(pageCriteria);
-    }
-
-    private TestCase queryById(String testCaseId) {
-        return testCaseRepository.find(testCaseId)
-                .orElseThrow(() -> new EntityNotFoundException(TestCase.class, testCaseId));
     }
 
     private void deleteTestCase(String testCaseId, String userId) {
