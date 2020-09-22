@@ -1,7 +1,6 @@
 package org.edgegallery.atp.model.testcase;
 
 import org.edgegallery.atp.constant.Constant;
-
 import lombok.Getter;
 import lombok.Setter;;
 
@@ -19,7 +18,7 @@ public class TestCaseResult {
     String reason;
 
     public TestCaseResult() {
-        this.result = Constant.Result.RUNNING;
+        this.result = Constant.Status.WAITING;
         this.reason = Constant.EMPTY;
     }
 

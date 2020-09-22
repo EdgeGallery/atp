@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
 import org.edgegallery.atp.application.testcase.TestCaseAbs;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ExceptionConstant;
@@ -53,7 +52,7 @@ public class TOSCAFileTestCase extends TestCaseAbs {
                     isExistTosca = true;
                     // some fields not exist in tosca.meta file
                     if (!TestCaseUtil.isExistAll(zipFile, entry, field)) {
-                        return setTestCaseResult(Constant.Result.FAILED, ExceptionConstant.TOSCAFileTestCase.LOSS_FIELD,
+                        return setTestCaseResult(Constant.Status.FAILED, ExceptionConstant.TOSCAFileTestCase.LOSS_FIELD,
                                 testCaseResult);
                     }
                     sourcePathSet = TestCaseUtil.getPathSet(zipFile, entry, field);
@@ -61,15 +60,15 @@ public class TOSCAFileTestCase extends TestCaseAbs {
             }
         } catch (IOException e) {
             LOGGER.error("TOSCAFileTestCase execute failed. {}", e.getMessage());
-            return setTestCaseResult(Constant.Result.FAILED, ExceptionConstant.INNER_EXCEPTION, testCaseResult);
+            return setTestCaseResult(Constant.Status.FAILED, ExceptionConstant.INNER_EXCEPTION, testCaseResult);
         }
 
         return isExistTosca == false
-                ? setTestCaseResult(Constant.Result.FAILED, ExceptionConstant.TOSCAFileTestCase.TOSCA_FILE_NOT_EXISTS,
+                ? setTestCaseResult(Constant.Status.FAILED, ExceptionConstant.TOSCAFileTestCase.TOSCA_FILE_NOT_EXISTS,
                         testCaseResult)
                 : pathSet.containsAll(sourcePathSet)
-                        ? setTestCaseResult(Constant.Result.SUCCESS, Constant.EMPTY, testCaseResult)
-                        : setTestCaseResult(Constant.Result.FAILED, ExceptionConstant.TOSCAFileTestCase.FILE_NOT_EXIT,
+                        ? setTestCaseResult(Constant.Status.SUCCESS, Constant.EMPTY, testCaseResult)
+                        : setTestCaseResult(Constant.Status.FAILED, ExceptionConstant.TOSCAFileTestCase.FILE_NOT_EXIT,
                                 testCaseResult);
     }
 

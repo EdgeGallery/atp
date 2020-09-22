@@ -34,7 +34,7 @@ public class TestCaseHandler {
             return (TestCaseResult) clazz.getMethod(METHOD_NAME, String.class).invoke(clazz.newInstance(), filePath);
         } catch (Exception e) {
             LOGGER.error("testCaseHandler failed. {}", e.getMessage());
-            return new TestCaseResult(Constant.Result.FAILED, ExceptionConstant.INNER_EXCEPTION);
+            return new TestCaseResult(Constant.Status.FAILED, ExceptionConstant.INNER_EXCEPTION);
         }
     }
 

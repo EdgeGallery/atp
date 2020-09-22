@@ -45,6 +45,7 @@ public class TestCaseManagerImpl implements TestCaseManager {
 
         @Override
         public void run() {
+            changeStatusAndSave(task);
             TestCaseDetail detail = task.getTestCaseDetail();
 
             execute(Constant.testCaseType.COMPLIANCE_TEST, detail.getComplianceTest());
@@ -52,8 +53,29 @@ public class TestCaseManagerImpl implements TestCaseManager {
             execute(Constant.testCaseType.SANDBOX_TEST, detail.getSandboxTest());
 
             task.setEndTime(taskRepository.getCurrentDates());
-            task.setStatus(!resultStatus ? Constant.Result.FAILED : Constant.Result.SUCCESS);
+            task.setStatus(!resultStatus ? Constant.Status.FAILED : Constant.Status.SUCCESS);
             taskRepository.update(task);
+        }
+
+        private void changeStatusAndSave(TaskRequest task) {
+            task.setStatus(Constant.Status.RUNNING);
+            TestCaseDetail detail = task.getTestCaseDetail();
+            changeTestCaseRunning(detail.getComplianceTest());
+            changeTestCaseRunning(detail.getSandboxTest());
+            changeTestCaseRunning(detail.getVirusScanningTest());
+            taskRepository.update(task);
+        }
+
+        private void changeTestCaseRunning(List<Map<String, TestCaseResult>> testCases) {
+            testCases.forEach(testCaseMap -> {
+                for (Map.Entry<String, TestCaseResult> entry : testCaseMap.entrySet()) {
+                    TestCaseResult result = entry.getValue();
+                    if (null != result) {
+                        result.setResult(Constant.Status.RUNNING);
+                        entry.setValue(result);
+                    }
+                }
+            });
         }
 
 
@@ -67,7 +89,7 @@ public class TestCaseManagerImpl implements TestCaseManager {
                     if (null != result) {
                         entry.setValue(result);
                     }
-                    resultStatus = Constant.Result.FAILED.equals(result.getResult()) ? false : resultStatus;
+                    resultStatus = Constant.Status.FAILED.equals(result.getResult()) ? false : resultStatus;
                 }
             });
         }

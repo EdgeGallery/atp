@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
 import org.edgegallery.atp.application.testcase.TestCaseAbs;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ExceptionConstant;
@@ -43,17 +42,17 @@ public class MFContentTestCase extends TestCaseAbs {
                 if (entry.getName().split("/").length == 2 && TestCaseUtil.fileSuffixValidate("mf", entry.getName())) {
                     // some fields not exist in tosca.meta file
                     return TestCaseUtil.isExistAll(zipFile, entry, field)
-                            ? setTestCaseResult(Constant.Result.SUCCESS, Constant.EMPTY, testCaseResult)
-                            : setTestCaseResult(Constant.Result.FAILED, ExceptionConstant.MFContentTestCase.LOSS_FIELD,
+                            ? setTestCaseResult(Constant.Status.SUCCESS, Constant.EMPTY, testCaseResult)
+                            : setTestCaseResult(Constant.Status.FAILED, ExceptionConstant.MFContentTestCase.LOSS_FIELD,
                                     testCaseResult);
                 }
             }
         } catch (IOException e) {
             LOGGER.error("TOSCAFileTestCase execute failed. {}", e.getMessage());
-            return setTestCaseResult(Constant.Result.FAILED, ExceptionConstant.INNER_EXCEPTION, testCaseResult);
+            return setTestCaseResult(Constant.Status.FAILED, ExceptionConstant.INNER_EXCEPTION, testCaseResult);
         }
 
-        return setTestCaseResult(Constant.Result.FAILED, ExceptionConstant.MFContentTestCase.FILE_NOT_EXIST,
+        return setTestCaseResult(Constant.Status.FAILED, ExceptionConstant.MFContentTestCase.FILE_NOT_EXIST,
                 testCaseResult);
     }
 

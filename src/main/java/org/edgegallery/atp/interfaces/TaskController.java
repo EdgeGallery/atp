@@ -14,13 +14,10 @@
 
 package org.edgegallery.atp.interfaces;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.validation.constraints.Pattern;
 import javax.ws.rs.core.MediaType;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
-import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.user.User;
 import org.edgegallery.atp.service.TaskService;
@@ -72,13 +69,10 @@ public class TaskController {
             @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('APPSTORE_TENANT')")
-    public ResponseEntity<Map<String, String>> startTest(
-            @RequestParam("userId") @Pattern(regexp = REG_USER_ID) String userId,
+    public ResponseEntity<String> startTest(@RequestParam("userId") @Pattern(regexp = REG_USER_ID) String userId,
             @RequestParam("userName") @Pattern(regexp = REG_USER_NAME) String userName,
             @ApiParam(value = "test yaml files", required = true) @RequestPart("file") MultipartFile packages) {
-        Map<String, String> result = new HashMap<String, String>();
-        result.put(Constant.TASK_ID, taskService.createTask(new User(userId, userName), packages));
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(taskService.createTask(new User(userId, userName), packages));
     }
 
     /**

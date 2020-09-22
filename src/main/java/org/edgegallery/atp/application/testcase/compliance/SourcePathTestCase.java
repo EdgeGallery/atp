@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
 import org.edgegallery.atp.application.testcase.TestCaseAbs;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ExceptionConstant;
@@ -50,11 +49,11 @@ public class SourcePathTestCase extends TestCaseAbs {
             }
         } catch (IOException e) {
             LOGGER.error("SourcePathTestCase execute failed. {}", e.getMessage());
-            return setTestCaseResult(Constant.Result.FAILED, ExceptionConstant.INNER_EXCEPTION, testCaseResult);
+            return setTestCaseResult(Constant.Status.FAILED, ExceptionConstant.INNER_EXCEPTION, testCaseResult);
         }
         return pathSet.containsAll(sourcePathSet)
-                ? setTestCaseResult(Constant.Result.SUCCESS, Constant.EMPTY, testCaseResult)
-                : setTestCaseResult(Constant.Result.FAILED,
+                ? setTestCaseResult(Constant.Status.SUCCESS, Constant.EMPTY, testCaseResult)
+                : setTestCaseResult(Constant.Status.FAILED,
                         ExceptionConstant.SourcePathTestCase.SOURCE_PATH_FILE_NOT_EXISTS, testCaseResult);
     }
 

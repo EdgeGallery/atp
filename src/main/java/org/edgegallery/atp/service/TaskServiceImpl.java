@@ -80,7 +80,7 @@ public class TaskServiceImpl implements TaskService {
      */
     private TaskRequest initTaskRequset(TaskRequest task, String filePath) {
         task.setCreateTime(taskRepository.getCurrentDates());
-        task.setStatus(Constant.Result.RUNNING);
+        task.setStatus(Constant.Status.WAITING);
 
         List<TestCase> testCaseList = testCaseRepository.queryAll(new PageCriteria(100, 0, "")).getResults();
 
