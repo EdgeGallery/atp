@@ -1,9 +1,9 @@
 package org.edgegallery.atp.model.task;
 
+import java.util.Date;
 import org.edgegallery.atp.model.Entity;
 import org.edgegallery.atp.model.testcase.TestCaseDetail;
 import org.edgegallery.atp.model.user.User;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,9 +19,9 @@ public class TaskRequest implements Entity {
 
     private String status;
 
-    private String createTime;
+    private Date createTime;
 
-    private String endTime;
+    private Date endTime;
 
     private User user;
 
@@ -53,9 +53,9 @@ public class TaskRequest implements Entity {
 
         private String status;
 
-        private String createTime;
+        private Date createTime;
 
-        private String endTime;
+        private Date endTime;
 
         private User user;
 
@@ -85,12 +85,12 @@ public class TaskRequest implements Entity {
             return this;
         }
 
-        public Builder setCreateTime(String createTime) {
+        public Builder setCreateTime(Date createTime) {
             this.createTime = createTime;
             return this;
         }
 
-        public Builder setEndTime(String endTime) {
+        public Builder setEndTime(Date endTime) {
             this.endTime = endTime;
             return this;
         }

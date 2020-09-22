@@ -34,6 +34,11 @@ public class TestCase implements Entity {
      */
     private String description;
 
+    /**
+     * content of test case souce code. The reserved field.
+     */
+    private String content;
+
     public TestCase() {
 
     }

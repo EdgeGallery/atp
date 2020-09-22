@@ -11,7 +11,6 @@ import org.edgegallery.atp.model.testcase.TestCaseDetail;
 import org.edgegallery.atp.model.testcase.TestCaseResult;
 import org.edgegallery.atp.repository.task.TaskRepository;
 import org.edgegallery.atp.repository.testcase.TestCaseRepository;
-import org.edgegallery.atp.utils.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -52,9 +51,9 @@ public class TestCaseManagerImpl implements TestCaseManager {
             execute(Constant.testCaseType.VIRUS_SCAN_TEST, detail.getVirusScanningTest());
             execute(Constant.testCaseType.SANDBOX_TEST, detail.getSandboxTest());
 
-            task.setEndTime(CommonUtil.getFormatDate());
+            task.setEndTime(taskRepository.getCurrentDates());
             task.setStatus(!resultStatus ? Constant.Result.FAILED : Constant.Result.SUCCESS);
-            taskRepository.storeTask(task);
+            taskRepository.update(task);
         }
 
 

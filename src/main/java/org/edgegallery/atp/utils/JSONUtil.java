@@ -1,9 +1,14 @@
 package org.edgegallery.atp.utils;
 
 import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JSONUtil {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JSONUtil.class);
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
@@ -14,8 +19,13 @@ public class JSONUtil {
      * @return String type variable
      * @throws IOException
      */
-    public static String marshal(Object obj) throws IOException {
-        return MAPPER.writeValueAsString(obj);
+    public static String marshal(Object obj) {
+        try {
+            return MAPPER.writeValueAsString(obj);
+        } catch (JsonProcessingException e) {
+            LOGGER.error("marshal obj failed. {}", obj);
+            throw new IllegalArgumentException("marshal obj failed.");
+        }
     }
 
     /**
@@ -27,7 +37,12 @@ public class JSONUtil {
      * @return target type model
      * @throws IOException
      */
-    public static <T> T unMarshal(String src, Class<T> type) throws IOException {
-        return MAPPER.readValue(src, type);
+    public static <T> T unMarshal(String src, Class<T> type) {
+        try {
+            return MAPPER.readValue(src, type);
+        } catch (IOException e) {
+            LOGGER.error("unmarshal obj failed. {}", src);
+            throw new IllegalArgumentException("unmarshal obj failed.");
+        }
     }
 }
