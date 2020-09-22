@@ -4,25 +4,27 @@ import java.io.File;
 import org.edgegallery.atp.utils.file.FileChecker;
 
 public interface Constant {
-    
+
     String EMPTY = "";
 
     String TASK_ID = "taskId";
 
     String UNDER_LINE = "_";
 
-    int MAX_TASK_THREAD_NUM = 5;
-    
+    int MAX_TASK_THREAD_NUM = 10;
+
     String APP_NAME = "app_name";
 
     String APP_VERSION = "app_archive_version";
 
-    interface Result {
+    interface Status {
         String SUCCESS = "success";
 
         String RUNNING = "running";
 
         String FAILED = "failed";
+
+        String WAITING = "waiting";
     }
 
     interface FileOperation {
@@ -61,5 +63,5 @@ public interface Constant {
         String SANDBOX_TEST = "sandboxTest";
 
     }
-    
+
 }
