@@ -60,8 +60,8 @@ public class TestCaseManagerImpl implements TestCaseManager {
         private void execute(String type, List<Map<String, TestCaseResult>> testCases) {
             testCases.forEach(testCaseMap -> {
                 for (Map.Entry<String, TestCaseResult> entry : testCaseMap.entrySet()) {
-                    TestCase testCase = testCaseRepository
-                            .findByNameAndType(entry.getKey(), Constant.testCaseType.COMPLIANCE_TEST).get();
+                    TestCase testCase =
+                            testCaseRepository.findByNameAndType(entry.getKey(), Constant.testCaseType.COMPLIANCE_TEST);
                     TestCaseResult result =
                             TestCaseHandler.getInstantce().testCaseHandler(testCase.getClassName(), filePath);
                     if (null != result) {

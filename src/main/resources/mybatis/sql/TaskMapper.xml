@@ -30,20 +30,25 @@
         #{createTime}, #{endTime}, #{userId}, #{userName},#{testCaseDetail})
     </insert>
     
-    <insert id="update"
+    <update id="update"
             parameterType="org.edgegallery.atp.model.task.TaskPO">
         update
         task_table 
         SET status = #{status}, endTime = #{endTime}, testCaseDetail = #{testCaseDetail}
         WHERE id = #{id}
-    </insert>
+    </update>
 
-    <select id="findByTaskId"
+    <select id="findByTaskIdAndUserId"
             resultType="org.edgegallery.atp.model.task.TaskPO"
             parameterType="String">
-        select * from task_table where id = #{taskId}
+        select * from task_table where id = #{taskId} and userId = #{userId}
     </select>
 
+    <select id="findTaskByUserId"
+            resultType="java.util.List"
+            parameterType="String">
+        select * from task_table where userId = #{userId}
+    </select>
 
     <delete id="delHisTask">
         delete from

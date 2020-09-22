@@ -1,6 +1,6 @@
 package org.edgegallery.atp.repository.testcase;
 
-import java.util.Optional;
+import java.util.List;
 import org.edgegallery.atp.model.page.Page;
 import org.edgegallery.atp.model.page.PageCriteria;
 import org.edgegallery.atp.model.testcase.TestCase;
@@ -9,7 +9,7 @@ public interface TestCaseRepository {
 
     Page<TestCase> queryAll(PageCriteria pageCriteria);
 
-    Optional<TestCase> find(String taskCaseId);
+    List<TestCase> findAllTestCases();
 
-    Optional<TestCase> findByNameAndType(String name, String type);
+    TestCase findByNameAndType(String name, String type);
 }

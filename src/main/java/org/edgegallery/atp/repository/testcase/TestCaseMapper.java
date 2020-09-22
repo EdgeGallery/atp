@@ -1,7 +1,6 @@
 package org.edgegallery.atp.repository.testcase;
 
 import java.util.List;
-import java.util.Optional;
 import org.apache.ibatis.annotations.Mapper;
 import org.edgegallery.atp.model.page.Page;
 import org.edgegallery.atp.model.page.PageCriteria;
@@ -18,11 +17,23 @@ public interface TestCaseMapper {
 
     List<TestCase> findAllWithAppPagination(PageCriteria pageCriteria);
 
-    List<TestCase> findAll();
-
-    Optional<TestCase> findByTestCaseId(String taskCaseId);
+    TestCase findByTestCaseId(String taskCaseId);
 
     void insert(TestCase testCasePO);
 
-    Optional<TestCase> findByNameAndType(String name, String type);
+    /**
+     * get test case by test case name and type.
+     * 
+     * @param name name
+     * @param type virusScanningTest,complianceTest or sandboxTest
+     * @return test case info.
+     */
+    TestCase findByNameAndType(String name, String type);
+
+    /**
+     * get all test cases.
+     * 
+     * @return test case list
+     */
+    List<TestCase> findAllTestCases();
 }

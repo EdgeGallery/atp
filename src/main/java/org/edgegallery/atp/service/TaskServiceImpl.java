@@ -6,11 +6,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import org.edgegallery.atp.application.testcase.TestCaseManagerImpl;
 import org.edgegallery.atp.constant.Constant;
-import org.edgegallery.atp.interfaces.dto.TaskDto;
-import org.edgegallery.atp.model.page.Page;
 import org.edgegallery.atp.model.page.PageCriteria;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.testcase.TestCase;
@@ -20,8 +17,6 @@ import org.edgegallery.atp.model.user.User;
 import org.edgegallery.atp.repository.task.TaskRepository;
 import org.edgegallery.atp.repository.testcase.TestCaseRepository;
 import org.edgegallery.atp.utils.TestCaseUtil;
-import org.edgegallery.atp.utils.exception.EntityNotFoundException;
-import org.edgegallery.atp.utils.exception.UnAuthorizedExecption;
 import org.edgegallery.atp.utils.file.FileChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,16 +37,6 @@ public class TaskServiceImpl implements TaskService {
 
     @Autowired
     TestCaseManagerImpl testCaseManager;
-
-    @Override
-    public ResponseEntity<List<TaskDto>> getAllTasks(User user) {
-        return ResponseEntity
-                .ok(queryAllRunningTasks(user.getUserId()).stream().map(TaskDto::of).collect(Collectors.toList()));
-    }
-
-    public ResponseEntity<TaskDto> getStatusByTaskId(String taskid) {
-        return ResponseEntity.ok(TaskDto.of(findTask(taskid)));
-    }
 
     @Override
     public String createTask(User user, MultipartFile packages) {
@@ -78,13 +63,13 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public ResponseEntity<TaskDto> getTaskById(User user, String taskid) {
-        TaskRequest status = findTask(taskid);
-        TaskDto dto = TaskDto.of(status);
-        if (!status.getUser().getUserId().equals(user.getUserId())) {
-            throw new UnAuthorizedExecption(taskid);
-        }
-        return ResponseEntity.ok(dto);
+    public ResponseEntity<List<TaskRequest>> getAllTasks(String userId) {
+        return ResponseEntity.ok(taskRepository.findTaskByUserId(userId));
+    }
+
+    @Override
+    public ResponseEntity<TaskRequest> getTaskById(String userId, String taskId) {
+        return ResponseEntity.ok(taskRepository.findByTaskIdAndUserId(taskId, userId));
     }
 
     /**
@@ -149,17 +134,5 @@ public class TaskServiceImpl implements TaskService {
         testCaseDetail.setVirusScanningTest(virusList);
 
         return testCaseDetail;
-    }
-
-    private Page<TaskRequest> queryAllTask(PageCriteria pageCriteria) {
-        return taskRepository.queryAll(pageCriteria);
-    }
-
-    private TaskRequest findTask(String taskId) {
-        return taskRepository.find(taskId).orElseThrow(() -> new EntityNotFoundException(TaskRequest.class, taskId));
-    }
-
-    private List<TaskRequest> queryAllRunningTasks(String userId) {
-        return taskRepository.queryAllRunningTasks();
     }
 }

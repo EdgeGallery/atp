@@ -14,9 +14,9 @@
 
 package org.edgegallery.atp.repository.task;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.edgegallery.atp.model.page.Page;
@@ -25,19 +25,13 @@ import org.edgegallery.atp.model.task.TaskPO;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 
 @Repository
 public class TaskRepositoryImpl implements TaskRepository {
 
     @Autowired
     TaskMapper taskMapper;
-
-    @Override
-    public Optional<TaskRequest> find(String taskId) {
-        Optional<TaskRequest> task = taskMapper.findByTaskId(taskId).map(TaskPO::toDomainModel);
-        return task;
-
-    }
 
     @Override
     public Page<TaskRequest> queryAll(PageCriteria pageCriteria) {
@@ -76,5 +70,22 @@ public class TaskRepositoryImpl implements TaskRepository {
     @Override
     public void delHisTask() {
         taskMapper.delHisTask();
+    }
+
+    @Override
+    public TaskRequest findByTaskIdAndUserId(String taskId, String userId) {
+        return taskMapper.findByTaskIdAndUserId(taskId, userId).toDomainModel();
+    }
+
+    @Override
+    public List<TaskRequest> findTaskByUserId(String userId) {
+        List<TaskPO> taskPOList = taskMapper.findTaskByUserId(userId);
+        List<TaskRequest> taskList = new ArrayList<TaskRequest>();
+        if (!CollectionUtils.isEmpty(taskPOList)) {
+            for (TaskPO task : taskPOList) {
+                taskList.add(task.toDomainModel());
+            }
+        }
+        return taskList;
     }
 }

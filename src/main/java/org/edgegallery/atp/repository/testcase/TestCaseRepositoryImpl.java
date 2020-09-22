@@ -15,7 +15,6 @@
 package org.edgegallery.atp.repository.testcase;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.edgegallery.atp.model.page.Page;
 import org.edgegallery.atp.model.page.PageCriteria;
@@ -38,14 +37,12 @@ public class TestCaseRepositoryImpl implements TestCaseRepository {
     }
 
     @Override
-    public Optional<TestCase> find(String taskCaseId) {
-        Optional<TestCase> testCase = testCaseMapper.findByTestCaseId(taskCaseId);
-        return testCase;
+    public List<TestCase> findAllTestCases() {
+        return testCaseMapper.findAllTestCases();
     }
 
     @Override
-    public Optional<TestCase> findByNameAndType(String name, String type) {
-        Optional<TestCase> testCase = testCaseMapper.findByNameAndType(name, type);
-        return testCase;
+    public TestCase findByNameAndType(String name, String type) {
+        return testCaseMapper.findByNameAndType(name, type);
     }
 }
