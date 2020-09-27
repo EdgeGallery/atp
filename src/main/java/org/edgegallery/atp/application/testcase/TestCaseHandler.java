@@ -1,5 +1,6 @@
 package org.edgegallery.atp.application.testcase;
 
+import java.util.Map;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ExceptionConstant;
 import org.edgegallery.atp.model.testcase.TestCaseResult;
@@ -28,10 +29,11 @@ public class TestCaseHandler {
      * @param filePath filePath
      * @return
      */
-    public TestCaseResult testCaseHandler(String pkgPth, String filePath) {
+    public TestCaseResult testCaseHandler(String pkgPth, String filePath, Map<String, String> context) {
         try {
             Class<?> clazz = Class.forName(pkgPth);
-            return (TestCaseResult) clazz.getMethod(METHOD_NAME, String.class).invoke(clazz.newInstance(), filePath);
+            return (TestCaseResult) clazz.getMethod(METHOD_NAME, String.class).invoke(clazz.newInstance(), filePath,
+                    context);
         } catch (Exception e) {
             LOGGER.error("testCaseHandler failed. {}", e.getMessage());
             return new TestCaseResult(Constant.Status.FAILED, ExceptionConstant.INNER_EXCEPTION);

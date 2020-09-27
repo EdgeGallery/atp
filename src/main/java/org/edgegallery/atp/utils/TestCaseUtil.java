@@ -3,17 +3,30 @@ package org.edgegallery.atp.utils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 /**
  * Test Case Util class
@@ -21,8 +34,8 @@ import org.slf4j.LoggerFactory;
 public class TestCaseUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseUtil.class);
-    private static final String DOT = ".";
-    private static final String COLON = ":";
+
+    private static RestTemplate REST_TEMPLATE = new RestTemplate();
 
     /**
      * validate fileName is .pattern
@@ -32,7 +45,7 @@ public class TestCaseUtil {
      * @return
      */
     public static boolean fileSuffixValidate(String pattern, String fileName) {
-        String suffix = fileName.substring(fileName.indexOf(DOT) + 1);
+        String suffix = fileName.substring(fileName.indexOf(Constant.DOT) + 1);
         if (StringUtils.isNotBlank(suffix)) {
             if (suffix.equals(pattern)) {
                 return true;
@@ -54,7 +67,7 @@ public class TestCaseUtil {
         try (BufferedReader br = new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry)))) {
             String line = "";
             while ((line = br.readLine()) != null) {
-                String[] splitByColon = line.split(COLON);
+                String[] splitByColon = line.split(Constant.COLON);
                 // prefix: path
                 if (splitByColon.length > 1 && prefixSet.contains(splitByColon[0])) {
                     pathSet.add(splitByColon[1].trim());
@@ -81,7 +94,7 @@ public class TestCaseUtil {
             String line = "";
             while ((line = br.readLine()) != null) {
                 // prefix: path
-                String[] splitByColon = line.split(COLON);
+                String[] splitByColon = line.split(Constant.COLON);
                 if (splitByColon.length > 1 && prefixSet.contains(splitByColon[0].trim())) {
                     sourcePathSet.add(splitByColon[0].trim());
                 }
@@ -113,7 +126,7 @@ public class TestCaseUtil {
      * @return
      */
     public static Map<String, String> getAppNameAndVersion(String filePath) {
-        Map<String,String> resultMap = new HashMap<String,String>();
+        Map<String, String> resultMap = new HashMap<String, String>();
         try (ZipFile zipFile = new ZipFile(filePath)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
@@ -123,11 +136,11 @@ public class TestCaseUtil {
                         String line = "";
                         while ((line = br.readLine()) != null) {
                             // prefix: path
-                            String[] splitByColon = line.split(COLON);
+                            String[] splitByColon = line.split(Constant.COLON);
                             if (splitByColon.length > 1 && Constant.APP_NAME.equals(splitByColon[0].trim())) {
                                 resultMap.put(Constant.APP_NAME, splitByColon[1].trim());
                             }
-                            
+
                             if (splitByColon.length > 1 && Constant.APP_VERSION.equals(splitByColon[0].trim())) {
                                 resultMap.put(Constant.APP_VERSION, splitByColon[1].trim());
                             }
@@ -142,5 +155,46 @@ public class TestCaseUtil {
             LOGGER.error("getAppNameAndVersion execute failed. {}", e.getMessage());
         }
         return resultMap;
+    }
+
+    /**
+     * send request to inventory to get mecHost ip.
+     * 
+     * @param context context info
+     * @return mecHostIp
+     */
+    public static String getMecHost(Map<String, String> context) {
+        String appInstanceId = UUID.randomUUID().toString();
+        List<String> mecHostIpList = new ArrayList<String>();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(Constant.ACCESS_TOKEN, context.get(Constant.ACCESS_TOKEN));
+        HttpEntity<String> request = new HttpEntity<>(headers);
+
+        // TODO ip port
+        String url = "https://ip:port" + Constant.URL.INVENTORY_GET_MECHOSTS_URL.replaceAll(Constant.TENANT_ID,
+                context.get(Constant.TENANT_ID));
+        try {
+            ResponseEntity<String> response = REST_TEMPLATE.exchange(url, HttpMethod.GET, request, String.class);
+            if (!HttpStatus.OK.equals(response.getStatusCode())) {
+                LOGGER.error("Instantiate through applcm reponse failed. The status code is {}",
+                        response.getStatusCode());
+                return null;
+            }
+
+            JsonArray jsonArray = new JsonParser().parse(response.getBody()).getAsJsonArray();
+            jsonArray.forEach(mecHost -> {
+                JsonElement mecHostIp = mecHost.getAsJsonObject().get("mechostIp");
+                if (null != mecHostIp) {
+                    mecHostIpList.add(mecHostIp.getAsString());
+                }
+            });
+        } catch (RestClientException e) {
+            LOGGER.error("Failed to instantiate application which appInstanceId is {} exception {}", appInstanceId,
+                    e.getMessage());
+            return null;
+        }
+
+        return mecHostIpList.get(0);
     }
 }

@@ -71,8 +71,9 @@ public class TaskController {
     @PreAuthorize("hasRole('APPSTORE_TENANT')")
     public ResponseEntity<String> startTest(@RequestParam("userId") @Pattern(regexp = REG_USER_ID) String userId,
             @RequestParam("userName") @Pattern(regexp = REG_USER_NAME) String userName,
-            @ApiParam(value = "test yaml files", required = true) @RequestPart("file") MultipartFile packages) {
-        return ResponseEntity.ok(taskService.createTask(new User(userId, userName), packages));
+            @ApiParam(value = "test yaml files", required = true) @RequestPart("file") MultipartFile packages,
+            @RequestParam("accessToken") String accessToken) {
+        return ResponseEntity.ok(taskService.createTask(new User(userId, userName), packages, accessToken));
     }
 
     /**
