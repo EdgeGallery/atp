@@ -1,4 +1,4 @@
-package org.edgegallery.atp.application.testcase;
+package org.edgegallery.atp.schedule.testcase;
 
 import java.util.Map;
 import org.edgegallery.atp.model.testcase.TestCaseResult;

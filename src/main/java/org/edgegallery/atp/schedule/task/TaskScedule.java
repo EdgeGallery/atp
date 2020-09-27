@@ -1,4 +1,4 @@
-package org.edgegallery.atp.application.task;
+package org.edgegallery.atp.schedule.task;
 
 import org.edgegallery.atp.repository.task.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;

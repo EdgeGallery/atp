@@ -1,14 +1,14 @@
-package org.edgegallery.atp.application.testcase.compliance;
+package org.edgegallery.atp.schedule.testcase.comliance;
 
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import org.edgegallery.atp.application.testcase.TestCaseAbs;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ExceptionConstant;
 import org.edgegallery.atp.model.testcase.TestCaseResult;
+import org.edgegallery.atp.schedule.testcase.TestCaseAbs;
 import org.edgegallery.atp.utils.TestCaseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
