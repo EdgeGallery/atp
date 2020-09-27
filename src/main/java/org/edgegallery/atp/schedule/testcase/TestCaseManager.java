@@ -1,4 +1,4 @@
-package org.edgegallery.atp.application.testcase;
+package org.edgegallery.atp.schedule.testcase;
 
 import org.edgegallery.atp.model.task.TaskRequest;
 
