@@ -3,6 +3,7 @@ package org.edgegallery.atp.application.testcase.compliance;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -26,7 +27,7 @@ public class SourcePathTestCase extends TestCaseAbs {
     private TestCaseResult testCaseResult = new TestCaseResult();
 
     @Override
-    public TestCaseResult execute(String filePath) {
+    public TestCaseResult execute(String filePath, Map<String, String> context) {
         Set<String> sourcePathSet = new HashSet<String>();
         try (ZipFile zipFile = new ZipFile(filePath)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();

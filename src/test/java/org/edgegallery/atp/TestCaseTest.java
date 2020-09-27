@@ -16,7 +16,8 @@ package org.edgegallery.atp;
 
 import java.io.File;
 import java.io.IOException;
-
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.ibatis.io.Resources;
 import org.edgegallery.atp.application.testcase.TestCaseHandler;
 import org.junit.Assert;
@@ -98,6 +99,8 @@ public class TestCaseTest {
         TestCaseHandler testCaseHandler = new TestCaseHandler();
         File csarFile = Resources.getResourceAsFile(filePath);
         String filePathCanonical = csarFile.getCanonicalPath();
-        return "success".equals(testCaseHandler.testCaseHandler(pkgPth, filePathCanonical).getResult()) ? true : false;
+        Map<String, String> context = new HashMap<String, String>();
+        return "success".equals(testCaseHandler.testCaseHandler(pkgPth, filePathCanonical, context).getResult()) ? true
+                : false;
     }
 }

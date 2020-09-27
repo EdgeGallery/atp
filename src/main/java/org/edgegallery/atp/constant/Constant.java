@@ -17,6 +17,20 @@ public interface Constant {
 
     String APP_VERSION = "app_archive_version";
 
+    String ACCESS_TOKEN = "access_token";
+
+    String TENANT_ID = "tenantId";
+
+    String IP = "ip";
+
+    String PORT = "port";
+
+    String DOT = ".";
+
+    String COLON = ":";
+
+    String APP_INSTANCE_ID = "appInstanceId";
+
     interface Status {
         String SUCCESS = "success";
 
@@ -62,6 +76,23 @@ public interface Constant {
 
         String SANDBOX_TEST = "sandboxTest";
 
+    }
+
+    interface URL {
+        /**
+         * /lcmcontroller/v1/tenants/{tenantId}/app_instances/{appInstanceId}/instantiate tenantId replaced
+         * by appInstanceId is for variables replacement
+         */
+        String APP_LCM_INSTANTIATE_APP_URL =
+                "/lcmcontroller/v1/tenants/appInstanceId/app_instances/appInstanceId/instantiate";
+
+        /**
+         * /lcmcontroller/v1/tenants/{tenantId}/app_instances/{appInstanceId}/terminate
+         */
+        String APP_LCM_TERMINATE_APP_URL =
+                "/lcmcontroller/v1/tenants/appInstanceId/app_instances/appInstanceId/terminate";
+
+        String INVENTORY_GET_MECHOSTS_URL = "/inventory/v1/tenants/tenantId/mechosts";
     }
 
 }

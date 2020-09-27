@@ -1,5 +1,6 @@
 package org.edgegallery.atp.application.testcase;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -48,9 +49,13 @@ public class TestCaseManagerImpl implements TestCaseManager {
             changeStatusAndSave(task);
             TestCaseDetail detail = task.getTestCaseDetail();
 
-            execute(Constant.testCaseType.COMPLIANCE_TEST, detail.getComplianceTest());
-            execute(Constant.testCaseType.VIRUS_SCAN_TEST, detail.getVirusScanningTest());
-            execute(Constant.testCaseType.SANDBOX_TEST, detail.getSandboxTest());
+            Map<String, String> context = new HashMap<String, String>();
+            context.put(Constant.ACCESS_TOKEN, task.getAccessToken());
+            context.put(Constant.TENANT_ID, task.getUser().getUserId());
+
+            execute(Constant.testCaseType.COMPLIANCE_TEST, detail.getComplianceTest(), context);
+            execute(Constant.testCaseType.VIRUS_SCAN_TEST, detail.getVirusScanningTest(), context);
+            execute(Constant.testCaseType.SANDBOX_TEST, detail.getSandboxTest(), context);
 
             task.setEndTime(taskRepository.getCurrentDates());
             task.setStatus(!resultStatus ? Constant.Status.FAILED : Constant.Status.SUCCESS);
@@ -79,13 +84,12 @@ public class TestCaseManagerImpl implements TestCaseManager {
         }
 
 
-        private void execute(String type, List<Map<String, TestCaseResult>> testCases) {
+        private void execute(String type, List<Map<String, TestCaseResult>> testCases, Map<String, String> context) {
             testCases.forEach(testCaseMap -> {
                 for (Map.Entry<String, TestCaseResult> entry : testCaseMap.entrySet()) {
-                    TestCase testCase =
-                            testCaseRepository.findByNameAndType(entry.getKey(), Constant.testCaseType.COMPLIANCE_TEST);
+                    TestCase testCase = testCaseRepository.findByNameAndType(entry.getKey(), type);
                     TestCaseResult result =
-                            TestCaseHandler.getInstantce().testCaseHandler(testCase.getClassName(), filePath);
+                            TestCaseHandler.getInstantce().testCaseHandler(testCase.getClassName(), filePath, context);
                     if (null != result) {
                         entry.setValue(result);
                     }

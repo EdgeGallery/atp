@@ -2,6 +2,7 @@ package org.edgegallery.atp.application.testcase.compliance;
 
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.edgegallery.atp.application.testcase.TestCaseAbs;
@@ -22,7 +23,7 @@ public class SuffixTestCase extends TestCaseAbs {
     private TestCaseResult testCaseResult = new TestCaseResult();
 
     @Override
-    public TestCaseResult execute(String filePath) {
+    public TestCaseResult execute(String filePath, Map<String, String> context) {
         try (ZipFile zipFile = new ZipFile(filePath)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {

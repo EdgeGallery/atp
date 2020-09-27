@@ -15,7 +15,7 @@ public interface TaskService {
      * @param packages scar file
      * @return taskId
      */
-    public String createTask(User user, MultipartFile packages);
+    public String createTask(User user, MultipartFile packages, String accessToken);
 
     /**
      * get task info by taskId

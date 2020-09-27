@@ -27,6 +27,8 @@ public class TaskRequest implements Entity {
 
     private TestCaseDetail testCaseDetail;
 
+    private String accessToken;
+
     public TaskRequest() {}
 
     public TaskRequest(Builder builder) {

@@ -39,10 +39,11 @@ public class TaskServiceImpl implements TaskService {
     TestCaseManagerImpl testCaseManager;
 
     @Override
-    public String createTask(User user, MultipartFile packages) {
+    public String createTask(User user, MultipartFile packages, String accessToken) {
         TaskRequest task = new TaskRequest();
         task.setId(taskRepository.generateId());
         task.setUser(user);
+        task.setAccessToken(accessToken);
 
         try {
             File tempFile = FileChecker.check(packages, task.getId());

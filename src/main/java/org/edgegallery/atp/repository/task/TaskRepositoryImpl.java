@@ -43,8 +43,7 @@ public class TaskRepositoryImpl implements TaskRepository {
 
     @Override
     public String generateId() {
-        String random = UUID.randomUUID().toString();
-        return random.replaceAll("-", "");
+        return UUID.randomUUID().toString();
     }
 
     @Override
