@@ -40,6 +40,18 @@ spring:
     multipart:
       max-file-size: 1MB
       max-request-size: 1MB
+ 
+applcm:
+  host:
+    ip: ${host_ip}
+    port: ${host_port}
+    protocol: ${host_protocol}
+
+inventory:
+  host:
+    ip: ${host_ip}
+    port: ${host_port}
+    protocol: ${host_protocol}
 
 ###mybtis####
 mybatis:

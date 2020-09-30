@@ -35,9 +35,9 @@ public class UninstantiateAppTestCase extends TestCaseAbs {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set(Constant.ACCESS_TOKEN, context.get(Constant.ACCESS_TOKEN));
 
-        // TODO IP PORT
-        String url =
-                "https://ip:port" + Constant.URL.APP_LCM_TERMINATE_APP_URL.replaceAll("appInstanceId", appInstanceId);
+        String url = applcmProtoctol.concat(Constant.COLON).concat(Constant.DOUBLE_SLASH).concat(applcmIp)
+                .concat(Constant.COLON).concat(applcmPort)
+                .concat(Constant.URL.APP_LCM_TERMINATE_APP_URL.replaceAll("appInstanceId", appInstanceId));
         try {
             ResponseEntity<String> response =
                     REST_TEMPLATE.exchange(url, HttpMethod.POST, new HttpEntity<>(headers), String.class);

@@ -1,5 +1,6 @@
 package org.edgegallery.atp.schedule.testcase;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +61,8 @@ public class TestCaseManagerImpl implements TestCaseManager {
             task.setEndTime(taskRepository.getCurrentDates());
             task.setStatus(!resultStatus ? Constant.Status.FAILED : Constant.Status.SUCCESS);
             taskRepository.update(task);
+
+            new File(filePath).delete();
         }
 
         private void changeStatusAndSave(TaskRequest task) {
