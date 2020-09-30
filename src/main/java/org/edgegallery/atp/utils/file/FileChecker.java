@@ -79,7 +79,7 @@ public class FileChecker {
      * 
      * @param file object.
      */
-    public static File check(MultipartFile file,String taskId) {
+    public static File check(MultipartFile file, String taskId) {
         String originalFilename = file.getOriginalFilename();
 
         // file name should not contains blank.
@@ -175,7 +175,6 @@ public class FileChecker {
             }
         } catch (IOException e) {
             FileUtils.cleanDirectory(new File(Constant.FileOperation.WORK_TEMP_DIR));
-            e.printStackTrace();
             throw new IllegalArgumentException("unzip csar with exception.");
         } finally {
             zis.close();

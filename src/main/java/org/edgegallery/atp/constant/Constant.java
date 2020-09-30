@@ -29,6 +29,8 @@ public interface Constant {
 
     String COLON = ":";
 
+    String DOUBLE_SLASH = "//";
+
     String APP_INSTANCE_ID = "appInstanceId";
 
     interface Status {

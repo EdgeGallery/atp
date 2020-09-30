@@ -14,7 +14,6 @@
 
 package org.edgegallery.atp.utils.file;
 
-import com.google.gson.Gson;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -36,6 +35,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.input.BoundedInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.google.gson.Gson;
 
 
 public class BasicInfo {
@@ -208,7 +208,7 @@ public class BasicInfo {
             }
             markDownContent = sb.toString();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("readMarkDown exception, {}", e.getMessage());;
         }
     }
 
