@@ -1,16 +1,16 @@
 servicecomb-config-order: 1
 APPLICATION_ID: openMec
 service_description:
-  name: mec-atp
+  name: atp
   version: 1.1.0
   environment: development
 servicecomb:
   service:
     registry:
       address: ${SC_ADDRESS}
-    publishAddress: 159.138.37.234
+    publishAddress: 119.3.33.157
   rest:
-    address: ${LISTEN_IP:0.0.0.0}:8099
+    address: ${LISTEN_IP:0.0.0.0}:8073
     servlet:
       urlPattern: /cse/*
   uploads:
@@ -21,7 +21,7 @@ servicecomb:
 #    timeout: 18000000
 ###pgsql config######
 server:
-  port: 8099
+  port: 8073
   ssl:
     enabled: ${SSL_ENABLED:false}
     key-store: ${SSL_KEY_STORE_PATH:}

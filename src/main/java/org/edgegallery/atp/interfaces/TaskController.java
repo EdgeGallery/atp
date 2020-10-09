@@ -40,8 +40,8 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 @Controller
-@RestSchema(schemaId = "test")
-@RequestMapping("/mec/atp/v1")
+@RestSchema(schemaId = "testTask")
+@RequestMapping("/edgegallery/atp/v1")
 @Api(tags = {"APT Test Controller"})
 @Validated
 public class TaskController {
@@ -68,7 +68,7 @@ public class TaskController {
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
-    @PreAuthorize("hasRole('APPSTORE_TENANT')")
+    @PreAuthorize("hasRole('ATP_TENANT')")
     public ResponseEntity<String> startTest(@RequestParam("userId") @Pattern(regexp = REG_USER_ID) String userId,
             @RequestParam("userName") @Pattern(regexp = REG_USER_NAME) String userName,
             @ApiParam(value = "test yaml files", required = true) @RequestPart("file") MultipartFile packages,
@@ -87,7 +87,7 @@ public class TaskController {
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
-    @PreAuthorize("hasRole('APPSTORE_TENANT')")
+    @PreAuthorize("hasRole('ATP_TENANT')")
     public ResponseEntity<List<TaskRequest>> getAllTasks(
             @RequestParam("userId") @Pattern(regexp = REG_USER_ID) String userId) {
         return taskService.getAllTasks(userId);
@@ -106,7 +106,7 @@ public class TaskController {
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
-    @PreAuthorize("hasRole('APPSTORE_TENANT')")
+    @PreAuthorize("hasRole('ATP_TENANT')")
     public ResponseEntity<TaskRequest> getTaskById(@RequestParam("userId") @Pattern(regexp = REG_USER_ID) String userId,
             @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId) {
         return taskService.getTaskById(userId, taskId);
