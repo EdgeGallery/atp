@@ -20,6 +20,7 @@ CREATE TABLE TEST_CASE_TABLE (
     NAME                     VARCHAR(100)       NULL,
     TYPE                     VARCHAR(100)       NULL,
     CLASSNAME                VARCHAR(100)       NULL,
+    CONTENT                  TEXT               NULL, 
     DESCRIPTION              TEXT               NULL
     CONSTRAINT test_case_table_pkey PRIMARY KEY (ID)
 );

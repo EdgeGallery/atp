@@ -17,12 +17,10 @@ package org.edgegallery.atp;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
-
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.servicecomb.springboot2.starter.EnableServiceComb;
 import org.mybatis.spring.annotation.MapperScan;
@@ -31,7 +29,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-@SpringBootApplication(scanBasePackages = "org.appstore.mec", exclude = {SecurityAutoConfiguration.class})
+@SpringBootApplication(scanBasePackages = "org.edgegallery.atp", exclude = {SecurityAutoConfiguration.class})
 @MapperScan(basePackages = {"org.edgegallery.atp.repository"})
 @EnableScheduling
 @EnableServiceComb
