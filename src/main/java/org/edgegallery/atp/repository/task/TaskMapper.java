@@ -52,7 +52,7 @@ public interface TaskMapper {
      * 
      * @return current time
      */
-    Date getCurrentDates();
+    Date getCurrentDate();
 
     /**
      * delete task created before one month

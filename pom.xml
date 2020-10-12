@@ -208,7 +208,7 @@
         </profile>
     </profiles>
     <build>
-        <finalName>atp</finalName>
+        <finalName>application-test-platform</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

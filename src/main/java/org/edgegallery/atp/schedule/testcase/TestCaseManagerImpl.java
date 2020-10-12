@@ -58,7 +58,7 @@ public class TestCaseManagerImpl implements TestCaseManager {
             execute(Constant.testCaseType.VIRUS_SCAN_TEST, detail.getVirusScanningTest(), context);
             execute(Constant.testCaseType.SANDBOX_TEST, detail.getSandboxTest(), context);
 
-            task.setEndTime(taskRepository.getCurrentDates());
+            task.setEndTime(taskRepository.getCurrentDate());
             task.setStatus(!resultStatus ? Constant.Status.FAILED : Constant.Status.SUCCESS);
             taskRepository.update(task);
 

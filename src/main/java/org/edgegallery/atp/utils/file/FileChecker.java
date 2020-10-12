@@ -128,7 +128,7 @@ public class FileChecker {
         if (System.getProperty("os.name").toLowerCase().contains("windows")) {
             return "C:\\atp";
         } else {
-            return "/home/atp";
+            return "/usr/atp";
         }
     }
 

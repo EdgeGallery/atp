@@ -21,6 +21,15 @@ CREATE TABLE TEST_CASE_TABLE (
     TYPE                     VARCHAR(100)       NULL,
     CLASSNAME                VARCHAR(100)       NULL,
     CONTENT                  TEXT               NULL, 
-    DESCRIPTION              TEXT               NULL
+    DESCRIPTION              TEXT               NULL,
     CONSTRAINT test_case_table_pkey PRIMARY KEY (ID)
+);
+
+DROP TABLE IF EXISTS BATCH_TASK_MAPPING_TABLE;
+
+CREATE TABLE BATCH_TASK_MAPPING_TABLE (
+    ID                       VARCHAR(200)       NOT NULL,
+    SUBTASKID                TEXT               NULL,
+    USERID                   VARCHAR(100)       NULL,
+    CONSTRAINT batch_task_mapping_table_pkey PRIMARY KEY (ID)
 );

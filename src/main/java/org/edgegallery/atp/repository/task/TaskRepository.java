@@ -28,13 +28,6 @@ public interface TaskRepository {
     Page<TaskRequest> queryAll(PageCriteria pageCriteria);
 
     /**
-     * generate uuid randomly
-     * 
-     * @return
-     */
-    String generateId();
-
-    /**
      * create task info
      * 
      * @param task task
@@ -55,7 +48,7 @@ public interface TaskRepository {
      * 
      * @return
      */
-    Date getCurrentDates();
+    Date getCurrentDate();
 
     /**
      * delete task created before one month

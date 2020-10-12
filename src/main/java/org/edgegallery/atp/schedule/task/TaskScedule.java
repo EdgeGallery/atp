@@ -17,7 +17,7 @@ class TestSchedule {
     @Autowired
     TaskRepository taskRepository;
 
-    @Scheduled(cron = "0/30 * *  * * ? ")
+    @Scheduled(cron = "0 0 2 * * ?")
     public void startSchedule() {
         System.out.println("===========1=>");
         try {
