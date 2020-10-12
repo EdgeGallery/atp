@@ -1,7 +1,7 @@
 servicecomb-config-order: 1
 APPLICATION_ID: openMec
 service_description:
-  name: atp
+  name: application-test-platform
   version: 1.1.0
   environment: development
 servicecomb:
@@ -14,8 +14,8 @@ servicecomb:
     servlet:
       urlPattern: /cse/*
   uploads:
-#    directory: /home/appstore
-    directory: c:\appstore
+#    directory: /usr/atp
+    directory: c:\atp
     maxSize: -1
 #  request:
 #    timeout: 18000000
