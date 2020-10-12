@@ -107,7 +107,8 @@ public class TaskController {
             @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_TENANT')")
-    public ResponseEntity<TaskRequest> getTaskById(@RequestParam("userId") @Pattern(regexp = REG_USER_ID) String userId,
+    public ResponseEntity<List<TaskRequest>> getTaskById(
+            @RequestParam("userId") @Pattern(regexp = REG_USER_ID) String userId,
             @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId) {
         return taskService.getTaskById(userId, taskId);
     }

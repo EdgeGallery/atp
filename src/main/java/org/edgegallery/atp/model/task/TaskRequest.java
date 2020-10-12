@@ -29,6 +29,11 @@ public class TaskRequest implements Entity {
 
     private String accessToken;
 
+    /**
+     * batch task id.
+     */
+    private String parentId;
+
     public TaskRequest() {}
 
     public TaskRequest(Builder builder) {

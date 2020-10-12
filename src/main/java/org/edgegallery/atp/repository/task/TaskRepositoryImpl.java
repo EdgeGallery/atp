@@ -17,7 +17,6 @@ package org.edgegallery.atp.repository.task;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import org.edgegallery.atp.model.page.Page;
 import org.edgegallery.atp.model.page.PageCriteria;
@@ -42,11 +41,6 @@ public class TaskRepositoryImpl implements TaskRepository {
     }
 
     @Override
-    public String generateId() {
-        return UUID.randomUUID().toString();
-    }
-
-    @Override
     public void insert(TaskRequest task) {
         taskMapper.insert(TaskPO.of(task));
     }
@@ -62,8 +56,8 @@ public class TaskRepositoryImpl implements TaskRepository {
     }
 
     @Override
-    public Date getCurrentDates() {
-        return taskMapper.getCurrentDates();
+    public Date getCurrentDate() {
+        return taskMapper.getCurrentDate();
     }
 
     @Override

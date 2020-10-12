@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.model.page.PageCriteria;
 import org.edgegallery.atp.model.task.TaskRequest;
@@ -13,9 +14,11 @@ import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.model.testcase.TestCaseDetail;
 import org.edgegallery.atp.model.testcase.TestCaseResult;
 import org.edgegallery.atp.model.user.User;
+import org.edgegallery.atp.repository.task.BatchTaskRepository;
 import org.edgegallery.atp.repository.task.TaskRepository;
 import org.edgegallery.atp.repository.testcase.TestCaseRepository;
 import org.edgegallery.atp.schedule.testcase.TestCaseManagerImpl;
+import org.edgegallery.atp.utils.CommonUtil;
 import org.edgegallery.atp.utils.TestCaseUtil;
 import org.edgegallery.atp.utils.file.FileChecker;
 import org.slf4j.Logger;
@@ -38,10 +41,13 @@ public class TaskServiceImpl implements TaskService {
     @Autowired
     TestCaseManagerImpl testCaseManager;
 
+    @Autowired
+    BatchTaskRepository batchTaskRepository;
+
     @Override
     public String createTask(User user, MultipartFile packages, String accessToken) {
         TaskRequest task = new TaskRequest();
-        task.setId(taskRepository.generateId());
+        task.setId(CommonUtil.generateId());
         task.setUser(user);
         task.setAccessToken(accessToken);
 
@@ -69,8 +75,20 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public ResponseEntity<TaskRequest> getTaskById(String userId, String taskId) {
-        return ResponseEntity.ok(taskRepository.findByTaskIdAndUserId(taskId, userId));
+    public ResponseEntity<List<TaskRequest>> getTaskById(String userId, String taskId) {
+        List<TaskRequest> taskList = new ArrayList<TaskRequest>();
+        String batchSubTask = batchTaskRepository.findBatchTask(taskId, userId);
+        if (StringUtils.isEmpty(batchSubTask)) {
+            // taskId is not batch task id, get single task id from taskTable
+            taskList.add(taskRepository.findByTaskIdAndUserId(taskId, userId));
+        } else {
+            // taskId is batch task id
+            String[] taskIdArray = batchSubTask.split(Constant.COMMA);
+            for (String id : taskIdArray) {
+                taskList.add(taskRepository.findByTaskIdAndUserId(id, userId));
+            }
+        }
+        return ResponseEntity.ok(taskList);
     }
 
     /**
@@ -80,7 +98,7 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     private TaskRequest initTaskRequset(TaskRequest task, String filePath) {
-        task.setCreateTime(taskRepository.getCurrentDates());
+        task.setCreateTime(taskRepository.getCurrentDate());
         task.setStatus(Constant.Status.WAITING);
 
         List<TestCase> testCaseList = testCaseRepository.queryAll(new PageCriteria(100, 0, "")).getResults();
