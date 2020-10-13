@@ -16,6 +16,7 @@ package org.edgegallery.atp.repository.testcase;
 
 import java.util.List;
 import org.edgegallery.atp.model.testcase.TestCase;
+import org.edgegallery.atp.repository.mapper.TestCaseMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 

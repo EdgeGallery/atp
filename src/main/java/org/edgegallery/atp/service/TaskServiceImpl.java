@@ -14,8 +14,8 @@ import org.edgegallery.atp.model.testcase.TestCaseDetail;
 import org.edgegallery.atp.model.testcase.TestCaseResult;
 import org.edgegallery.atp.model.user.User;
 import org.edgegallery.atp.repository.task.BatchTaskRepository;
-import org.edgegallery.atp.repository.task.TaskRepositoryImpl;
-import org.edgegallery.atp.repository.testcase.TestCaseRepositoryImpl;
+import org.edgegallery.atp.repository.task.TaskRepository;
+import org.edgegallery.atp.repository.testcase.TestCaseRepository;
 import org.edgegallery.atp.schedule.testcase.TestCaseManagerImpl;
 import org.edgegallery.atp.utils.CommonUtil;
 import org.edgegallery.atp.utils.TestCaseUtil;
@@ -32,10 +32,10 @@ public class TaskServiceImpl implements TaskService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskServiceImpl.class);
 
     @Autowired
-    TaskRepositoryImpl taskRepository;
+    TaskRepository taskRepository;
 
     @Autowired
-    TestCaseRepositoryImpl testCaseRepository;
+    TestCaseRepository testCaseRepository;
 
     @Autowired
     TestCaseManagerImpl testCaseManager;

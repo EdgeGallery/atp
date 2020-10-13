@@ -30,7 +30,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication(scanBasePackages = "org.edgegallery.atp", exclude = {SecurityAutoConfiguration.class})
-@MapperScan(basePackages = {"org.edgegallery.atp.repository"})
+@MapperScan(basePackages = {"org.edgegallery.atp.repository.mapper"})
 @EnableScheduling
 @EnableServiceComb
 public class MainServer {

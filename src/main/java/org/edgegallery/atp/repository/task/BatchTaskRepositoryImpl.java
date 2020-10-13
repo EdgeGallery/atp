@@ -14,6 +14,7 @@
 
 package org.edgegallery.atp.repository.task;
 
+import org.edgegallery.atp.repository.mapper.BatchTaskMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
