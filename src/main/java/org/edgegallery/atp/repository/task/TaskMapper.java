@@ -38,6 +38,11 @@ public interface TaskMapper {
      */
     void insert(TaskPO taskPO);
 
+    /**
+     * query all running tasks
+     * 
+     * @return running task info list
+     */
     List<TaskPO> queryAllRunningTasks();
 
     /**
