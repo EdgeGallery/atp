@@ -1,4 +1,4 @@
-package org.edgegallery.atp.repository.testcase;
+package org.edgegallery.atp.repository.mapper;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;

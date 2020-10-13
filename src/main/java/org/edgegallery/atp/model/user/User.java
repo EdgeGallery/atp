@@ -14,24 +14,13 @@
 
 package org.edgegallery.atp.model.user;
 
-import java.util.List;
 import org.apache.commons.lang.Validate;
 
 public class User {
 
-    public static final String USER_INDEX = "userIndex";
-
     private String userId;
 
     private String userName;
-
-    private List<Permissions> permissions;
-
-    private String company;
-
-    private String gender;
-
-    private String telephone;
 
     /**
      * Constructor of User.
@@ -54,34 +43,6 @@ public class User {
         return userName;
     }
 
-    /**
-     * Constructor of User with full parameters..
-     */
-    public User(String userId, String userName, List<Permissions> permissions, String company, String gender,
-            String telephone) {
-        this.userId = userId;
-        this.userName = userName;
-        this.permissions = permissions;
-        this.company = company;
-        this.gender = gender;
-        this.telephone = telephone;
-    }
-
-    public List<Permissions> getPermissions() {
-        return permissions;
-    }
-
-    public String getCompany() {
-        return company;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public String getTelephone() {
-        return telephone;
-    }
 
     public boolean check() {
         return true;

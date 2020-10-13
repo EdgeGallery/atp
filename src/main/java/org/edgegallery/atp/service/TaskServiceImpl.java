@@ -8,15 +8,14 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
-import org.edgegallery.atp.model.page.PageCriteria;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.model.testcase.TestCaseDetail;
 import org.edgegallery.atp.model.testcase.TestCaseResult;
 import org.edgegallery.atp.model.user.User;
 import org.edgegallery.atp.repository.task.BatchTaskRepository;
-import org.edgegallery.atp.repository.task.TaskRepositoryImpl;
-import org.edgegallery.atp.repository.testcase.TestCaseRepositoryImpl;
+import org.edgegallery.atp.repository.task.TaskRepository;
+import org.edgegallery.atp.repository.testcase.TestCaseRepository;
 import org.edgegallery.atp.schedule.testcase.TestCaseManagerImpl;
 import org.edgegallery.atp.utils.CommonUtil;
 import org.edgegallery.atp.utils.TestCaseUtil;
@@ -33,10 +32,10 @@ public class TaskServiceImpl implements TaskService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskServiceImpl.class);
 
     @Autowired
-    TaskRepositoryImpl taskRepository;
+    TaskRepository taskRepository;
 
     @Autowired
-    TestCaseRepositoryImpl testCaseRepository;
+    TestCaseRepository testCaseRepository;
 
     @Autowired
     TestCaseManagerImpl testCaseManager;
@@ -101,7 +100,7 @@ public class TaskServiceImpl implements TaskService {
         task.setCreateTime(taskRepository.getCurrentDate());
         task.setStatus(Constant.Status.WAITING);
 
-        List<TestCase> testCaseList = testCaseRepository.queryAll(new PageCriteria(100, 0, "")).getResults();
+        List<TestCase> testCaseList = testCaseRepository.findAllTestCases();
 
         if (null != testCaseList) {
             task.setTestCaseDetail(initTestCaseDetail(testCaseList));

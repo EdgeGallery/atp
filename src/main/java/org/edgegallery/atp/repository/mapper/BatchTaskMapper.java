@@ -1,4 +1,4 @@
-package org.edgegallery.atp.repository.task;
+package org.edgegallery.atp.repository.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Component;

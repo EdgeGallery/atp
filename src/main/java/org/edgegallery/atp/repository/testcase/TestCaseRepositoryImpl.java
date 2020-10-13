@@ -15,10 +15,8 @@
 package org.edgegallery.atp.repository.testcase;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import org.edgegallery.atp.model.page.Page;
-import org.edgegallery.atp.model.page.PageCriteria;
 import org.edgegallery.atp.model.testcase.TestCase;
+import org.edgegallery.atp.repository.mapper.TestCaseMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -27,14 +25,6 @@ public class TestCaseRepositoryImpl implements TestCaseRepository {
 
     @Autowired
     private TestCaseMapper testCaseMapper;
-
-    @Override
-    public Page<TestCase> queryAll(PageCriteria pageCriteria) {
-        long total = testCaseMapper.countTotal(pageCriteria).longValue();
-        List<TestCase> releases =
-                testCaseMapper.findAllWithAppPagination(pageCriteria).stream().collect(Collectors.toList());
-        return new Page<>(releases, pageCriteria.getLimit(), pageCriteria.getOffset(), total);
-    }
 
     @Override
     public List<TestCase> findAllTestCases() {

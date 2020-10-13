@@ -16,7 +16,7 @@
   -->
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.edgegallery.atp.repository.testcase.TestCaseMapper">
+<mapper namespace="org.edgegallery.atp.repository.mapper.TestCaseMapper">
 
     <select id="findByNameAndType"
             resultType="org.edgegallery.atp.model.testcase.TestCase"

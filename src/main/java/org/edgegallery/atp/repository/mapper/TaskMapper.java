@@ -1,4 +1,4 @@
-package org.edgegallery.atp.repository.task;
+package org.edgegallery.atp.repository.mapper;
 
 import java.util.Date;
 import java.util.List;

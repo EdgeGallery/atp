@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import org.edgegallery.atp.model.task.TaskRequest;
-import org.edgegallery.atp.repository.task.TaskRepositoryImpl;
+import org.edgegallery.atp.repository.task.TaskRepository;
 import org.edgegallery.atp.schedule.testcase.TestCaseManagerImpl;
 import org.edgegallery.atp.utils.file.FileChecker;
 import org.slf4j.Logger;
@@ -20,7 +20,7 @@ class TaskSchedule {
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskSchedule.class);
 
     @Autowired
-    TaskRepositoryImpl taskRepository;
+    TaskRepository taskRepository;
 
     @Autowired
     TestCaseManagerImpl testCaseManager;

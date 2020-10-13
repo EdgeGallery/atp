@@ -1,8 +1,6 @@
 package org.edgegallery.atp.service;
 
 import java.util.List;
-import org.edgegallery.atp.model.page.Page;
-import org.edgegallery.atp.model.page.PageCriteria;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.model.user.User;
 import org.edgegallery.atp.repository.testcase.TestCaseRepository;
@@ -23,11 +21,6 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
-    public ResponseEntity<List<TestCase>> queryAll() {
-        return ResponseEntity.ok(queryAll(new PageCriteria(100, 0, "")).getResults());
-    }
-
-    @Override
     public ResponseEntity<TestCase> queryByTestCaseId(String testCaseId) {
         // TODO
         return ResponseEntity.ok(null);
@@ -36,10 +29,6 @@ public class TestCaseServiceImpl implements TestCaseService {
     @Override
     public void deleteTestCase(String testCaseId, User user) {
         deleteTestCase(testCaseId, user.getUserId());
-    }
-
-    private Page<TestCase> queryAll(PageCriteria pageCriteria) {
-        return testCaseRepository.queryAll(pageCriteria);
     }
 
     private void deleteTestCase(String testCaseId, String userId) {
