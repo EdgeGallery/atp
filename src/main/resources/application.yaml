@@ -40,7 +40,8 @@ spring:
     multipart:
       max-file-size: 1MB
       max-request-size: 1MB
- 
+  jackson:
+    default-property-inclusion: non_null
 applcm:
   host:
     ip: ${host_ip}

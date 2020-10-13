@@ -1,15 +1,23 @@
 package org.edgegallery.atp.repository.testcase;
 
 import java.util.List;
-import org.edgegallery.atp.model.page.Page;
-import org.edgegallery.atp.model.page.PageCriteria;
 import org.edgegallery.atp.model.testcase.TestCase;
 
 public interface TestCaseRepository {
 
-    Page<TestCase> queryAll(PageCriteria pageCriteria);
-
+    /**
+     * find all test case
+     * 
+     * @return
+     */
     List<TestCase> findAllTestCases();
 
+    /**
+     * find test case by test case name and test case type
+     * 
+     * @param name test case name
+     * @param type test case type
+     * @return
+     */
     TestCase findByNameAndType(String name, String type);
 }

@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
-import org.edgegallery.atp.model.page.PageCriteria;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.model.testcase.TestCaseDetail;
@@ -101,7 +100,7 @@ public class TaskServiceImpl implements TaskService {
         task.setCreateTime(taskRepository.getCurrentDate());
         task.setStatus(Constant.Status.WAITING);
 
-        List<TestCase> testCaseList = testCaseRepository.queryAll(new PageCriteria(100, 0, "")).getResults();
+        List<TestCase> testCaseList = testCaseRepository.findAllTestCases();
 
         if (null != testCaseList) {
             task.setTestCaseDetail(initTestCaseDetail(testCaseList));

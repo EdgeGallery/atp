@@ -69,7 +69,7 @@
 	</select>
 
 	<select id="getCurrentDate" resultType="java.util.Date">
-		select sysdate from dual
+		select current_time
 	</select>
 
 	<select id="queryAllRunningTasks" resultType="org.edgegallery.atp.model.task.TaskPO">

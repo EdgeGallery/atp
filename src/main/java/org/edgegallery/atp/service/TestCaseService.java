@@ -10,8 +10,6 @@ public interface TestCaseService {
 
     public void testCaseUpload(User user, List<MultipartFile> uploadFiles);
 
-    public ResponseEntity<List<TestCase>> queryAll();
-
     public ResponseEntity<TestCase> queryByTestCaseId(String testCaseId);
 
     public void deleteTestCase(String testCaseId, User user);
