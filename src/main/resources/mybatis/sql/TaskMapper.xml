@@ -73,6 +73,6 @@
 	</select>
 
 	<select id="queryAllRunningTasks" resultType="org.edgegallery.atp.model.task.TaskPO">
-		select * from task_table where status = 'running'...
+		select * from task_table where status = 'running'
 	</select>
 </mapper>
