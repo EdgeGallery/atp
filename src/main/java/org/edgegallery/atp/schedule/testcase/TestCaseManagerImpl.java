@@ -11,7 +11,7 @@ import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.model.testcase.TestCaseDetail;
 import org.edgegallery.atp.model.testcase.TestCaseResult;
-import org.edgegallery.atp.repository.task.TaskRepository;
+import org.edgegallery.atp.repository.task.TaskRepositoryImpl;
 import org.edgegallery.atp.repository.testcase.TestCaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,7 +27,7 @@ public class TestCaseManagerImpl implements TestCaseManager {
     TestCaseRepository testCaseRepository;
 
     @Autowired
-    TaskRepository taskRepository;
+    TaskRepositoryImpl taskRepository;
 
     @Override
     public void executeTestCase(TaskRequest task, String filePath) {
