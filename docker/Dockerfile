@@ -19,7 +19,6 @@ ENV APP_FILE application-test-platform.jar
 ENV APP_HOME /usr/atp
 EXPOSE 9085
 COPY target/*.jar $APP_HOME/
-COPY target/output $APP_HOME/
 WORKDIR $APP_HOME
 ENTRYPOINT ["sh", "-c"]
 CMD ["exec java -jar $APP_FILE"]
