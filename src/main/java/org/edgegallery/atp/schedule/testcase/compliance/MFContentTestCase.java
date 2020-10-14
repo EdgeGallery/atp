@@ -36,7 +36,6 @@ public class MFContentTestCase extends TestCaseAbs {
 
     @Override
     public TestCaseResult execute(String filePath, Map<String, String> context) {
-        LOGGER.warn("mf content in.");
         try (ZipFile zipFile = new ZipFile(filePath)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
