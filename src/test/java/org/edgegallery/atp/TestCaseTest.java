@@ -34,63 +34,63 @@ public class TestCaseTest {
 
     @Test
     public void suffixTestCaseTestNormal() throws IOException {
-        String pkgPth = "org.edgegallery.atp.application.testcase.compliance.SuffixTestCase";
+        String pkgPth = "org.edgegallery.atp.schedule.testcase.compliance.SuffixTestCase";
         String filePath = "testfile/AR.csar";
-        // Assert.assertTrue(getTestCaseHandler(pkgPth, filePath));
+        Assert.assertTrue(getTestCaseHandler(pkgPth, filePath));
     }
 
     @Test
     public void suffixTestCaseTestAbNormal() throws IOException {
-        String pkgPth = "org.edgegallery.atp.application.testcase.compliance.SuffixTestCase";
+        String pkgPth = "org.edgegallery.atp.schedule.testcase.compliance.SuffixTestCase";
         String filePath = "testfile/ARNoMfTosca.csar";
         Assert.assertFalse(getTestCaseHandler(pkgPth, filePath));
     }
 
     @Test
     public void sourcePathTestCaseNormal() throws IOException {
-        String pkgPth = "org.edgegallery.atp.application.testcase.compliance.SourcePathTestCase";
+        String pkgPth = "org.edgegallery.atp.schedule.testcase.compliance.SourcePathTestCase";
         String filePath = "testfile/AR.csar";
-        // Assert.assertTrue(getTestCaseHandler(pkgPth, filePath));
+        Assert.assertTrue(getTestCaseHandler(pkgPth, filePath));
     }
 
     @Test
     public void sourcePathTestCaseAbNormal() throws IOException {
-        String pkgPth = "org.edgegallery.atp.application.testcase.compliance.SourcePathTestCase";
+        String pkgPth = "org.edgegallery.atp.schedule.testcase.compliance.SourcePathTestCase";
         String filePath = "testfile/ARException.csar";
         Assert.assertFalse(getTestCaseHandler(pkgPth, filePath));
     }
 
     @Test
     public void mfContentTestCaseNormal() throws IOException {
-        String pkgPth = "org.edgegallery.atp.application.testcase.compliance.MFContentTestCase";
+        String pkgPth = "org.edgegallery.atp.schedule.testcase.compliance.MFContentTestCase";
         String filePath = "testfile/AR.csar";
-        // Assert.assertTrue(getTestCaseHandler(pkgPth, filePath));
+        Assert.assertTrue(getTestCaseHandler(pkgPth, filePath));
     }
 
     @Test
     public void mfContentTestCaseAbNormal() throws IOException {
-        String pkgPth = "org.edgegallery.atp.application.testcase.compliance.MFContentTestCase";
+        String pkgPth = "org.edgegallery.atp.schedule.testcase.compliance.MFContentTestCase";
         String filePath = "testfile/ARException.csar";
         Assert.assertFalse(getTestCaseHandler(pkgPth, filePath));
     }
 
     @Test
     public void toscaFileTestCaseNormal() throws IOException {
-        String pkgPth = "org.edgegallery.atp.application.testcase.compliance.TOSCAFileTestCase";
+        String pkgPth = "org.edgegallery.atp.schedule.testcase.compliance.TOSCAFileTestCase";
         String filePath = "testfile/AR.csar";
-        // Assert.assertTrue(getTestCaseHandler(pkgPth, filePath));
+        Assert.assertTrue(getTestCaseHandler(pkgPth, filePath));
     }
 
     @Test
     public void toscaFileTestCaseWithoutTosca() throws IOException {
-        String pkgPth = "org.edgegallery.atp.application.testcase.compliance.TOSCAFileTestCase";
+        String pkgPth = "org.edgegallery.atp.schedule.testcase.compliance.TOSCAFileTestCase";
         String filePath = "testfile/ARNoMfTosca.csar";
         Assert.assertFalse(getTestCaseHandler(pkgPth, filePath));
     }
 
     @Test
     public void toscaFileTestCaseFieldException() throws IOException {
-        String pkgPth = "org.edgegallery.atp.application.testcase.compliance.TOSCAFileTestCase";
+        String pkgPth = "org.edgegallery.atp.schedule.testcase.compliance.TOSCAFileTestCase";
         String filePath = "testfile/ARException.csar";
         Assert.assertFalse(getTestCaseHandler(pkgPth, filePath));
     }

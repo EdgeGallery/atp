@@ -31,6 +31,8 @@ public interface Constant {
 
     String DOUBLE_SLASH = "//";
 
+    String SLASH = "/";
+
     String COMMA = ",";
 
     String APP_INSTANCE_ID = "appInstanceId";

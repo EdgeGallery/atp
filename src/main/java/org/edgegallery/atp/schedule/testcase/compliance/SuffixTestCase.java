@@ -1,4 +1,4 @@
-package org.edgegallery.atp.schedule.testcase.comliance;
+package org.edgegallery.atp.schedule.testcase.compliance;
 
 import java.io.IOException;
 import java.util.Enumeration;
@@ -29,7 +29,8 @@ public class SuffixTestCase extends TestCaseAbs {
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
                 // root directory and file is end of mf
-                if (entry.getName().split("/").length == 2 && TestCaseUtil.fileSuffixValidate("mf", entry.getName())) {
+                if (entry.getName().split(Constant.SLASH).length == 2
+                        && TestCaseUtil.fileSuffixValidate("mf", entry.getName())) {
                     return setTestCaseResult(Constant.Status.SUCCESS, Constant.EMPTY, testCaseResult);
                 }
             }

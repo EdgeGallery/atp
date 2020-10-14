@@ -32,8 +32,8 @@ public class TestCaseHandler {
     public TestCaseResult testCaseHandler(String pkgPth, String filePath, Map<String, String> context) {
         try {
             Class<?> clazz = Class.forName(pkgPth);
-            return (TestCaseResult) clazz.getMethod(METHOD_NAME, String.class).invoke(clazz.newInstance(), filePath,
-                    context);
+            return (TestCaseResult) clazz.getMethod(METHOD_NAME, String.class, Map.class).invoke(clazz.newInstance(),
+                    filePath, context);
         } catch (Exception e) {
             LOGGER.error("testCaseHandler failed. {}", e.getMessage());
             return new TestCaseResult(Constant.Status.FAILED, ExceptionConstant.INNER_EXCEPTION);

@@ -47,8 +47,7 @@
 	<delete id="delHisTask">
 		delete from
 		task_table
-		where
-		date('now','-30 day') >= date(createTime)
+		where (current_date() - createTime) > 30
 	</delete>
 
 	<select id="countTotal" resultType="java.lang.Integer"

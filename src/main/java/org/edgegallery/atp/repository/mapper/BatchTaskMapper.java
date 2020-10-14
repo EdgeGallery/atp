@@ -1,6 +1,7 @@
 package org.edgegallery.atp.repository.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -14,5 +15,5 @@ public interface BatchTaskMapper {
      * @param userId
      * @return
      */
-    String findBatchTask(String id, String userId);
+    String findBatchTask(@Param("id") String id, @Param("userId") String userId);
 }

@@ -1,4 +1,4 @@
-package org.edgegallery.atp.schedule.testcase.comliance;
+package org.edgegallery.atp.schedule.testcase.compliance;
 
 import java.io.IOException;
 import java.util.Enumeration;
@@ -36,11 +36,13 @@ public class MFContentTestCase extends TestCaseAbs {
 
     @Override
     public TestCaseResult execute(String filePath, Map<String, String> context) {
+        LOGGER.warn("mf content in.");
         try (ZipFile zipFile = new ZipFile(filePath)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
-                if (entry.getName().split("/").length == 2 && TestCaseUtil.fileSuffixValidate("mf", entry.getName())) {
+                if (entry.getName().split(Constant.SLASH).length == 2
+                        && TestCaseUtil.fileSuffixValidate("mf", entry.getName())) {
                     // some fields not exist in tosca.meta file
                     return TestCaseUtil.isExistAll(zipFile, entry, field)
                             ? setTestCaseResult(Constant.Status.SUCCESS, Constant.EMPTY, testCaseResult)
