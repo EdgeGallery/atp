@@ -1,10 +1,8 @@
-package org.edgegallery.atp.schedule.testcase.comliance;
+package org.edgegallery.atp.schedule.testcase.compliance;
 
 import java.io.IOException;
 import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.edgegallery.atp.constant.Constant;
@@ -16,23 +14,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Implementation of validating .mf file content.
+ * Implementation of validating .mf file must be in root directory.
  */
-public class MFContentTestCase extends TestCaseAbs {
+public class SuffixTestCase extends TestCaseAbs {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MFContentTestCase.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SuffixTestCase.class);
 
     private TestCaseResult testCaseResult = new TestCaseResult();
-
-    private static Set<String> field = new HashSet<String>() {
-        {
-            add("app_name");
-            add("app_provider");
-            add("app_archive_version");
-            add("app_release_date_time");
-            add("app_contact");
-        }
-    };
 
     @Override
     public TestCaseResult execute(String filePath, Map<String, String> context) {
@@ -40,19 +28,16 @@ public class MFContentTestCase extends TestCaseAbs {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
-                if (entry.getName().split("/").length == 2 && TestCaseUtil.fileSuffixValidate("mf", entry.getName())) {
-                    // some fields not exist in tosca.meta file
-                    return TestCaseUtil.isExistAll(zipFile, entry, field)
-                            ? setTestCaseResult(Constant.Status.SUCCESS, Constant.EMPTY, testCaseResult)
-                            : setTestCaseResult(Constant.Status.FAILED, ExceptionConstant.MFContentTestCase.LOSS_FIELD,
-                                    testCaseResult);
+                // root directory and file is end of mf
+                if (entry.getName().split(Constant.SLASH).length == 2
+                        && TestCaseUtil.fileSuffixValidate("mf", entry.getName())) {
+                    return setTestCaseResult(Constant.Status.SUCCESS, Constant.EMPTY, testCaseResult);
                 }
             }
         } catch (IOException e) {
-            LOGGER.error("TOSCAFileTestCase execute failed. {}", e.getMessage());
+            LOGGER.error("SuffixTestCase execute failed. {}", e.getMessage());
             return setTestCaseResult(Constant.Status.FAILED, ExceptionConstant.INNER_EXCEPTION, testCaseResult);
         }
-
         return setTestCaseResult(Constant.Status.FAILED, ExceptionConstant.MFContentTestCase.FILE_NOT_EXIST,
                 testCaseResult);
     }

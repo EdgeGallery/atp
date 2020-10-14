@@ -2,6 +2,7 @@ package org.edgegallery.atp.repository.mapper;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.edgegallery.atp.model.page.Page;
 import org.edgegallery.atp.model.page.PageCriteria;
 import org.edgegallery.atp.model.testcase.TestCase;
@@ -28,7 +29,7 @@ public interface TestCaseMapper {
      * @param type virusScanningTest,complianceTest or sandboxTest
      * @return test case info.
      */
-    TestCase findByNameAndType(String name, String type);
+    TestCase findByNameAndType(@Param("name") String name, @Param("type") String type);
 
     /**
      * get all test cases.

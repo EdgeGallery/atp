@@ -25,7 +25,7 @@
     </select>
 
     <select id="findAllTestCases"
-            resultType="java.util.List">
+            resultType="org.edgegallery.atp.model.testcase.TestCase">
         select * from test_case_table
     </select>
 

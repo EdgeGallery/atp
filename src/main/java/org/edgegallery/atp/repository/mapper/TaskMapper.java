@@ -3,6 +3,7 @@ package org.edgegallery.atp.repository.mapper;
 import java.util.Date;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.edgegallery.atp.model.page.PageCriteria;
 import org.edgegallery.atp.model.task.TaskPO;
 import org.springframework.stereotype.Component;
@@ -17,7 +18,7 @@ public interface TaskMapper {
      * @param taskId taskId
      * @return taskInfo
      */
-    TaskPO findByTaskIdAndUserId(String taskId, String userId);
+    TaskPO findByTaskIdAndUserId(@Param("taskId") String taskId, @Param("userId") String userId);
 
     /**
      * get task list by userId

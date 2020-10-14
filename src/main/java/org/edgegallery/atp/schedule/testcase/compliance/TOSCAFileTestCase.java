@@ -1,4 +1,4 @@
-package org.edgegallery.atp.schedule.testcase.comliance;
+package org.edgegallery.atp.schedule.testcase.compliance;
 
 import java.io.IOException;
 import java.util.Enumeration;
