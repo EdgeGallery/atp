@@ -24,4 +24,12 @@
         select subTaskId from batch_task_mapping_table where id = #{id} and userId = #{userId}
     </select>
 
+	<insert id="insert"
+		parameterType="org.edgegallery.atp.model.task.BatchTask">
+		insert into
+		batch_task_mapping_table
+		(id, subTaskId, userId, userName)
+		VALUES
+		(#{id}, #{subTaskId}, #{userId},#{userName})
+	</insert>
 </mapper>

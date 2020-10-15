@@ -61,7 +61,7 @@ public interface TaskMapper {
     Date getCurrentDate();
 
     /**
-     * delete task created before one month
+     * delete task created 30 days before
      */
     void delHisTask();
 }

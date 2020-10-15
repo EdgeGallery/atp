@@ -47,7 +47,7 @@
 	<delete id="delHisTask">
 		delete from
 		task_table
-		where (current_date() - createTime) > 30
+		where (now()::timestamp without time zone-createTime::timestamp without time zone) > (30 * '1 sec'::interval)
 	</delete>
 
 	<select id="countTotal" resultType="java.lang.Integer"

@@ -33,4 +33,23 @@ public interface TaskService {
      * @return taskInformation list
      */
     public ResponseEntity<List<TaskRequest>> getAllTasks(String userId);
+
+    /**
+     * download test report by taskId and userId
+     * 
+     * @param taskId test taskId
+     * @param userId
+     * @return
+     */
+    public String downloadTestReport(String taskId, String userId);
+
+    /**
+     * create batch task
+     * 
+     * @param user userInfo
+     * @param packageList package list
+     * @param accessToken accessToken
+     * @return batch task id
+     */
+    public String createBatchTask(User user, List<MultipartFile> packageList, String accessToken);
 }

@@ -14,6 +14,7 @@
 
 package org.edgegallery.atp.repository.task;
 
+import org.edgegallery.atp.model.task.BatchTask;
 import org.edgegallery.atp.repository.mapper.BatchTaskMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -27,6 +28,11 @@ public class BatchTaskRepositoryImpl implements BatchTaskRepository {
     @Override
     public String findBatchTask(String id, String userId) {
         return batchTaskMapper.findBatchTask(id, userId);
+    }
+
+    @Override
+    public void insert(BatchTask batchTask) {
+        batchTaskMapper.insert(batchTask);
     }
 
 }
