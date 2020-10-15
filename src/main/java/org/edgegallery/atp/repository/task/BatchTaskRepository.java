@@ -1,5 +1,7 @@
 package org.edgegallery.atp.repository.task;
 
+import org.edgegallery.atp.model.task.BatchTask;
+
 public interface BatchTaskRepository {
 
     /**
@@ -10,4 +12,11 @@ public interface BatchTaskRepository {
      * @return
      */
     String findBatchTask(String id, String userId);
+
+    /**
+     * insert into batch task table.
+     * 
+     * @param batchTask batch task info.
+     */
+    void insert(BatchTask batchTask);
 }
