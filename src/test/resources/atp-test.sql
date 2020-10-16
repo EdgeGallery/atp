@@ -31,6 +31,7 @@ CREATE TABLE BATCH_TASK_MAPPING_TABLE (
     ID                       VARCHAR(200)       NOT NULL,
     SUBTASKID                TEXT               NULL,
     USERID                   VARCHAR(100)       NULL,
+    USERNAME                 VARCHAR(100)       NULL,
     CONSTRAINT batch_task_mapping_table_pkey PRIMARY KEY (ID)
 );
 

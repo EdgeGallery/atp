@@ -46,11 +46,9 @@ import io.swagger.annotations.ApiResponses;
 @Validated
 public class TaskController {
 
-    private static final String REG_USER_ID = "[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}";
+    private static final String REG_ID = "[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}";
 
     private static final String REG_USER_NAME = "^[a-zA-Z][a-zA-Z0-9_]{5,29}$";
-
-    private static final String REG_ID = "[0-9a-f]{32}";
 
     @Autowired
     private TaskService taskService;
@@ -69,7 +67,7 @@ public class TaskController {
             @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_TENANT')")
-    public ResponseEntity<String> startTest(@RequestParam("userId") @Pattern(regexp = REG_USER_ID) String userId,
+    public ResponseEntity<String> startTest(@RequestParam("userId") @Pattern(regexp = REG_ID) String userId,
             @RequestParam("userName") @Pattern(regexp = REG_USER_NAME) String userName,
             @ApiParam(value = "test yaml files", required = true) @RequestPart("file") MultipartFile packages,
             @RequestParam("accessToken") String accessToken) {
@@ -89,7 +87,7 @@ public class TaskController {
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_TENANT')")
     public ResponseEntity<List<TaskRequest>> getAllTasks(
-            @RequestParam("userId") @Pattern(regexp = REG_USER_ID) String userId) {
+            @RequestParam("userId") @Pattern(regexp = REG_ID) String userId) {
         return taskService.getAllTasks(userId);
     }
 
@@ -108,7 +106,7 @@ public class TaskController {
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_TENANT')")
     public ResponseEntity<List<TaskRequest>> getTaskById(
-            @RequestParam("userId") @Pattern(regexp = REG_USER_ID) String userId,
+            @RequestParam("userId") @Pattern(regexp = REG_ID) String userId,
             @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId) {
         return taskService.getTaskById(userId, taskId);
     }
@@ -119,8 +117,7 @@ public class TaskController {
             @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_TENANT')")
-    public ResponseEntity<String> downloadTestReport(
-            @RequestParam("userId") @Pattern(regexp = REG_USER_ID) String userId,
+    public ResponseEntity<String> downloadTestReport(@RequestParam("userId") @Pattern(regexp = REG_ID) String userId,
             @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId) {
         return ResponseEntity.ok(taskService.downloadTestReport(taskId, userId));
     }
@@ -131,7 +128,7 @@ public class TaskController {
             @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_TENANT')")
-    public ResponseEntity<String> startBatchTest(@RequestParam("userId") @Pattern(regexp = REG_USER_ID) String userId,
+    public ResponseEntity<String> startBatchTest(@RequestParam("userId") @Pattern(regexp = REG_ID) String userId,
             @RequestParam("userName") @Pattern(regexp = REG_USER_NAME) String userName,
             @ApiParam(value = "test yaml file list",
                     required = true) @RequestPart("file") List<MultipartFile> packageList,
