@@ -32,5 +32,9 @@ public interface ExceptionConstant {
         String RESPONSE_FROM_APPLCM_FAILED = "terminate app instance failed, and the response code is: ";
     }
 
+    interface VirusScanTestCase {
+        String FIND_VIRUS = "The file contains virus, the number of virus is: %s";
+    }
+
     String INNER_EXCEPTION = "inner exception, please check the log.";
 }
