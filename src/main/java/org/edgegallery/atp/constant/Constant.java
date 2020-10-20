@@ -19,6 +19,10 @@ public interface Constant {
 
     String ACCESS_TOKEN = "access_token";
 
+    String USER_ID = "userId";
+
+    String USER_NAME = "userName";
+
     String TENANT_ID = "tenantId";
 
     String IP = "ip";
@@ -33,8 +37,8 @@ public interface Constant {
 
     String SLASH = "/";
 
-    String COMMA = ",";
 
+    String COMMA = ",";
     String APP_INSTANCE_ID = "appInstanceId";
 
     interface Status {
