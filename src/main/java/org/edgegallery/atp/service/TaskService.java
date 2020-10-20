@@ -2,7 +2,6 @@ package org.edgegallery.atp.service;
 
 import java.util.List;
 import org.edgegallery.atp.model.task.TaskRequest;
-import org.edgegallery.atp.model.user.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,11 +10,10 @@ public interface TaskService {
     /**
      * create a test task
      * 
-     * @param user userInfo
      * @param packages scar file
      * @return taskId
      */
-    public String createTask(User user, MultipartFile packages, String accessToken);
+    public String createTask(MultipartFile packages);
 
     /**
      * get task info by taskId
@@ -46,10 +44,8 @@ public interface TaskService {
     /**
      * create batch task
      * 
-     * @param user userInfo
      * @param packageList package list
-     * @param accessToken accessToken
      * @return batch task id
      */
-    public String createBatchTask(User user, List<MultipartFile> packageList, String accessToken);
+    public String createBatchTask(List<MultipartFile> packageList);
 }

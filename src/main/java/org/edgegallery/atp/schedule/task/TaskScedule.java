@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 class TaskSchedule {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskSchedule.class);
 
     @Autowired

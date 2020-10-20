@@ -18,8 +18,9 @@ import java.util.List;
 import javax.validation.constraints.Pattern;
 import javax.ws.rs.core.MediaType;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
+import org.edgegallery.atp.constant.Constant;
+import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
 import org.edgegallery.atp.model.task.TaskRequest;
-import org.edgegallery.atp.model.user.User;
 import org.edgegallery.atp.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 import io.swagger.annotations.Api;
@@ -62,16 +62,14 @@ public class TaskController {
      * @return taskId
      */
     @PostMapping(value = "/tasks", produces = MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "start test", response = String.class)
+    @ApiOperation(value = "start test task.", response = String.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_TENANT')")
-    public ResponseEntity<String> startTest(@RequestParam("userId") @Pattern(regexp = REG_ID) String userId,
-            @RequestParam("userName") @Pattern(regexp = REG_USER_NAME) String userName,
-            @ApiParam(value = "test yaml files", required = true) @RequestPart("file") MultipartFile packages,
-            @RequestParam("accessToken") String accessToken) {
-        return ResponseEntity.ok(taskService.createTask(new User(userId, userName), packages, accessToken));
+    public ResponseEntity<String> startTest(
+            @ApiParam(value = "test yaml files", required = true) @RequestPart("file") MultipartFile packages) {
+        return ResponseEntity.ok(taskService.createTask(packages));
     }
 
     /**
@@ -81,14 +79,16 @@ public class TaskController {
      * @return task list
      */
     @GetMapping(value = "/tasks", produces = MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "get all tasks.", response = TaskRequest.class)
+    @ApiOperation(value = "get all tasks by userId.", response = TaskRequest.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_TENANT')")
-    public ResponseEntity<List<TaskRequest>> getAllTasks(
-            @RequestParam("userId") @Pattern(regexp = REG_ID) String userId) {
-        return taskService.getAllTasks(userId);
+    public ResponseEntity<List<TaskRequest>> getAllTasks() {
+        if (null == AccessTokenFilter.context.get()) {
+            throw new IllegalArgumentException("AccessTokenFilter.context is null");
+        }
+        return taskService.getAllTasks(AccessTokenFilter.context.get().get(Constant.USER_ID));
     }
 
     /**
@@ -100,26 +100,32 @@ public class TaskController {
      * @return task info
      */
     @GetMapping(value = "/tasks/{taskId}", produces = MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "get all tasks.", response = TaskRequest.class)
+    @ApiOperation(value = "get tasks by taskId and userId.", response = TaskRequest.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_TENANT')")
     public ResponseEntity<List<TaskRequest>> getTaskById(
-            @RequestParam("userId") @Pattern(regexp = REG_ID) String userId,
             @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId) {
-        return taskService.getTaskById(userId, taskId);
+        if (null == AccessTokenFilter.context.get()) {
+            throw new IllegalArgumentException("AccessTokenFilter.context is null");
+        }
+        return taskService.getTaskById(AccessTokenFilter.context.get().get(Constant.USER_ID), taskId);
     }
 
-    @PostMapping(value = "/tasks/{taskId}", produces = MediaType.APPLICATION_JSON)
+    @GetMapping(value = "/tasks/{taskId}/download", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "download test report", response = String.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_TENANT')")
-    public ResponseEntity<String> downloadTestReport(@RequestParam("userId") @Pattern(regexp = REG_ID) String userId,
+    public ResponseEntity<String> downloadTestReport(
             @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId) {
-        return ResponseEntity.ok(taskService.downloadTestReport(taskId, userId));
+        if (null == AccessTokenFilter.context.get()) {
+            throw new IllegalArgumentException("AccessTokenFilter.context is null");
+        }
+        return ResponseEntity
+                .ok(taskService.downloadTestReport(taskId, AccessTokenFilter.context.get().get(Constant.USER_ID)));
     }
 
     @PostMapping(value = "/batch/tasks", produces = MediaType.APPLICATION_JSON)
@@ -128,11 +134,8 @@ public class TaskController {
             @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_TENANT')")
-    public ResponseEntity<String> startBatchTest(@RequestParam("userId") @Pattern(regexp = REG_ID) String userId,
-            @RequestParam("userName") @Pattern(regexp = REG_USER_NAME) String userName,
-            @ApiParam(value = "test yaml file list",
-                    required = true) @RequestPart("file") List<MultipartFile> packageList,
-            @RequestParam("accessToken") String accessToken) {
-        return ResponseEntity.ok(taskService.createBatchTask(new User(userId, userName), packageList, accessToken));
+    public ResponseEntity<String> startBatchTest(@ApiParam(value = "test yaml file list",
+            required = true) @RequestPart("file") List<MultipartFile> packageList) {
+        return ResponseEntity.ok(taskService.createBatchTask(packageList));
     }
 }

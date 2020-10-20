@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
+import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
 import org.edgegallery.atp.model.task.BatchTask;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.testcase.TestCase;
@@ -47,11 +48,9 @@ public class TaskServiceImpl implements TaskService {
     BatchTaskRepository batchTaskRepository;
 
     @Override
-    public String createTask(User user, MultipartFile packages, String accessToken) {
+    public String createTask(MultipartFile packages) {
         TaskRequest task = new TaskRequest();
         task.setId(CommonUtil.generateId());
-        task.setUser(user);
-        task.setAccessToken(accessToken);
 
         try {
             File tempFile = FileChecker.check(packages, task.getId());
@@ -113,7 +112,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public String createBatchTask(User user, List<MultipartFile> packageList, String accessToken) {
+    public String createBatchTask(List<MultipartFile> packageList) {
         Map<String, File> tempFileList = new HashMap<String, File>();
         StringBuffer subTaskId = new StringBuffer();
         packageList.forEach(file -> {
@@ -126,6 +125,11 @@ public class TaskServiceImpl implements TaskService {
             subTaskId.append(taskId).append(Constant.COMMA);
         });
 
+        Map<String, String> context = AccessTokenFilter.context.get();
+        if (null == context) {
+            throw new IllegalArgumentException("AccessTokenFilter.context is null");
+        }
+        User user = new User(context.get(Constant.USER_ID), context.get(Constant.USER_NAME));
         String batchTaskId = initAndSaveBatchTask(user, subTaskId);
 
         tempFileList.forEach((taskId, tempFile) -> {
@@ -133,7 +137,7 @@ public class TaskServiceImpl implements TaskService {
                 TaskRequest task = new TaskRequest();
                 task.setId(taskId);
                 task.setUser(user);
-                task.setAccessToken(accessToken);
+                task.setAccessToken(context.get(Constant.ACCESS_TOKEN));
                 String filePath = tempFile.getCanonicalPath();
                 initTaskRequset(task, filePath);
                 taskRepository.insert(task);
@@ -186,9 +190,14 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     private TaskRequest initTaskRequset(TaskRequest task, String filePath) {
+        Map<String, String> context = AccessTokenFilter.context.get();
+        if (null == context) {
+            throw new IllegalArgumentException("AccessTokenFilter.context is null");
+        }
         task.setCreateTime(taskRepository.getCurrentDate());
         task.setStatus(Constant.Status.WAITING);
-
+        task.setUser(new User(context.get(Constant.USER_ID), context.get(Constant.USER_NAME)));
+        task.setAccessToken(context.get(Constant.ACCESS_TOKEN));
         List<TestCase> testCaseList = testCaseRepository.findAllTestCases();
 
         if (null != testCaseList) {
