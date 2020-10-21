@@ -15,6 +15,10 @@ import org.edgegallery.atp.schedule.testcase.TestCaseAbs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * execute virus scan class.
+ *
+ */
 public class VirusScanTestCase extends TestCaseAbs {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VirusScanTestCase.class);
