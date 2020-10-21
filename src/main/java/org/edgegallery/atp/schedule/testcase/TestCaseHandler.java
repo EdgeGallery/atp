@@ -24,9 +24,11 @@ public class TestCaseHandler {
     }
 
     /**
+     * dynamic schedule test case
      * 
      * @param pkgPth org.appstore.mec.domain.model.testcase.draft.SuffixTestCase
      * @param filePath filePath
+     * @param context context info
      * @return
      */
     public TestCaseResult testCaseHandler(String pkgPth, String filePath, Map<String, String> context) {

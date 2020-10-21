@@ -34,6 +34,10 @@ public class TestCaseManagerImpl implements TestCaseManager {
         virusTreadPool.execute(new TaskProcessor(task, filePath));
     }
 
+    /**
+     * process test task and schedule test cases.
+     *
+     */
     private class TaskProcessor implements Runnable {
 
         TaskRequest task;
@@ -65,6 +69,11 @@ public class TestCaseManagerImpl implements TestCaseManager {
             new File(filePath).delete();
         }
 
+        /**
+         * change task status from waiting to running.
+         * 
+         * @param task task info.
+         */
         private void changeStatusAndSave(TaskRequest task) {
             task.setStatus(Constant.Status.RUNNING);
             TestCaseDetail detail = task.getTestCaseDetail();
@@ -74,6 +83,11 @@ public class TestCaseManagerImpl implements TestCaseManager {
             taskRepository.update(task);
         }
 
+        /**
+         * change test case status to running.
+         * 
+         * @param testCases test case list info.
+         */
         private void changeTestCaseRunning(List<Map<String, TestCaseResult>> testCases) {
             testCases.forEach(testCaseMap -> {
                 for (Map.Entry<String, TestCaseResult> entry : testCaseMap.entrySet()) {
@@ -86,7 +100,13 @@ public class TestCaseManagerImpl implements TestCaseManager {
             });
         }
 
-
+        /**
+         * schedule test case according to test case type.
+         * 
+         * @param type test case type
+         * @param testCases test case list info
+         * @param context context info
+         */
         private void execute(String type, List<Map<String, TestCaseResult>> testCases, Map<String, String> context) {
             testCases.forEach(testCaseMap -> {
                 for (Map.Entry<String, TestCaseResult> entry : testCaseMap.entrySet()) {
