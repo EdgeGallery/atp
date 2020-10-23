@@ -26,6 +26,8 @@ import org.edgegallery.atp.utils.file.FileChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONException;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -150,6 +152,32 @@ public class TaskServiceImpl implements TaskService {
         return batchTaskId;
     }
 
+    @Override
+    public JSONObject dependencyCheck(MultipartFile packages) {
+        JSONObject result = new JSONObject();
+        String fileId = CommonUtil.generateId();
+
+        File tempFile = FileChecker.check(packages, fileId);
+        if (null == tempFile) {
+            CommonUtil.deleteTempFile(fileId, packages);
+            throw new IllegalArgumentException("temp file is null");
+        }
+
+        try {
+            String filePath = tempFile.getCanonicalPath();
+            Map<String, String> checkResult = FileChecker.dependencyCheck(filePath);
+            result.put("dependency", checkResult);
+        } catch (IOException e) {
+            LOGGER.error("get caninical path failed. {}", e.getMessage());
+        } catch (JSONException e) {
+            LOGGER.error("JSONObject put failed. {}", e.getMessage());
+        } finally {
+            CommonUtil.deleteTempFile(fileId, packages);
+        }
+
+        return result;
+    }
+
     /**
      * init batch task info and store to db.
      * 
@@ -251,4 +279,5 @@ public class TaskServiceImpl implements TaskService {
 
         return testCaseDetail;
     }
+
 }
