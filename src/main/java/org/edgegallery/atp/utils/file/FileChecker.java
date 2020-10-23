@@ -16,24 +16,34 @@ package org.edgegallery.atp.utils.file;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.Normalizer;
 import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.edgegallery.atp.constant.Constant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 import com.google.common.io.Files;
 
 public class FileChecker {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileChecker.class);
 
     /**
      * check if file path is valid.
@@ -129,6 +139,59 @@ public class FileChecker {
             return "C:\\atp";
         } else {
             return "/usr/atp";
+        }
+    }
+
+    /**
+     * dependency application check
+     * 
+     * @param filePath
+     * @return dependency application info, key is appId and value is packageId
+     */
+    public static Map<String, String> dependencyCheck(String filePath) {
+        Map<String, String> result = new HashMap<String, String>();
+        try (ZipFile zipFile = new ZipFile(filePath)) {
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = entries.nextElement();
+                String[] pathSplit = entry.getName().split(Constant.SLASH);
+
+                // fileName/Definitions/MainServiceTemplate.yaml
+                if (pathSplit.length == 3 && Constant.DEFINITIONS.equals(pathSplit[1].trim())
+                        && Constant.MAIN_SERVICE_TEMPLATE_YAML.equals(pathSplit[2].trim())) {
+                    analysisDependency(result, zipFile, entry);
+                }
+            }
+        } catch (IOException e) {
+            LOGGER.error("dependency Check failed. {}", e.getMessage());
+        }
+        return result;
+    }
+
+    private static void analysisDependency(Map<String, String> result, ZipFile zipFile, ZipEntry entry) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry)))) {
+            String line = "";
+            while ((line = br.readLine()) != null && line.trim().startsWith(Constant.DEPENDENCE)) {
+                // -name
+                line = br.readLine().trim();
+                while (line != null && line.trim().startsWith(Constant.STRIKE)) {
+                    String appId = Constant.EMPTY;
+                    String packageId = Constant.EMPTY;
+                    while ((line = br.readLine()) != null && line.startsWith(" ")
+                            && !line.trim().startsWith(Constant.STRIKE)) {
+                        line = line.trim();
+                        if (line.startsWith(Constant.APP_ID)) {
+                            appId = line;
+                        } else if (line.startsWith(Constant.PACKAGE_ID)) {
+                            packageId = line;
+                        }
+                    }
+                    // TODO if no appId or packageId, throw exception or no?
+                    result.put(appId, packageId);
+                }
+            }
+        } catch (IOException e) {
+            LOGGER.error("analysis dependency failed. {}", e.getMessage());
         }
     }
 

@@ -2,6 +2,7 @@ package org.edgegallery.atp.service;
 
 import java.util.List;
 import org.edgegallery.atp.model.task.TaskRequest;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -48,4 +49,12 @@ public interface TaskService {
      * @return batch task id
      */
     public String createBatchTask(List<MultipartFile> packageList);
+
+    /**
+     * application dependency check.
+     * 
+     * @param package package file
+     * @return dependency application info.
+     */
+    public JSONObject dependencyCheck(MultipartFile packages);
 }

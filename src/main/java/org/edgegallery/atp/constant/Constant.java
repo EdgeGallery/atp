@@ -37,9 +37,21 @@ public interface Constant {
 
     String SLASH = "/";
 
-
     String COMMA = ",";
+
+    String STRIKE = "-";
+
     String APP_INSTANCE_ID = "appInstanceId";
+
+    String DEFINITIONS = "Definitions";
+
+    String MAIN_SERVICE_TEMPLATE_YAML = "MainServiceTemplate.yaml";
+
+    String DEPENDENCE = "dependence";
+
+    String APP_ID = "appId";
+
+    String PACKAGE_ID = "packageId";
 
     interface Status {
         String SUCCESS = "success";
