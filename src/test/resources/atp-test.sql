@@ -42,4 +42,5 @@ INSERT INTO public.test_case_table(
 ('4d203173-3333-4f62-aabb-8ebcec357f87','Suffix','','compliancesTest','org.edgegallery.atp.schedule.testcase.compliance.SuffixTestCase',''),
 ('4d203173-4444-4f62-aabb-8ebcec357f87','ToscaFile','','compliancesTest','org.edgegallery.atp.schedule.testcase.compliance.TOSCAFileTestCase',''),
 ('4d203173-5555-4f62-aabb-8ebcec357f87','Instantiate','','sandboxTest','org.edgegallery.atp.schedule.testcase.sandbox.InstantiateAppTestCase',''),
-('4d203173-6666-4f62-aabb-8ebcec357f87','UnInstantiate','','sandboxTest','org.edgegallery.atp.schedule.testcase.sandbox.UninstantiateAppTestCase','');
+('4d203173-6666-4f62-aabb-8ebcec357f87','UnInstantiate','','sandboxTest','org.edgegallery.atp.schedule.testcase.sandbox.UninstantiateAppTestCase',''),
+('4d203173-7777-4f62-aabb-8ebcec357f87','VirusScanning','','virusScanningTest','org.edgegallery.atp.schedule.testcase.virusScan.VirusScanTestCase','');

@@ -1,6 +1,7 @@
 package org.edgegallery.atp.service;
 
-import org.edgegallery.atp.model.testcase.TestCaseQueryRes;
+import java.util.List;
+import org.edgegallery.atp.model.testcase.TestCase;
 import org.springframework.http.ResponseEntity;
 
 public interface TestCaseService {
@@ -8,7 +9,8 @@ public interface TestCaseService {
     /**
      * query all test cases
      * 
+     * @param type test case type
      * @return all test cases info.
      */
-    public ResponseEntity<TestCaseQueryRes> getAllTestCases();
+    public ResponseEntity<List<TestCase>> getAllTestCases(String type);
 }

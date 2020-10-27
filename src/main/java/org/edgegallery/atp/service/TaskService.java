@@ -1,8 +1,8 @@
 package org.edgegallery.atp.service;
 
 import java.util.List;
+import org.edgegallery.atp.model.CommonActionRes;
 import org.edgegallery.atp.model.task.TaskRequest;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,7 +14,7 @@ public interface TaskService {
      * @param packages scar file
      * @return taskId
      */
-    public String createTask(MultipartFile packages);
+    public List<TaskRequest> createTask(List<MultipartFile> packages);
 
     /**
      * get task info by taskId
@@ -23,7 +23,7 @@ public interface TaskService {
      * @param taskid taskId
      * @return task information
      */
-    public ResponseEntity<List<TaskRequest>> getTaskById(String userId, String taskId);
+    public ResponseEntity<TaskRequest> getTaskById(String userId, String taskId);
 
     /**
      * get all task info
@@ -43,18 +43,10 @@ public interface TaskService {
     public String downloadTestReport(String taskId, String userId);
 
     /**
-     * create batch task
-     * 
-     * @param packageList package list
-     * @return batch task id
-     */
-    public String createBatchTask(List<MultipartFile> packageList);
-
-    /**
      * application dependency check.
      * 
      * @param package package file
      * @return dependency application info.
      */
-    public JSONObject dependencyCheck(MultipartFile packages);
+    public CommonActionRes dependencyCheck(MultipartFile packages);
 }

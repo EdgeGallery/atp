@@ -36,6 +36,8 @@ import java.util.zip.ZipInputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.edgegallery.atp.constant.Constant;
+import org.edgegallery.atp.utils.CommonUtil;
+import org.edgegallery.atp.utils.JSONUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
@@ -122,8 +124,10 @@ public class FileChecker {
             file.transferTo(result);
             unzip(tempFileAddress);
         } catch (IOException e) {
+            CommonUtil.deleteTempFile(taskId, file);
             throw new IllegalArgumentException("create temp file with IOException");
         } catch (IllegalStateException e) {
+            CommonUtil.deleteTempFile(taskId, file);
             throw new IllegalArgumentException(e.getMessage());
         }
         return result;
@@ -168,26 +172,32 @@ public class FileChecker {
         return result;
     }
 
+    public static void main(String[] args) {
+        System.out.print(JSONUtil.marshal(dependencyCheck("D:\\AR_app.csar")));
+    }
+
     private static void analysisDependency(Map<String, String> result, ZipFile zipFile, ZipEntry entry) {
         try (BufferedReader br = new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry)))) {
             String line = "";
-            while ((line = br.readLine()) != null && line.trim().startsWith(Constant.DEPENDENCE)) {
-                // -name
-                line = br.readLine().trim();
-                while (line != null && line.trim().startsWith(Constant.STRIKE)) {
-                    String appId = Constant.EMPTY;
-                    String packageId = Constant.EMPTY;
-                    while ((line = br.readLine()) != null && line.startsWith(" ")
-                            && !line.trim().startsWith(Constant.STRIKE)) {
-                        line = line.trim();
-                        if (line.startsWith(Constant.APP_ID)) {
-                            appId = line;
-                        } else if (line.startsWith(Constant.PACKAGE_ID)) {
-                            packageId = line;
+            while ((line = br.readLine()) != null) {
+                if (line.trim().startsWith(Constant.DEPENDENCE)) {
+                    // -name
+                    line = br.readLine().trim();
+                    while (line != null && line.trim().startsWith(Constant.STRIKE)) {
+                        String appId = Constant.EMPTY;
+                        String packageId = Constant.EMPTY;
+                        while ((line = br.readLine()) != null && line.startsWith(" ")
+                                && !line.trim().startsWith(Constant.STRIKE)) {
+                            line = line.trim();
+                            if (line.startsWith(Constant.APP_ID)) {
+                                appId = line.split(Constant.COLON)[1].trim();
+                            } else if (line.startsWith(Constant.PACKAGE_ID)) {
+                                packageId = line.split(Constant.COLON)[1].trim();
+                            }
                         }
+                        // TODO if no appId or packageId, throw exception or no?
+                        result.put(appId, packageId);
                     }
-                    // TODO if no appId or packageId, throw exception or no?
-                    result.put(appId, packageId);
                 }
             }
         } catch (IOException e) {

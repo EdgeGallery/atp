@@ -115,6 +115,8 @@ public interface Constant {
                 "/lcmcontroller/v1/tenants/appInstanceId/app_instances/appInstanceId/terminate";
 
         String INVENTORY_GET_MECHOSTS_URL = "/inventory/v1/tenants/tenantId/mechosts";
+
+        String APP_STORE_GET_APP_PACKAGE = "/mec/appstore/v1/apps/%s/packages/%s";
     }
 
 }

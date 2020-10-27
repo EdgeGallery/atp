@@ -14,16 +14,17 @@
 
 package org.edgegallery.atp.interfaces;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.validation.constraints.Pattern;
 import javax.ws.rs.core.MediaType;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
+import org.edgegallery.atp.model.CommonActionRes;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
@@ -67,10 +68,12 @@ public class TaskController {
             @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     // @PreAuthorize("hasRole('ATP_TENANT')")
-    public ResponseEntity<String> startTest(
-            @ApiParam(value = "test yaml files", required = true) @RequestPart("file") MultipartFile packages) {
+    public ResponseEntity<List<TaskRequest>> startTest(
+            @ApiParam(value = "application files", required = true) @RequestPart("file") MultipartFile packageList) {
         // TODO mock method for test locally.
         AccessTokenFilter.test();
+        List<MultipartFile> packages = new ArrayList<MultipartFile>();
+        packages.add(packageList);
         return ResponseEntity.ok(taskService.createTask(packages));
     }
 
@@ -109,7 +112,7 @@ public class TaskController {
             @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     // @PreAuthorize("hasRole('ATP_TENANT')")
-    public ResponseEntity<List<TaskRequest>> getTaskById(
+    public ResponseEntity<TaskRequest> getTaskById(
             @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId) {
         // TODO mock method for test locally.
         AccessTokenFilter.test();
@@ -136,29 +139,20 @@ public class TaskController {
                 .ok(taskService.downloadTestReport(taskId, AccessTokenFilter.context.get().get(Constant.USER_ID)));
     }
 
-    @PostMapping(value = "/batch/tasks", produces = MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "start batch test", response = String.class)
-    @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
-            @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
-            @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
-    // @PreAuthorize("hasRole('ATP_TENANT')")
-    public ResponseEntity<String> startBatchTest(@ApiParam(value = "test yaml file list",
-            required = true) @RequestPart("file") List<MultipartFile> packageList) {
-        // TODO mock method for test locally.
-        AccessTokenFilter.test();
-        return ResponseEntity.ok(taskService.createBatchTask(packageList));
-    }
-
     @PostMapping(value = "/common-action/analysis-app", produces = MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "application dependency check.", response = JSONObject.class)
+    @ApiOperation(value = "application dependency check.", response = CommonActionRes.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     // @PreAuthorize("hasRole('ATP_TENANT')")
-    public ResponseEntity<JSONObject> dependencyCheck(
-            @ApiParam(value = "test yaml files", required = true) @RequestPart("file") MultipartFile packages) {
+    public ResponseEntity<CommonActionRes> dependencyCheck(
+            @ApiParam(value = "application files", required = true) @RequestPart("file") MultipartFile packages) {
         // TODO mock method for test locally.
         AccessTokenFilter.test();
+        if (null == AccessTokenFilter.context.get()) {
+            throw new IllegalArgumentException("AccessTokenFilter.context is null");
+        }
         return ResponseEntity.ok(taskService.dependencyCheck(packages));
     }
+
 }

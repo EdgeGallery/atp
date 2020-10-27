@@ -35,4 +35,9 @@ public class TestCaseRepositoryImpl implements TestCaseRepository {
     public TestCase findByNameAndType(String name, String type) {
         return testCaseMapper.findByNameAndType(name, type);
     }
+
+    @Override
+    public List<TestCase> findTestCasesByType(String type) {
+        return testCaseMapper.findTestCasesByType(type);
+    }
 }

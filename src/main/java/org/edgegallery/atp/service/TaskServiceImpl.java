@@ -6,10 +6,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
-import org.edgegallery.atp.model.task.BatchTask;
+import org.edgegallery.atp.model.CommonActionRes;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.model.testcase.TestCaseDetail;
@@ -26,8 +25,6 @@ import org.edgegallery.atp.utils.file.FileChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -50,72 +47,9 @@ public class TaskServiceImpl implements TaskService {
     BatchTaskRepository batchTaskRepository;
 
     @Override
-    public String createTask(MultipartFile packages) {
-        TaskRequest task = new TaskRequest();
-        task.setId(CommonUtil.generateId());
-
-        try {
-            File tempFile = FileChecker.check(packages, task.getId());
-            if (null == tempFile) {
-                throw new IllegalArgumentException("temp file is null");
-            }
-            String filePath = tempFile.getCanonicalPath();
-
-            initTaskRequset(task, filePath);
-            taskRepository.insert(task);
-            testCaseManager.executeTestCase(task, filePath);
-        } catch (IOException e) {
-            LOGGER.error("create task failed.");
-            return null;
-        }
-
-        return task.getId();
-    }
-
-    @Override
-    public ResponseEntity<List<TaskRequest>> getAllTasks(String userId) {
-        return ResponseEntity.ok(taskRepository.findTaskByUserId(userId));
-    }
-
-    @Override
-    public ResponseEntity<List<TaskRequest>> getTaskById(String userId, String taskId) {
-        List<TaskRequest> taskList = new ArrayList<TaskRequest>();
-        String batchSubTask = batchTaskRepository.findBatchTask(taskId, userId);
-        if (StringUtils.isEmpty(batchSubTask)) {
-            // taskId is not batch task id, get single task id from taskTable
-            taskList.add(taskRepository.findByTaskIdAndUserId(taskId, userId));
-        } else {
-            // taskId is batch task id
-            String[] taskIdArray = batchSubTask.split(Constant.COMMA);
-            for (String id : taskIdArray) {
-                taskList.add(taskRepository.findByTaskIdAndUserId(id, userId));
-            }
-        }
-        return ResponseEntity.ok(taskList);
-    }
-
-    @Override
-    public String downloadTestReport(String taskId, String userId) {
-        Map<String, Object> result = new HashMap<String, Object>();
-        Yaml yaml = new Yaml();
-        String batchSubTask = batchTaskRepository.findBatchTask(taskId, userId);
-        if (StringUtils.isEmpty(batchSubTask)) {
-            // taskId is not batch task id, get single task id from taskTable
-            getTestCaseDetail(taskId, userId, result);
-        } else {
-            // taskId is batch task id
-            String[] taskIdArray = batchSubTask.split(Constant.COMMA);
-            for (String id : taskIdArray) {
-                getTestCaseDetail(id, userId, result);
-            }
-        }
-
-        return yaml.dump(result);
-    }
-
-    @Override
-    public String createBatchTask(List<MultipartFile> packageList) {
+    public List<TaskRequest> createTask(List<MultipartFile> packageList) {
         Map<String, File> tempFileList = new HashMap<String, File>();
+        List<TaskRequest> resultList = new ArrayList<TaskRequest>();
         StringBuffer subTaskId = new StringBuffer();
         packageList.forEach(file -> {
             String taskId = CommonUtil.generateId();
@@ -129,10 +63,10 @@ public class TaskServiceImpl implements TaskService {
 
         Map<String, String> context = AccessTokenFilter.context.get();
         if (null == context) {
+            // TODO delete temp file.
             throw new IllegalArgumentException("AccessTokenFilter.context is null");
         }
         User user = new User(context.get(Constant.USER_ID), context.get(Constant.USER_NAME));
-        String batchTaskId = initAndSaveBatchTask(user, subTaskId);
 
         tempFileList.forEach((taskId, tempFile) -> {
             try {
@@ -144,17 +78,43 @@ public class TaskServiceImpl implements TaskService {
                 initTaskRequset(task, filePath);
                 taskRepository.insert(task);
                 testCaseManager.executeTestCase(task, filePath);
+                resultList.add(task);
             } catch (IOException e) {
                 LOGGER.error("create task {} failed, file name is: {}", taskId, tempFile.getName());
             }
         });
 
-        return batchTaskId;
+        return resultList;
     }
 
     @Override
-    public JSONObject dependencyCheck(MultipartFile packages) {
-        JSONObject result = new JSONObject();
+    public ResponseEntity<List<TaskRequest>> getAllTasks(String userId) {
+        return ResponseEntity.ok(taskRepository.findTaskByUserId(userId));
+    }
+
+    @Override
+    public ResponseEntity<TaskRequest> getTaskById(String userId, String taskId) {
+        return ResponseEntity.ok((taskRepository.findByTaskIdAndUserId(taskId, userId)));
+    }
+
+    @Override
+    public String downloadTestReport(String taskId, String userId) {
+        Map<String, Object> result = new HashMap<String, Object>();
+        Yaml yaml = new Yaml();
+        TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, userId);
+
+        if (null != task) {
+            TestCaseDetail testcaseDetail = task.getTestCaseDetail();
+            String str = JSONUtil.marshal(testcaseDetail).replaceAll("\\[|\\]", "");
+            Map<String, Object> map = JSONUtil.unMarshal(str, Map.class);
+            result.put(taskId, map);
+        }
+        return yaml.dump(result);
+    }
+
+    @Override
+    public CommonActionRes dependencyCheck(MultipartFile packages) {
+        CommonActionRes result = new CommonActionRes();
         String fileId = CommonUtil.generateId();
 
         File tempFile = FileChecker.check(packages, fileId);
@@ -165,12 +125,15 @@ public class TaskServiceImpl implements TaskService {
 
         try {
             String filePath = tempFile.getCanonicalPath();
-            Map<String, String> checkResult = FileChecker.dependencyCheck(filePath);
-            result.put("dependency", checkResult);
+            // key is appId, value is packageId
+            Map<String, String> appPackageIdMap = FileChecker.dependencyCheck(filePath);
+            Map<String, String> getDependencyInfo = new HashMap<String, String>();
+            appPackageIdMap.forEach((appId, appPackageId) -> {
+                CommonUtil.getAppInfoFromAppStore(getDependencyInfo, appId, appPackageId);
+            });
+            result.setDependency(getDependencyInfo);
         } catch (IOException e) {
             LOGGER.error("get caninical path failed. {}", e.getMessage());
-        } catch (JSONException e) {
-            LOGGER.error("JSONObject put failed. {}", e.getMessage());
         } finally {
             CommonUtil.deleteTempFile(fileId, packages);
         }
@@ -178,38 +141,6 @@ public class TaskServiceImpl implements TaskService {
         return result;
     }
 
-    /**
-     * init batch task info and store to db.
-     * 
-     * @param user user info
-     * @param subTaskId subTaskId field
-     * @return batch task id.
-     */
-    private String initAndSaveBatchTask(User user, StringBuffer subTaskId) {
-        BatchTask batchTask = new BatchTask();
-        batchTask.setId(CommonUtil.generateId());
-        batchTask.setUserId(user.getUserId());
-        batchTask.setUserName(user.getUserName());
-        batchTask.setSubTaskId(subTaskId.substring(0, subTaskId.length() - 1));
-        batchTaskRepository.insert(batchTask);
-        return batchTask.getId();
-    }
-
-    /**
-     * query task and get testCaseDetail, convert it to map patterm
-     * 
-     * @param task task
-     * @return testCaseDetail of map pattern
-     */
-    private void getTestCaseDetail(String taskId, String userId, Map<String, Object> result) {
-        TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, userId);
-        if (null != task) {
-            TestCaseDetail testcaseDetail = task.getTestCaseDetail();
-            String str = JSONUtil.marshal(testcaseDetail).replaceAll("\\[|\\]", "");
-            Map<String, Object> map = JSONUtil.unMarshal(str, Map.class);
-            result.put(taskId, map);
-        }
-    }
 
     /**
      * init taskRequest Model

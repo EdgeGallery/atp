@@ -37,4 +37,12 @@ public interface TestCaseMapper {
      * @return test case list
      */
     List<TestCase> findAllTestCases();
+
+    /**
+     * find test cases by type.
+     * 
+     * @param type test case type
+     * @return test case info list.
+     */
+    List<TestCase> findTestCasesByType(@Param("type") String type);
 }
