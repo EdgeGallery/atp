@@ -14,10 +14,11 @@
 
 package org.edgegallery.atp.interfaces;
 
+import java.util.List;
 import javax.ws.rs.core.MediaType;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
 import org.edgegallery.atp.model.task.TaskRequest;
-import org.edgegallery.atp.model.testcase.TestCaseQueryRes;
+import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.service.TestCaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -53,8 +55,8 @@ public class TestCaseController {
             @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     // @PreAuthorize("hasRole('ATP_TENANT')")
-    public ResponseEntity<TestCaseQueryRes> getAllTestCases() {
-        return testCaseService.getAllTestCases();
+    public ResponseEntity<List<TestCase>> getAllTestCases(@RequestParam("type") String type) {
+        return testCaseService.getAllTestCases(type);
     }
 
 }

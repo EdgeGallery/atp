@@ -28,5 +28,10 @@
             resultType="org.edgegallery.atp.model.testcase.TestCase">
         select * from test_case_table
     </select>
+    
+    <select id="findTestCasesByType"
+            resultType="org.edgegallery.atp.model.testcase.TestCase">
+        select * from test_case_table where type = #{type}
+    </select>
 
 </mapper>

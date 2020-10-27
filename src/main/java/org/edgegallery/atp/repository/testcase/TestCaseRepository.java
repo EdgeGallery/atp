@@ -20,4 +20,11 @@ public interface TestCaseRepository {
      * @return
      */
     TestCase findByNameAndType(String name, String type);
+
+    /**
+     * 
+     * @param type test case type
+     * @return
+     */
+    List<TestCase> findTestCasesByType(String type);
 }
