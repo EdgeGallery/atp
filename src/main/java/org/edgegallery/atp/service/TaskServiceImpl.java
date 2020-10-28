@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
 import org.edgegallery.atp.model.CommonActionRes;
@@ -29,6 +30,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.yaml.snakeyaml.Yaml;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 @Service("TaskService")
 public class TaskServiceImpl implements TaskService {
@@ -126,10 +129,17 @@ public class TaskServiceImpl implements TaskService {
         try {
             String filePath = tempFile.getCanonicalPath();
             // key is appId, value is packageId
-            Map<String, String> appPackageIdMap = FileChecker.dependencyCheck(filePath);
+            Stack<Map<String, String>> dependencyAppList = new Stack<Map<String, String>>();
+            CommonUtil.dependencyCheckSchdule(filePath, dependencyAppList);
             Map<String, String> getDependencyInfo = new HashMap<String, String>();
-            appPackageIdMap.forEach((appId, appPackageId) -> {
-                CommonUtil.getAppInfoFromAppStore(getDependencyInfo, appId, appPackageId);
+            dependencyAppList.forEach(map -> {
+                JsonObject response =
+                        CommonUtil.getAppInfoFromAppStore(map.get(Constant.APP_ID), map.get(Constant.PACKAGE_ID));
+                if (null != response) {
+                    JsonElement appName = response.get("name");
+                    JsonElement appVersion = response.get("version");
+                    getDependencyInfo.put(appName.getAsString(), appVersion.getAsString());
+                }
             });
             result.setDependency(getDependencyInfo);
         } catch (IOException e) {

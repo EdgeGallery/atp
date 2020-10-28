@@ -43,6 +43,8 @@ public interface Constant {
 
     String APP_INSTANCE_ID = "appInstanceId";
 
+    String DEPENDENCY_APP_INSTANCE_ID = "dependencyAppInstanceId";
+
     String DEFINITIONS = "Definitions";
 
     String MAIN_SERVICE_TEMPLATE_YAML = "MainServiceTemplate.yaml";
@@ -101,22 +103,17 @@ public interface Constant {
     }
 
     interface URL {
-        /**
-         * /lcmcontroller/v1/tenants/{tenantId}/app_instances/{appInstanceId}/instantiate tenantId replaced
-         * by appInstanceId is for variables replacement
-         */
-        String APP_LCM_INSTANTIATE_APP_URL =
-                "/lcmcontroller/v1/tenants/appInstanceId/app_instances/appInstanceId/instantiate";
-
-        /**
-         * /lcmcontroller/v1/tenants/{tenantId}/app_instances/{appInstanceId}/terminate
-         */
-        String APP_LCM_TERMINATE_APP_URL =
-                "/lcmcontroller/v1/tenants/appInstanceId/app_instances/appInstanceId/terminate";
-
         String INVENTORY_GET_MECHOSTS_URL = "/inventory/v1/tenants/tenantId/mechosts";
 
         String APP_STORE_GET_APP_PACKAGE = "/mec/appstore/v1/apps/%s/packages/%s";
+
+        String APP_STORE_DOWNLOAD_CSAR = "/mec/appstore/v1/apps/%s/packages/%s/action/download";
+
+        String APM_UPLOAD_PACKAGE = "/apm/v1/tenants/{tenant_id}/packages/upload";
+
+        String APPO_CREATE_APPINSTANCE = "/appo/v1/tenants/{tenant_id}/app_instances";
+
+        String APPO_DELETE_APPLICATION_INSTANCE = "/appo/v1/tenants/{tenant_id}/app_instances/{app_instance_id}";
     }
 
 }

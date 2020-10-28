@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.Normalizer;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -150,10 +151,10 @@ public class FileChecker {
      * dependency application check
      * 
      * @param filePath
-     * @return dependency application info, key is appId and value is packageId
+     * @return dependency application info list, contains appName,appId and appPackageId.
      */
-    public static Map<String, String> dependencyCheck(String filePath) {
-        Map<String, String> result = new HashMap<String, String>();
+    public static List<Map<String, String>> dependencyCheck(String filePath) {
+        List<Map<String, String>> result = new ArrayList<Map<String, String>>();
         try (ZipFile zipFile = new ZipFile(filePath)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
@@ -176,7 +177,7 @@ public class FileChecker {
         System.out.print(JSONUtil.marshal(dependencyCheck("D:\\AR_app.csar")));
     }
 
-    private static void analysisDependency(Map<String, String> result, ZipFile zipFile, ZipEntry entry) {
+    private static void analysisDependency(List<Map<String, String>> result, ZipFile zipFile, ZipEntry entry) {
         try (BufferedReader br = new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry)))) {
             String line = "";
             while ((line = br.readLine()) != null) {
@@ -184,19 +185,19 @@ public class FileChecker {
                     // -name
                     line = br.readLine().trim();
                     while (line != null && line.trim().startsWith(Constant.STRIKE)) {
-                        String appId = Constant.EMPTY;
-                        String packageId = Constant.EMPTY;
+                        Map<String, String> map = new HashMap<String, String>();
+                        map.put(Constant.APP_NAME, line.split(Constant.COLON)[1].trim());
                         while ((line = br.readLine()) != null && line.startsWith(" ")
                                 && !line.trim().startsWith(Constant.STRIKE)) {
                             line = line.trim();
                             if (line.startsWith(Constant.APP_ID)) {
-                                appId = line.split(Constant.COLON)[1].trim();
+                                map.put(Constant.APP_ID, line.split(Constant.COLON)[1].trim());
                             } else if (line.startsWith(Constant.PACKAGE_ID)) {
-                                packageId = line.split(Constant.COLON)[1].trim();
+                                map.put(Constant.PACKAGE_ID, line.split(Constant.COLON)[1].trim());
                             }
                         }
                         // TODO if no appId or packageId, throw exception or no?
-                        result.put(appId, packageId);
+                        result.add(map);
                     }
                 }
             }

@@ -23,13 +23,16 @@ public interface ExceptionConstant {
     }
 
     interface InstantiateAppTestCase {
-        String SEND_REQUEST_TO_APPLCM_FAILED = "send instantiate request to applcm failed.";
-        String RESPONSE_FROM_APPLCM_FAILED = "instantiate app failed, and the response code is: ";
+        String RESPONSE_FROM_APM_FAILED = "upload csar file to apm failed, and the response code is: ";
+        String INSTANTIATE_DEPENDENCE_APP_FAILED =
+                "instantiate dependence app failed, the name of failed dependenced app are: ";
+        String INSTANTIATE_APP_FAILED = "instantiate app from appo failed.";
     }
 
     interface UninstantiateAppTestCase {
-        String SEND_REQUEST_TO_APPLCM_FAILED = "send terminate app instance request to applcm failed.";
-        String RESPONSE_FROM_APPLCM_FAILED = "terminate app instance failed, and the response code is: ";
+        String UNINSTANTIATE_DEPENDENCE_APP_FAILED =
+                "delete instantiate dependence app failed, the appInstanceId of failed dependenced app are: ";
+        String UNINSTANTIATE_APP_FAILED = "delete instantiate app from appo failed, the appInstanceId is: ";
     }
 
     interface VirusScanTestCase {
