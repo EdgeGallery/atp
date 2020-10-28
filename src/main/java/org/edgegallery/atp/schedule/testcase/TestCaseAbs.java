@@ -13,13 +13,13 @@ import org.springframework.stereotype.Component;
 public abstract class TestCaseAbs {
 
     @Value("${applcm.host.ip}")
-    public String applcmIp;
+    public String appoIp;
 
     @Value("${applcm.host.port}")
-    public String applcmPort;
+    public String appoPort;
 
     @Value("${applcm.host.protocol}")
-    public String applcmProtoctol;
+    public String appoProtoctol;
 
     @Value("${inventory.host.ip}")
     public String inventoryIp;
