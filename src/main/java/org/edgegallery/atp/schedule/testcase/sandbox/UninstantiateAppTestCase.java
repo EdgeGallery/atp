@@ -13,7 +13,6 @@ import org.edgegallery.atp.utils.CommonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * terminate app instance.
@@ -21,8 +20,6 @@ import org.springframework.web.client.RestTemplate;
  */
 public class UninstantiateAppTestCase extends TestCaseAbs {
     private static final Logger LOGGER = LoggerFactory.getLogger(UninstantiateAppTestCase.class);
-
-    private RestTemplate REST_TEMPLATE = new RestTemplate();
 
     private TestCaseResult testCaseResult = new TestCaseResult();
 
@@ -43,7 +40,6 @@ public class UninstantiateAppTestCase extends TestCaseAbs {
         }
 
         if (!CollectionUtils.isEmpty(failedInstance)) {
-            // TODO EXCEPTION DETAIL
             return setTestCaseResult(Constant.Status.FAILED,
                     ExceptionConstant.UninstantiateAppTestCase.UNINSTANTIATE_DEPENDENCE_APP_FAILED
                             .concat(failedInstance.toString()),

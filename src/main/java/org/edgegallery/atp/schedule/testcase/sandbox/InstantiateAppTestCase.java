@@ -13,16 +13,12 @@ import org.edgegallery.atp.schedule.testcase.TestCaseAbs;
 import org.edgegallery.atp.utils.CommonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import com.google.gson.JsonArray;
@@ -44,82 +40,65 @@ public class InstantiateAppTestCase extends TestCaseAbs {
 
     @Override
     public TestCaseResult execute(String filePath, Map<String, String> context) {
-        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        body.add("file", new FileSystemResource(filePath));
-        body.add("hostList", getMecHost(context));
-        // TODO 2 PARAMETERS
+        Map<String, String> packageInfo = CommonUtil.getPackageInfo(filePath);
+        ResponseEntity<String> response =
+                CommonUtil.uploadFileToAPM(
+                        filePath, context, appoProtoctol.concat(Constant.COLON).concat(Constant.DOUBLE_SLASH)
+                                .concat(appoIp).concat(Constant.COLON).concat(appoPort),
+                        getMecHost(context), packageInfo);
+        if (null == response || !HttpStatus.OK.equals(response.getStatusCode())) {
+            return setTestCaseResult(Constant.Status.FAILED,
+                    ExceptionConstant.InstantiateAppTestCase.RESPONSE_FROM_APM_FAILED
+                            .concat(response.getStatusCode().toString()),
+                    testCaseResult);
+        }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-        headers.set(Constant.ACCESS_TOKEN, context.get(Constant.ACCESS_TOKEN));
-
-        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
-
-        String url = appoProtoctol.concat(Constant.COLON).concat(Constant.DOUBLE_SLASH).concat(appoIp)
-                .concat(Constant.COLON).concat(appoPort)
-                .concat(String.format(Constant.URL.APM_UPLOAD_PACKAGE, context.get(Constant.TENANT_ID)));
-        try {
-            ResponseEntity<String> response = REST_TEMPLATE.exchange(url, HttpMethod.POST, requestEntity, String.class);
-
-            if (!HttpStatus.OK.equals(response.getStatusCode())) {
-                return setTestCaseResult(Constant.Status.FAILED,
-                        ExceptionConstant.InstantiateAppTestCase.RESPONSE_FROM_APM_FAILED
-                                .concat(response.getStatusCode().toString()),
-                        testCaseResult);
+        JsonObject jsonObject = new JsonParser().parse(response.getBody()).getAsJsonObject();
+        Map<String, String> appInfo = new HashMap<String, String>() {
+            {
+                put(Constant.APP_NAME, packageInfo.get(Constant.APP_NAME));
+                put(Constant.APP_ID, jsonObject.get("appId").getAsString());
+                put(Constant.PACKAGE_ID, jsonObject.get("appPackageId").getAsString());
             }
+        };
 
-            JsonObject jsonObject = new JsonParser().parse(response.getBody()).getAsJsonObject();
-            Map<String, String> appInfo = new HashMap<String, String>() {
-                {
-                    // TODO APP_NAME
-                    put(Constant.APP_NAME, "");
-                    put(Constant.APP_ID, jsonObject.get("appId").getAsString());
-                    put(Constant.PACKAGE_ID, jsonObject.get("appPackageId").getAsString());
-                }
-            };
+        StringBuffer appInstanceList = new StringBuffer();
+        // analysis dependency app.
+        Stack<Map<String, String>> dependencyAppList = new Stack<Map<String, String>>();
+        CommonUtil.dependencyCheckSchdule(filePath, dependencyAppList);
 
-            StringBuffer appInstanceList = new StringBuffer();
-            // analysis dependency app.
-            Stack<Map<String, String>> dependencyAppList = new Stack<Map<String, String>>();
-            CommonUtil.dependencyCheckSchdule(filePath, dependencyAppList);
-
-            List<String> failedAppName = new ArrayList<String>();
-            dependencyAppList.forEach(map -> {
-                String instanceId = CommonUtil.createInstanceFromAppo(filePath, context, map, getMecHost(context),
-                        appoProtoctol.concat(Constant.COLON).concat(Constant.DOUBLE_SLASH).concat(appoIp)
-                                .concat(Constant.COLON).concat(appoPort));
-                if (null == instanceId) {
-                    failedAppName.add(map.get(Constant.APP_NAME));
-                } else {
-                    appInstanceList.append(instanceId).append(Constant.COMMA);
-                }
-            });
-
-            context.put(Constant.DEPENDENCY_APP_INSTANCE_ID, appInstanceList.toString());
-
-            // some dependence app instantiate failed.
-            if (!CollectionUtils.isEmpty(failedAppName)) {
-                return setTestCaseResult(Constant.Status.FAILED,
-                        ExceptionConstant.InstantiateAppTestCase.INSTANTIATE_DEPENDENCE_APP_FAILED
-                                .concat(failedAppName.toString()),
-                        testCaseResult);
-            }
-
-            // instantiate original app
-            String appInstanceId = CommonUtil.createInstanceFromAppo(filePath, context, appInfo, getMecHost(context),
+        List<String> failedAppName = new ArrayList<String>();
+        dependencyAppList.forEach(map -> {
+            String instanceId = CommonUtil.createInstanceFromAppo(filePath, context, map, getMecHost(context),
                     appoProtoctol.concat(Constant.COLON).concat(Constant.DOUBLE_SLASH).concat(appoIp)
                             .concat(Constant.COLON).concat(appoPort));
-            context.put(Constant.APP_INSTANCE_ID, appInstanceId);
+            if (null == instanceId) {
+                failedAppName.add(map.get(Constant.APP_NAME));
+            } else {
+                appInstanceList.append(instanceId).append(Constant.COMMA);
+            }
+        });
 
-            return null != appInstanceId ? setTestCaseResult(Constant.Status.SUCCESS, Constant.EMPTY, testCaseResult)
-                    : setTestCaseResult(Constant.Status.FAILED,
-                            ExceptionConstant.InstantiateAppTestCase.INSTANTIATE_APP_FAILED, testCaseResult);
+        context.put(Constant.DEPENDENCY_APP_INSTANCE_ID, appInstanceList.toString());
 
-        } catch (RestClientException e) {
-            LOGGER.error("Failed to upload file to apm, exception {}", e.getMessage());
+        // some dependence app instantiate failed.
+        if (!CollectionUtils.isEmpty(failedAppName)) {
             return setTestCaseResult(Constant.Status.FAILED,
-                    ExceptionConstant.InstantiateAppTestCase.RESPONSE_FROM_APM_FAILED, testCaseResult);
+                    ExceptionConstant.InstantiateAppTestCase.INSTANTIATE_DEPENDENCE_APP_FAILED
+                            .concat(failedAppName.toString()),
+                    testCaseResult);
         }
+
+        // instantiate original app
+        String appInstanceId = CommonUtil.createInstanceFromAppo(filePath, context, appInfo, getMecHost(context),
+                appoProtoctol.concat(Constant.COLON).concat(Constant.DOUBLE_SLASH).concat(appoIp).concat(Constant.COLON)
+                        .concat(appoPort));
+        context.put(Constant.APP_INSTANCE_ID, appInstanceId);
+
+        return null != appInstanceId ? setTestCaseResult(Constant.Status.SUCCESS, Constant.EMPTY, testCaseResult)
+                : setTestCaseResult(Constant.Status.FAILED,
+                        ExceptionConstant.InstantiateAppTestCase.INSTANTIATE_APP_FAILED, testCaseResult);
+
     }
 
     /**
