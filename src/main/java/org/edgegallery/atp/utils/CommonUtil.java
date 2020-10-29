@@ -1,17 +1,25 @@
 package org.edgegallery.atp.utils;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.UUID;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
 import org.edgegallery.atp.utils.file.FileChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -214,5 +222,72 @@ public class CommonUtil {
         }
 
         return false;
+    }
+
+    /**
+     * get package info from csar file.
+     * 
+     * @param filePath file path
+     * @return package info
+     */
+    public static Map<String, String> getPackageInfo(String filePath) {
+        Map<String, String> packageInfo = new HashMap<String, String>();
+        try (ZipFile zipFile = new ZipFile(filePath)) {
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = entries.nextElement();
+                if (entry.getName().split(Constant.SLASH).length == 2
+                        && TestCaseUtil.fileSuffixValidate("mf", entry.getName())) {
+                    try (BufferedReader br = new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry)))) {
+                        String line = "";
+                        while ((line = br.readLine()) != null) {
+                            // prefix: path
+                            if (line.trim().startsWith("app_name")) {
+                                packageInfo.put(Constant.APP_NAME, line.split(Constant.COLON)[1].trim());
+                            }
+                            if (line.trim().startsWith("app_archive_version")) {
+                                packageInfo.put(Constant.APP_VERSION, line.split(Constant.COLON)[1].trim());
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            LOGGER.error("getPackageInfo failed. {}", e.getMessage());
+        }
+        return packageInfo;
+    }
+
+    /**
+     * upload file to apm service.
+     * 
+     * @param filePath file path
+     * @param context context info
+     * @param ipPort protocol://ip:port
+     * @param hostIp host ip
+     * @return response from atp
+     */
+    public static ResponseEntity<String> uploadFileToAPM(String filePath, Map<String, String> context, String ipPort,
+            String hostIp, Map<String, String> packageInfo) {
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("file", new FileSystemResource(filePath));
+        body.add("hostList", hostIp);
+        body.add("appPackageName", packageInfo.get(Constant.APP_NAME));
+        body.add("appPackageVersion", packageInfo.get(Constant.APP_VERSION));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        headers.set(Constant.ACCESS_TOKEN, context.get(Constant.ACCESS_TOKEN));
+
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+        String url = ipPort.concat(String.format(Constant.URL.APM_UPLOAD_PACKAGE, context.get(Constant.TENANT_ID)));
+        try {
+            ResponseEntity<String> response = REST_TEMPLATE.exchange(url, HttpMethod.POST, requestEntity, String.class);
+            return response;
+        } catch (RestClientException e) {
+            LOGGER.error("Failed to upload file to apm, exception {}", e.getMessage());
+        }
+        return null;
     }
 }
