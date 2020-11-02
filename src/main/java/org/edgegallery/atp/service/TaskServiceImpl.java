@@ -1,7 +1,9 @@
 package org.edgegallery.atp.service;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +28,9 @@ import org.edgegallery.atp.utils.file.FileChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -101,7 +106,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public String downloadTestReport(String taskId, String userId) {
+    public ResponseEntity<InputStreamResource> downloadTestReport(String taskId, String userId) {
         Map<String, Object> result = new HashMap<String, Object>();
         Yaml yaml = new Yaml();
         TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, userId);
@@ -112,7 +117,12 @@ public class TaskServiceImpl implements TaskService {
             Map<String, Object> map = JSONUtil.unMarshal(str, Map.class);
             result.put(taskId, map);
         }
-        return yaml.dump(result);
+        String yamlStr = yaml.dump(result);
+        InputStream yamlStream = new ByteArrayInputStream(yamlStr.getBytes());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/octet-stream");
+        return new ResponseEntity<>(new InputStreamResource(yamlStream), headers, HttpStatus.OK);
     }
 
     @Override

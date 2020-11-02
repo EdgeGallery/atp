@@ -25,6 +25,7 @@ import org.edgegallery.atp.model.CommonActionRes;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
@@ -123,20 +124,19 @@ public class TaskController {
     }
 
     @GetMapping(value = "/tasks/{taskId}/action/download", produces = MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "download test report", response = String.class)
+    @ApiOperation(value = "download test report", response = InputStreamResource.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     // @PreAuthorize("hasRole('ATP_TENANT')")
-    public ResponseEntity<String> downloadTestReport(
+    public ResponseEntity<InputStreamResource> downloadTestReport(
             @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId) {
         // TODO mock method for test locally.
         AccessTokenFilter.test();
         if (null == AccessTokenFilter.context.get()) {
             throw new IllegalArgumentException("AccessTokenFilter.context is null");
         }
-        return ResponseEntity
-                .ok(taskService.downloadTestReport(taskId, AccessTokenFilter.context.get().get(Constant.USER_ID)));
+        return taskService.downloadTestReport(taskId, AccessTokenFilter.context.get().get(Constant.USER_ID));
     }
 
     @PostMapping(value = "/common-action/analysis-app", produces = MediaType.APPLICATION_JSON)
