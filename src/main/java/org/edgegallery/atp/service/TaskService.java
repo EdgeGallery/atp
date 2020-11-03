@@ -3,6 +3,7 @@ package org.edgegallery.atp.service;
 import java.util.List;
 import org.edgegallery.atp.model.CommonActionRes;
 import org.edgegallery.atp.model.task.TaskRequest;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,7 +32,7 @@ public interface TaskService {
      * @param user userInfo
      * @return taskInformation list
      */
-    public ResponseEntity<List<TaskRequest>> getAllTasks(String userId);
+    public ResponseEntity<List<TaskRequest>> getAllTasks(String userId, String appName, String status);
 
     /**
      * download test report by taskId and userId
@@ -40,7 +41,7 @@ public interface TaskService {
      * @param userId
      * @return
      */
-    public String downloadTestReport(String taskId, String userId);
+    public ResponseEntity<InputStreamResource> downloadTestReport(String taskId, String userId);
 
     /**
      * application dependency check.
