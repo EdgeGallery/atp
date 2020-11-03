@@ -96,8 +96,8 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public ResponseEntity<List<TaskRequest>> getAllTasks(String userId) {
-        return ResponseEntity.ok(taskRepository.findTaskByUserId(userId));
+    public ResponseEntity<List<TaskRequest>> getAllTasks(String userId, String appName, String status) {
+        return ResponseEntity.ok(taskRepository.findTaskByUserId(userId, appName, status));
     }
 
     @Override

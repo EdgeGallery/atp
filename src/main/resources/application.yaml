@@ -8,7 +8,7 @@ servicecomb:
   service:
     registry:
       address: ${SC_ADDRESS}
-  publishAddress: 119.3.33.157
+    publishAddress: 119.3.33.157
   rest:
     address: ${LISTEN_IP:0.0.0.0}:8073
     servlet:

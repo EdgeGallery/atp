@@ -26,7 +26,8 @@ public interface TaskMapper {
      * @param userId
      * @return
      */
-    List<TaskPO> findTaskByUserId(String userId);
+    List<TaskPO> findTaskByUserId(@Param("userId") String userId, @Param("appName") String appName,
+            @Param("status") String status);
 
     Number countTotal(PageCriteria pageCriteria);
 

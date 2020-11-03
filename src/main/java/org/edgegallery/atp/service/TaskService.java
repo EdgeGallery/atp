@@ -32,7 +32,7 @@ public interface TaskService {
      * @param user userInfo
      * @return taskInformation list
      */
-    public ResponseEntity<List<TaskRequest>> getAllTasks(String userId);
+    public ResponseEntity<List<TaskRequest>> getAllTasks(String userId, String appName, String status);
 
     /**
      * download test report by taskId and userId

@@ -41,7 +41,18 @@
 
 	<select id="findTaskByUserId" resultType="org.edgegallery.atp.model.task.TaskPO"
 		parameterType="String">
-		select * from task_table where userId = #{userId}
+		select * from task_table
+		<where>
+			<if test="userId != null">
+				userId = #{userId}
+			</if>
+			<if test="appName != null">
+				and appName = #{appName}
+			</if>
+			<if test="status != null">
+				and status = #{status}
+			</if>
+		</where>
 	</select>
 
 	<delete id="delHisTask">
