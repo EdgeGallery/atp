@@ -17,6 +17,7 @@ package org.edgegallery.atp.interfaces;
 import java.util.ArrayList;
 import java.util.List;
 import javax.validation.constraints.Pattern;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
 import org.edgegallery.atp.constant.Constant;
@@ -33,7 +34,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 import io.swagger.annotations.Api;
@@ -91,8 +91,8 @@ public class TaskController {
             @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     // @PreAuthorize("hasRole('ATP_TENANT')")
-    public ResponseEntity<List<TaskRequest>> getAllTasks(@RequestParam("appName") String appName,
-            @RequestParam("status") String status) {
+    public ResponseEntity<List<TaskRequest>> getAllTasks(@QueryParam("appName") String appName,
+            @QueryParam("status") String status) {
         // TODO mock method for test locally.
         AccessTokenFilter.test();
         if (null == AccessTokenFilter.context.get()) {

@@ -48,10 +48,11 @@ public class MainServer {
 
             public void checkServerTrusted(X509Certificate[] certs, String authType) {}
         }};
-        SSLContext sc = SSLContext.getInstance("SSL");
+        SSLContext sc = SSLContext.getInstance("TLSv1.2");
         sc.init(null, trustAllCerts, new java.security.SecureRandom());
         HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
         HttpsURLConnection.setDefaultHostnameVerifier(NoopHostnameVerifier.INSTANCE);
         SpringApplication.run(MainServer.class, args);
+
     }
 }
