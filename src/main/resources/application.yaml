@@ -30,7 +30,7 @@ server:
     key-alias: ${SSL_KEY_ALIAS:}
 spring:
   datasource:
-    url: jdbc:postgresql://${POSTGRES_IP:appstore-be-postgres-svc}:${POSTGRES_PORT:5432}/${POSTGRES_DB_NAME:appstoredb}
+    url: jdbc:postgresql://${POSTGRES_IP:atp-postgres-svc}:${POSTGRES_PORT:5432}/${POSTGRES_DB_NAME:atpdb}
     username: ${POSTGRES_USERNAME}
     password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
@@ -44,15 +44,15 @@ spring:
     default-property-inclusion: non_null
 applcm:
   host:
-    ip: ${host_ip}
-    port: ${host_port}
-    protocol: ${host_protocol}
+    ip: ${APPLCM_HOST_IP}
+    port: ${APPLCM_HOST_PORT}
+    protocol: ${APPLCM_HOST_PROTOCOL}
 
 inventory:
   host:
-    ip: ${host_ip}
-    port: ${host_port}
-    protocol: ${host_protocol}
+    ip: ${INVENTORY_HOST_IP}
+    port: ${INVENTORY_HOST_PORT}
+    protocol: ${INVENTORY_HOST_PROTOCOL}
 
 ###mybtis####
 mybatis:
