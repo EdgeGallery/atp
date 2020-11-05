@@ -26,7 +26,7 @@ public class TestCaseHandler {
     /**
      * dynamic schedule test case
      * 
-     * @param pkgPth org.appstore.mec.domain.model.testcase.draft.SuffixTestCase
+     * @param pkgPth org.edgegallery.atp.schedule.testcase.compliance.SuffixTestCase
      * @param filePath filePath
      * @param context context info
      * @return

@@ -40,7 +40,7 @@ ATP (Application test platform)是应用测试认证的平台，通过构建统�
     # ip or service name in k8s
     servicecenter.ip=127.0.0.1
     servicecenter.port=30100
-    servicecomb.name=mec-appstore
+    servicecomb.name=application-test-platform
     ```
 
 - ### 编译打包

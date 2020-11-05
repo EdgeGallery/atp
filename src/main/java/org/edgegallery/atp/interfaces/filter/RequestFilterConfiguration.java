@@ -32,7 +32,7 @@ public class RequestFilterConfiguration {
     public FilterRegistrationBean<OncePerRequestFilter> authFilterRegistrationBean() {
         FilterRegistrationBean<OncePerRequestFilter> registration = new FilterRegistrationBean<>();
         registration.setFilter(new HttpTraceLogFilter());
-        registration.addUrlPatterns("/mec/appstore/v1/*");
+        registration.addUrlPatterns("/edgegallery/atp/v1/*");
         registration.setName("HttpTraceLogFilter");
         return registration;
     }
