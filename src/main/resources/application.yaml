@@ -1,21 +1,21 @@
 servicecomb-config-order: 1
-APPLICATION_ID: openMec
+APPLICATION_ID: edgegallery
 service_description:
-  name: application-test-platform
+  name: mec-atp
   version: 1.1.0
   environment: development
 servicecomb:
   service:
     registry:
       address: ${SC_ADDRESS}
-    publishAddress: 119.3.33.157
+#    publishAddress: 119.3.33.157
   rest:
     address: ${LISTEN_IP:0.0.0.0}:8073
     servlet:
       urlPattern: /cse/*
   uploads:
-#    directory: /usr/atp
-    directory: c:\atp
+    directory: /usr/atp
+#    directory: c:\atp
     maxSize: -1
 #  request:
 #    timeout: 18000000
@@ -58,8 +58,8 @@ inventory:
 mybatis:
   mapper-locations: classpath:mybatis/sql/*.xml
 
-#security:
-#  oauth2:
-#    resource:
-#      jwt:
-#        key-uri: ${AUTH_SERVER_ADDRESS:http://user-mgmt-svc:8067}/oauth/token_key
+security:
+  oauth2:
+    resource:
+      jwt:
+        key-uri: ${AUTH_SERVER_ADDRESS:http://user-mgmt-svc:8067}/oauth/token_key
