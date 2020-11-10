@@ -79,7 +79,7 @@
 	</select>
 
 	<select id="getCurrentDate" resultType="java.util.Date">
-		select current_time
+		select now()::timestamp without time zone
 	</select>
 
 	<select id="queryAllRunningTasks" resultType="org.edgegallery.atp.model.task.TaskPO">
