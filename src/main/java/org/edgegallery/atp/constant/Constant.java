@@ -49,7 +49,7 @@ public interface Constant {
 
     String MAIN_SERVICE_TEMPLATE_YAML = "MainServiceTemplate.yaml";
 
-    String DEPENDENCE = "dependence";
+    String DEPENDENCE = "dependencies";
 
     String APP_ID = "appId";
 
@@ -96,7 +96,7 @@ public interface Constant {
     interface testCaseType {
         String VIRUS_SCAN_TEST = "virusScanningTest";
 
-        String COMPLIANCE_TEST = "compliancesTest";
+        String COMPLIANCE_TEST = "complianceTest";
 
         String SANDBOX_TEST = "sandboxTest";
 
