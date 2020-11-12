@@ -28,10 +28,6 @@ public class TOSCAFileTestCase extends TestCaseAbs {
     private static Set<String> field = new HashSet<String>() {
         {
             add("Entry-Definitions");
-            add("ETSI-Entry-Manifest");
-            add("Entry-Tests");
-            add("ETSI-Entry-Change-Log");
-            add("Entry-Helm-Package");
         }
     };
 
