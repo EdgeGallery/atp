@@ -73,7 +73,7 @@ public class TaskController {
     public ResponseEntity<List<TaskRequest>> startTest(
             @ApiParam(value = "application files", required = true) @RequestPart("file") MultipartFile packageList) {
         // TODO mock method for test locally.
-        AccessTokenFilter.test();
+        // AccessTokenFilter.test();
         List<MultipartFile> packages = new ArrayList<MultipartFile>();
         packages.add(packageList);
         return ResponseEntity.ok(taskService.createTask(packages));
@@ -94,7 +94,7 @@ public class TaskController {
     public ResponseEntity<List<TaskRequest>> getAllTasks(@QueryParam("appName") String appName,
             @QueryParam("status") String status) {
         // TODO mock method for test locally.
-        AccessTokenFilter.test();
+        // AccessTokenFilter.test();
         if (null == AccessTokenFilter.context.get()) {
             throw new IllegalArgumentException("AccessTokenFilter.context is null");
         }
@@ -118,7 +118,7 @@ public class TaskController {
     public ResponseEntity<TaskRequest> getTaskById(
             @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId) {
         // TODO mock method for test locally.
-        AccessTokenFilter.test();
+        // AccessTokenFilter.test();
         if (null == AccessTokenFilter.context.get()) {
             throw new IllegalArgumentException("AccessTokenFilter.context is null");
         }
@@ -134,7 +134,7 @@ public class TaskController {
     public ResponseEntity<InputStreamResource> downloadTestReport(
             @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId) {
         // TODO mock method for test locally.
-        AccessTokenFilter.test();
+        // AccessTokenFilter.test();
         if (null == AccessTokenFilter.context.get()) {
             throw new IllegalArgumentException("AccessTokenFilter.context is null");
         }
@@ -150,7 +150,7 @@ public class TaskController {
     public ResponseEntity<CommonActionRes> dependencyCheck(
             @ApiParam(value = "application files", required = true) @RequestPart("file") MultipartFile packages) {
         // TODO mock method for test locally.
-        AccessTokenFilter.test();
+        // AccessTokenFilter.test();
         if (null == AccessTokenFilter.context.get()) {
             throw new IllegalArgumentException("AccessTokenFilter.context is null");
         }
