@@ -83,10 +83,6 @@ public class TestCaseUtil {
             while ((line = br.readLine()) != null) {
                 // prefix: path
                 String[] splitByColon = line.split(Constant.COLON);
-                if (splitByColon.length > 1) {
-                    String a = splitByColon[0].trim();
-                    boolean s = prefixSet.contains(a);
-                }
                 if (splitByColon.length > 1 && prefixSet.contains(splitByColon[0].trim())) {
                     sourcePathSet.add(splitByColon[0].trim());
                 }
