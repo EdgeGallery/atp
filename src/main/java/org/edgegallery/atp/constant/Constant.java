@@ -45,7 +45,7 @@ public interface Constant {
 
     String DEPENDENCY_APP_INSTANCE_ID = "dependencyAppInstanceId";
 
-    String DEFINITIONS = "Definitions";
+    String DEFINITIONS = "Definition";
 
     String MAIN_SERVICE_TEMPLATE_YAML = "MainServiceTemplate.yaml";
 
@@ -114,6 +114,18 @@ public interface Constant {
         String APPO_CREATE_APPINSTANCE = "/appo/v1/tenants/{tenant_id}/app_instances";
 
         String APPO_DELETE_APPLICATION_INSTANCE = "/appo/v1/tenants/{tenant_id}/app_instances/{app_instance_id}";
+    }
+
+    interface DependencyAnalysis {
+        String NODE_TEMPLATES = "node_templates";
+
+        String APP_CONFIGURATION = "app_configuration";
+
+        String PROPERTIES = "properties";
+
+        String APP_SERVICE_REQUIRED = "appServiceRequired";
+
+        String SERNAME = "serName";
     }
 
 }

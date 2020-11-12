@@ -38,7 +38,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.utils.CommonUtil;
-import org.edgegallery.atp.utils.JSONUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
@@ -161,9 +160,9 @@ public class FileChecker {
                 ZipEntry entry = entries.nextElement();
                 String[] pathSplit = entry.getName().split(Constant.SLASH);
 
-                // fileName/Definitions/MainServiceTemplate.yaml
-                if (pathSplit.length == 3 && Constant.DEFINITIONS.equals(pathSplit[1].trim())
-                        && Constant.MAIN_SERVICE_TEMPLATE_YAML.equals(pathSplit[2].trim())) {
+                // fileName/APPD/Definition/MainServiceTemplate.yaml
+                if (pathSplit.length == 4 && Constant.DEFINITIONS.equals(pathSplit[2].trim())
+                        && pathSplit[3].trim().endsWith(Constant.FileOperation.PACKAGE_YAML_FORMAT)) {
                     analysisDependency(result, zipFile, entry);
                 }
             }
@@ -173,37 +172,73 @@ public class FileChecker {
         return result;
     }
 
-    public static void main(String[] args) {
-        System.out.print(JSONUtil.marshal(dependencyCheck("D:\\AR_app.csar")));
-    }
-
     private static void analysisDependency(List<Map<String, String>> result, ZipFile zipFile, ZipEntry entry) {
         try (BufferedReader br = new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry)))) {
-            String line = "";
-            while ((line = br.readLine()) != null) {
-                if (line.trim().startsWith(Constant.DEPENDENCE)) {
-                    // -name
-                    line = br.readLine().trim();
-                    while (line != null && line.trim().startsWith(Constant.STRIKE)) {
-                        Map<String, String> map = new HashMap<String, String>();
-                        map.put(Constant.APP_NAME, line.split(Constant.COLON)[1].trim());
-                        while ((line = br.readLine()) != null && line.startsWith(" ")
-                                && !line.trim().startsWith(Constant.STRIKE)) {
-                            line = line.trim();
-                            if (line.startsWith(Constant.APP_ID)) {
-                                map.put(Constant.APP_ID, line.split(Constant.COLON)[1].trim());
-                            } else if (line.startsWith(Constant.PACKAGE_ID)) {
-                                map.put(Constant.PACKAGE_ID, line.split(Constant.COLON)[1].trim());
-                            }
-                        }
-                        // TODO if no appId or packageId, throw exception or no?
-                        result.add(map);
+            String line = positionDependencyService(br);
+            if (StringUtils.isEmpty(line)) {
+                LOGGER.error(
+                        "can not find the dependency path, the dependency path must be in node_templates.app_configuration.properties.appServiceRequired");
+                throw new IllegalArgumentException(
+                        "can not find the dependency path, the dependency path must be in node_templates.app_configuration.properties.appServiceRequired");
+            }
+            // -serName
+            while (line != null && line.trim().startsWith(Constant.STRIKE)) {
+                Map<String, String> map = new HashMap<String, String>();
+                map.put(Constant.APP_NAME, line.split(Constant.COLON)[1].trim());
+                while ((line = br.readLine()) != null && !isEnd(line) && !line.trim().startsWith(Constant.STRIKE)) {
+                    line = line.trim();
+                    if (line.startsWith(Constant.APP_ID)) {
+                        map.put(Constant.APP_ID, line.split(Constant.COLON)[1].trim());
+                    } else if (line.startsWith(Constant.PACKAGE_ID)) {
+                        map.put(Constant.PACKAGE_ID, line.split(Constant.COLON)[1].trim());
                     }
                 }
+                // TODO if no appId or packageId, throw exception or no?
+                result.add(map);
             }
+
         } catch (IOException e) {
             LOGGER.error("analysis dependency failed. {}", e.getMessage());
         }
+    }
+
+    /**
+     * if depedency service define end.
+     * 
+     * @param str yaml line
+     * @return is depedency service define end.
+     */
+    private static boolean isEnd(String str) {
+        return str.split(Constant.COLON).length <= 1;
+    }
+
+    /**
+     * position to dependency service field
+     * 
+     * @param br bufferReader
+     * @return line
+     * @throws IOException
+     */
+    private static String positionDependencyService(BufferedReader br) throws IOException {
+        String line = "";
+        while ((line = br.readLine()) != null) {
+            if (line.trim().startsWith(Constant.DependencyAnalysis.NODE_TEMPLATES)) {
+                while ((line = br.readLine()) != null) {
+                    if (line.trim().startsWith(Constant.DependencyAnalysis.APP_CONFIGURATION)) {
+                        while ((line = br.readLine()) != null) {
+                            if (line.trim().startsWith(Constant.DependencyAnalysis.PROPERTIES)) {
+                                while ((line = br.readLine()) != null) {
+                                    if (line.trim().startsWith(Constant.DependencyAnalysis.APP_SERVICE_REQUIRED)) {
+                                        return br.readLine().trim();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return line;
     }
 
     /**

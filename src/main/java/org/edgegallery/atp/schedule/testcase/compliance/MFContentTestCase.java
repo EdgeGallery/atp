@@ -26,11 +26,11 @@ public class MFContentTestCase extends TestCaseAbs {
 
     private static Set<String> field = new HashSet<String>() {
         {
-            add("app_name");
-            add("app_provider");
-            add("app_archive_version");
-            add("app_release_date_time");
-            add("app_contact");
+            add("app_product_name");
+            add("app_provider_id");
+            add("app_package_version");
+            add("app_release_data_time");
+            add("app_package_description");
         }
     };
 

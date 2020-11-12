@@ -3,9 +3,8 @@ package org.edgegallery.atp.constant;
 public interface ExceptionConstant {
 
     interface MFContentTestCase {
-
         String LOSS_FIELD =
-                ".mf file may lost the following fileds:app_name,app_provider,app_archive_version,app_release_date_time or app_contact.";
+                ".mf file may lost the following fileds:app_product_name,app_provider_id,app_package_version,app_release_date_time or app_package_description.";
 
         String FILE_NOT_EXIST = ".mf file may not exist or it do not in the root directory.";
     }
@@ -16,10 +15,8 @@ public interface ExceptionConstant {
 
     interface TOSCAFileTestCase {
         String TOSCA_FILE_NOT_EXISTS = "tosca.meta not exists.";
-        String LOSS_FIELD =
-                "tosca.meta file may lost the following fileds:Entry-Definitions,ETSI-Entry-Manifest,Entry-Tests,ETSI-Entry-Change-Log or Entry-Helm-Package.";
-        String FILE_NOT_EXIT =
-                "the file must exists corresponding the value of the following field:Entry-Definitions,ETSI-Entry-Manifest,Entry-Tests,ETSI-Entry-Change-Log and Entry-Helm-Package.";
+        String LOSS_FIELD = "tosca.meta file may lost the following filed:Entry-Definitions.";
+        String FILE_NOT_EXIT = "the value of field Entry-Definitions do not exist corresponding file";
     }
 
     interface InstantiateAppTestCase {
