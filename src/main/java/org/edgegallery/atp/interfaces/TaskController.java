@@ -24,6 +24,7 @@ import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
 import org.edgegallery.atp.model.CommonActionRes;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.service.TaskService;
+import org.edgegallery.atp.utils.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
@@ -50,8 +51,6 @@ public class TaskController {
 
     private static final String REG_ID = "[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}";
 
-    private static final String REG_USER_NAME = "^[a-zA-Z][a-zA-Z0-9_]{5,29}$";
-
     @Autowired
     private TaskService taskService;
 
@@ -71,10 +70,6 @@ public class TaskController {
     // @PreAuthorize("hasRole('ATP_TENANT')")
     public ResponseEntity<List<TaskRequest>> startTest(@ApiParam(value = "application files",
             required = true) @RequestPart("file") List<MultipartFile> packageList) {
-        // TODO mock method for test locally.
-        // AccessTokenFilter.test();
-        // List<MultipartFile> packages = new ArrayList<MultipartFile>();
-        // packages.add(packageList);
         return ResponseEntity.ok(taskService.createTask(packageList));
     }
 
@@ -92,11 +87,7 @@ public class TaskController {
     // @PreAuthorize("hasRole('ATP_TENANT')")
     public ResponseEntity<List<TaskRequest>> getAllTasks(@QueryParam("appName") String appName,
             @QueryParam("status") String status) {
-        // TODO mock method for test locally.
-        // AccessTokenFilter.test();
-        if (null == AccessTokenFilter.context.get()) {
-            throw new IllegalArgumentException("AccessTokenFilter.context is null");
-        }
+        CommonUtil.validateContext();
         return taskService.getAllTasks(AccessTokenFilter.context.get().get(Constant.USER_ID), appName, status);
     }
 
@@ -116,11 +107,7 @@ public class TaskController {
     // @PreAuthorize("hasRole('ATP_TENANT')")
     public ResponseEntity<TaskRequest> getTaskById(
             @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId) {
-        // TODO mock method for test locally.
-        // AccessTokenFilter.test();
-        if (null == AccessTokenFilter.context.get()) {
-            throw new IllegalArgumentException("AccessTokenFilter.context is null");
-        }
+        CommonUtil.validateContext();
         return taskService.getTaskById(AccessTokenFilter.context.get().get(Constant.USER_ID), taskId);
     }
 
@@ -132,11 +119,7 @@ public class TaskController {
     // @PreAuthorize("hasRole('ATP_TENANT')")
     public ResponseEntity<InputStreamResource> downloadTestReport(
             @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId) {
-        // TODO mock method for test locally.
-        // AccessTokenFilter.test();
-        if (null == AccessTokenFilter.context.get()) {
-            throw new IllegalArgumentException("AccessTokenFilter.context is null");
-        }
+        CommonUtil.validateContext();
         return taskService.downloadTestReport(taskId, AccessTokenFilter.context.get().get(Constant.USER_ID));
     }
 
@@ -148,11 +131,7 @@ public class TaskController {
     // @PreAuthorize("hasRole('ATP_TENANT')")
     public ResponseEntity<CommonActionRes> dependencyCheck(
             @ApiParam(value = "application files", required = true) @RequestPart("file") MultipartFile packages) {
-        // TODO mock method for test locally.
-        // AccessTokenFilter.test();
-        if (null == AccessTokenFilter.context.get()) {
-            throw new IllegalArgumentException("AccessTokenFilter.context is null");
-        }
+        CommonUtil.validateContext();
         return ResponseEntity.ok(taskService.dependencyCheck(packages));
     }
 

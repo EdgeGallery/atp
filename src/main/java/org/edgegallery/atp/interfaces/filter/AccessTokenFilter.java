@@ -28,25 +28,16 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
 @Import({ResourceServerTokenServicesConfiguration.class})
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-// public class AccessTokenFilter extends OncePerRequestFilter {
-public class AccessTokenFilter {
+public class AccessTokenFilter extends OncePerRequestFilter {
     @Autowired
     TokenStore jwtTokenStore;
 
     public static ThreadLocal<Map<String, String>> context = new ThreadLocal<Map<String, String>>();;
-
-    // // TODO mock method for test locally.
-    // public static void test() {
-    // Map<String, String> contextMap = new HashMap<String, String>();
-    // contextMap.put(Constant.ACCESS_TOKEN, "58bbeb8d-c020-46e5-bab9-7d4bc9e875b8");
-    // contextMap.put(Constant.USER_ID, "58bbeb8d-c020-46e5-bab9-7d4bc9e875b8");
-    // contextMap.put(Constant.USER_NAME, "baizhenzhen");
-    // context.set(contextMap);
-    // }
 
     // @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -92,9 +83,6 @@ public class AccessTokenFilter {
         contextMap.put(Constant.ACCESS_TOKEN, accessTokenStr);
         contextMap.put(Constant.USER_ID, userIdFromRequest);
         contextMap.put(Constant.USER_NAME, userNameFromRequest);
-        // contextMap.put(Constant.ACCESS_TOKEN, "11");
-        // contextMap.put(Constant.USER_ID, "111");
-        // contextMap.put(Constant.USER_NAME, "111");
         context.set(contextMap);
 
 

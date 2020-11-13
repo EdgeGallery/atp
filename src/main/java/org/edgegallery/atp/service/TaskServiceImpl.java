@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import org.edgegallery.atp.constant.Constant;
+import org.edgegallery.atp.constant.ExceptionConstant;
 import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
 import org.edgegallery.atp.model.CommonActionRes;
 import org.edgegallery.atp.model.task.TaskRequest;
@@ -72,7 +73,7 @@ public class TaskServiceImpl implements TaskService {
         Map<String, String> context = AccessTokenFilter.context.get();
         if (null == context) {
             tempFileList.forEach((taskId, file) -> file.delete());;
-            throw new IllegalArgumentException("AccessTokenFilter.context is null");
+            throw new IllegalArgumentException(ExceptionConstant.CONTEXT_IS_NULL);
         }
         User user = new User(context.get(Constant.USER_ID), context.get(Constant.USER_NAME));
 
