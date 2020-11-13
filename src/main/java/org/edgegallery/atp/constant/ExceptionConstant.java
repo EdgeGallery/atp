@@ -37,4 +37,6 @@ public interface ExceptionConstant {
     }
 
     String INNER_EXCEPTION = "inner exception, please check the log.";
+
+    String CONTEXT_IS_NULL = "AccessTokenFilter.context is null";
 }

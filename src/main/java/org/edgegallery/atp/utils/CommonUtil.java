@@ -12,9 +12,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.UUID;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.edgegallery.atp.constant.Constant;
+import org.edgegallery.atp.constant.ExceptionConstant;
 import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
 import org.edgegallery.atp.utils.file.FileChecker;
 import org.slf4j.Logger;
@@ -289,5 +291,36 @@ public class CommonUtil {
             LOGGER.error("Failed to upload file to apm, exception {}", e.getMessage());
         }
         return null;
+    }
+
+    /**
+     * uuid validate
+     * 
+     * @param param parameter
+     * @return is legal uuid pattern
+     */
+    public static boolean isUuidPattern(String param) {
+        Pattern pattern = Pattern.compile("[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}");
+        return pattern.matcher(param).matches();
+    }
+
+    /**
+     * name validate
+     * 
+     * @param name name
+     * @return is legal name pattern
+     */
+    public static boolean isLegalName(String name) {
+        Pattern pattern = Pattern.compile("[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}");
+        return pattern.matcher(name).matches();
+    }
+
+    /**
+     * validate context is not empty.
+     */
+    public static void validateContext() {
+        if (null == AccessTokenFilter.context.get()) {
+            throw new IllegalArgumentException(ExceptionConstant.CONTEXT_IS_NULL);
+        }
     }
 }
