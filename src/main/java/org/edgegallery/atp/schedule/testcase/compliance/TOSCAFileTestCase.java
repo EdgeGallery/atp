@@ -49,24 +49,21 @@ public class TOSCAFileTestCase extends TestCaseAbs {
                     isExistTosca = true;
                     // some fields not exist in tosca.meta file
                     if (!TestCaseUtil.isExistAll(zipFile, entry, field)) {
-                        return setTestCaseResult(Constant.Status.FAILED, ExceptionConstant.TOSCAFileTestCase.LOSS_FIELD,
-                                testCaseResult);
+                        return setTestCaseResult(Constant.FAILED, ExceptionConstant.TOSCA_LOSS_FIELD, testCaseResult);
                     }
                     sourcePathSet = TestCaseUtil.getPathSet(zipFile, entry, field);
                 }
             }
         } catch (IOException e) {
             LOGGER.error("TOSCAFileTestCase execute failed. {}", e.getMessage());
-            return setTestCaseResult(Constant.Status.FAILED, ExceptionConstant.INNER_EXCEPTION, testCaseResult);
+            return setTestCaseResult(Constant.FAILED, ExceptionConstant.INNER_EXCEPTION, testCaseResult);
         }
 
         return isExistTosca == false
-                ? setTestCaseResult(Constant.Status.FAILED, ExceptionConstant.TOSCAFileTestCase.TOSCA_FILE_NOT_EXISTS,
-                        testCaseResult)
+                ? setTestCaseResult(Constant.FAILED, ExceptionConstant.TOSCA_FILE_NOT_EXISTS, testCaseResult)
                 : pathSet.containsAll(sourcePathSet)
-                        ? setTestCaseResult(Constant.Status.SUCCESS, Constant.EMPTY, testCaseResult)
-                        : setTestCaseResult(Constant.Status.FAILED, ExceptionConstant.TOSCAFileTestCase.FILE_NOT_EXIT,
-                                testCaseResult);
+                        ? setTestCaseResult(Constant.SUCCESS, Constant.EMPTY, testCaseResult)
+                        : setTestCaseResult(Constant.FAILED, ExceptionConstant.FILE_NOT_EXIT, testCaseResult);
     }
 
 }

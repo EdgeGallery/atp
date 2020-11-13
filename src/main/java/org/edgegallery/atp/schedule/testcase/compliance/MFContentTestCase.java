@@ -44,18 +44,16 @@ public class MFContentTestCase extends TestCaseAbs {
                         && TestCaseUtil.fileSuffixValidate("mf", entry.getName())) {
                     // some fields not exist in tosca.meta file
                     return TestCaseUtil.isExistAll(zipFile, entry, field)
-                            ? setTestCaseResult(Constant.Status.SUCCESS, Constant.EMPTY, testCaseResult)
-                            : setTestCaseResult(Constant.Status.FAILED, ExceptionConstant.MFContentTestCase.LOSS_FIELD,
-                                    testCaseResult);
+                            ? setTestCaseResult(Constant.SUCCESS, Constant.EMPTY, testCaseResult)
+                            : setTestCaseResult(Constant.FAILED, ExceptionConstant.MF_LOSS_FIELD, testCaseResult);
                 }
             }
         } catch (IOException e) {
             LOGGER.error("TOSCAFileTestCase execute failed. {}", e.getMessage());
-            return setTestCaseResult(Constant.Status.FAILED, ExceptionConstant.INNER_EXCEPTION, testCaseResult);
+            return setTestCaseResult(Constant.FAILED, ExceptionConstant.INNER_EXCEPTION, testCaseResult);
         }
 
-        return setTestCaseResult(Constant.Status.FAILED, ExceptionConstant.MFContentTestCase.FILE_NOT_EXIST,
-                testCaseResult);
+        return setTestCaseResult(Constant.FAILED, ExceptionConstant.FILE_NOT_EXIST, testCaseResult);
     }
 
 }

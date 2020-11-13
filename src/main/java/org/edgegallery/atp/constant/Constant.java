@@ -55,77 +55,75 @@ public interface Constant {
 
     String PACKAGE_ID = "packageId";
 
-    interface Status {
-        String SUCCESS = "success";
+    String SUCCESS = "success";
 
-        String RUNNING = "running";
+    String RUNNING = "running";
 
-        String FAILED = "failed";
+    String FAILED = "failed";
 
-        String WAITING = "waiting";
-    }
+    String WAITING = "waiting";
 
-    interface FileOperation {
-        String WORK_TEMP_DIR = FileChecker.getDir() + File.separator + "temp";
+    String WORK_TEMP_DIR = FileChecker.getDir() + File.separator + "temp";
 
-        String REG = "[^\\s\\\\/:*?\"<>|](\\x20|[^\\s\\\\/:*?\"<>|])*[^\\s\\\\/:*?\"<>|.]$";
+    String REG = "[^\\s\\\\/:*?\"<>|](\\x20|[^\\s\\\\/:*?\"<>|])*[^\\s\\\\/:*?\"<>|.]$";
 
-        int MAX_LENGTH_FILE_NAME = 255;
+    int MAX_LENGTH_FILE_NAME = 255;
 
-        String PACKAGE_XML_FORMAT = ".xml";
+    String PACKAGE_XML_FORMAT = ".xml";
 
-        String PACKAGE_YAML_FORMAT = ".yaml";
+    String PACKAGE_YAML_FORMAT = ".yaml";
 
-        String PACKAGE_CSH_FORMAT = ".csh";
+    String PACKAGE_CSH_FORMAT = ".csh";
 
-        String PACKAGE_META_FORMAT = ".meta";
+    String PACKAGE_META_FORMAT = ".meta";
 
-        String PACKAGE_TXT_FORMAT = ".txt";
+    String PACKAGE_TXT_FORMAT = ".txt";
 
-        String MANIFEST = ".mf";
+    String MANIFEST = ".mf";
 
-        String MARK_DOWN = ".md";
+    String MARK_DOWN = ".md";
 
-        int BUFFER = 512;
+    int BUFFER = 512;
 
-        int TOO_BIG = 0x6400000; // max size of unzipped data, 100MB
+    int TOO_BIG = 0x6400000; // max size of unzipped data, 100MB
 
-        int TOO_MANY = 1024; // max number of files
-    }
+    int TOO_MANY = 1024; // max number of files
 
-    interface testCaseType {
-        String VIRUS_SCAN_TEST = "virusScanningTest";
+    String VIRUS_SCAN_TEST = "virusScanningTest";
 
-        String COMPLIANCE_TEST = "complianceTest";
+    String COMPLIANCE_TEST = "complianceTest";
 
-        String SANDBOX_TEST = "sandboxTest";
+    String SANDBOX_TEST = "sandboxTest";
 
-    }
 
-    interface URL {
-        String INVENTORY_GET_MECHOSTS_URL = "/inventory/v1/tenants/tenantId/mechosts";
+    String INVENTORY_GET_MECHOSTS_URL = "/inventory/v1/tenants/tenantId/mechosts";
 
-        String APP_STORE_GET_APP_PACKAGE = "/mec/appstore/v1/apps/%s/packages/%s";
+    String APP_STORE_GET_APP_PACKAGE = "/mec/appstore/v1/apps/%s/packages/%s";
 
-        String APP_STORE_DOWNLOAD_CSAR = "/mec/appstore/v1/apps/%s/packages/%s/action/download";
+    String APP_STORE_DOWNLOAD_CSAR = "/mec/appstore/v1/apps/%s/packages/%s/action/download";
 
-        String APM_UPLOAD_PACKAGE = "/apm/v1/tenants/{tenant_id}/packages/upload";
+    String APM_UPLOAD_PACKAGE = "/apm/v1/tenants/{tenant_id}/packages/upload";
 
-        String APPO_CREATE_APPINSTANCE = "/appo/v1/tenants/{tenant_id}/app_instances";
+    String APPO_CREATE_APPINSTANCE = "/appo/v1/tenants/{tenant_id}/app_instances";
 
-        String APPO_DELETE_APPLICATION_INSTANCE = "/appo/v1/tenants/{tenant_id}/app_instances/{app_instance_id}";
-    }
+    String APPO_DELETE_APPLICATION_INSTANCE = "/appo/v1/tenants/{tenant_id}/app_instances/{app_instance_id}";
 
-    interface DependencyAnalysis {
-        String NODE_TEMPLATES = "node_templates";
+    String NODE_TEMPLATES = "node_templates";
 
-        String APP_CONFIGURATION = "app_configuration";
+    String APP_CONFIGURATION = "app_configuration";
 
-        String PROPERTIES = "properties";
+    String PROPERTIES = "properties";
 
-        String APP_SERVICE_REQUIRED = "appServiceRequired";
+    String APP_SERVICE_REQUIRED = "appServiceRequired";
 
-        String SERNAME = "serName";
-    }
+    String SERNAME = "serName";
+
+    String PROTOCOL_APM = "https://mecm-apm:8092";
+
+    String PROTOCAL_APPO = "https://mecm-appo:8091";
+
+    String PROTOCOL_INVENTORY = "https://mecm-inventory:8093";
+
+    String PROTOCOL_APPSTORE = "https://appstore-be-svc:8099";
 
 }

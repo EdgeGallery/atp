@@ -86,9 +86,10 @@ public class CommonUtil {
         headers.set(Constant.ACCESS_TOKEN, AccessTokenFilter.context.get().get(Constant.ACCESS_TOKEN));
         HttpEntity<String> request = new HttpEntity<>(headers);
 
-        String url = String.format(Constant.URL.APP_STORE_GET_APP_PACKAGE, appId, packageId);
+        String url = String.format(Constant.APP_STORE_GET_APP_PACKAGE, appId, packageId);
         try {
-            ResponseEntity<String> response = REST_TEMPLATE.exchange(url, HttpMethod.GET, request, String.class);
+            ResponseEntity<String> response = REST_TEMPLATE.exchange(Constant.PROTOCOL_APPSTORE.concat(url),
+                    HttpMethod.GET, request, String.class);
             if (!HttpStatus.OK.equals(response.getStatusCode())) {
                 LOGGER.error("get app info from appstore reponse failed. The status code is {}",
                         response.getStatusCode());
@@ -116,9 +117,10 @@ public class CommonUtil {
         headers.set(Constant.ACCESS_TOKEN, AccessTokenFilter.context.get().get(Constant.ACCESS_TOKEN));
         HttpEntity<String> request = new HttpEntity<>(headers);
 
-        String url = String.format(Constant.URL.APP_STORE_DOWNLOAD_CSAR, appId, packageId);
+        String url = String.format(Constant.APP_STORE_DOWNLOAD_CSAR, appId, packageId);
         try {
-            ResponseEntity<String> response = REST_TEMPLATE.exchange(url, HttpMethod.GET, request, String.class);
+            ResponseEntity<String> response = REST_TEMPLATE.exchange(Constant.PROTOCOL_APPSTORE.concat(url),
+                    HttpMethod.GET, request, String.class);
             if (!HttpStatus.OK.equals(response.getStatusCode())) {
                 LOGGER.error("download csar file from appstore reponse failed. The status code is {}",
                         response.getStatusCode());
@@ -145,7 +147,7 @@ public class CommonUtil {
      * @return create app instance sucess or not.s
      */
     public static String createInstanceFromAppo(String filePath, Map<String, String> context,
-            Map<String, String> appInfo, String hostIp, String ipPort) {
+            Map<String, String> appInfo, String hostIp) {
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         body.add("appInstanceDescription", CommonUtil.generateId());
         body.add("appName", appInfo.get(Constant.APP_NAME));
@@ -159,8 +161,8 @@ public class CommonUtil {
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
-        String url =
-                ipPort.concat(String.format(Constant.URL.APPO_CREATE_APPINSTANCE, context.get(Constant.TENANT_ID)));
+        String url = Constant.PROTOCAL_APPO
+                .concat(String.format(Constant.APPO_CREATE_APPINSTANCE, context.get(Constant.TENANT_ID)));
         try {
             ResponseEntity<String> response = REST_TEMPLATE.exchange(url, HttpMethod.POST, requestEntity, String.class);
 
@@ -209,10 +211,11 @@ public class CommonUtil {
         headers.set(Constant.ACCESS_TOKEN, context.get(Constant.ACCESS_TOKEN));
         HttpEntity<String> request = new HttpEntity<>(headers);
 
-        String url = String.format(Constant.URL.APPO_DELETE_APPLICATION_INSTANCE, context.get(Constant.TENANT_ID),
+        String url = String.format(Constant.APPO_DELETE_APPLICATION_INSTANCE, context.get(Constant.TENANT_ID),
                 appInstanceId);
         try {
-            ResponseEntity<String> response = REST_TEMPLATE.exchange(url, HttpMethod.DELETE, request, String.class);
+            ResponseEntity<String> response = REST_TEMPLATE.exchange(Constant.PROTOCAL_APPO.concat(url),
+                    HttpMethod.DELETE, request, String.class);
             if (HttpStatus.OK.equals(response.getStatusCode())) {
                 return true;
             }
@@ -269,8 +272,8 @@ public class CommonUtil {
      * @param hostIp host ip
      * @return response from atp
      */
-    public static ResponseEntity<String> uploadFileToAPM(String filePath, Map<String, String> context, String ipPort,
-            String hostIp, Map<String, String> packageInfo) {
+    public static ResponseEntity<String> uploadFileToAPM(String filePath, Map<String, String> context, String hostIp,
+            Map<String, String> packageInfo) {
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         body.add("file", new FileSystemResource(filePath));
         body.add("hostList", hostIp);
@@ -283,7 +286,8 @@ public class CommonUtil {
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
-        String url = ipPort.concat(String.format(Constant.URL.APM_UPLOAD_PACKAGE, context.get(Constant.TENANT_ID)));
+        String url = Constant.PROTOCOL_APM
+                .concat(String.format(Constant.APM_UPLOAD_PACKAGE, context.get(Constant.TENANT_ID)));
         try {
             ResponseEntity<String> response = REST_TEMPLATE.exchange(url, HttpMethod.POST, requestEntity, String.class);
             return response;

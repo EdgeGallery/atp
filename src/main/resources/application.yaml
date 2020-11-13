@@ -42,17 +42,6 @@ spring:
       max-request-size: 1MB
   jackson:
     default-property-inclusion: non_null
-applcm:
-  host:
-    ip: ${APPLCM_HOST_IP}
-    port: ${APPLCM_HOST_PORT}
-    protocol: ${APPLCM_HOST_PROTOCOL}
-
-inventory:
-  host:
-    ip: ${INVENTORY_HOST_IP}
-    port: ${INVENTORY_HOST_PORT}
-    protocol: ${INVENTORY_HOST_PROTOCOL}
 
 ###mybtis####
 mybatis:

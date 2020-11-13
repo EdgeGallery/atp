@@ -38,7 +38,7 @@ public class TestCaseHandler {
                     filePath, context);
         } catch (Exception e) {
             LOGGER.error("testCaseHandler failed. {}", e.getMessage());
-            return new TestCaseResult(Constant.Status.FAILED, ExceptionConstant.INNER_EXCEPTION);
+            return new TestCaseResult(Constant.FAILED, ExceptionConstant.INNER_EXCEPTION);
         }
     }
 

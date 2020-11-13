@@ -66,18 +66,16 @@ public class FileChecker {
         }
 
         String name = filePath.toLowerCase();
-        if (!(name.endsWith(Constant.FileOperation.MANIFEST) || name.endsWith(Constant.FileOperation.MARK_DOWN)
-                || name.endsWith(Constant.FileOperation.PACKAGE_XML_FORMAT)
-                || name.endsWith(Constant.FileOperation.PACKAGE_YAML_FORMAT)
-                || name.endsWith(Constant.FileOperation.PACKAGE_CSH_FORMAT)
-                || name.endsWith(Constant.FileOperation.PACKAGE_META_FORMAT)
-                || name.endsWith(Constant.FileOperation.PACKAGE_TXT_FORMAT))) {
+        if (!(name.endsWith(Constant.MANIFEST) || name.endsWith(Constant.MARK_DOWN)
+                || name.endsWith(Constant.PACKAGE_XML_FORMAT) || name.endsWith(Constant.PACKAGE_YAML_FORMAT)
+                || name.endsWith(Constant.PACKAGE_CSH_FORMAT) || name.endsWith(Constant.PACKAGE_META_FORMAT)
+                || name.endsWith(Constant.PACKAGE_TXT_FORMAT))) {
             throw new IllegalArgumentException();
         }
 
         String[] dirs = filePath.split(":");
         for (String dir : dirs) {
-            Matcher matcher = Pattern.compile(Constant.FileOperation.REG).matcher(dir);
+            Matcher matcher = Pattern.compile(Constant.REG).matcher(dir);
             if (!matcher.matches()) {
                 throw new IllegalArgumentException();
             }
@@ -162,7 +160,7 @@ public class FileChecker {
 
                 // fileName/APPD/Definition/MainServiceTemplate.yaml
                 if (pathSplit.length == 4 && Constant.DEFINITIONS.equals(pathSplit[2].trim())
-                        && pathSplit[3].trim().endsWith(Constant.FileOperation.PACKAGE_YAML_FORMAT)) {
+                        && pathSplit[3].trim().endsWith(Constant.PACKAGE_YAML_FORMAT)) {
                     analysisDependency(result, zipFile, entry);
                 }
             }
@@ -193,7 +191,6 @@ public class FileChecker {
                         map.put(Constant.PACKAGE_ID, line.split(Constant.COLON)[1].trim());
                     }
                 }
-                // TODO if no appId or packageId, throw exception or no?
                 result.add(map);
             }
 
@@ -222,13 +219,13 @@ public class FileChecker {
     private static String positionDependencyService(BufferedReader br) throws IOException {
         String line = "";
         while ((line = br.readLine()) != null) {
-            if (line.trim().startsWith(Constant.DependencyAnalysis.NODE_TEMPLATES)) {
+            if (line.trim().startsWith(Constant.NODE_TEMPLATES)) {
                 while ((line = br.readLine()) != null) {
-                    if (line.trim().startsWith(Constant.DependencyAnalysis.APP_CONFIGURATION)) {
+                    if (line.trim().startsWith(Constant.APP_CONFIGURATION)) {
                         while ((line = br.readLine()) != null) {
-                            if (line.trim().startsWith(Constant.DependencyAnalysis.PROPERTIES)) {
+                            if (line.trim().startsWith(Constant.PROPERTIES)) {
                                 while ((line = br.readLine()) != null) {
-                                    if (line.trim().startsWith(Constant.DependencyAnalysis.APP_SERVICE_REQUIRED)) {
+                                    if (line.trim().startsWith(Constant.APP_SERVICE_REQUIRED)) {
                                         return br.readLine().trim();
                                     }
                                 }
@@ -253,21 +250,20 @@ public class FileChecker {
         ZipEntry entry;
         int entries = 0;
         int total = 0;
-        byte[] data = new byte[Constant.FileOperation.BUFFER];
+        byte[] data = new byte[Constant.BUFFER];
         try {
             while ((entry = zis.getNextEntry()) != null) {
                 int count;
                 // Write the files to the disk, but ensure that the entryName is valid,
                 // and that the file is not insanely big
-                String name = sanitzeFileName(entry.getName(), Constant.FileOperation.WORK_TEMP_DIR);
+                String name = sanitzeFileName(entry.getName(), Constant.WORK_TEMP_DIR);
                 File f = new File(name);
                 if (isDir(entry, f)) {
                     continue;
                 }
                 FileOutputStream fos = FileUtils.openOutputStream(f);
-                try (BufferedOutputStream dest = new BufferedOutputStream(fos, Constant.FileOperation.BUFFER)) {
-                    while (total <= Constant.FileOperation.TOO_BIG
-                            && (count = zis.read(data, 0, Constant.FileOperation.BUFFER)) != -1) {
+                try (BufferedOutputStream dest = new BufferedOutputStream(fos, Constant.BUFFER)) {
+                    while (total <= Constant.TOO_BIG && (count = zis.read(data, 0, Constant.BUFFER)) != -1) {
                         dest.write(data, 0, count);
                         total += count;
                     }
@@ -275,15 +271,15 @@ public class FileChecker {
                 }
                 zis.closeEntry();
                 entries++;
-                if (entries > Constant.FileOperation.TOO_MANY) {
+                if (entries > Constant.TOO_MANY) {
                     throw new IllegalStateException("Too many files to unzip.");
                 }
-                if (total > Constant.FileOperation.TOO_BIG) {
+                if (total > Constant.TOO_BIG) {
                     throw new IllegalStateException("File being unzipped is too big.");
                 }
             }
         } catch (IOException e) {
-            FileUtils.cleanDirectory(new File(Constant.FileOperation.WORK_TEMP_DIR));
+            FileUtils.cleanDirectory(new File(Constant.WORK_TEMP_DIR));
             throw new IllegalArgumentException("unzip csar with exception.");
         } finally {
             zis.close();
@@ -303,11 +299,11 @@ public class FileChecker {
      * @return
      */
     private static boolean isValid(String fileName) {
-        if (StringUtils.isEmpty(fileName) || fileName.length() > Constant.FileOperation.MAX_LENGTH_FILE_NAME) {
+        if (StringUtils.isEmpty(fileName) || fileName.length() > Constant.MAX_LENGTH_FILE_NAME) {
             return false;
         }
         fileName = Normalizer.normalize(fileName, Normalizer.Form.NFKC);
-        Matcher matcher = Pattern.compile(Constant.FileOperation.REG).matcher(fileName);
+        Matcher matcher = Pattern.compile(Constant.REG).matcher(fileName);
         if (!matcher.matches()) {
             return false;
         }

@@ -42,14 +42,10 @@ public class InstantiateAppTestCase extends TestCaseAbs {
     public TestCaseResult execute(String filePath, Map<String, String> context) {
         Map<String, String> packageInfo = CommonUtil.getPackageInfo(filePath);
         ResponseEntity<String> response =
-                CommonUtil.uploadFileToAPM(
-                        filePath, context, appoProtoctol.concat(Constant.COLON).concat(Constant.DOUBLE_SLASH)
-                                .concat(appoIp).concat(Constant.COLON).concat(appoPort),
-                        getMecHost(context), packageInfo);
+                CommonUtil.uploadFileToAPM(filePath, context, getMecHost(context), packageInfo);
         if (null == response || !HttpStatus.OK.equals(response.getStatusCode())) {
-            return setTestCaseResult(Constant.Status.FAILED,
-                    ExceptionConstant.InstantiateAppTestCase.RESPONSE_FROM_APM_FAILED
-                            .concat(response.getStatusCode().toString()),
+            return setTestCaseResult(Constant.FAILED,
+                    ExceptionConstant.RESPONSE_FROM_APM_FAILED.concat(response.getStatusCode().toString()),
                     testCaseResult);
         }
 
@@ -69,9 +65,7 @@ public class InstantiateAppTestCase extends TestCaseAbs {
 
         List<String> failedAppName = new ArrayList<String>();
         dependencyAppList.forEach(map -> {
-            String instanceId = CommonUtil.createInstanceFromAppo(filePath, context, map, getMecHost(context),
-                    appoProtoctol.concat(Constant.COLON).concat(Constant.DOUBLE_SLASH).concat(appoIp)
-                            .concat(Constant.COLON).concat(appoPort));
+            String instanceId = CommonUtil.createInstanceFromAppo(filePath, context, map, getMecHost(context));
             if (null == instanceId) {
                 failedAppName.add(map.get(Constant.APP_NAME));
             } else {
@@ -83,21 +77,17 @@ public class InstantiateAppTestCase extends TestCaseAbs {
 
         // some dependence app instantiate failed.
         if (!CollectionUtils.isEmpty(failedAppName)) {
-            return setTestCaseResult(Constant.Status.FAILED,
-                    ExceptionConstant.InstantiateAppTestCase.INSTANTIATE_DEPENDENCE_APP_FAILED
-                            .concat(failedAppName.toString()),
+            return setTestCaseResult(Constant.FAILED,
+                    ExceptionConstant.INSTANTIATE_DEPENDENCE_APP_FAILED.concat(failedAppName.toString()),
                     testCaseResult);
         }
 
         // instantiate original app
-        String appInstanceId = CommonUtil.createInstanceFromAppo(filePath, context, appInfo, getMecHost(context),
-                appoProtoctol.concat(Constant.COLON).concat(Constant.DOUBLE_SLASH).concat(appoIp).concat(Constant.COLON)
-                        .concat(appoPort));
+        String appInstanceId = CommonUtil.createInstanceFromAppo(filePath, context, appInfo, getMecHost(context));
         context.put(Constant.APP_INSTANCE_ID, appInstanceId);
 
-        return null != appInstanceId ? setTestCaseResult(Constant.Status.SUCCESS, Constant.EMPTY, testCaseResult)
-                : setTestCaseResult(Constant.Status.FAILED,
-                        ExceptionConstant.InstantiateAppTestCase.INSTANTIATE_APP_FAILED, testCaseResult);
+        return null != appInstanceId ? setTestCaseResult(Constant.SUCCESS, Constant.EMPTY, testCaseResult)
+                : setTestCaseResult(Constant.FAILED, ExceptionConstant.INSTANTIATE_APP_FAILED, testCaseResult);
 
     }
 
@@ -115,9 +105,8 @@ public class InstantiateAppTestCase extends TestCaseAbs {
         headers.set(Constant.ACCESS_TOKEN, context.get(Constant.ACCESS_TOKEN));
         HttpEntity<String> request = new HttpEntity<>(headers);
 
-        String url = inventoryProtoctol.concat(Constant.COLON).concat(Constant.DOUBLE_SLASH).concat(inventoryIp)
-                .concat(Constant.COLON).concat(inventoryPort).concat(Constant.URL.INVENTORY_GET_MECHOSTS_URL
-                        .replaceAll(Constant.TENANT_ID, context.get(Constant.TENANT_ID)));
+        String url = Constant.PROTOCOL_INVENTORY.concat(
+                Constant.INVENTORY_GET_MECHOSTS_URL.replaceAll(Constant.TENANT_ID, context.get(Constant.TENANT_ID)));
         try {
             ResponseEntity<String> response = REST_TEMPLATE.exchange(url, HttpMethod.GET, request, String.class);
             if (!HttpStatus.OK.equals(response.getStatusCode())) {
