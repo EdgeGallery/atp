@@ -14,7 +14,6 @@
 
 package org.edgegallery.atp.interfaces;
 
-import java.util.ArrayList;
 import java.util.List;
 import javax.validation.constraints.Pattern;
 import javax.ws.rs.QueryParam;
@@ -70,13 +69,13 @@ public class TaskController {
             @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     // @PreAuthorize("hasRole('ATP_TENANT')")
-    public ResponseEntity<List<TaskRequest>> startTest(
-            @ApiParam(value = "application files", required = true) @RequestPart("file") MultipartFile packageList) {
+    public ResponseEntity<List<TaskRequest>> startTest(@ApiParam(value = "application files",
+            required = true) @RequestPart("file") List<MultipartFile> packageList) {
         // TODO mock method for test locally.
         // AccessTokenFilter.test();
-        List<MultipartFile> packages = new ArrayList<MultipartFile>();
-        packages.add(packageList);
-        return ResponseEntity.ok(taskService.createTask(packages));
+        // List<MultipartFile> packages = new ArrayList<MultipartFile>();
+        // packages.add(packageList);
+        return ResponseEntity.ok(taskService.createTask(packageList));
     }
 
     /**
