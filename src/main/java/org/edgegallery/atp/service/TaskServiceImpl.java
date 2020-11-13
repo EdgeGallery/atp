@@ -71,7 +71,7 @@ public class TaskServiceImpl implements TaskService {
 
         Map<String, String> context = AccessTokenFilter.context.get();
         if (null == context) {
-            // TODO delete temp file.
+            tempFileList.forEach((taskId, file) -> file.delete());;
             throw new IllegalArgumentException("AccessTokenFilter.context is null");
         }
         User user = new User(context.get(Constant.USER_ID), context.get(Constant.USER_NAME));
