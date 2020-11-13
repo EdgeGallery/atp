@@ -72,7 +72,7 @@ public class TaskServiceImpl implements TaskService {
 
         Map<String, String> context = AccessTokenFilter.context.get();
         if (null == context) {
-            tempFileList.forEach((taskId, file) -> file.delete());;
+            tempFileList.forEach((taskId, file) -> file.delete());
             throw new IllegalArgumentException(ExceptionConstant.CONTEXT_IS_NULL);
         }
         User user = new User(context.get(Constant.USER_ID), context.get(Constant.USER_NAME));
@@ -175,7 +175,7 @@ public class TaskServiceImpl implements TaskService {
             throw new IllegalArgumentException("AccessTokenFilter.context is null");
         }
         task.setCreateTime(taskRepository.getCurrentDate());
-        task.setStatus(Constant.Status.WAITING);
+        task.setStatus(Constant.WAITING);
         task.setUser(new User(context.get(Constant.USER_ID), context.get(Constant.USER_NAME)));
         task.setAccessToken(context.get(Constant.ACCESS_TOKEN));
         List<TestCase> testCaseList = testCaseRepository.findAllTestCases();
@@ -208,13 +208,13 @@ public class TaskServiceImpl implements TaskService {
 
         for (TestCase testCase : testCaseList) {
             switch (testCase.getType()) {
-                case Constant.testCaseType.VIRUS_SCAN_TEST:
+                case Constant.VIRUS_SCAN_TEST:
                     virusMap.put(testCase.getName(), new TestCaseResult());
                     break;
-                case Constant.testCaseType.COMPLIANCE_TEST:
+                case Constant.COMPLIANCE_TEST:
                     complianceMap.put(testCase.getName(), new TestCaseResult());
                     break;
-                case Constant.testCaseType.SANDBOX_TEST:
+                case Constant.SANDBOX_TEST:
                     sandboxMap.put(testCase.getName(), new TestCaseResult());
                     break;
                 default:

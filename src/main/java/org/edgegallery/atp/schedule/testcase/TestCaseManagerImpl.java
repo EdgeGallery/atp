@@ -58,12 +58,12 @@ public class TestCaseManagerImpl implements TestCaseManager {
             context.put(Constant.ACCESS_TOKEN, task.getAccessToken());
             context.put(Constant.TENANT_ID, task.getUser().getUserId());
 
-            execute(Constant.testCaseType.COMPLIANCE_TEST, detail.getComplianceTest(), context);
-            execute(Constant.testCaseType.VIRUS_SCAN_TEST, detail.getVirusScanningTest(), context);
-            execute(Constant.testCaseType.SANDBOX_TEST, detail.getSandboxTest(), context);
+            execute(Constant.COMPLIANCE_TEST, detail.getComplianceTest(), context);
+            execute(Constant.VIRUS_SCAN_TEST, detail.getVirusScanningTest(), context);
+            execute(Constant.SANDBOX_TEST, detail.getSandboxTest(), context);
 
             task.setEndTime(taskRepository.getCurrentDate());
-            task.setStatus(!resultStatus ? Constant.Status.FAILED : Constant.Status.SUCCESS);
+            task.setStatus(!resultStatus ? Constant.FAILED : Constant.SUCCESS);
             taskRepository.update(task);
 
             new File(filePath).delete();
@@ -75,7 +75,7 @@ public class TestCaseManagerImpl implements TestCaseManager {
          * @param task task info.
          */
         private void changeStatusAndSave(TaskRequest task) {
-            task.setStatus(Constant.Status.RUNNING);
+            task.setStatus(Constant.RUNNING);
             TestCaseDetail detail = task.getTestCaseDetail();
             changeTestCaseRunning(detail.getComplianceTest());
             changeTestCaseRunning(detail.getSandboxTest());
@@ -93,7 +93,7 @@ public class TestCaseManagerImpl implements TestCaseManager {
                 for (Map.Entry<String, TestCaseResult> entry : testCaseMap.entrySet()) {
                     TestCaseResult result = entry.getValue();
                     if (null != result) {
-                        result.setResult(Constant.Status.RUNNING);
+                        result.setResult(Constant.RUNNING);
                         entry.setValue(result);
                     }
                 }
@@ -116,7 +116,7 @@ public class TestCaseManagerImpl implements TestCaseManager {
                     if (null != result) {
                         entry.setValue(result);
                     }
-                    resultStatus = Constant.Status.FAILED.equals(result.getResult()) ? false : resultStatus;
+                    resultStatus = Constant.FAILED.equals(result.getResult()) ? false : resultStatus;
                 }
             });
         }

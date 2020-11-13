@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
+import org.edgegallery.atp.constant.ExceptionConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.ResourceServerTokenServicesConfiguration;
 import org.springframework.context.annotation.Import;
@@ -37,12 +38,12 @@ public class AccessTokenFilter extends OncePerRequestFilter {
     @Autowired
     TokenStore jwtTokenStore;
 
-    public static ThreadLocal<Map<String, String>> context = new ThreadLocal<Map<String, String>>();;
+    public static ThreadLocal<Map<String, String>> context = new ThreadLocal<>();
 
     // @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        Map<String, String> contextMap = new HashMap<String, String>();
+        Map<String, String> contextMap = new HashMap<>();
         String accessTokenStr = request.getHeader(Constant.ACCESS_TOKEN);
         if (StringUtils.isEmpty(accessTokenStr)) {
             response.sendError(HttpStatus.UNAUTHORIZED.value(), "Access token is empty");
@@ -50,7 +51,7 @@ public class AccessTokenFilter extends OncePerRequestFilter {
         }
         OAuth2AccessToken accessToken = jwtTokenStore.readAccessToken(accessTokenStr);
         if (accessToken == null) {
-            response.sendError(HttpStatus.UNAUTHORIZED.value(), "Invalid access token");
+            response.sendError(HttpStatus.UNAUTHORIZED.value(), ExceptionConstant.INVALID_ACCESS_TOKEN);
             return;
         }
         if (accessToken.isExpired()) {
@@ -59,7 +60,7 @@ public class AccessTokenFilter extends OncePerRequestFilter {
         }
         Map<String, Object> additionalInfoMap = accessToken.getAdditionalInformation();
         if (additionalInfoMap == null) {
-            response.sendError(HttpStatus.UNAUTHORIZED.value(), "Invalid access token");
+            response.sendError(HttpStatus.UNAUTHORIZED.value(), ExceptionConstant.INVALID_ACCESS_TOKEN);
             return;
         }
         String userIdFromRequest = request.getParameter(Constant.USER_ID);
@@ -76,7 +77,7 @@ public class AccessTokenFilter extends OncePerRequestFilter {
         }
         OAuth2Authentication auth = jwtTokenStore.readAuthentication(accessToken);
         if (auth == null) {
-            response.sendError(HttpStatus.UNAUTHORIZED.value(), "Invalid access token");
+            response.sendError(HttpStatus.UNAUTHORIZED.value(), ExceptionConstant.INVALID_ACCESS_TOKEN);
             return;
         }
 

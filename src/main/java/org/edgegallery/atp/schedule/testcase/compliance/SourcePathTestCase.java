@@ -51,12 +51,10 @@ public class SourcePathTestCase extends TestCaseAbs {
             }
         } catch (IOException e) {
             LOGGER.error("SourcePathTestCase execute failed. {}", e.getMessage());
-            return setTestCaseResult(Constant.Status.FAILED, ExceptionConstant.INNER_EXCEPTION, testCaseResult);
+            return setTestCaseResult(Constant.FAILED, ExceptionConstant.INNER_EXCEPTION, testCaseResult);
         }
-        return pathSet.containsAll(sourcePathSet)
-                ? setTestCaseResult(Constant.Status.SUCCESS, Constant.EMPTY, testCaseResult)
-                : setTestCaseResult(Constant.Status.FAILED,
-                        ExceptionConstant.SourcePathTestCase.SOURCE_PATH_FILE_NOT_EXISTS, testCaseResult);
+        return pathSet.containsAll(sourcePathSet) ? setTestCaseResult(Constant.SUCCESS, Constant.EMPTY, testCaseResult)
+                : setTestCaseResult(Constant.FAILED, ExceptionConstant.SOURCE_PATH_FILE_NOT_EXISTS, testCaseResult);
     }
 
 }

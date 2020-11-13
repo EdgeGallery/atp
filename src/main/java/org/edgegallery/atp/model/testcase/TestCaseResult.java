@@ -18,7 +18,7 @@ public class TestCaseResult {
     String reason;
 
     public TestCaseResult() {
-        this.result = Constant.Status.WAITING;
+        this.result = Constant.WAITING;
         this.reason = Constant.EMPTY;
     }
 

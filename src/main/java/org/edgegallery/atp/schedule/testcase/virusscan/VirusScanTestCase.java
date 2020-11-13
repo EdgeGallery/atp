@@ -1,4 +1,4 @@
-package org.edgegallery.atp.schedule.testcase.virusScan;
+package org.edgegallery.atp.schedule.testcase.virusscan;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -25,11 +25,11 @@ public class VirusScanTestCase extends TestCaseAbs {
 
     private TestCaseResult testCaseResult = new TestCaseResult();
 
-    private final String PATH_COMMAND = "cd /root/testVirus/clamav-0.102.4";
+    private static final String PATH_COMMAND = "cd /root/testVirus/clamav-0.102.4";
 
-    private final String EXECUTE_SCAN_COMMAND = "clamscan %s";
+    private static final String EXECUTE_SCAN_COMMAND = "clamscan %s";
 
-    private final String EXIT_COMMAND = "exit";
+    private static final String EXIT_COMMAND = "exit";
 
     @Override
     public TestCaseResult execute(String filePath, Map<String, String> context) {
@@ -48,10 +48,9 @@ public class VirusScanTestCase extends TestCaseAbs {
                         if (line.startsWith("Infected files")) {
                             String scanResult = line.split(": ")[1].trim();
                             return "0".equals(scanResult)
-                                    ? setTestCaseResult(Constant.Status.SUCCESS, Constant.EMPTY, testCaseResult)
-                                    : setTestCaseResult(Constant.Status.FAILED,
-                                            String.format(ExceptionConstant.VirusScanTestCase.FIND_VIRUS, scanResult),
-                                            testCaseResult);
+                                    ? setTestCaseResult(Constant.SUCCESS, Constant.EMPTY, testCaseResult)
+                                    : setTestCaseResult(Constant.FAILED,
+                                            String.format(ExceptionConstant.FIND_VIRUS, scanResult), testCaseResult);
                         }
                     }
                 } finally {
@@ -62,7 +61,7 @@ public class VirusScanTestCase extends TestCaseAbs {
         } catch (IOException e) {
             LOGGER.error("Failed to execute virus scan, exception is {}", e.getMessage());
         }
-        return setTestCaseResult(Constant.Status.FAILED, ExceptionConstant.INNER_EXCEPTION, testCaseResult);
+        return setTestCaseResult(Constant.FAILED, ExceptionConstant.INNER_EXCEPTION, testCaseResult);
     }
 
 }

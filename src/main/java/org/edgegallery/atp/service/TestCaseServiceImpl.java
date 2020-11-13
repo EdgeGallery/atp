@@ -19,8 +19,8 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     @Override
     public ResponseEntity<List<TestCase>> getAllTestCases(String type) {
-        if (Constant.testCaseType.COMPLIANCE_TEST.equals(type) || Constant.testCaseType.SANDBOX_TEST.equals(type)
-                || Constant.testCaseType.VIRUS_SCAN_TEST.equals(type)) {
+        if (Constant.COMPLIANCE_TEST.equals(type) || Constant.SANDBOX_TEST.equals(type)
+                || Constant.VIRUS_SCAN_TEST.equals(type)) {
             return ResponseEntity.ok(testCaseRepository.findTestCasesByType(type));
         }
 

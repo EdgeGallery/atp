@@ -40,16 +40,15 @@ public class UninstantiateAppTestCase extends TestCaseAbs {
         }
 
         if (!CollectionUtils.isEmpty(failedInstance)) {
-            return setTestCaseResult(Constant.Status.FAILED,
-                    ExceptionConstant.UninstantiateAppTestCase.UNINSTANTIATE_DEPENDENCE_APP_FAILED
-                            .concat(failedInstance.toString()),
+            LOGGER.error("some instance not terminate successfully.");
+            return setTestCaseResult(Constant.FAILED,
+                    ExceptionConstant.UNINSTANTIATE_DEPENDENCE_APP_FAILED.concat(failedInstance.toString()),
                     testCaseResult);
         }
 
         return CommonUtil.deleteAppInstance(appInstanceId, context)
-                ? setTestCaseResult(Constant.Status.SUCCESS, Constant.EMPTY, testCaseResult)
-                : setTestCaseResult(Constant.Status.FAILED,
-                        ExceptionConstant.UninstantiateAppTestCase.UNINSTANTIATE_APP_FAILED.concat(appInstanceId),
+                ? setTestCaseResult(Constant.SUCCESS, Constant.EMPTY, testCaseResult)
+                : setTestCaseResult(Constant.FAILED, ExceptionConstant.UNINSTANTIATE_APP_FAILED.concat(appInstanceId),
                         testCaseResult);
     }
 

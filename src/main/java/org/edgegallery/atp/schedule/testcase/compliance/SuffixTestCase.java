@@ -31,15 +31,14 @@ public class SuffixTestCase extends TestCaseAbs {
                 // root directory and file is end of mf
                 if (entry.getName().split(Constant.SLASH).length == 2
                         && TestCaseUtil.fileSuffixValidate("mf", entry.getName())) {
-                    return setTestCaseResult(Constant.Status.SUCCESS, Constant.EMPTY, testCaseResult);
+                    return setTestCaseResult(Constant.SUCCESS, Constant.EMPTY, testCaseResult);
                 }
             }
         } catch (IOException e) {
             LOGGER.error("SuffixTestCase execute failed. {}", e.getMessage());
-            return setTestCaseResult(Constant.Status.FAILED, ExceptionConstant.INNER_EXCEPTION, testCaseResult);
+            return setTestCaseResult(Constant.FAILED, ExceptionConstant.INNER_EXCEPTION, testCaseResult);
         }
-        return setTestCaseResult(Constant.Status.FAILED, ExceptionConstant.MFContentTestCase.FILE_NOT_EXIST,
-                testCaseResult);
+        return setTestCaseResult(Constant.FAILED, ExceptionConstant.FILE_NOT_EXIST, testCaseResult);
     }
 
 }
