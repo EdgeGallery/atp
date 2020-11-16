@@ -284,9 +284,9 @@ public class FileChecker {
             throw new IllegalArgumentException("unzip csar with exception.");
         } finally {
             zis.close();
-            if (!StringUtils.isEmpty(name)) {
-                new File(name).delete();
-            }
+            // if (!StringUtils.isEmpty(name)) {
+            // new File(name).delete();
+            // }
         }
     }
 
