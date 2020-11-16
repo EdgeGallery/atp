@@ -25,6 +25,8 @@ import org.edgegallery.atp.model.CommonActionRes;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.service.TaskService;
 import org.edgegallery.atp.utils.CommonUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
@@ -48,7 +50,7 @@ import io.swagger.annotations.ApiResponses;
 @Api(tags = {"APT Test Controller"})
 @Validated
 public class TaskController {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(TaskController.class);
     private static final String REG_ID = "[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}";
 
     @Autowired
@@ -70,6 +72,7 @@ public class TaskController {
     // @PreAuthorize("hasRole('ATP_TENANT')")
     public ResponseEntity<List<TaskRequest>> startTest(@ApiParam(value = "application files",
             required = true) @RequestPart("file") List<MultipartFile> packageList) {
+        LOGGER.warn("startTest in.");
         return ResponseEntity.ok(taskService.createTask(packageList));
     }
 
@@ -132,6 +135,7 @@ public class TaskController {
     public ResponseEntity<CommonActionRes> dependencyCheck(
             @ApiParam(value = "application files", required = true) @RequestPart("file") MultipartFile packages) {
         CommonUtil.validateContext();
+        LOGGER.warn("dependencyCheck in.");
         return ResponseEntity.ok(taskService.dependencyCheck(packages));
     }
 

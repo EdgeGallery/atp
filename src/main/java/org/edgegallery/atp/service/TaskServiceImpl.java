@@ -143,7 +143,9 @@ public class TaskServiceImpl implements TaskService {
             // key is appId, value is packageId
             Stack<Map<String, String>> dependencyAppList = new Stack<Map<String, String>>();
             CommonUtil.dependencyCheckSchdule(filePath, dependencyAppList);
+            LOGGER.warn("dependencyAppList result: {}", JSONUtil.marshal(dependencyAppList));
             Map<String, String> getDependencyInfo = new HashMap<String, String>();
+
             dependencyAppList.forEach(map -> {
                 JsonObject response =
                         CommonUtil.getAppInfoFromAppStore(map.get(Constant.APP_ID), map.get(Constant.PACKAGE_ID));
