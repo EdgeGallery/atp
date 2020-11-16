@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ExceptionConstant;
-import org.edgegallery.atp.utils.JSONUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,13 +86,14 @@ public class AccessTokenFilter extends OncePerRequestFilter {
             return;
         }
         LOGGER.warn("accessTokenStr: " + accessTokenStr);
+        LOGGER.warn("userIdFromToken: " + userIdFromToken);
+        LOGGER.warn("userNameFromToken: " + userNameFromToken);
         LOGGER.warn("userIdFromRequest: " + userIdFromRequest);
         LOGGER.warn("userNameFromRequest: " + userNameFromRequest);
         contextMap.put(Constant.ACCESS_TOKEN, accessTokenStr);
-        contextMap.put(Constant.USER_ID, userIdFromRequest);
-        contextMap.put(Constant.USER_NAME, userNameFromRequest);
+        contextMap.put(Constant.USER_ID, userIdFromToken);
+        contextMap.put(Constant.USER_NAME, userNameFromToken);
         context.set(contextMap);
-        LOGGER.warn("context: " + JSONUtil.marshal(context));
 
         SecurityContextHolder.getContext().setAuthentication(auth);
         filterChain.doFilter(request, response);
