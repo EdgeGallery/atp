@@ -33,9 +33,12 @@ public class VirusScanTestCase extends TestCaseAbs {
 
     @Override
     public TestCaseResult execute(String filePath, Map<String, String> context) {
+        LOGGER.warn("virus scan in.");
         try {
             Process proc = Runtime.getRuntime().exec("/bin/bash", null, new File("/bin"));
+            LOGGER.warn("proc get.");
             if (null != proc) {
+                LOGGER.warn("proc is not null.");
                 try (BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
                         PrintWriter out = new PrintWriter(
                                 new BufferedWriter(new OutputStreamWriter(proc.getOutputStream())), true)) {
@@ -44,6 +47,7 @@ public class VirusScanTestCase extends TestCaseAbs {
                     out.println(EXIT_COMMAND);
 
                     String line = "";
+                    LOGGER.warn("line init.");
                     while ((line = in.readLine()) != null) {
                         LOGGER.warn("virus scan line: {}", line);
                         if (line.startsWith("Infected files")) {
