@@ -45,8 +45,10 @@ public class VirusScanTestCase extends TestCaseAbs {
 
                     String line = "";
                     while ((line = in.readLine()) != null) {
+                        LOGGER.warn("virus scan line: {}", line);
                         if (line.startsWith("Infected files")) {
                             String scanResult = line.split(": ")[1].trim();
+                            LOGGER.warn("virus scan Infected files: {}", scanResult);
                             return "0".equals(scanResult)
                                     ? setTestCaseResult(Constant.SUCCESS, Constant.EMPTY, testCaseResult)
                                     : setTestCaseResult(Constant.FAILED,
