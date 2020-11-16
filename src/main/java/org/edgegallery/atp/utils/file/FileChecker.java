@@ -256,7 +256,8 @@ public class FileChecker {
                 int count;
                 // Write the files to the disk, but ensure that the entryName is valid,
                 // and that the file is not insanely big
-                String name = sanitzeFileName(entry.getName(), Constant.WORK_TEMP_DIR);
+                // String name = sanitzeFileName(entry.getName(), Constant.WORK_TEMP_DIR);
+                String name = sanitzeFileName(entry.getName(), fileName);
                 File f = new File(name);
                 if (isDir(entry, f)) {
                     continue;
