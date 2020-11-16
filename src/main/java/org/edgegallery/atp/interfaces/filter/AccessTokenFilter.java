@@ -45,7 +45,7 @@ public class AccessTokenFilter extends OncePerRequestFilter {
 
     public static ThreadLocal<Map<String, String>> context = new ThreadLocal<>();
 
-    // @Override
+    @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         LOGGER.warn("doFilterInternal in ");
