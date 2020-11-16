@@ -71,6 +71,7 @@ public class TaskServiceImpl implements TaskService {
         });
 
         Map<String, String> context = AccessTokenFilter.context.get();
+        LOGGER.warn("createTask context: " + JSONUtil.marshal(context));
         if (null == context) {
             tempFileList.forEach((taskId, file) -> file.delete());
             throw new IllegalArgumentException(ExceptionConstant.CONTEXT_IS_NULL);
