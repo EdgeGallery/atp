@@ -71,7 +71,6 @@ public class TaskServiceImpl implements TaskService {
         });
 
         Map<String, String> context = AccessTokenFilter.context.get();
-        LOGGER.warn("createTask context: " + JSONUtil.marshal(context));
         if (null == context) {
             tempFileList.forEach((taskId, file) -> file.delete());
             throw new IllegalArgumentException(ExceptionConstant.CONTEXT_IS_NULL);
@@ -143,7 +142,6 @@ public class TaskServiceImpl implements TaskService {
             // key is appId, value is packageId
             Stack<Map<String, String>> dependencyAppList = new Stack<Map<String, String>>();
             CommonUtil.dependencyCheckSchdule(filePath, dependencyAppList);
-            LOGGER.warn("dependencyAppList result: {}", JSONUtil.marshal(dependencyAppList));
             Map<String, String> getDependencyInfo = new HashMap<String, String>();
 
             dependencyAppList.forEach(map -> {

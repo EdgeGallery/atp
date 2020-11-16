@@ -37,7 +37,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Import({ResourceServerTokenServicesConfiguration.class})
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class AccessTokenFilter extends OncePerRequestFilter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccessTokenFilter.class);
 
     @Autowired
     TokenStore jwtTokenStore;
@@ -47,7 +46,6 @@ public class AccessTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        LOGGER.warn("doFilterInternal in ");
         Map<String, String> contextMap = new HashMap<>();
         String accessTokenStr = request.getHeader(Constant.ACCESS_TOKEN);
         if (StringUtils.isEmpty(accessTokenStr)) {
@@ -85,11 +83,6 @@ public class AccessTokenFilter extends OncePerRequestFilter {
             response.sendError(HttpStatus.UNAUTHORIZED.value(), ExceptionConstant.INVALID_ACCESS_TOKEN);
             return;
         }
-        LOGGER.warn("accessTokenStr: " + accessTokenStr);
-        LOGGER.warn("userIdFromToken: " + userIdFromToken);
-        LOGGER.warn("userNameFromToken: " + userNameFromToken);
-        LOGGER.warn("userIdFromRequest: " + userIdFromRequest);
-        LOGGER.warn("userNameFromRequest: " + userNameFromRequest);
         contextMap.put(Constant.ACCESS_TOKEN, accessTokenStr);
         contextMap.put(Constant.USER_ID, userIdFromToken);
         contextMap.put(Constant.USER_NAME, userNameFromToken);

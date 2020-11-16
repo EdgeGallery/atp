@@ -13,9 +13,9 @@ public interface Constant {
 
     int MAX_TASK_THREAD_NUM = 10;
 
-    String APP_NAME = "app_name";
+    String APP_NAME = "app_product_name";
 
-    String APP_VERSION = "app_archive_version";
+    String APP_VERSION = "app_package_version";
 
     String ACCESS_TOKEN = "access_token";
 
