@@ -3,6 +3,7 @@ package org.edgegallery.atp.utils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -15,6 +16,7 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import org.apache.commons.io.FileUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ExceptionConstant;
 import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
@@ -22,6 +24,7 @@ import org.edgegallery.atp.utils.file.FileChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -112,25 +115,28 @@ public class CommonUtil {
      * @param packageId packageId
      * @return response body
      */
-    public static JsonObject downloadAppFromAppStore(String appId, String packageId) {
+    public static InputStream downloadAppFromAppStore(String appId, String packageId) {
         HttpHeaders headers = new HttpHeaders();
         headers.set(Constant.ACCESS_TOKEN, AccessTokenFilter.context.get().get(Constant.ACCESS_TOKEN));
         HttpEntity<String> request = new HttpEntity<>(headers);
 
         String url = String.format(Constant.APP_STORE_DOWNLOAD_CSAR, appId, packageId);
         try {
-            ResponseEntity<String> response = REST_TEMPLATE.exchange(Constant.PROTOCOL_APPSTORE.concat(url),
-                    HttpMethod.GET, request, String.class);
-            if (!HttpStatus.OK.equals(response.getStatusCode())) {
+            ResponseEntity<Resource> response = REST_TEMPLATE.exchange(Constant.PROTOCOL_APPSTORE.concat(url),
+                    HttpMethod.GET, request, Resource.class);
+            Resource responseBody = response.getBody();
+
+            if (!HttpStatus.OK.equals(response.getStatusCode()) || responseBody == null) {
                 LOGGER.error("download csar file from appstore reponse failed. The status code is {}",
                         response.getStatusCode());
                 return null;
             }
 
-            JsonObject jsonObject = new JsonParser().parse(response.getBody()).getAsJsonObject();
-            return jsonObject;
+            return responseBody.getInputStream();
         } catch (RestClientException e) {
             LOGGER.error("Failed to get app info from appstore which appId is {} exception {}", appId, e.getMessage());
+        } catch (IOException e) {
+            LOGGER.error("responseBody.getInputStream() failed,exception is:{}", e.getMessage());
         }
 
         return null;
@@ -190,12 +196,22 @@ public class CommonUtil {
         dependencyStack.addAll(dependencyList);
 
         dependencyList.forEach(map -> {
-            JsonObject response = downloadAppFromAppStore(map.get(Constant.APP_ID), map.get(Constant.PACKAGE_ID));
-            if (null != response) {
-                // TODO analysis response and get csar file, get csar file path
-                String dependencyFilePath = "";
+            InputStream inputStream = downloadAppFromAppStore(map.get(Constant.APP_ID), map.get(Constant.PACKAGE_ID));
+            // analysis response and get csar file, get csar file path
+            String dependencyFilePath = new StringBuilder().append(FileChecker.getDir()).append(File.separator)
+                    .append("temp").append(File.separator).append(map.get(Constant.APP_ID)).append(Constant.UNDER_LINE)
+                    .append(map.get(Constant.PACKAGE_ID)).toString();
+            LOGGER.warn("temp file is: " + dependencyFilePath);
+            File file = new File(dependencyFilePath);
+            try {
+                FileUtils.copyInputStreamToFile(inputStream, file);
                 dependencyCheckSchdule(dependencyFilePath, dependencyStack);
+            } catch (IOException e) {
+                String msg = "copy input stream to file failed.";
+                LOGGER.error(msg);
+                throw new IllegalArgumentException(msg);
             }
+            file.delete();
         });
     }
 
