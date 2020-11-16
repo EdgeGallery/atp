@@ -251,13 +251,13 @@ public class FileChecker {
         int entries = 0;
         int total = 0;
         byte[] data = new byte[Constant.BUFFER];
+        String name = "";
         try {
             while ((entry = zis.getNextEntry()) != null) {
                 int count;
                 // Write the files to the disk, but ensure that the entryName is valid,
                 // and that the file is not insanely big
-                // String name = sanitzeFileName(entry.getName(), Constant.WORK_TEMP_DIR);
-                String name = sanitzeFileName(entry.getName(), fileName);
+                name = sanitzeFileName(entry.getName(), Constant.WORK_TEMP_DIR);
                 File f = new File(name);
                 if (isDir(entry, f)) {
                     continue;
@@ -284,6 +284,9 @@ public class FileChecker {
             throw new IllegalArgumentException("unzip csar with exception.");
         } finally {
             zis.close();
+            if (!StringUtils.isEmpty(name)) {
+                new File(name).delete();
+            }
         }
     }
 
