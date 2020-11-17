@@ -64,6 +64,9 @@ RUN apk update &&\
     apk add shadow &&\
     groupadd -r -g $GID $GROUP_NAME &&\
     useradd -r -u $UID -g $GID -d $APP_HOME -s /sbin/nologin -c "Docker image user" $USER_NAME
+    
+RUN apk update &&\
+    apk add shadow &&\
     groupadd clamav &&\
     useradd -g clamav clamav
 
