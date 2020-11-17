@@ -22,8 +22,7 @@ RUN apk update &&\
     apk upgrade &&\
     apk add bash
     
-RUN apt-get update &&\
-    apt-get install vim
+RUN apt install vim
 
 EXPOSE 9085
 COPY target/*.jar $APP_HOME/
