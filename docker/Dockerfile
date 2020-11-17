@@ -14,16 +14,75 @@
 #    limitations under the License.
 #
 FROM openjdk:8u201-jdk-alpine
+
+# Define all environment variable here
+ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk
 ENV TZ='Asia/Shanghai'
 ENV APP_FILE application-test-platform.jar
 ENV APP_HOME /usr/atp
+ENV UID=166
+ENV GID=166
+ENV USER_NAME=eguser
+ENV GROUP_NAME=eggroup
+ENV ENV="/etc/profile"
+
+# # CREATE APP USER ##
+# Set umask
+RUN sed -i "s|umask 022|umask 027|g" /etc/profile
+
+# Create the home directory for the new app user.
+RUN mkdir -p /usr/app
+RUN mkdir -p /usr/app/bin
 
 RUN apk update &&\
     apk upgrade &&\
     apk add bash
+    apk add yum
+    
+RUN groupadd clamav && useradd -g clamav clamav && id clamav
 
-EXPOSE 9085
-COPY target/*.jar $APP_HOME/
+RUN mkdir -p /usr/local/clamav/logs &&\    
+	touch /usr/local/clamav/logs/clamd.log &&\
+	touch /usr/local/clamav/logs/freshclam.log &&\
+	chown clamav.clamav /usr/local/clamav/logs/clamd.log &&\
+	chown clamav.clamav /usr/local/clamav/logs/freshclam.log
+	
+RUN mkdir -p /usr/local/clamav/updata &&\
+	chown -R root.clamav /usr/local/clamav/ &&\
+	chown -R clamav.clamav /usr/local/clamav/updata/
+
+#RUN apt-get update &&\   
+#	apt install vim &&\  
+#	apt install weget &&\  
+#	apt install yum &&\  
+#	apt install net-tools &&\         
+#	apt install iputils-ping
+
+# Create an app user so our program doesn't run as root.
+RUN apk update &&\
+    apk add shadow &&\
+    groupadd -r -g $GID $GROUP_NAME &&\
+    useradd -r -u $UID -g $GID -d $APP_HOME -s /sbin/nologin -c "Docker image user" $USER_NAME
+
+RUN apk add docker
+
 WORKDIR $APP_HOME
-ENTRYPOINT ["sh", "-c"]
-CMD ["exec java -jar $APP_FILE"]
+
+COPY target/*.jar $APP_HOME/bin
+COPY configs/*.sh $APP_HOME/bin
+
+RUN chmod 750 $APP_HOME &&\
+    chmod -R 550 $APP_HOME/bin &&\
+    mkdir -p -m 750 $APP_HOME/config &&\
+    mkdir -p -m 750 $APP_HOME/log &&\
+    mkdir -p -m 750 $APP_HOME/packages &&\
+    mkdir -p -m 700 $APP_HOME/ssl &&\
+    chown -R $USER_NAME:$GROUP_NAME $APP_HOME
+
+EXPOSE 8099
+
+# Change to the app user.
+USER $USER_NAME
+
+# Execute script & application
+ENTRYPOINT ["sh", "./bin/start.sh"]
