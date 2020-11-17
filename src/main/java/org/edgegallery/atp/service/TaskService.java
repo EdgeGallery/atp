@@ -15,7 +15,7 @@ public interface TaskService {
      * @param packages scar file
      * @return taskId
      */
-    public List<TaskRequest> createTask(List<MultipartFile> packages);
+    public List<TaskRequest> createTask(MultipartFile[] packages);
 
     /**
      * get task info by taskId

@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,33 +57,28 @@ public class TaskServiceImpl implements TaskService {
     BatchTaskRepository batchTaskRepository;
 
     @Override
-    public List<TaskRequest> createTask(List<MultipartFile> packageList) {
-        LOGGER.warn("createTask in.");
+    public List<TaskRequest> createTask(MultipartFile[] packageList) {
         Map<String, File> tempFileList = new HashMap<String, File>();
         List<TaskRequest> resultList = new ArrayList<TaskRequest>();
         StringBuffer subTaskId = new StringBuffer();
         LOGGER.warn("packageList: " + packageList);
-        packageList.forEach(file -> {
+        Arrays.asList(packageList).forEach(file -> {
             LOGGER.warn("file in.");
             String taskId = CommonUtil.generateId();
             File tempFile = FileChecker.check(file, taskId);
-            LOGGER.warn("tempFile in." + file.getOriginalFilename());
             if (null == tempFile) {
-                LOGGER.warn("temp file is null");
                 throw new IllegalArgumentException(file.getOriginalFilename() + "temp file is null");
             }
             tempFileList.put(taskId, tempFile);
             subTaskId.append(taskId).append(Constant.COMMA);
         });
-        LOGGER.warn("2222");
         Map<String, String> context = AccessTokenFilter.context.get();
         if (null == context) {
             tempFileList.forEach((taskId, file) -> file.delete());
             throw new IllegalArgumentException(ExceptionConstant.CONTEXT_IS_NULL);
         }
-        LOGGER.warn("context");
         User user = new User(context.get(Constant.USER_ID), context.get(Constant.USER_NAME));
-        LOGGER.warn("tempFileList: " + JSONUtil.marshal(tempFileList));
+        LOGGER.warn("tempFileList {}", JSONUtil.marshal(tempFileList));
         tempFileList.forEach((taskId, tempFile) -> {
             try {
                 TaskRequest task = new TaskRequest();
@@ -91,7 +87,6 @@ public class TaskServiceImpl implements TaskService {
                 task.setAccessToken(context.get(Constant.ACCESS_TOKEN));
                 String filePath = tempFile.getCanonicalPath();
                 initTaskRequset(task, filePath);
-                LOGGER.warn("task: " + JSONUtil.marshal(task));
                 taskRepository.insert(task);
                 testCaseManager.executeTestCase(task, filePath);
                 resultList.add(task);
@@ -99,7 +94,6 @@ public class TaskServiceImpl implements TaskService {
                 LOGGER.error("create task {} failed, file name is: {}", taskId, tempFile.getName());
             }
         });
-        LOGGER.warn("end");
         return resultList;
     }
 
