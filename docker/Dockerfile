@@ -37,9 +37,12 @@ RUN mkdir -p /usr/app/bin
 RUN apk update &&\
     apk upgrade &&\
     apk add bash
-    apk add yum
-    
+
 RUN groupadd clamav && useradd -g clamav clamav && id clamav
+    
+RUN apk update &&\
+    apk upgrade &&\
+    apk add yum
 
 RUN mkdir -p /usr/local/clamav/logs &&\    
 	touch /usr/local/clamav/logs/clamd.log &&\
