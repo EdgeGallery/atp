@@ -65,17 +65,19 @@ public class TaskServiceImpl implements TaskService {
             String taskId = CommonUtil.generateId();
             File tempFile = FileChecker.check(file, taskId);
             if (null == tempFile) {
+                LOGGER.warn("temp file is null");
                 throw new IllegalArgumentException(file.getOriginalFilename() + "temp file is null");
             }
             tempFileList.put(taskId, tempFile);
             subTaskId.append(taskId).append(Constant.COMMA);
         });
-
+        LOGGER.warn("2222");
         Map<String, String> context = AccessTokenFilter.context.get();
         if (null == context) {
             tempFileList.forEach((taskId, file) -> file.delete());
             throw new IllegalArgumentException(ExceptionConstant.CONTEXT_IS_NULL);
         }
+        LOGGER.warn("context");
         User user = new User(context.get(Constant.USER_ID), context.get(Constant.USER_NAME));
 
         tempFileList.forEach((taskId, tempFile) -> {
@@ -86,6 +88,7 @@ public class TaskServiceImpl implements TaskService {
                 task.setAccessToken(context.get(Constant.ACCESS_TOKEN));
                 String filePath = tempFile.getCanonicalPath();
                 initTaskRequset(task, filePath);
+                LOGGER.warn("task: " + JSONUtil.marshal(task));
                 taskRepository.insert(task);
                 testCaseManager.executeTestCase(task, filePath);
                 resultList.add(task);
@@ -93,7 +96,7 @@ public class TaskServiceImpl implements TaskService {
                 LOGGER.error("create task {} failed, file name is: {}", taskId, tempFile.getName());
             }
         });
-
+        LOGGER.warn("end");
         return resultList;
     }
 
