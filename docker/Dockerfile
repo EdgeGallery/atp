@@ -42,16 +42,6 @@ RUN apk update &&\
 #    apk upgrade &&\
 #    apk add yum
 
-RUN mkdir -p /usr/local/clamav/logs &&\    
-	touch /usr/local/clamav/logs/clamd.log &&\
-	touch /usr/local/clamav/logs/freshclam.log &&\
-	chown clamav.clamav /usr/local/clamav/logs/clamd.log &&\
-	chown clamav.clamav /usr/local/clamav/logs/freshclam.log
-	
-RUN mkdir -p /usr/local/clamav/updata &&\
-	chown -R root.clamav /usr/local/clamav/ &&\
-	chown -R clamav.clamav /usr/local/clamav/updata/
-
 #RUN apt-get update &&\   
 #	apt install vim &&\  
 #	apt install weget &&\  
@@ -69,6 +59,16 @@ RUN apk update &&\
     apk add shadow &&\
     groupadd clamav &&\
     useradd -g clamav clamav
+    
+RUN mkdir -p /usr/local/clamav/logs &&\    
+	touch /usr/local/clamav/logs/clamd.log &&\
+	touch /usr/local/clamav/logs/freshclam.log &&\
+	chown clamav.clamav /usr/local/clamav/logs/clamd.log &&\
+	chown clamav.clamav /usr/local/clamav/logs/freshclam.log
+	
+RUN mkdir -p /usr/local/clamav/updata &&\
+	chown -R root.clamav /usr/local/clamav/ &&\
+	chown -R clamav.clamav /usr/local/clamav/updata/
 
 RUN apk add docker
 
