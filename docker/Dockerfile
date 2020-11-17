@@ -17,6 +17,14 @@ FROM openjdk:8u201-jdk-alpine
 ENV TZ='Asia/Shanghai'
 ENV APP_FILE application-test-platform.jar
 ENV APP_HOME /usr/atp
+
+RUN apk update &&\
+    apk upgrade &&\
+    apk add bash
+    
+RUN apt-get update &&\
+    apt-get install vim
+
 EXPOSE 9085
 COPY target/*.jar $APP_HOME/
 WORKDIR $APP_HOME

@@ -57,6 +57,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public List<TaskRequest> createTask(List<MultipartFile> packageList) {
+        LOGGER.warn("createTask in.");
         Map<String, File> tempFileList = new HashMap<String, File>();
         List<TaskRequest> resultList = new ArrayList<TaskRequest>();
         StringBuffer subTaskId = new StringBuffer();
