@@ -33,10 +33,10 @@
             resultType="org.edgegallery.atp.model.testcase.TestCase">
         select * from test_case_table
         <where>
-			<if test="type != null and type !=''">
-				type = #{type}
-			</if>
-		</where>
+          <if test="type != null and type !=''">
+            type = #{type}
+          </if>
+        </where>
     </select>
 
 </mapper>
