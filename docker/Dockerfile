@@ -38,9 +38,9 @@ RUN apk update &&\
     apk upgrade &&\
     apk add bash
 
-RUN apk update &&\
-    apk upgrade &&\
-    apk add yum
+#RUN apk update &&\
+#    apk upgrade &&\
+#    apk add yum
 
 RUN mkdir -p /usr/local/clamav/logs &&\    
 	touch /usr/local/clamav/logs/clamd.log &&\
