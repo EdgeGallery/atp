@@ -38,7 +38,9 @@ RUN apk update &&\
     apk upgrade &&\
     apk add bash
 
-RUN groupadd clamav && useradd -g clamav clamav && id clamav
+RUN apk update &&\
+    groupadd clamav &&\
+    useradd -g clamav clamav
     
 RUN apk update &&\
     apk upgrade &&\
