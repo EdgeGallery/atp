@@ -21,8 +21,6 @@ ENV APP_HOME /usr/atp
 RUN apk update &&\
     apk upgrade &&\
     apk add bash
-    
-RUN apt install vim
 
 EXPOSE 9085
 COPY target/*.jar $APP_HOME/
