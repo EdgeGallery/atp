@@ -61,9 +61,12 @@ public class TaskServiceImpl implements TaskService {
         Map<String, File> tempFileList = new HashMap<String, File>();
         List<TaskRequest> resultList = new ArrayList<TaskRequest>();
         StringBuffer subTaskId = new StringBuffer();
+        LOGGER.warn("packageList: " + packageList);
         packageList.forEach(file -> {
+            LOGGER.warn("file in.");
             String taskId = CommonUtil.generateId();
             File tempFile = FileChecker.check(file, taskId);
+            LOGGER.warn("tempFile in." + file.getOriginalFilename());
             if (null == tempFile) {
                 LOGGER.warn("temp file is null");
                 throw new IllegalArgumentException(file.getOriginalFilename() + "temp file is null");
@@ -79,7 +82,7 @@ public class TaskServiceImpl implements TaskService {
         }
         LOGGER.warn("context");
         User user = new User(context.get(Constant.USER_ID), context.get(Constant.USER_NAME));
-
+        LOGGER.warn("tempFileList: " + JSONUtil.marshal(tempFileList));
         tempFileList.forEach((taskId, tempFile) -> {
             try {
                 TaskRequest task = new TaskRequest();
