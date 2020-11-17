@@ -75,17 +75,12 @@ RUN apk add docker
 WORKDIR $APP_HOME
 
 COPY target/*.jar $APP_HOME/bin
-COPY configs/*.sh $APP_HOME/bin
 
 RUN chmod 750 $APP_HOME &&\
     chmod -R 550 $APP_HOME/bin &&\
-    mkdir -p -m 750 $APP_HOME/config &&\
-    mkdir -p -m 750 $APP_HOME/log &&\
-    mkdir -p -m 750 $APP_HOME/packages &&\
-    mkdir -p -m 700 $APP_HOME/ssl &&\
     chown -R $USER_NAME:$GROUP_NAME $APP_HOME
 
-EXPOSE 8099
+EXPOSE 8073
 
 # Change to the app user.
 USER $USER_NAME
