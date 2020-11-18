@@ -302,6 +302,9 @@ public class CommonUtil {
         headers.set(Constant.ACCESS_TOKEN, context.get(Constant.ACCESS_TOKEN));
 
         LOGGER.warn("hostIp: " + hostIp);
+        LOGGER.warn("filePath: " + filePath);
+        LOGGER.warn("appPackageName: " + packageInfo.get(Constant.APP_NAME));
+        LOGGER.warn("appPackageVersion: " + packageInfo.get(Constant.APP_VERSION));
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 

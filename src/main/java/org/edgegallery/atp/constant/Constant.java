@@ -102,11 +102,11 @@ public interface Constant {
 
     String APP_STORE_DOWNLOAD_CSAR = "/mec/appstore/v1/apps/%s/packages/%s/action/download";
 
-    String APM_UPLOAD_PACKAGE = "/apm/v1/tenants/{tenant_id}/packages/upload";
+    String APM_UPLOAD_PACKAGE = "/apm/v1/tenants/%s/packages/upload";
 
-    String APPO_CREATE_APPINSTANCE = "/appo/v1/tenants/{tenant_id}/app_instances";
+    String APPO_CREATE_APPINSTANCE = "/appo/v1/tenants/%s/app_instances";
 
-    String APPO_DELETE_APPLICATION_INSTANCE = "/appo/v1/tenants/{tenant_id}/app_instances/{app_instance_id}";
+    String APPO_DELETE_APPLICATION_INSTANCE = "/appo/v1/tenants/%s/app_instances/%s";
 
     String NODE_TEMPLATES = "node_templates";
 
