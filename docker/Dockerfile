@@ -20,19 +20,19 @@ ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk
 ENV TZ='Asia/Shanghai'
 ENV APP_FILE application-test-platform.jar
 ENV APP_HOME /usr/app
-ENV UID=166
-ENV GID=166
-ENV USER_NAME=eguser
-ENV GROUP_NAME=eggroup
+#ENV UID=166
+#ENV GID=166
+#ENV USER_NAME=eguser
+#ENV GROUP_NAME=eggroup
 ENV ENV="/etc/profile"
 
 # # CREATE APP USER ##
 # Set umask
-RUN sed -i "s|umask 022|umask 027|g" /etc/profile
+#RUN sed -i "s|umask 022|umask 027|g" /etc/profile
 
 # Create the home directory for the new app user.
-RUN mkdir -p /usr/app
-RUN mkdir -p /usr/app/bin
+#RUN mkdir -p /usr/app
+#RUN mkdir -p /usr/app/bin
 
 RUN apk update &&\
     apk upgrade &&\
