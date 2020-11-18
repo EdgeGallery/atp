@@ -264,10 +264,10 @@ public class CommonUtil {
                         String line = "";
                         while ((line = br.readLine()) != null) {
                             // prefix: path
-                            if (line.trim().startsWith("app_name")) {
+                            if (line.trim().startsWith(Constant.APP_NAME)) {
                                 packageInfo.put(Constant.APP_NAME, line.split(Constant.COLON)[1].trim());
                             }
-                            if (line.trim().startsWith("app_archive_version")) {
+                            if (line.trim().startsWith(Constant.APP_VERSION)) {
                                 packageInfo.put(Constant.APP_VERSION, line.split(Constant.COLON)[1].trim());
                             }
                         }
