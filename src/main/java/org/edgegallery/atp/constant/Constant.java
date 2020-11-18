@@ -118,11 +118,11 @@ public interface Constant {
 
     String SERNAME = "serName";
 
-    String PROTOCOL_APM = "https://mecm-apm:30202";
+    String PROTOCOL_APM = "https://mecm-apm:8092";
 
-    String PROTOCAL_APPO = "https://mecm-appo:30201";
+    String PROTOCAL_APPO = "https://mecm-appo:8091";
 
-    String PROTOCOL_INVENTORY = "https://mecm-inventory:30203";
+    String PROTOCOL_INVENTORY = "https://mecm-inventory:8093";
 
     String PROTOCOL_APPSTORE = "https://appstore-be-svc:8099";
 
