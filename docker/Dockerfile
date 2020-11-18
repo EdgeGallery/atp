@@ -19,7 +19,7 @@ FROM openjdk:8u201-jdk-alpine
 ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk
 ENV TZ='Asia/Shanghai'
 ENV APP_FILE application-test-platform.jar
-ENV APP_HOME /usr/atp
+ENV APP_HOME /usr/app
 ENV UID=166
 ENV GID=166
 ENV USER_NAME=eguser
@@ -50,7 +50,9 @@ COPY target/*.jar $APP_HOME/bin
 
 RUN chmod 750 $APP_HOME &&\
     chmod -R 550 $APP_HOME/bin &&\
-    chown -R $USER_NAME:$GROUP_NAME $APP_HOME
+    mkdir -p -m 750 $APP_HOME/log &&\
+    chown -R $USER_NAME:$GROUP_NAME $APP_HOME &&\
+    chown -R $USER_NAME:$GROUP_NAME $APP_HOME/log
 
 EXPOSE 8073
 
