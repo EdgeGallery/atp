@@ -169,6 +169,7 @@ public class CommonUtil {
 
         String url = Constant.PROTOCAL_APPO
                 .concat(String.format(Constant.APPO_CREATE_APPINSTANCE, context.get(Constant.TENANT_ID)));
+        LOGGER.warn("createInstanceFromAppo: " + url);
         try {
             ResponseEntity<String> response = REST_TEMPLATE.exchange(url, HttpMethod.POST, requestEntity, String.class);
 
@@ -300,10 +301,13 @@ public class CommonUtil {
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         headers.set(Constant.ACCESS_TOKEN, context.get(Constant.ACCESS_TOKEN));
 
+        LOGGER.warn("hostIp: " + hostIp);
+
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
         String url = Constant.PROTOCOL_APM
                 .concat(String.format(Constant.APM_UPLOAD_PACKAGE, context.get(Constant.TENANT_ID)));
+        LOGGER.warn("uploadFileToAPM: " + url);
         try {
             ResponseEntity<String> response = REST_TEMPLATE.exchange(url, HttpMethod.POST, requestEntity, String.class);
             return response;

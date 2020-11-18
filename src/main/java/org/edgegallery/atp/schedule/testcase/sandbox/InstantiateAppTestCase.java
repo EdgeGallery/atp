@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
-import java.util.UUID;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ExceptionConstant;
 import org.edgegallery.atp.model.testcase.TestCaseResult;
@@ -98,7 +97,6 @@ public class InstantiateAppTestCase extends TestCaseAbs {
      * @return mecHostIp
      */
     private String getMecHost(Map<String, String> context) {
-        String appInstanceId = UUID.randomUUID().toString();
         List<String> mecHostIpList = new ArrayList<String>();
 
         HttpHeaders headers = new HttpHeaders();
@@ -107,6 +105,7 @@ public class InstantiateAppTestCase extends TestCaseAbs {
 
         String url = Constant.PROTOCOL_INVENTORY.concat(
                 Constant.INVENTORY_GET_MECHOSTS_URL.replaceAll(Constant.TENANT_ID, context.get(Constant.TENANT_ID)));
+        LOGGER.warn("get mechostb url: " + url);
         try {
             ResponseEntity<String> response = REST_TEMPLATE.exchange(url, HttpMethod.GET, request, String.class);
             if (!HttpStatus.OK.equals(response.getStatusCode())) {
