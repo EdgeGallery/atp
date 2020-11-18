@@ -123,8 +123,7 @@ public class InstantiateAppTestCase extends TestCaseAbs {
                 }
             });
         } catch (RestClientException e) {
-            LOGGER.error("Failed to instantiate application which appInstanceId is {} exception {}", appInstanceId,
-                    e.getMessage());
+            LOGGER.error("Failed to get hosts from inventory, exception {}", e.getMessage());
             return null;
         }
 
