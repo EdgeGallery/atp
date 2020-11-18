@@ -16,7 +16,7 @@
 FROM openjdk:8u201-jdk-alpine
 
 # Define all environment variable here
-ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk
+#ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk
 ENV TZ='Asia/Shanghai'
 ENV APP_FILE application-test-platform.jar
 ENV APP_HOME /usr/app
@@ -24,7 +24,7 @@ ENV APP_HOME /usr/app
 #ENV GID=166
 #ENV USER_NAME=eguser
 #ENV GROUP_NAME=eggroup
-ENV ENV="/etc/profile"
+#ENV ENV="/etc/profile"
 
 # # CREATE APP USER ##
 # Set umask
@@ -44,9 +44,10 @@ RUN apk update &&\
 #    groupadd -r -g $GID $GROUP_NAME &&\
 #    useradd -r -u $UID -g $GID -d $APP_HOME -s /sbin/nologin -c "Docker image user" $USER_NAME
 
-WORKDIR $APP_HOME
 
-COPY target/*.jar $APP_HOME/bin
+COPY target/*.jar $APP_HOME/
+
+WORKDIR $APP_HOME
 
 #RUN chmod 750 $APP_HOME &&\
 #    chmod -R 550 $APP_HOME/bin &&\
@@ -58,8 +59,8 @@ COPY target/*.jar $APP_HOME/bin
 EXPOSE 8073
 
 # Change to the app user.
-USER $USER_NAME
+#USER $USER_NAME
 
 # Execute script & application
 ENTRYPOINT ["sh", "-c"]
-CMD ["exec java -jar ./bin/$APP_FILE"]
+CMD ["exec java -jar $APP_FILE"]
