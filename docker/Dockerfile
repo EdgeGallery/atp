@@ -38,39 +38,11 @@ RUN apk update &&\
     apk upgrade &&\
     apk add bash
 
-#RUN apk update &&\
-#    apk upgrade &&\
-#    apk add yum
-
-#RUN apt-get update &&\   
-#	apt install vim &&\  
-#	apt install weget &&\  
-#	apt install yum &&\  
-#	apt install net-tools &&\         
-#	apt install iputils-ping
-
 # Create an app user so our program doesn't run as root.
 RUN apk update &&\
     apk add shadow &&\
     groupadd -r -g $GID $GROUP_NAME &&\
     useradd -r -u $UID -g $GID -d $APP_HOME -s /sbin/nologin -c "Docker image user" $USER_NAME
-    
-RUN apk update &&\
-    apk add shadow &&\
-    groupadd clamav &&\
-    useradd -g clamav clamav
-    
-RUN mkdir -p /usr/local/clamav/logs &&\    
-	touch /usr/local/clamav/logs/clamd.log &&\
-	touch /usr/local/clamav/logs/freshclam.log &&\
-	chown clamav.clamav /usr/local/clamav/logs/clamd.log &&\
-	chown clamav.clamav /usr/local/clamav/logs/freshclam.log
-	
-RUN mkdir -p /usr/local/clamav/updata &&\
-	chown -R root.clamav /usr/local/clamav/ &&\
-	chown -R clamav.clamav /usr/local/clamav/updata/
-
-RUN apk add docker
 
 WORKDIR $APP_HOME
 
@@ -86,4 +58,5 @@ EXPOSE 8073
 USER $USER_NAME
 
 # Execute script & application
-ENTRYPOINT ["sh", "./bin/start.sh"]
+ENTRYPOINT ["sh", "-c"]
+CMD ["exec java -jar ./bin/$APP_FILE"]
