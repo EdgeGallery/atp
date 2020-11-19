@@ -164,7 +164,13 @@ public class CommonUtil {
 
         String url = Constant.PROTOCAL_APPO
                 .concat(String.format(Constant.APPO_CREATE_APPINSTANCE, context.get(Constant.TENANT_ID)));
-        LOGGER.warn("createInstanceFromAppo: " + url);
+
+        LOGGER.warn("appName: " + appInfo.get(Constant.APP_NAME));
+        LOGGER.warn("appPackageId: " + appInfo.get(Constant.PACKAGE_ID));
+        LOGGER.warn("appdId: " + appInfo.get(Constant.APP_ID));
+        LOGGER.warn("mecHost: " + hostIp);
+
+
         try {
             ResponseEntity<String> response = REST_TEMPLATE.exchange(url, HttpMethod.POST, requestEntity, String.class);
             LOGGER.warn("createInstanceFromAppo: " + response.getStatusCode());
