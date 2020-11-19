@@ -150,17 +150,19 @@ public class CommonUtil {
      */
     public static String createInstanceFromAppo(String filePath, Map<String, String> context,
             Map<String, String> appInfo, String hostIp) {
-        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        body.add("appInstanceDescription", CommonUtil.generateId());
-        body.add("appName", appInfo.get(Constant.APP_NAME));
-        body.add("appPackageId", appInfo.get(Constant.PACKAGE_ID));
-        body.add("appdId", appInfo.get(Constant.APP_ID));
-        body.add("mecHost", hostIp);
+        Map<String, Object> body = new HashMap<>();
+        body.put("appInstanceDescription", CommonUtil.generateId());
+        body.put("appName", appInfo.get(Constant.APP_NAME));
+        body.put("appPackageId", appInfo.get(Constant.PACKAGE_ID));
+        body.put("appdId", appInfo.get(Constant.APP_ID));
+        body.put("mecHost", hostIp);
 
         HttpHeaders headers = new HttpHeaders();
         headers.set(Constant.ACCESS_TOKEN, context.get(Constant.ACCESS_TOKEN));
+        headers.set(Constant.CONTENT_TYPE, Constant.APPLICATION_JSON);
 
-        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
 
         String url = Constant.PROTOCAL_APPO
                 .concat(String.format(Constant.APPO_CREATE_APPINSTANCE, context.get(Constant.TENANT_ID)));

@@ -126,4 +126,7 @@ public interface Constant {
 
     String PROTOCOL_APPSTORE = "https://appstore-be-svc:8099";
 
+    String CONTENT_TYPE = "Content-Type";
+
+    String APPLICATION_JSON = "application/json";
 }
