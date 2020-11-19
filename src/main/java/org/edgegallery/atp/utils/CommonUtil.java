@@ -168,13 +168,14 @@ public class CommonUtil {
 
         LOGGER.warn("appName: " + appInfo.get(Constant.APP_NAME));
         LOGGER.warn("appPackageId: " + appInfo.get(Constant.PACKAGE_ID));
-        LOGGER.warn("appdId: " + appInfo.get(Constant.APP_ID));
+        LOGGER.warn("appId: " + appInfo.get(Constant.APP_ID));
         LOGGER.warn("mecHost: " + hostIp);
 
         try {
             ResponseEntity<String> response = REST_TEMPLATE.exchange(url, HttpMethod.POST, requestEntity, String.class);
             LOGGER.warn("createInstanceFromAppo: " + response.getStatusCode());
-            if (HttpStatus.OK.equals(response.getStatusCode())) {
+            if (HttpStatus.OK.equals(response.getStatusCode())
+                    || HttpStatus.ACCEPTED.equals(response.getStatusCode())) {
                 JsonObject jsonObject = new JsonParser().parse(response.getBody()).getAsJsonObject();
                 LOGGER.warn("jsonObject: " + jsonObject.toString());
                 return jsonObject.get("app_instance_id").getAsString();
