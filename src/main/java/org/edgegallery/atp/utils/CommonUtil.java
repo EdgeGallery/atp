@@ -157,7 +157,6 @@ public class CommonUtil {
         body.add("mecHost", hostIp);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         headers.set(Constant.ACCESS_TOKEN, context.get(Constant.ACCESS_TOKEN));
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
