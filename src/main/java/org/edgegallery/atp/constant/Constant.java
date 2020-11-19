@@ -129,4 +129,8 @@ public interface Constant {
     String CONTENT_TYPE = "Content-Type";
 
     String APPLICATION_JSON = "application/json";
+
+    String APPO_GET_INSTANCE = "/appo/v1/tenants/%s/app_instances/%s";
+
+    String CREATED = "created";
 }
