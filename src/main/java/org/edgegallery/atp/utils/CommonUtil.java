@@ -178,7 +178,10 @@ public class CommonUtil {
                     || HttpStatus.ACCEPTED.equals(response.getStatusCode())) {
                 JsonObject jsonObject = new JsonParser().parse(response.getBody()).getAsJsonObject();
                 LOGGER.warn("jsonObject: " + jsonObject.toString());
-                return jsonObject.get("app_instance_id").getAsString();
+                JsonObject responseBody = jsonObject.get("response").getAsJsonObject();
+                if (null != responseBody) {
+                    return responseBody.get("app_instance_id").getAsString();
+                }
             }
         } catch (RestClientException e) {
             LOGGER.error("Failed to create app instance from appo which appId is {} exception {}",
