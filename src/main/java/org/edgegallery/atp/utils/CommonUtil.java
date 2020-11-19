@@ -12,6 +12,7 @@ import java.util.Stack;
 import java.util.UUID;
 import java.util.regex.Pattern;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ExceptionConstant;
 import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
@@ -343,7 +344,7 @@ public class CommonUtil {
      * @return is legal name pattern
      */
     public static void lengthCheck(String param) {
-        if (param.length() > 128) {
+        if (!StringUtils.isEmpty(param) && param.length() > 128) {
             throw new IllegalArgumentException(String.format("the length of %s must less than 128.", param));
         }
     }
