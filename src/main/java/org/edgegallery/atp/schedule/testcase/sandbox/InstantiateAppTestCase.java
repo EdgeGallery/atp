@@ -36,7 +36,9 @@ public class InstantiateAppTestCase extends TestCaseAbs {
         Map<String, String> packageInfo = CommonUtil.getPackageInfo(filePath);
         ResponseEntity<String> response =
                 CommonUtil.uploadFileToAPM(filePath, context, getMecHost(context), packageInfo);
-        if (null == response || !HttpStatus.OK.equals(response.getStatusCode())) {
+        if (null == response || !(HttpStatus.OK.equals(response.getStatusCode())
+                || HttpStatus.ACCEPTED.equals(response.getStatusCode()))) {
+            LOGGER.warn("uploadFileToAPM status: {}", response.getStatusCode());
             return setTestCaseResult(Constant.FAILED,
                     ExceptionConstant.RESPONSE_FROM_APM_FAILED.concat(response.getStatusCode().toString()),
                     testCaseResult);
@@ -56,6 +58,8 @@ public class InstantiateAppTestCase extends TestCaseAbs {
         Stack<Map<String, String>> dependencyAppList = new Stack<Map<String, String>>();
         CommonUtil.dependencyCheckSchdule(filePath, dependencyAppList);
 
+        LOGGER.warn("dependencyAppList: " + dependencyAppList);
+
         List<String> failedAppName = new ArrayList<String>();
         dependencyAppList.forEach(map -> {
             String instanceId = CommonUtil.createInstanceFromAppo(filePath, context, map, getMecHost(context));
@@ -65,6 +69,9 @@ public class InstantiateAppTestCase extends TestCaseAbs {
                 appInstanceList.append(instanceId).append(Constant.COMMA);
             }
         });
+
+        LOGGER.warn("appInstanceList: " + appInstanceList.toString());
+
 
         context.put(Constant.DEPENDENCY_APP_INSTANCE_ID, appInstanceList.toString());
 
@@ -78,6 +85,8 @@ public class InstantiateAppTestCase extends TestCaseAbs {
         // instantiate original app
         String appInstanceId = CommonUtil.createInstanceFromAppo(filePath, context, appInfo, getMecHost(context));
         context.put(Constant.APP_INSTANCE_ID, appInstanceId);
+
+        LOGGER.warn("original appInstanceId: " + appInstanceId);
 
         return null != appInstanceId ? setTestCaseResult(Constant.SUCCESS, Constant.EMPTY, testCaseResult)
                 : setTestCaseResult(Constant.FAILED, ExceptionConstant.INSTANTIATE_APP_FAILED, testCaseResult);

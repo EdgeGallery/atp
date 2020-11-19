@@ -167,9 +167,10 @@ public class CommonUtil {
         LOGGER.warn("createInstanceFromAppo: " + url);
         try {
             ResponseEntity<String> response = REST_TEMPLATE.exchange(url, HttpMethod.POST, requestEntity, String.class);
-
+            LOGGER.warn("createInstanceFromAppo: " + response.getStatusCode());
             if (HttpStatus.OK.equals(response.getStatusCode())) {
                 JsonObject jsonObject = new JsonParser().parse(response.getBody()).getAsJsonObject();
+                LOGGER.warn("jsonObject: " + jsonObject.toString());
                 return jsonObject.get("app_instance_id").getAsString();
             }
         } catch (RestClientException e) {
