@@ -181,7 +181,11 @@ public class CommonUtil {
                 JsonObject responseBody = jsonObject.get("response").getAsJsonObject();
                 if (null != responseBody) {
                     Thread.sleep(4000);
-                    return responseBody.get("app_instance_id").getAsString();
+                    String appInstanceId = responseBody.get("app_instance_id").getAsString();
+                    if (getApplicationInstance(context, appInstanceId)) {
+                        return appInstanceId;
+                    }
+                    return null;
                 }
             }
         } catch (RestClientException e) {
@@ -191,6 +195,49 @@ public class CommonUtil {
             LOGGER.error("createInstanceFromAppo thread sleep exception, {}", e.getMessage());
         }
         return null;
+    }
+
+    public static boolean getApplicationInstance(Map<String, String> context, String app_instance_id) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(Constant.ACCESS_TOKEN, context.get(Constant.ACCESS_TOKEN));
+        HttpEntity<String> request = new HttpEntity<>(headers);
+
+        String url = Constant.PROTOCAL_APPO
+                .concat(String.format(Constant.APPO_GET_INSTANCE, context.get(Constant.TENANT_ID), app_instance_id));
+
+        LOGGER.warn("getApplicationInstance URL: " + url);
+
+        long startTime = System.currentTimeMillis();
+
+        while (true) {
+            try {
+                ResponseEntity<String> response = REST_TEMPLATE.exchange(url, HttpMethod.GET, request, String.class);
+                if (!HttpStatus.OK.equals(response.getStatusCode())) {
+                    LOGGER.error("get application instance from appo reponse failed. The status code is {}",
+                            response.getStatusCode());
+                    return false;
+                }
+
+                JsonObject jsonObject = new JsonParser().parse(response.getBody()).getAsJsonObject();
+                LOGGER.warn("response: " + jsonObject);
+
+                if (Constant.CREATED.equals(jsonObject.get("operationalStatus").getAsString())) {
+                    LOGGER.warn("CREATED");
+                    break;
+                }
+
+                if ((System.currentTimeMillis() - startTime) > 60000) {
+                    LOGGER.error("get instance {} from appo time out", app_instance_id);
+                    return false;
+                }
+            } catch (RestClientException e) {
+                LOGGER.error("Failed to get application instance from appo which app_instance_id is {} exception {}",
+                        app_instance_id, e.getMessage());
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
