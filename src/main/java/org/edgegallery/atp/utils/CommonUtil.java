@@ -154,7 +154,7 @@ public class CommonUtil {
         body.put("appInstanceDescription", CommonUtil.generateId());
         body.put("appName", appInfo.get(Constant.APP_NAME));
         body.put("appPackageId", appInfo.get(Constant.PACKAGE_ID));
-        body.put("appdId", appInfo.get(Constant.APP_ID));
+        body.put("appId", appInfo.get(Constant.APP_ID));
         body.put("mecHost", hostIp);
 
         HttpHeaders headers = new HttpHeaders();
@@ -162,7 +162,6 @@ public class CommonUtil {
         headers.set(Constant.CONTENT_TYPE, Constant.APPLICATION_JSON);
 
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
-
 
         String url = Constant.PROTOCAL_APPO
                 .concat(String.format(Constant.APPO_CREATE_APPINSTANCE, context.get(Constant.TENANT_ID)));
