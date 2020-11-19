@@ -234,8 +234,9 @@ public class CommonUtil {
         headers.set(Constant.ACCESS_TOKEN, context.get(Constant.ACCESS_TOKEN));
         HttpEntity<String> request = new HttpEntity<>(headers);
 
-        String url = String.format(Constant.APPO_DELETE_APPLICATION_INSTANCE, context.get(Constant.TENANT_ID),
-                appInstanceId);
+        String url = Constant.PROTOCAL_APPO.concat(String.format(Constant.APPO_DELETE_APPLICATION_INSTANCE,
+                context.get(Constant.TENANT_ID), appInstanceId));
+        LOGGER.warn("deleteAppInstance URL: {}", url);
         try {
             ResponseEntity<String> response = REST_TEMPLATE.exchange(Constant.PROTOCAL_APPO.concat(url),
                     HttpMethod.DELETE, request, String.class);
