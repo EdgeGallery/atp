@@ -17,7 +17,6 @@ package org.edgegallery.atp.interfaces;
 import java.util.List;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.testcase.TestCase;
@@ -58,10 +57,7 @@ public class TestCaseController {
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     // @PreAuthorize("hasRole('GUEST')")
     public ResponseEntity<List<TestCase>> getAllTestCases(@QueryParam("type") String type) {
-        if (!StringUtils.isEmpty(type)) {
-            CommonUtil.lengthCheck(type);
-        }
-
+        CommonUtil.lengthCheck(type);
         return testCaseService.getAllTestCases(type);
     }
 
