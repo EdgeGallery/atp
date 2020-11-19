@@ -53,12 +53,13 @@
 				and status = #{status}
 			</if>
 		</where>
+		order by createTime decs
 	</select>
 
 	<delete id="delHisTask">
 		delete from
 		task_table
-		where (now()::timestamp without time zone-createTime::timestamp without time zone) > (30 * '1 day'::interval)
+		where (now()::timestamp without time zone-createTime::timestamp without time zone) > ('1 day'::interval)
 	</delete>
 
 	<select id="countTotal" resultType="java.lang.Integer"
