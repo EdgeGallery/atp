@@ -53,7 +53,7 @@
 				and status = #{status}
 			</if>
 		</where>
-		order by createTime decs
+		ORDER BY createTime DESC
 	</select>
 
 	<delete id="delHisTask">
