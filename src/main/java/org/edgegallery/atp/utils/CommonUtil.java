@@ -157,7 +157,6 @@ public class CommonUtil {
         body.add("mecHost", hostIp);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         headers.set(Constant.ACCESS_TOKEN, context.get(Constant.ACCESS_TOKEN));
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
@@ -169,7 +168,6 @@ public class CommonUtil {
         LOGGER.warn("appPackageId: " + appInfo.get(Constant.PACKAGE_ID));
         LOGGER.warn("appdId: " + appInfo.get(Constant.APP_ID));
         LOGGER.warn("mecHost: " + hostIp);
-
 
         try {
             ResponseEntity<String> response = REST_TEMPLATE.exchange(url, HttpMethod.POST, requestEntity, String.class);
@@ -331,9 +329,11 @@ public class CommonUtil {
      * @param param parameter
      * @return is legal uuid pattern
      */
-    public static boolean isUuidPattern(String param) {
+    public static void isUuidPattern(String param) {
         Pattern pattern = Pattern.compile("[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}");
-        return pattern.matcher(param).matches();
+        if (!pattern.matcher(param).matches()) {
+            throw new IllegalArgumentException(String.format("%s is not uuid pattern.", param));
+        }
     }
 
     /**
@@ -342,9 +342,10 @@ public class CommonUtil {
      * @param name name
      * @return is legal name pattern
      */
-    public static boolean isLegalName(String name) {
-        Pattern pattern = Pattern.compile("[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}");
-        return pattern.matcher(name).matches();
+    public static void lengthCheck(String param) {
+        if (param.length() > 128) {
+            throw new IllegalArgumentException(String.format("the length of %s must less than 128.", param));
+        }
     }
 
     /**

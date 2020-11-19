@@ -38,6 +38,8 @@ class TaskSchedule {
     @PostConstruct
     public void handleRunningData() {
         List<TaskRequest> runningTaskList = taskRepository.queryAllRunningTasks();
+        LOGGER.warn("handleRunningData runningTaskList: {}", runningTaskList);
+
         File tempFile = new File(
                 new StringBuilder().append(FileChecker.getDir()).append(File.separator).append("temp").toString());
         File[] fileList = tempFile.listFiles();
@@ -46,6 +48,7 @@ class TaskSchedule {
             for (File file : fileList) {
                 if (file.getName().startsWith(task.getId())) {
                     try {
+                        LOGGER.warn("execute task: {}", task.getId());
                         testCaseManager.executeTestCase(task, file.getCanonicalPath());
                     } catch (IOException e) {
                         LOGGER.error("{} get canonical path failed.", file.getName());
