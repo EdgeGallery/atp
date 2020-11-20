@@ -12,16 +12,10 @@ import org.edgegallery.atp.schedule.testcase.TestCaseAbs;
 import org.edgegallery.atp.utils.CommonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -105,36 +99,39 @@ public class InstantiateAppTestCase extends TestCaseAbs {
      * @return mecHostIp
      */
     private String getMecHost(Map<String, String> context) {
-        List<String> mecHostIpList = new ArrayList<String>();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set(Constant.ACCESS_TOKEN, context.get(Constant.ACCESS_TOKEN));
-        HttpEntity<String> request = new HttpEntity<>(headers);
-
-        String url = Constant.PROTOCOL_INVENTORY.concat(
-                Constant.INVENTORY_GET_MECHOSTS_URL.replaceAll(Constant.TENANT_ID, context.get(Constant.TENANT_ID)));
-        LOGGER.warn("get mechostb url: " + url);
-        try {
-            ResponseEntity<String> response = REST_TEMPLATE.exchange(url, HttpMethod.GET, request, String.class);
-            if (!HttpStatus.OK.equals(response.getStatusCode())) {
-                LOGGER.error("Instantiate through applcm reponse failed. The status code is {}",
-                        response.getStatusCode());
-                return null;
-            }
-
-            JsonArray jsonArray = new JsonParser().parse(response.getBody()).getAsJsonArray();
-            jsonArray.forEach(mecHost -> {
-                JsonElement mecHostIp = mecHost.getAsJsonObject().get("mechostIp");
-                if (null != mecHostIp) {
-                    mecHostIpList.add(mecHostIp.getAsString());
-                }
-            });
-        } catch (RestClientException e) {
-            LOGGER.error("Failed to get hosts from inventory, exception {}", e.getMessage());
-            return null;
-        }
-
-        return mecHostIpList.get(0);
+        return "119.8.53.3";
+        // List<String> mecHostIpList = new ArrayList<String>();
+        //
+        // HttpHeaders headers = new HttpHeaders();
+        // headers.set(Constant.ACCESS_TOKEN, context.get(Constant.ACCESS_TOKEN));
+        // HttpEntity<String> request = new HttpEntity<>(headers);
+        //
+        // String url = Constant.PROTOCOL_INVENTORY.concat(
+        // Constant.INVENTORY_GET_MECHOSTS_URL.replaceAll(Constant.TENANT_ID,
+        // context.get(Constant.TENANT_ID)));
+        // LOGGER.warn("get mechostb url: " + url);
+        // try {
+        // ResponseEntity<String> response = REST_TEMPLATE.exchange(url, HttpMethod.GET, request,
+        // String.class);
+        // if (!HttpStatus.OK.equals(response.getStatusCode())) {
+        // LOGGER.error("Instantiate through applcm reponse failed. The status code is {}",
+        // response.getStatusCode());
+        // return null;
+        // }
+        //
+        // JsonArray jsonArray = new JsonParser().parse(response.getBody()).getAsJsonArray();
+        // jsonArray.forEach(mecHost -> {
+        // JsonElement mecHostIp = mecHost.getAsJsonObject().get("mechostIp");
+        // if (null != mecHostIp) {
+        // mecHostIpList.add(mecHostIp.getAsString());
+        // }
+        // });
+        // } catch (RestClientException e) {
+        // LOGGER.error("Failed to get hosts from inventory, exception {}", e.getMessage());
+        // return null;
+        // }
+        //
+        // return mecHostIpList.get(0);
     }
 
 }
