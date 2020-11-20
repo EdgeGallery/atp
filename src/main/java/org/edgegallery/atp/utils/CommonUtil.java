@@ -178,7 +178,7 @@ public class CommonUtil {
                     || HttpStatus.ACCEPTED.equals(response.getStatusCode())) {
                 JsonObject jsonObject = new JsonParser().parse(response.getBody()).getAsJsonObject();
                 LOGGER.warn("jsonObject: " + jsonObject.toString());
-                Thread.sleep(10000);
+                Thread.sleep(5000);
                 JsonObject responseBody = jsonObject.get("response").getAsJsonObject();
                 if (null != responseBody) {
                     String appInstanceId = responseBody.get("app_instance_id").getAsString();
@@ -220,9 +220,10 @@ public class CommonUtil {
                 }
 
                 JsonObject jsonObject = new JsonParser().parse(response.getBody()).getAsJsonObject();
+                JsonObject responseBody = jsonObject.get("response").getAsJsonObject();
                 LOGGER.warn("response: " + jsonObject);
 
-                if (Constant.CREATED.equals(jsonObject.get("operationalStatus").getAsString())) {
+                if (Constant.CREATED.equals(responseBody.get("operationalStatus").getAsString())) {
                     LOGGER.warn("CREATED");
                     break;
                 }
