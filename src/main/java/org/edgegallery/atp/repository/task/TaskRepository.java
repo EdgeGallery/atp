@@ -51,7 +51,7 @@ public interface TaskRepository {
     Date getCurrentDate();
 
     /**
-     * delete task created 30 days before
+     * delete task created 7 days before
      */
     void delHisTask();
 

@@ -25,7 +25,7 @@ class TaskSchedule {
     TestCaseManagerImpl testCaseManager;
 
     /**
-     * clean task data before one month every 2 clock.
+     * clean task data before one week every 2 clock.
      */
     @Scheduled(cron = "0 0 2 * * ?")
     public void cleanHistoryData() {
@@ -38,7 +38,7 @@ class TaskSchedule {
     @PostConstruct
     public void handleRunningData() {
         List<TaskRequest> runningTaskList = taskRepository.queryAllRunningTasks();
-        LOGGER.warn("handleRunningData runningTaskList: {}", runningTaskList);
+        LOGGER.info("handleRunningData runningTaskList: {}", runningTaskList);
 
         File tempFile = new File(
                 new StringBuilder().append(FileChecker.getDir()).append(File.separator).append("temp").toString());
@@ -48,7 +48,7 @@ class TaskSchedule {
             for (File file : fileList) {
                 if (file.getName().startsWith(task.getId())) {
                     try {
-                        LOGGER.warn("execute task: {}", task.getId());
+                        LOGGER.info("execute task: {}", task.getId());
                         testCaseManager.executeTestCase(task, file.getCanonicalPath());
                     } catch (IOException e) {
                         LOGGER.error("{} get canonical path failed.", file.getName());
