@@ -180,7 +180,6 @@ public class CommonUtil {
                 LOGGER.warn("jsonObject: " + jsonObject.toString());
                 JsonObject responseBody = jsonObject.get("response").getAsJsonObject();
                 if (null != responseBody) {
-                    Thread.sleep(4000);
                     String appInstanceId = responseBody.get("app_instance_id").getAsString();
                     if (getApplicationInstance(context, appInstanceId)) {
                         return appInstanceId;
@@ -191,8 +190,6 @@ public class CommonUtil {
         } catch (RestClientException e) {
             LOGGER.error("Failed to create app instance from appo which appId is {} exception {}",
                     appInfo.get(Constant.APP_ID), e.getMessage());
-        } catch (InterruptedException e) {
-            LOGGER.error("createInstanceFromAppo thread sleep exception, {}", e.getMessage());
         }
         return null;
     }
