@@ -156,28 +156,21 @@ public class CommonUtil {
         body.put("appPackageId", appInfo.get(Constant.PACKAGE_ID));
         body.put("appId", appInfo.get(Constant.APP_ID));
         body.put("mecHost", hostIp);
+        LOGGER.info("create instance body: {}", JSONUtil.marshal(body));
 
         HttpHeaders headers = new HttpHeaders();
         headers.set(Constant.ACCESS_TOKEN, context.get(Constant.ACCESS_TOKEN));
         headers.set(Constant.CONTENT_TYPE, Constant.APPLICATION_JSON);
 
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
-
         String url = Constant.PROTOCAL_APPO
                 .concat(String.format(Constant.APPO_CREATE_APPINSTANCE, context.get(Constant.TENANT_ID)));
 
-        LOGGER.warn("appName: " + appInfo.get(Constant.APP_NAME));
-        LOGGER.warn("appPackageId: " + appInfo.get(Constant.PACKAGE_ID));
-        LOGGER.warn("appId: " + appInfo.get(Constant.APP_ID));
-        LOGGER.warn("mecHost: " + hostIp);
-
         try {
             ResponseEntity<String> response = REST_TEMPLATE.exchange(url, HttpMethod.POST, requestEntity, String.class);
-            LOGGER.warn("createInstanceFromAppo: " + response.getStatusCode());
             if (HttpStatus.OK.equals(response.getStatusCode())
                     || HttpStatus.ACCEPTED.equals(response.getStatusCode())) {
                 JsonObject jsonObject = new JsonParser().parse(response.getBody()).getAsJsonObject();
-                LOGGER.warn("jsonObject: " + jsonObject.toString());
                 Thread.sleep(5000);
                 JsonObject responseBody = jsonObject.get("response").getAsJsonObject();
                 if (null != responseBody) {
@@ -192,8 +185,7 @@ public class CommonUtil {
             LOGGER.error("Failed to create app instance from appo which appId is {} exception {}",
                     appInfo.get(Constant.APP_ID), e.getMessage());
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOGGER.error("Tread sleep");
         }
         return null;
     }
@@ -209,7 +201,6 @@ public class CommonUtil {
         LOGGER.warn("getApplicationInstance URL: " + url);
 
         long startTime = System.currentTimeMillis();
-
         while (true) {
             try {
                 ResponseEntity<String> response = REST_TEMPLATE.exchange(url, HttpMethod.GET, request, String.class);
@@ -221,10 +212,9 @@ public class CommonUtil {
 
                 JsonObject jsonObject = new JsonParser().parse(response.getBody()).getAsJsonObject();
                 JsonObject responseBody = jsonObject.get("response").getAsJsonObject();
-                LOGGER.warn("response: " + jsonObject);
 
                 if (Constant.CREATED.equals(responseBody.get("operationalStatus").getAsString())) {
-                    LOGGER.warn("CREATED");
+                    LOGGER.info("{} is Created.", app_instance_id);
                     break;
                 }
 
@@ -260,7 +250,6 @@ public class CommonUtil {
             String dependencyFilePath = new StringBuilder().append(FileChecker.getDir()).append(File.separator)
                     .append("temp").append(File.separator).append(map.get(Constant.APP_ID)).append(Constant.UNDER_LINE)
                     .append(map.get(Constant.PACKAGE_ID)).toString();
-            LOGGER.warn("temp file is: " + dependencyFilePath);
             File file = new File(dependencyFilePath);
             try {
                 FileUtils.copyInputStreamToFile(inputStream, file);
@@ -363,16 +352,13 @@ public class CommonUtil {
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         headers.set(Constant.ACCESS_TOKEN, context.get(Constant.ACCESS_TOKEN));
 
-        LOGGER.warn("hostIp: " + hostIp);
-        LOGGER.warn("filePath: " + filePath);
-        LOGGER.warn("appPackageName: " + packageInfo.get(Constant.APP_NAME));
-        LOGGER.warn("appPackageVersion: " + packageInfo.get(Constant.APP_VERSION));
+        LOGGER.info("hostIp: " + hostIp);
+        LOGGER.info("appPackageName: " + packageInfo.get(Constant.APP_NAME));
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
         String url = Constant.PROTOCOL_APM
                 .concat(String.format(Constant.APM_UPLOAD_PACKAGE, context.get(Constant.TENANT_ID)));
-        LOGGER.warn("uploadFileToAPM: " + url);
         try {
             ResponseEntity<String> response = REST_TEMPLATE.exchange(url, HttpMethod.POST, requestEntity, String.class);
             return response;

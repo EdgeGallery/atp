@@ -61,9 +61,7 @@ public class TaskServiceImpl implements TaskService {
         Map<String, File> tempFileList = new HashMap<String, File>();
         List<TaskRequest> resultList = new ArrayList<TaskRequest>();
         StringBuffer subTaskId = new StringBuffer();
-        LOGGER.warn("packageList: " + packageList);
         Arrays.asList(packageList).forEach(file -> {
-            LOGGER.warn("file in.");
             String taskId = CommonUtil.generateId();
             File tempFile = FileChecker.check(file, taskId);
             if (null == tempFile) {
@@ -72,13 +70,15 @@ public class TaskServiceImpl implements TaskService {
             tempFileList.put(taskId, tempFile);
             subTaskId.append(taskId).append(Constant.COMMA);
         });
+
         Map<String, String> context = AccessTokenFilter.context.get();
         if (null == context) {
             tempFileList.forEach((taskId, file) -> file.delete());
             throw new IllegalArgumentException(ExceptionConstant.CONTEXT_IS_NULL);
         }
+
         User user = new User(context.get(Constant.USER_ID), context.get(Constant.USER_NAME));
-        LOGGER.warn("tempFileList {}", JSONUtil.marshal(tempFileList));
+
         tempFileList.forEach((taskId, tempFile) -> {
             try {
                 TaskRequest task = new TaskRequest();

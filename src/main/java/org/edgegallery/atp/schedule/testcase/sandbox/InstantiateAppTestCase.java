@@ -64,7 +64,7 @@ public class InstantiateAppTestCase extends TestCaseAbs {
         Stack<Map<String, String>> dependencyAppList = new Stack<Map<String, String>>();
         CommonUtil.dependencyCheckSchdule(filePath, dependencyAppList);
 
-        LOGGER.warn("dependencyAppList: " + dependencyAppList);
+        LOGGER.info("dependencyAppList: {}", dependencyAppList);
 
         List<String> failedAppName = new ArrayList<String>();
         dependencyAppList.forEach(map -> {
@@ -76,8 +76,7 @@ public class InstantiateAppTestCase extends TestCaseAbs {
             }
         });
 
-        LOGGER.warn("appInstanceList: " + appInstanceList.toString());
-
+        LOGGER.info("appInstanceList: {}", appInstanceList.toString());
 
         context.put(Constant.DEPENDENCY_APP_INSTANCE_ID, appInstanceList.toString());
 
@@ -92,7 +91,7 @@ public class InstantiateAppTestCase extends TestCaseAbs {
         String appInstanceId = CommonUtil.createInstanceFromAppo(filePath, context, appInfo, getMecHost(context));
         context.put(Constant.APP_INSTANCE_ID, appInstanceId);
 
-        LOGGER.warn("original appInstanceId: " + appInstanceId);
+        LOGGER.info("original appInstanceId: {}", appInstanceId);
 
         return null != appInstanceId ? setTestCaseResult(Constant.SUCCESS, Constant.EMPTY, testCaseResult)
                 : setTestCaseResult(Constant.FAILED, ExceptionConstant.INSTANTIATE_APP_FAILED, testCaseResult);
