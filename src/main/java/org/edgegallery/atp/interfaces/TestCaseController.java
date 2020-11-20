@@ -56,8 +56,7 @@ public class TestCaseController {
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
-    // @PreAuthorize("hasRole('ATP_GUEST')")
-    @PreAuthorize("hasRole('APPSTORE_TENANT')")
+    @PreAuthorize("hasRole('ATP_GUEST')")
     public ResponseEntity<List<TestCase>> getAllTestCases(@QueryParam("type") String type) {
         CommonUtil.lengthCheck(type);
         return testCaseService.getAllTestCases(type);
