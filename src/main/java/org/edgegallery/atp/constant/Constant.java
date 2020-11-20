@@ -132,5 +132,5 @@ public interface Constant {
 
     String APPO_GET_INSTANCE = "/appo/v1/tenants/%s/app_instance_infos/%s";
 
-    String CREATED = "created";
+    String CREATED = "Created";
 }
