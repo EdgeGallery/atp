@@ -69,6 +69,7 @@ public class TaskController {
             @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     // @PreAuthorize("hasRole('ATP_TENANT')")
+    @PreAuthorize("hasRole('APPSTORE_TENANT')")
     public ResponseEntity<List<TaskRequest>> startTest(
             @ApiParam(value = "application files", required = true) @RequestParam("file") MultipartFile[] packageList) {
         return ResponseEntity.ok(taskService.createTask(packageList));
@@ -107,7 +108,7 @@ public class TaskController {
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
-    @PreAuthorize("hasRole('ATP_GUEST')")
+    // @PreAuthorize("hasRole('ATP_GUEST')")
     public ResponseEntity<TaskRequest> getTaskById(
             @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId) {
         CommonUtil.validateContext();
@@ -119,7 +120,7 @@ public class TaskController {
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
-    @PreAuthorize("hasRole('ATP_TENANT')")
+    // @PreAuthorize("hasRole('ATP_TENANT')")
     public ResponseEntity<InputStreamResource> downloadTestReport(
             @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId) {
         CommonUtil.validateContext();
@@ -131,7 +132,8 @@ public class TaskController {
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
-    @PreAuthorize("hasRole('ATP_TENANT')")
+    // @PreAuthorize("hasRole('ATP_TENANT')")
+    @PreAuthorize("hasRole('APPSTORE_TENANT')")
     public ResponseEntity<CommonActionRes> dependencyCheck(
             @ApiParam(value = "application files", required = true) @RequestPart("file") MultipartFile packages) {
         CommonUtil.validateContext();
