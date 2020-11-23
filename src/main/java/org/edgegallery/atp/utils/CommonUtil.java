@@ -171,7 +171,6 @@ public class CommonUtil {
             if (HttpStatus.OK.equals(response.getStatusCode())
                     || HttpStatus.ACCEPTED.equals(response.getStatusCode())) {
                 JsonObject jsonObject = new JsonParser().parse(response.getBody()).getAsJsonObject();
-                Thread.sleep(5000);
                 JsonObject responseBody = jsonObject.get("response").getAsJsonObject();
                 if (null != responseBody) {
                     String appInstanceId = responseBody.get("app_instance_id").getAsString();
@@ -184,8 +183,6 @@ public class CommonUtil {
         } catch (RestClientException e) {
             LOGGER.error("Failed to create app instance from appo which appId is {} exception {}",
                     appInfo.get(Constant.APP_ID), e.getMessage());
-        } catch (InterruptedException e) {
-            LOGGER.error("Tread sleep");
         }
         return null;
     }
@@ -279,8 +276,7 @@ public class CommonUtil {
                 context.get(Constant.TENANT_ID), appInstanceId));
         LOGGER.warn("deleteAppInstance URL: {}", url);
         try {
-            ResponseEntity<String> response = REST_TEMPLATE.exchange(Constant.PROTOCAL_APPO.concat(url),
-                    HttpMethod.DELETE, request, String.class);
+            ResponseEntity<String> response = REST_TEMPLATE.exchange(url, HttpMethod.DELETE, request, String.class);
             if (HttpStatus.OK.equals(response.getStatusCode())) {
                 return true;
             }
