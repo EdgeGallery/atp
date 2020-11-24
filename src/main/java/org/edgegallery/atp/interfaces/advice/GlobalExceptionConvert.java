@@ -77,8 +77,8 @@ public class GlobalExceptionConvert {
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseBody
     public RestReturn accessDeniedException(HttpServletRequest request, AccessDeniedException e) {
-        return RestReturn.builder().code(Response.Status.UNAUTHORIZED.getStatusCode())
-                .error(Response.Status.UNAUTHORIZED.getReasonPhrase()).message(e.getMessage())
+        return RestReturn.builder().code(Response.Status.FORBIDDEN.getStatusCode())
+                .error(Response.Status.FORBIDDEN.getReasonPhrase()).message(e.getMessage())
                 .path(request.getRequestURI()).build();
     }
 

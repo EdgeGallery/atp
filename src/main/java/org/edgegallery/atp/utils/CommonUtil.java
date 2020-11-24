@@ -280,7 +280,8 @@ public class CommonUtil {
         LOGGER.warn("deleteAppInstance URL: {}", url);
         try {
             ResponseEntity<String> response = REST_TEMPLATE.exchange(url, HttpMethod.DELETE, request, String.class);
-            if (HttpStatus.OK.equals(response.getStatusCode())) {
+            if (HttpStatus.OK.equals(response.getStatusCode())
+                    || HttpStatus.ACCEPTED.equals(response.getStatusCode())) {
                 return true;
             }
             LOGGER.error("delete app instance from appo reponse failed. The status code is {}",
