@@ -39,11 +39,10 @@ RUN apk update &&\
     apk add bash
 
 # Create an app user so our program doesn't run as root.
-#RUN apk update &&\
-#    apk add shadow &&\
-#    groupadd -r -g $GID $GROUP_NAME &&\
-#    useradd -r -u $UID -g $GID -d $APP_HOME -s /sbin/nologin -c "Docker image user" $USER_NAME
-
+RUN apk update &&\
+    apk add shadow &&\
+    groupadd clamav &&\
+    useradd -g clamav -s /bin/false -c "Clam AntiVirus" clamav
 
 COPY target/*.jar $APP_HOME/
 
