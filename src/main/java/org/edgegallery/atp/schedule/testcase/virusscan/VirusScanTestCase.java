@@ -25,7 +25,7 @@ public class VirusScanTestCase extends TestCaseAbs {
 
     private TestCaseResult testCaseResult = new TestCaseResult();
 
-    private static final String PATH_COMMAND = "cd /root/testVirus/clamav-0.102.4";
+    private static final String PATH_COMMAND = "cd /usr/app/clamav-0.102.4";
 
     private static final String EXECUTE_SCAN_COMMAND = "clamscan %s";
 
