@@ -173,7 +173,7 @@ public class FileChecker {
     }
 
     private static void analysisDependency(List<Map<String, String>> result, ZipFile zipFile, ZipEntry entry) {
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry)))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry), "utf-8"))) {
             String line = positionDependencyService(br);
             if (StringUtils.isEmpty(line)) {
                 LOGGER.error(
@@ -228,7 +228,9 @@ public class FileChecker {
                             if (line.trim().startsWith(Constant.PROPERTIES)) {
                                 while ((line = br.readLine()) != null) {
                                     if (line.trim().startsWith(Constant.APP_SERVICE_REQUIRED)) {
-                                        return br.readLine().trim();
+                                        line = br.readLine();
+                                        return null == line ? line : line.trim();
+
                                     }
                                 }
                             }

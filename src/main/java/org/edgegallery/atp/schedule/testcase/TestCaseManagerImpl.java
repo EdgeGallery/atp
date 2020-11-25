@@ -13,11 +13,14 @@ import org.edgegallery.atp.model.testcase.TestCaseDetail;
 import org.edgegallery.atp.model.testcase.TestCaseResult;
 import org.edgegallery.atp.repository.task.TaskRepositoryImpl;
 import org.edgegallery.atp.repository.testcase.TestCaseRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TestCaseManagerImpl implements TestCaseManager {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseManagerImpl.class);
 
     ExecutorService virusTreadPool = Executors.newFixedThreadPool(Constant.MAX_TASK_THREAD_NUM);
 
@@ -66,7 +69,9 @@ public class TestCaseManagerImpl implements TestCaseManager {
             task.setStatus(!resultStatus ? Constant.FAILED : Constant.SUCCESS);
             taskRepository.update(task);
 
-            new File(filePath).delete();
+            if (!(new File(filePath).delete())) {
+                LOGGER.error("TaskProcessor.run.delete file error, the file path is: {}", filePath);
+            }
         }
 
         /**

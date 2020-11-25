@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -52,6 +53,7 @@ public class TaskServiceImpl implements TaskService {
     @Autowired
     TestCaseManagerImpl testCaseManager;
 
+    AccessTokenFilter accessTokenFilter = new AccessTokenFilter();
 
     @Override
     public List<TaskRequest> createTask(MultipartFile[] packageList) {
@@ -61,16 +63,17 @@ public class TaskServiceImpl implements TaskService {
         Arrays.asList(packageList).forEach(file -> {
             String taskId = CommonUtil.generateId();
             File tempFile = FileChecker.check(file, taskId);
-            if (null == tempFile) {
-                throw new IllegalArgumentException(file.getOriginalFilename() + "temp file is null");
-            }
             tempFileList.put(taskId, tempFile);
             subTaskId.append(taskId).append(Constant.COMMA);
         });
 
-        Map<String, String> context = AccessTokenFilter.context.get();
+        Map<String, String> context = accessTokenFilter.getContext().get();
         if (null == context) {
-            tempFileList.forEach((taskId, file) -> file.delete());
+            tempFileList.forEach((taskId, file) -> {
+                if (!file.delete()) {
+                    LOGGER.error("createTask delete file {} failed.", file.getName());
+                }
+            });
             throw new IllegalArgumentException(ExceptionConstant.CONTEXT_IS_NULL);
         }
 
@@ -117,11 +120,16 @@ public class TaskServiceImpl implements TaskService {
             result.put(taskId, map);
         }
         String yamlStr = yaml.dump(result);
-        InputStream yamlStream = new ByteArrayInputStream(yamlStr.getBytes());
+        try {
+            InputStream yamlStream = new ByteArrayInputStream(yamlStr.getBytes("utf-8"));
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Type", "application/octet-stream");
+            return new ResponseEntity<>(new InputStreamResource(yamlStream), headers, HttpStatus.OK);
+        } catch (UnsupportedEncodingException e) {
+            LOGGER.error("getBytes by utf-8 failed.");
+        }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/octet-stream");
-        return new ResponseEntity<>(new InputStreamResource(yamlStream), headers, HttpStatus.OK);
+        return null;
     }
 
     @Override
@@ -130,13 +138,6 @@ public class TaskServiceImpl implements TaskService {
         String fileId = CommonUtil.generateId();
 
         File tempFile = FileChecker.check(packages, fileId);
-        if (null == tempFile) {
-            if (!CommonUtil.deleteTempFile(fileId, packages)) {
-                LOGGER.error("dependencyCheck delete file {} failed.", packages.getOriginalFilename());
-            }
-
-            throw new IllegalArgumentException("temp file is null");
-        }
 
         try {
             String filePath = tempFile.getCanonicalPath();
@@ -172,7 +173,7 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     private TaskRequest initTaskRequset(TaskRequest task, String filePath) {
-        Map<String, String> context = AccessTokenFilter.context.get();
+        Map<String, String> context = accessTokenFilter.getContext().get();
         if (null == context) {
             throw new IllegalArgumentException("AccessTokenFilter.context is null");
         }

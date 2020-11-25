@@ -8,6 +8,7 @@ import org.edgegallery.atp.model.user.User;
 import org.edgegallery.atp.repository.PersistenceObject;
 import org.edgegallery.atp.utils.JSONUtil;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,6 +16,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
+@SuppressFBWarnings(value = {"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class TaskPO implements PersistenceObject<TaskRequest> {
 
     @Column(name = "id")
