@@ -96,7 +96,7 @@ public interface Constant {
     String SANDBOX_TEST = "sandboxTest";
 
 
-    String INVENTORY_GET_MECHOSTS_URL = "/inventory/v1/tenants/tenantId/mechosts";
+    String INVENTORY_GET_MECHOSTS_URL = "/inventory/v1/tenants/%s/mechosts";
 
     String APP_STORE_GET_APP_PACKAGE = "/mec/appstore/v1/apps/%s/packages/%s";
 

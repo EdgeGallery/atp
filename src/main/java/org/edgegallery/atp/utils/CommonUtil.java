@@ -44,7 +44,7 @@ import com.google.gson.JsonParser;
 public class CommonUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(CommonUtil.class);
 
-    private static RestTemplate REST_TEMPLATE = new RestTemplate();
+    private static RestTemplate restTemplate = new RestTemplate();
 
     /**
      * get time according to special format
@@ -71,8 +71,8 @@ public class CommonUtil {
      * @param fileId taskId
      * @param file csar file
      */
-    public static void deleteTempFile(String fileId, MultipartFile file) {
-        new File(new StringBuilder().append(FileChecker.getDir()).append(File.separator).append("temp")
+    public static boolean deleteTempFile(String fileId, MultipartFile file) {
+        return new File(new StringBuilder().append(FileChecker.getDir()).append(File.separator).append("temp")
                 .append(File.separator).append(fileId).append(Constant.UNDER_LINE).append(file.getOriginalFilename())
                 .toString()).delete();
     }
@@ -92,7 +92,7 @@ public class CommonUtil {
 
         String url = String.format(Constant.APP_STORE_GET_APP_PACKAGE, appId, packageId);
         try {
-            ResponseEntity<String> response = REST_TEMPLATE.exchange(Constant.PROTOCOL_APPSTORE.concat(url),
+            ResponseEntity<String> response = restTemplate.exchange(Constant.PROTOCOL_APPSTORE.concat(url),
                     HttpMethod.GET, request, String.class);
             if (!HttpStatus.OK.equals(response.getStatusCode())) {
                 LOGGER.error("get app info from appstore reponse failed. The status code is {}",
@@ -100,8 +100,7 @@ public class CommonUtil {
                 return null;
             }
 
-            JsonObject jsonObject = new JsonParser().parse(response.getBody()).getAsJsonObject();
-            return jsonObject;
+            return new JsonParser().parse(response.getBody()).getAsJsonObject();
         } catch (RestClientException e) {
             LOGGER.error("Failed to get app info from appstore which appId is {} exception {}", appId, e.getMessage());
         }
@@ -123,7 +122,7 @@ public class CommonUtil {
 
         String url = String.format(Constant.APP_STORE_DOWNLOAD_CSAR, appId, packageId);
         try {
-            ResponseEntity<Resource> response = REST_TEMPLATE.exchange(Constant.PROTOCOL_APPSTORE.concat(url),
+            ResponseEntity<Resource> response = restTemplate.exchange(Constant.PROTOCOL_APPSTORE.concat(url),
                     HttpMethod.GET, request, Resource.class);
             Resource responseBody = response.getBody();
 
@@ -153,8 +152,8 @@ public class CommonUtil {
      * @param ipPort protocl://ip:port
      * @return create app instance sucess or not.s
      */
-    public static String createInstanceFromAppo(String filePath, Map<String, String> context,
-            Map<String, String> appInfo, String hostIp) {
+    public static String createInstanceFromAppo(Map<String, String> context, Map<String, String> appInfo,
+            String hostIp) {
         Map<String, Object> body = new HashMap<>();
         body.put("appInstanceDescription", CommonUtil.generateId());
         body.put("appName", appInfo.get(Constant.APP_NAME));
@@ -172,7 +171,7 @@ public class CommonUtil {
                 .concat(String.format(Constant.APPO_CREATE_APPINSTANCE, context.get(Constant.TENANT_ID)));
 
         try {
-            ResponseEntity<String> response = REST_TEMPLATE.exchange(url, HttpMethod.POST, requestEntity, String.class);
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
             if (HttpStatus.OK.equals(response.getStatusCode())
                     || HttpStatus.ACCEPTED.equals(response.getStatusCode())) {
                 JsonObject jsonObject = new JsonParser().parse(response.getBody()).getAsJsonObject();
@@ -195,20 +194,20 @@ public class CommonUtil {
         return null;
     }
 
-    public static boolean getApplicationInstance(Map<String, String> context, String app_instance_id) {
+    public static boolean getApplicationInstance(Map<String, String> context, String appInstanceId) {
         HttpHeaders headers = new HttpHeaders();
         headers.set(Constant.ACCESS_TOKEN, context.get(Constant.ACCESS_TOKEN));
         HttpEntity<String> request = new HttpEntity<>(headers);
 
         String url = Constant.PROTOCAL_APPO
-                .concat(String.format(Constant.APPO_GET_INSTANCE, context.get(Constant.TENANT_ID), app_instance_id));
+                .concat(String.format(Constant.APPO_GET_INSTANCE, context.get(Constant.TENANT_ID), appInstanceId));
 
         LOGGER.warn("getApplicationInstance URL: " + url);
 
         long startTime = System.currentTimeMillis();
         while (true) {
             try {
-                ResponseEntity<String> response = REST_TEMPLATE.exchange(url, HttpMethod.GET, request, String.class);
+                ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, request, String.class);
                 if (!HttpStatus.OK.equals(response.getStatusCode())) {
                     LOGGER.error("get application instance from appo reponse failed. The status code is {}",
                             response.getStatusCode());
@@ -219,17 +218,17 @@ public class CommonUtil {
                 JsonObject responseBody = jsonObject.get("response").getAsJsonObject();
 
                 if (Constant.CREATED.equals(responseBody.get("operationalStatus").getAsString())) {
-                    LOGGER.info("{} is Created.", app_instance_id);
+                    LOGGER.info("{} is Created.", appInstanceId);
                     break;
                 }
 
                 if ((System.currentTimeMillis() - startTime) > 60000) {
-                    LOGGER.error("get instance {} from appo time out", app_instance_id);
+                    LOGGER.error("get instance {} from appo time out", appInstanceId);
                     return false;
                 }
             } catch (RestClientException e) {
                 LOGGER.error("Failed to get application instance from appo which app_instance_id is {} exception {}",
-                        app_instance_id, e.getMessage());
+                        appInstanceId, e.getMessage());
                 return false;
             }
         }
@@ -264,7 +263,9 @@ public class CommonUtil {
                 LOGGER.error(msg);
                 throw new IllegalArgumentException(msg);
             }
-            file.delete();
+            if (!file.delete()) {
+                LOGGER.error("dependencyCheckSchdule file {} delete failed.", file.getName());
+            }
         });
     }
 
@@ -284,7 +285,7 @@ public class CommonUtil {
                 context.get(Constant.TENANT_ID), appInstanceId));
         LOGGER.warn("deleteAppInstance URL: {}", url);
         try {
-            ResponseEntity<String> response = REST_TEMPLATE.exchange(url, HttpMethod.DELETE, request, String.class);
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.DELETE, request, String.class);
             if (HttpStatus.OK.equals(response.getStatusCode())
                     || HttpStatus.ACCEPTED.equals(response.getStatusCode())) {
                 return true;
@@ -363,8 +364,7 @@ public class CommonUtil {
         String url = Constant.PROTOCOL_APM
                 .concat(String.format(Constant.APM_UPLOAD_PACKAGE, context.get(Constant.TENANT_ID)));
         try {
-            ResponseEntity<String> response = REST_TEMPLATE.exchange(url, HttpMethod.POST, requestEntity, String.class);
-            return response;
+            return restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
         } catch (RestClientException e) {
             LOGGER.error("Failed to upload file to apm, exception {}", e.getMessage());
         }
