@@ -14,7 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * Test Case Util class
@@ -22,8 +21,6 @@ import org.springframework.web.client.RestTemplate;
 public class TestCaseUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseUtil.class);
-
-    private static RestTemplate REST_TEMPLATE = new RestTemplate();
 
     /**
      * validate fileName is .pattern

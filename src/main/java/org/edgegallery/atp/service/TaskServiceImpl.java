@@ -19,7 +19,6 @@ import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.model.testcase.TestCaseDetail;
 import org.edgegallery.atp.model.testcase.TestCaseResult;
 import org.edgegallery.atp.model.user.User;
-import org.edgegallery.atp.repository.task.BatchTaskRepository;
 import org.edgegallery.atp.repository.task.TaskRepository;
 import org.edgegallery.atp.repository.testcase.TestCaseRepository;
 import org.edgegallery.atp.schedule.testcase.TestCaseManagerImpl;
@@ -53,8 +52,6 @@ public class TaskServiceImpl implements TaskService {
     @Autowired
     TestCaseManagerImpl testCaseManager;
 
-    @Autowired
-    BatchTaskRepository batchTaskRepository;
 
     @Override
     public List<TaskRequest> createTask(MultipartFile[] packageList) {

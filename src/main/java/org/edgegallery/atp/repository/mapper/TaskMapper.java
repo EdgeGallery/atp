@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.edgegallery.atp.model.page.PageCriteria;
 import org.edgegallery.atp.model.task.TaskPO;
 import org.springframework.stereotype.Component;
 
@@ -28,10 +27,6 @@ public interface TaskMapper {
      */
     List<TaskPO> findTaskByUserId(@Param("userId") String userId, @Param("appName") String appName,
             @Param("status") String status);
-
-    Number countTotal(PageCriteria pageCriteria);
-
-    List<TaskPO> findAllWithAppPagination(PageCriteria pageCriteria);
 
     /**
      * create task info

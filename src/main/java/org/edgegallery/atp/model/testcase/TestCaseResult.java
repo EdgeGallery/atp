@@ -2,7 +2,7 @@ package org.edgegallery.atp.model.testcase;
 
 import org.edgegallery.atp.constant.Constant;
 import lombok.Getter;
-import lombok.Setter;;
+import lombok.Setter;
 
 @Setter
 @Getter

@@ -62,23 +62,6 @@
 		where (now()::timestamp without time zone-createTime::timestamp without time zone) > (7 * '1 day'::interval)
 	</delete>
 
-	<select id="countTotal" resultType="java.lang.Integer"
-		parameterType="java.util.Map">
-		select count(*) from task_table
-		<where>
-			<if test="id != null">
-				id = #{id}
-			</if>
-			<if test="appName != null">
-				and appName = #{appName}
-			</if>
-			<if test="appVersion != null">
-				and appVersion = #{appVersion}
-			</if>
-		</where>
-		limit #{limit} offset #{offset}
-	</select>
-
 	<select id="getCurrentDate" resultType="java.util.Date">
 		select now()::timestamp without time zone
 	</select>
