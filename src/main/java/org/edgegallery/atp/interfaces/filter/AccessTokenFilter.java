@@ -39,7 +39,7 @@ public class AccessTokenFilter extends OncePerRequestFilter {
     @Autowired
     TokenStore jwtTokenStore;
 
-    public static ThreadLocal<Map<String, String>> context = new ThreadLocal<>();
+    private ThreadLocal<Map<String, String>> context = new ThreadLocal<>();
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -88,5 +88,9 @@ public class AccessTokenFilter extends OncePerRequestFilter {
 
         SecurityContextHolder.getContext().setAuthentication(auth);
         filterChain.doFilter(request, response);
+    }
+    
+    public ThreadLocal<Map<String, String>> getContext(){
+        return context;
     }
 }

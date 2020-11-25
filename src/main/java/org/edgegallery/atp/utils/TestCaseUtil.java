@@ -49,7 +49,7 @@ public class TestCaseUtil {
      */
     public static Set<String> getPathSet(ZipFile zipFile, ZipEntry entry, Set<String> prefixSet) {
         Set<String> pathSet = new HashSet<String>();
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry)))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry), "utf-8"))) {
             String line = "";
             while ((line = br.readLine()) != null) {
                 String[] splitByColon = line.split(Constant.COLON);
@@ -75,7 +75,7 @@ public class TestCaseUtil {
      */
     public static boolean isExistAll(ZipFile zipFile, ZipEntry entry, Set<String> prefixSet) {
         Set<String> sourcePathSet = new HashSet<String>();
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry)))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry), "utf-8"))) {
             String line = "";
             while ((line = br.readLine()) != null) {
                 // prefix: path
@@ -117,7 +117,8 @@ public class TestCaseUtil {
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
                 if (entry.getName().split("/").length == 2 && TestCaseUtil.fileSuffixValidate("mf", entry.getName())) {
-                    try (BufferedReader br = new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry)))) {
+                    try (BufferedReader br =
+                            new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry), "utf-8"))) {
                         String line = "";
                         while ((line = br.readLine()) != null) {
                             // prefix: path
