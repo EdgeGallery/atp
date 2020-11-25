@@ -122,7 +122,9 @@ public class FileChecker {
             file.transferTo(result);
             unzip(tempFileAddress);
         } catch (IOException e) {
-            CommonUtil.deleteTempFile(taskId, file);
+            if (!CommonUtil.deleteTempFile(taskId, file)) {
+                LOGGER.warn("check delete file {} failed.", file.getOriginalFilename());
+            }
             throw new IllegalArgumentException("create temp file with IOException");
         } catch (IllegalStateException e) {
             CommonUtil.deleteTempFile(taskId, file);

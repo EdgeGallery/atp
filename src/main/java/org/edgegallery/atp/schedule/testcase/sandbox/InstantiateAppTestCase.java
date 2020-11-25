@@ -44,10 +44,11 @@ public class InstantiateAppTestCase extends TestCaseAbs {
                 CommonUtil.uploadFileToAPM(filePath, context, getMecHost(context), packageInfo);
         if (null == response || !(HttpStatus.OK.equals(response.getStatusCode())
                 || HttpStatus.ACCEPTED.equals(response.getStatusCode()))) {
-            LOGGER.warn("uploadFileToAPM status: {}", response.getStatusCode());
-            return setTestCaseResult(Constant.FAILED,
-                    ExceptionConstant.RESPONSE_FROM_APM_FAILED.concat(response.getStatusCode().toString()),
-                    testCaseResult);
+            return null == response
+                    ? setTestCaseResult(Constant.FAILED, ExceptionConstant.RESPONSE_FROM_APM_FAILED, testCaseResult)
+                    : setTestCaseResult(Constant.FAILED,
+                            ExceptionConstant.RESPONSE_FROM_APM_FAILED.concat(response.getStatusCode().toString()),
+                            testCaseResult);
         }
 
         JsonObject jsonObject = new JsonParser().parse(response.getBody()).getAsJsonObject();
@@ -68,7 +69,7 @@ public class InstantiateAppTestCase extends TestCaseAbs {
 
         List<String> failedAppName = new ArrayList<String>();
         dependencyAppList.forEach(map -> {
-            String instanceId = CommonUtil.createInstanceFromAppo(filePath, context, map, getMecHost(context));
+            String instanceId = CommonUtil.createInstanceFromAppo(context, map, getMecHost(context));
             if (null == instanceId) {
                 failedAppName.add(map.get(Constant.APP_NAME));
             } else {
@@ -88,7 +89,7 @@ public class InstantiateAppTestCase extends TestCaseAbs {
         }
 
         // instantiate original app
-        String appInstanceId = CommonUtil.createInstanceFromAppo(filePath, context, appInfo, getMecHost(context));
+        String appInstanceId = CommonUtil.createInstanceFromAppo(context, appInfo, getMecHost(context));
         context.put(Constant.APP_INSTANCE_ID, appInstanceId);
 
         LOGGER.info("original appInstanceId: {}", appInstanceId);
@@ -111,8 +112,8 @@ public class InstantiateAppTestCase extends TestCaseAbs {
         headers.set(Constant.ACCESS_TOKEN, context.get(Constant.ACCESS_TOKEN));
         HttpEntity<String> request = new HttpEntity<>(headers);
 
-        String url = Constant.PROTOCOL_INVENTORY.concat(
-                Constant.INVENTORY_GET_MECHOSTS_URL.replaceAll(Constant.TENANT_ID, context.get(Constant.TENANT_ID)));
+        String url = Constant.PROTOCOL_INVENTORY
+                .concat(String.format(Constant.INVENTORY_GET_MECHOSTS_URL, context.get(Constant.TENANT_ID)));
         LOGGER.warn("get mechostb url: " + url);
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, request, String.class);

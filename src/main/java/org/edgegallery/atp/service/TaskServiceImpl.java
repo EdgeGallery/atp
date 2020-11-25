@@ -131,7 +131,10 @@ public class TaskServiceImpl implements TaskService {
 
         File tempFile = FileChecker.check(packages, fileId);
         if (null == tempFile) {
-            CommonUtil.deleteTempFile(fileId, packages);
+            if (!CommonUtil.deleteTempFile(fileId, packages)) {
+                LOGGER.error("dependencyCheck delete file {} failed.", packages.getOriginalFilename());
+            }
+
             throw new IllegalArgumentException("temp file is null");
         }
 
