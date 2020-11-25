@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
@@ -317,8 +318,8 @@ public class CommonUtil {
                 ZipEntry entry = entries.nextElement();
                 if (entry.getName().split(Constant.SLASH).length == 2
                         && TestCaseUtil.fileSuffixValidate("mf", entry.getName())) {
-                    try (BufferedReader br =
-                            new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry), "utf-8"))) {
+                    try (BufferedReader br = new BufferedReader(
+                            new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
                         String line = "";
                         while ((line = br.readLine()) != null) {
                             // prefix: path

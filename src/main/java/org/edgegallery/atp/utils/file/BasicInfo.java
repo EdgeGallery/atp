@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
@@ -198,7 +199,7 @@ public class BasicInfo {
         try {
             InputStream in = FileUtils.openInputStream(file);
             BoundedInputStream boundedInput = new BoundedInputStream(in, 8192);
-            InputStreamReader reader = new InputStreamReader(boundedInput, "UTF-8");
+            InputStreamReader reader = new InputStreamReader(boundedInput, StandardCharsets.UTF_8);
             BufferedReader br = new BufferedReader(reader);
             String temp = readLine(br);
             StringBuffer sb = new StringBuffer();
@@ -246,7 +247,7 @@ public class BasicInfo {
         InputStreamReader isr = null;
         try {
             BoundedInputStream boundedInput = new BoundedInputStream(FileUtils.openInputStream(file), 8192);
-            isr = new InputStreamReader(boundedInput, "UTF-8");
+            isr = new InputStreamReader(boundedInput, StandardCharsets.UTF_8);
             reader = new BufferedReader(isr, 2048);
             for (String tempString; (tempString = readLine(reader)) != null;) {
                 // If line is empty, ignore
