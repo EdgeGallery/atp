@@ -196,11 +196,10 @@ public class BasicInfo {
     }
 
     private void readMarkDown(File file) {
-        try {
-            InputStream in = FileUtils.openInputStream(file);
-            BoundedInputStream boundedInput = new BoundedInputStream(in, 8192);
-            InputStreamReader reader = new InputStreamReader(boundedInput, StandardCharsets.UTF_8);
-            BufferedReader br = new BufferedReader(reader);
+        try (InputStream in = FileUtils.openInputStream(file);
+                BoundedInputStream boundedInput = new BoundedInputStream(in, 8192);
+                InputStreamReader reader = new InputStreamReader(boundedInput, StandardCharsets.UTF_8);
+                BufferedReader br = new BufferedReader(reader)) {
             String temp = readLine(br);
             StringBuffer sb = new StringBuffer();
             while (temp != null) {
