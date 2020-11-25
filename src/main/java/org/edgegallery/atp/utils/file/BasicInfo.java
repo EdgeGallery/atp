@@ -207,7 +207,7 @@ public class BasicInfo {
                 temp = readLine(br);
             }
             markDownContent = sb.toString();
-        } catch (Exception e) {
+        } catch (IOException e) {
             LOGGER.error("readMarkDown exception, {}", e.getMessage());;
         }
     }
