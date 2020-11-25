@@ -2,8 +2,6 @@ package org.edgegallery.atp.repository.task;
 
 import java.util.Date;
 import java.util.List;
-import org.edgegallery.atp.model.page.Page;
-import org.edgegallery.atp.model.page.PageCriteria;
 import org.edgegallery.atp.model.task.TaskRequest;
 
 public interface TaskRepository {
@@ -25,7 +23,6 @@ public interface TaskRepository {
      */
     List<TaskRequest> findTaskByUserId(String userId, String appName, String status);
 
-    Page<TaskRequest> queryAll(PageCriteria pageCriteria);
 
     /**
      * create task info

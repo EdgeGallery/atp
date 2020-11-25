@@ -44,10 +44,6 @@ public class TaskPO implements PersistenceObject<TaskRequest> {
     @Column(name = "testCaseDetail")
     private String testCaseDetail;
 
-    public TaskPO() {
-
-    }
-
     public static TaskPO of(TaskRequest startTest) {
         TaskPO taskPO = new TaskPO();
         taskPO.setAppName(startTest.getAppName());

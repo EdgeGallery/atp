@@ -18,8 +18,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.edgegallery.atp.model.page.Page;
-import org.edgegallery.atp.model.page.PageCriteria;
 import org.edgegallery.atp.model.task.TaskPO;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.repository.mapper.TaskMapper;
@@ -32,14 +30,6 @@ public class TaskRepositoryImpl implements TaskRepository {
 
     @Autowired
     TaskMapper taskMapper;
-
-    @Override
-    public Page<TaskRequest> queryAll(PageCriteria pageCriteria) {
-        long total = taskMapper.countTotal(pageCriteria).longValue();
-        List<TaskRequest> releases = taskMapper.findAllWithAppPagination(pageCriteria).stream()
-                .map(TaskPO::toDomainModel).collect(Collectors.toList());
-        return new Page<>(releases, pageCriteria.getLimit(), pageCriteria.getOffset(), total);
-    }
 
     @Override
     public void insert(TaskRequest task) {

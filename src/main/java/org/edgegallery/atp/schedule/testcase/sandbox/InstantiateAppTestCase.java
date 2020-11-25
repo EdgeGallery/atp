@@ -33,7 +33,7 @@ public class InstantiateAppTestCase extends TestCaseAbs {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InstantiateAppTestCase.class);
 
-    private RestTemplate REST_TEMPLATE = new RestTemplate();
+    private RestTemplate restTemplate = new RestTemplate();
 
     private TestCaseResult testCaseResult = new TestCaseResult();
 
@@ -115,7 +115,7 @@ public class InstantiateAppTestCase extends TestCaseAbs {
                 Constant.INVENTORY_GET_MECHOSTS_URL.replaceAll(Constant.TENANT_ID, context.get(Constant.TENANT_ID)));
         LOGGER.warn("get mechostb url: " + url);
         try {
-            ResponseEntity<String> response = REST_TEMPLATE.exchange(url, HttpMethod.GET, request, String.class);
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, request, String.class);
             if (!HttpStatus.OK.equals(response.getStatusCode())) {
                 LOGGER.error("Instantiate through applcm reponse failed. The status code is {}",
                         response.getStatusCode());

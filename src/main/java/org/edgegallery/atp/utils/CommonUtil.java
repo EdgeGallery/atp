@@ -1,16 +1,21 @@
 package org.edgegallery.atp.utils;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.UUID;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
@@ -302,32 +307,30 @@ public class CommonUtil {
      */
     public static Map<String, String> getPackageInfo(String filePath) {
         Map<String, String> packageInfo = new HashMap<String, String>();
-        // try (ZipFile zipFile = new ZipFile(filePath)) {
-        // Enumeration<? extends ZipEntry> entries = zipFile.entries();
-        // while (entries.hasMoreElements()) {
-        // ZipEntry entry = entries.nextElement();
-        // if (entry.getName().split(Constant.SLASH).length == 2
-        // && TestCaseUtil.fileSuffixValidate("mf", entry.getName())) {
-        // try (BufferedReader br = new BufferedReader(new
-        // InputStreamReader(zipFile.getInputStream(entry)))) {
-        // String line = "";
-        // while ((line = br.readLine()) != null) {
-        // // prefix: path
-        // if (line.trim().startsWith(Constant.APP_NAME)) {
-        // packageInfo.put(Constant.APP_NAME, line.split(Constant.COLON)[1].trim());
-        // }
-        // if (line.trim().startsWith(Constant.APP_VERSION)) {
-        // packageInfo.put(Constant.APP_VERSION, line.split(Constant.COLON)[1].trim());
-        // }
-        // }
-        // }
-        // }
-        // }
-        // } catch (IOException e) {
-        // LOGGER.error("getPackageInfo failed. {}", e.getMessage());
-        // }
-        packageInfo.put(Constant.APP_NAME, "test");
-        packageInfo.put(Constant.APP_VERSION, "1.0");
+        try (ZipFile zipFile = new ZipFile(filePath)) {
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = entries.nextElement();
+                if (entry.getName().split(Constant.SLASH).length == 2
+                        && TestCaseUtil.fileSuffixValidate("mf", entry.getName())) {
+                    try (BufferedReader br = new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry)))) {
+                        String line = "";
+                        while ((line = br.readLine()) != null) {
+                            // prefix: path
+                            if (line.trim().startsWith(Constant.APP_NAME)) {
+                                packageInfo.put(Constant.APP_NAME, line.split(Constant.COLON)[1].trim());
+                            }
+                            if (line.trim().startsWith(Constant.APP_VERSION)) {
+                                packageInfo.put(Constant.APP_VERSION, line.split(Constant.COLON)[1].trim());
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            LOGGER.error("getPackageInfo failed. {}", e.getMessage());
+        }
+
         return packageInfo;
     }
 
