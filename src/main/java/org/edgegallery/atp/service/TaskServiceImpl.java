@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -121,7 +122,7 @@ public class TaskServiceImpl implements TaskService {
         }
         String yamlStr = yaml.dump(result);
         try {
-            InputStream yamlStream = new ByteArrayInputStream(yamlStr.getBytes("utf-8"));
+            InputStream yamlStream = new ByteArrayInputStream(yamlStr.getBytes(StandardCharsets.UTF_8));
             HttpHeaders headers = new HttpHeaders();
             headers.add("Content-Type", "application/octet-stream");
             return new ResponseEntity<>(new InputStreamResource(yamlStream), headers, HttpStatus.OK);

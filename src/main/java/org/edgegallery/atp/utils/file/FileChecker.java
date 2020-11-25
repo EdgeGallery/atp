@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -173,7 +174,8 @@ public class FileChecker {
     }
 
     private static void analysisDependency(List<Map<String, String>> result, ZipFile zipFile, ZipEntry entry) {
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry), "utf-8"))) {
+        try (BufferedReader br =
+                new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
             String line = positionDependencyService(br);
             if (StringUtils.isEmpty(line)) {
                 LOGGER.error(

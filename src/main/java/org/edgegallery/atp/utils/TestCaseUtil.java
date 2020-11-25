@@ -3,6 +3,7 @@ package org.edgegallery.atp.utils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,7 +50,8 @@ public class TestCaseUtil {
      */
     public static Set<String> getPathSet(ZipFile zipFile, ZipEntry entry, Set<String> prefixSet) {
         Set<String> pathSet = new HashSet<String>();
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry), "utf-8"))) {
+        try (BufferedReader br =
+                new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
             String line = "";
             while ((line = br.readLine()) != null) {
                 String[] splitByColon = line.split(Constant.COLON);
@@ -75,7 +77,8 @@ public class TestCaseUtil {
      */
     public static boolean isExistAll(ZipFile zipFile, ZipEntry entry, Set<String> prefixSet) {
         Set<String> sourcePathSet = new HashSet<String>();
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry), "utf-8"))) {
+        try (BufferedReader br =
+                new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
             String line = "";
             while ((line = br.readLine()) != null) {
                 // prefix: path
@@ -117,8 +120,8 @@ public class TestCaseUtil {
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
                 if (entry.getName().split("/").length == 2 && TestCaseUtil.fileSuffixValidate("mf", entry.getName())) {
-                    try (BufferedReader br =
-                            new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry), "utf-8"))) {
+                    try (BufferedReader br = new BufferedReader(
+                            new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
                         String line = "";
                         while ((line = br.readLine()) != null) {
                             // prefix: path
