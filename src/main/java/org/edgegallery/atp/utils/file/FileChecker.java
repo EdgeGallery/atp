@@ -180,8 +180,7 @@ public class FileChecker {
             if (StringUtils.isEmpty(line)) {
                 LOGGER.error(
                         "can not find the dependency path, the dependency path must be in node_templates.app_configuration.properties.appServiceRequired");
-                throw new IllegalArgumentException(
-                        "can not find the dependency path, the dependency path must be in node_templates.app_configuration.properties.appServiceRequired");
+                return;
             }
             // -serName
             while (line != null && line.trim().startsWith(Constant.STRIKE)) {
