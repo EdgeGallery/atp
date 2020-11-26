@@ -117,10 +117,9 @@ public class CommonUtil {
      * @param packageId packageId
      * @return response body
      */
-    public static InputStream downloadAppFromAppStore(String appId, String packageId) {
-        LOGGER.info("downloadAppFromAppStore in");
+    public static InputStream downloadAppFromAppStore(String appId, String packageId, Map<String, String> context) {
         HttpHeaders headers = new HttpHeaders();
-        headers.set(Constant.ACCESS_TOKEN, AccessTokenFilter.context.get().get(Constant.ACCESS_TOKEN));
+        headers.set(Constant.ACCESS_TOKEN, context.get(Constant.ACCESS_TOKEN));
         HttpEntity<String> request = new HttpEntity<>(headers);
         LOGGER.info("downloadAppFromAppStore appId: {}", appId);
         LOGGER.info("downloadAppFromAppStore packageId: {}", packageId);
@@ -247,7 +246,8 @@ public class CommonUtil {
      * @param filePath csar file path
      * @param dependencyStack stack contains all dependency app.
      */
-    public static void dependencyCheckSchdule(String filePath, Stack<Map<String, String>> dependencyStack) {
+    public static void dependencyCheckSchdule(String filePath, Stack<Map<String, String>> dependencyStack,
+            Map<String, String> context) {
         List<Map<String, String>> dependencyList = FileChecker.dependencyCheck(filePath);
         if (CollectionUtils.isEmpty(dependencyList)) {
             LOGGER.warn("dependencyCheckSchdule dependencyList is empty.");
@@ -255,13 +255,9 @@ public class CommonUtil {
         }
         dependencyStack.addAll(dependencyList);
 
-        LOGGER.warn("dependencyCheckSchdule dependencyList get end.{}", dependencyList);
-
         dependencyList.forEach(map -> {
-            LOGGER.warn("dependencyList tranverse start.");
-            LOGGER.warn("(map.get(Constant.APP_ID),{}", map.get(Constant.APP_ID));
-            LOGGER.warn(" map.get(Constant.PACKAGE_ID),{}", map.get(Constant.PACKAGE_ID));
-            InputStream inputStream = downloadAppFromAppStore(map.get(Constant.APP_ID), map.get(Constant.PACKAGE_ID));
+            InputStream inputStream =
+                    downloadAppFromAppStore(map.get(Constant.APP_ID), map.get(Constant.PACKAGE_ID), context);
             // analysis response and get csar file, get csar file path
             String dependencyFilePath = new StringBuilder().append(FileChecker.getDir()).append(File.separator)
                     .append("temp").append(File.separator).append(map.get(Constant.APP_ID)).append(Constant.UNDER_LINE)
@@ -269,7 +265,7 @@ public class CommonUtil {
             File file = new File(dependencyFilePath);
             try {
                 FileUtils.copyInputStreamToFile(inputStream, file);
-                dependencyCheckSchdule(dependencyFilePath, dependencyStack);
+                dependencyCheckSchdule(dependencyFilePath, dependencyStack, context);
             } catch (IOException e) {
                 String msg = "copy input stream to file failed.";
                 LOGGER.error(msg);

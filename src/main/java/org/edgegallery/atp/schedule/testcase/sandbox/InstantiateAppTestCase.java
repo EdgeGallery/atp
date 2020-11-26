@@ -64,7 +64,7 @@ public class InstantiateAppTestCase extends TestCaseAbs {
         StringBuffer appInstanceList = new StringBuffer();
         // analysis dependency app.
         Stack<Map<String, String>> dependencyAppList = new Stack<Map<String, String>>();
-        CommonUtil.dependencyCheckSchdule(filePath, dependencyAppList);
+        CommonUtil.dependencyCheckSchdule(filePath, dependencyAppList, context);
 
         LOGGER.info("dependencyAppList: {}", dependencyAppList);
 
