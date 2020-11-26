@@ -160,7 +160,6 @@ public class FileChecker {
             LOGGER.info("zipFile in.");
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
-                LOGGER.info("dependencyCheck analysis zip.");
                 ZipEntry entry = entries.nextElement();
                 String[] pathSplit = entry.getName().split(Constant.SLASH);
 
