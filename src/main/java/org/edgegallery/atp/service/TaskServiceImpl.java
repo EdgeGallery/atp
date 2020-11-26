@@ -53,8 +53,6 @@ public class TaskServiceImpl implements TaskService {
     @Autowired
     TestCaseManagerImpl testCaseManager;
 
-    AccessTokenFilter accessTokenFilter = new AccessTokenFilter();
-
     @Override
     public List<TaskRequest> createTask(MultipartFile[] packageList) {
         Map<String, File> tempFileList = new HashMap<String, File>();
@@ -67,7 +65,7 @@ public class TaskServiceImpl implements TaskService {
             subTaskId.append(taskId).append(Constant.COMMA);
         });
 
-        Map<String, String> context = accessTokenFilter.getContext().get();
+        Map<String, String> context = AccessTokenFilter.context.get();
         if (null == context) {
             tempFileList.forEach((taskId, file) -> {
                 if (!file.delete()) {
@@ -167,7 +165,7 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     private TaskRequest initTaskRequset(TaskRequest task, String filePath) {
-        Map<String, String> context = accessTokenFilter.getContext().get();
+        Map<String, String> context = AccessTokenFilter.context.get();
         if (null == context) {
             throw new IllegalArgumentException("AccessTokenFilter.context is null");
         }

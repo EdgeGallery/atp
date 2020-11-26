@@ -43,7 +43,7 @@ public class TaskRepositoryImpl implements TaskRepository {
 
     @Override
     public void update(TaskRequest task) {
-        taskMapper.update(TaskPO.of(task));;
+        taskMapper.update(TaskPO.of(task));
     }
 
     @Override
