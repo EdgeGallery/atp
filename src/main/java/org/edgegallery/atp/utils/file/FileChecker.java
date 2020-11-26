@@ -160,7 +160,6 @@ public class FileChecker {
             LOGGER.info("zipFile in.");
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
-                LOGGER.info("dependencyCheck analysis zip.");
                 ZipEntry entry = entries.nextElement();
                 String[] pathSplit = entry.getName().split(Constant.SLASH);
 
@@ -168,8 +167,10 @@ public class FileChecker {
                 if (pathSplit.length == 4 && Constant.DEFINITIONS.equals(pathSplit[2].trim())
                         && pathSplit[3].trim().endsWith(Constant.PACKAGE_YAML_FORMAT)) {
                     analysisDependency(result, zipFile, entry);
+                    break;
                 }
             }
+            LOGGER.info("dependencyCheck end.");
         } catch (IOException e) {
             LOGGER.error("dependency Check failed. {}", e.getMessage());
         }

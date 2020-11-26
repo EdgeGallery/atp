@@ -254,6 +254,8 @@ public class CommonUtil {
         }
         dependencyStack.addAll(dependencyList);
 
+        LOGGER.warn("dependencyCheckSchdule dependencyList get end.");
+
         dependencyList.forEach(map -> {
             InputStream inputStream = downloadAppFromAppStore(map.get(Constant.APP_ID), map.get(Constant.PACKAGE_ID));
             // analysis response and get csar file, get csar file path
