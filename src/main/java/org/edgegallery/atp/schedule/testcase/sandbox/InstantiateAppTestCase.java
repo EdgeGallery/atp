@@ -44,6 +44,7 @@ public class InstantiateAppTestCase extends TestCaseAbs {
                 CommonUtil.uploadFileToAPM(filePath, context, getMecHost(context), packageInfo);
         if (null == response || !(HttpStatus.OK.equals(response.getStatusCode())
                 || HttpStatus.ACCEPTED.equals(response.getStatusCode()))) {
+            LOGGER.error("uploadFileToAPM failed, response: {}", response);
             return null == response
                     ? setTestCaseResult(Constant.FAILED, ExceptionConstant.RESPONSE_FROM_APM_FAILED, testCaseResult)
                     : setTestCaseResult(Constant.FAILED,
