@@ -183,8 +183,12 @@ public class CommonUtil {
                 if (null != responseBody) {
                     String appInstanceId = responseBody.get("app_instance_id").getAsString();
                     Thread.sleep(5000);
-                    if (getApplicationInstance(context, appInstanceId)) {
-                        return appInstanceId;
+                    if (getApplicationInstance(context, appInstanceId, Constant.CREATED)
+                            && instantiateAppFromAppo(context, appInstanceId)) {
+                        Thread.sleep(2000);
+                        if (getApplicationInstance(context, appInstanceId, Constant.INSTANTIATED)) {
+                            return appInstanceId;
+                        }
                     }
                     return null;
                 }
@@ -198,7 +202,37 @@ public class CommonUtil {
         return null;
     }
 
-    public static boolean getApplicationInstance(Map<String, String> context, String appInstanceId) {
+    /**
+     * instantiate application by appo
+     * 
+     * @param context context info.
+     * @param appInstanceId appInstanceId
+     * @return instantiate app successful
+     */
+    public static boolean instantiateAppFromAppo(Map<String, String> context, String appInstanceId) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(Constant.ACCESS_TOKEN, context.get(Constant.ACCESS_TOKEN));
+        HttpEntity<String> request = new HttpEntity<>(headers);
+
+        String url = Constant.PROTOCAL_APPO
+                .concat(String.format(Constant.APPO_INSTANTIATE_APP, context.get(Constant.TENANT_ID), appInstanceId));
+        LOGGER.info("instantiateAppFromAppo URL : {}", url);
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
+            if (!HttpStatus.ACCEPTED.equals(response.getStatusCode())) {
+                LOGGER.error("instantiate application from appo reponse failed. The status code is {}",
+                        response.getStatusCode());
+                return false;
+            }
+        } catch (RestClientException e) {
+            LOGGER.error("Failed to instantiate application from appo which app_instance_id is {} exception {}",
+                    appInstanceId, e.getMessage());
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean getApplicationInstance(Map<String, String> context, String appInstanceId, String status) {
         HttpHeaders headers = new HttpHeaders();
         headers.set(Constant.ACCESS_TOKEN, context.get(Constant.ACCESS_TOKEN));
         HttpEntity<String> request = new HttpEntity<>(headers);
@@ -221,7 +255,7 @@ public class CommonUtil {
                 JsonObject jsonObject = new JsonParser().parse(response.getBody()).getAsJsonObject();
                 JsonObject responseBody = jsonObject.get("response").getAsJsonObject();
 
-                if (Constant.CREATED.equals(responseBody.get("operationalStatus").getAsString())) {
+                if (status.equalsIgnoreCase(responseBody.get("operationalStatus").getAsString())) {
                     LOGGER.info("{} is Created.", appInstanceId);
                     break;
                 }
@@ -342,6 +376,7 @@ public class CommonUtil {
 
         return packageInfo;
     }
+
 
     /**
      * upload file to apm service.

@@ -123,9 +123,9 @@ public class TestCaseManagerImpl implements TestCaseManager {
                     if (null != result) {
                         entry.setValue(result);
                     }
-                    LOGGER.warn("{} result.getResult{}", entry.getKey(), result.getResult());
+                    LOGGER.info("{} result.getResult {}", entry.getKey(), result.getResult());
                     resultStatus = Constant.FAILED.equals(result.getResult()) ? false : resultStatus;
-                    LOGGER.warn("resultStatus", resultStatus);
+                    LOGGER.info("resultStatus {}", resultStatus);
                 }
             });
         }
