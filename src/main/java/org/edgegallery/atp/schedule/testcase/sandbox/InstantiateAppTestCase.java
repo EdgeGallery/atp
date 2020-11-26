@@ -68,6 +68,7 @@ public class InstantiateAppTestCase extends TestCaseAbs {
 
         LOGGER.info("dependencyAppList: {}", dependencyAppList);
 
+        // create instantiate
         List<String> failedAppName = new ArrayList<String>();
         dependencyAppList.forEach(map -> {
             String instanceId = CommonUtil.createInstanceFromAppo(context, map, getMecHost(context));

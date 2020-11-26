@@ -249,6 +249,7 @@ public class CommonUtil {
     public static void dependencyCheckSchdule(String filePath, Stack<Map<String, String>> dependencyStack) {
         List<Map<String, String>> dependencyList = FileChecker.dependencyCheck(filePath);
         if (CollectionUtils.isEmpty(dependencyList)) {
+            LOGGER.warn("dependencyCheckSchdule dependencyList is empty.");
             return;
         }
         dependencyStack.addAll(dependencyList);

@@ -154,10 +154,13 @@ public class FileChecker {
      * @return dependency application info list, contains appName,appId and appPackageId.
      */
     public static List<Map<String, String>> dependencyCheck(String filePath) {
+        LOGGER.info("dependencyCheck filePath: {}", filePath);
         List<Map<String, String>> result = new ArrayList<Map<String, String>>();
         try (ZipFile zipFile = new ZipFile(filePath)) {
+            LOGGER.info("zipFile in.");
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
+                LOGGER.info("dependencyCheck analysis zip.");
                 ZipEntry entry = entries.nextElement();
                 String[] pathSplit = entry.getName().split(Constant.SLASH);
 
@@ -178,7 +181,7 @@ public class FileChecker {
                 new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
             String line = positionDependencyService(br);
             if (StringUtils.isEmpty(line)) {
-                LOGGER.error(
+                LOGGER.warn(
                         "can not find the dependency path, the dependency path must be in node_templates.app_configuration.properties.appServiceRequired");
                 return;
             }
@@ -234,7 +237,6 @@ public class FileChecker {
                                     if (line.trim().startsWith(Constant.APP_SERVICE_REQUIRED)) {
                                         line = br.readLine();
                                         return null == line ? line : line.trim();
-
                                     }
                                 }
                             }
