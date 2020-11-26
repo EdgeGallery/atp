@@ -47,8 +47,6 @@ public class CommonUtil {
 
     private static RestTemplate restTemplate = new RestTemplate();
 
-    private static final AccessTokenFilter accessTokenFilter = new AccessTokenFilter();
-
     /**
      * get time according to special format
      * 
@@ -91,7 +89,7 @@ public class CommonUtil {
     public static JsonObject getAppInfoFromAppStore(String appId, String packageId) {
         HttpHeaders headers = new HttpHeaders();
 
-        headers.set(Constant.ACCESS_TOKEN, accessTokenFilter.getContext().get().get(Constant.ACCESS_TOKEN));
+        headers.set(Constant.ACCESS_TOKEN, AccessTokenFilter.context.get().get(Constant.ACCESS_TOKEN));
         HttpEntity<String> request = new HttpEntity<>(headers);
 
         String url = String.format(Constant.APP_STORE_GET_APP_PACKAGE, appId, packageId);
@@ -121,7 +119,7 @@ public class CommonUtil {
      */
     public static InputStream downloadAppFromAppStore(String appId, String packageId) {
         HttpHeaders headers = new HttpHeaders();
-        headers.set(Constant.ACCESS_TOKEN, accessTokenFilter.getContext().get().get(Constant.ACCESS_TOKEN));
+        headers.set(Constant.ACCESS_TOKEN, AccessTokenFilter.context.get().get(Constant.ACCESS_TOKEN));
         HttpEntity<String> request = new HttpEntity<>(headers);
 
         String url = String.format(Constant.APP_STORE_DOWNLOAD_CSAR, appId, packageId);
@@ -405,7 +403,7 @@ public class CommonUtil {
      * validate context is not empty.
      */
     public static void validateContext() {
-        if (null == accessTokenFilter.getContext().get()) {
+        if (null == AccessTokenFilter.context.get()) {
             throw new IllegalArgumentException(ExceptionConstant.CONTEXT_IS_NULL);
         }
     }

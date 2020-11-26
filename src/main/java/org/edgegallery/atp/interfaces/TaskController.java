@@ -55,8 +55,6 @@ public class TaskController {
     @Autowired
     private TaskService taskService;
 
-    AccessTokenFilter accessTokenFilter = new AccessTokenFilter();
-
     /**
      * create test task
      * 
@@ -93,7 +91,7 @@ public class TaskController {
         CommonUtil.validateContext();
         CommonUtil.lengthCheck(appName);
         CommonUtil.lengthCheck(status);
-        return taskService.getAllTasks(accessTokenFilter.getContext().get().get(Constant.USER_ID), appName, status);
+        return taskService.getAllTasks(AccessTokenFilter.context.get().get(Constant.USER_ID), appName, status);
     }
 
     /**
@@ -113,7 +111,7 @@ public class TaskController {
     public ResponseEntity<TaskRequest> getTaskById(
             @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId) {
         CommonUtil.validateContext();
-        return taskService.getTaskById(accessTokenFilter.getContext().get().get(Constant.USER_ID), taskId);
+        return taskService.getTaskById(AccessTokenFilter.context.get().get(Constant.USER_ID), taskId);
     }
 
     @GetMapping(value = "/tasks/{taskId}/action/download", produces = MediaType.APPLICATION_JSON)
@@ -125,7 +123,7 @@ public class TaskController {
     public ResponseEntity<InputStreamResource> downloadTestReport(
             @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId) {
         CommonUtil.validateContext();
-        return taskService.downloadTestReport(taskId, accessTokenFilter.getContext().get().get(Constant.USER_ID));
+        return taskService.downloadTestReport(taskId, AccessTokenFilter.context.get().get(Constant.USER_ID));
     }
 
     @PostMapping(value = "/common-action/analysis-app", produces = MediaType.APPLICATION_JSON)
