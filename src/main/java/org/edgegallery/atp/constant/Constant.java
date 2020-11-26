@@ -137,4 +137,6 @@ public interface Constant {
     String APPO_INSTANTIATE_APP = "/appo/v1/tenants/%s/app_instances/%s";
 
     String INSTANTIATED = "instantiated";
+
+    String INSTANTIATE_FAILED = "Instantiation failed";
 }
