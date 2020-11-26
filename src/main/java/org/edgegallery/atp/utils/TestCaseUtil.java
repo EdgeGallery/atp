@@ -32,10 +32,8 @@ public class TestCaseUtil {
      */
     public static boolean fileSuffixValidate(String pattern, String fileName) {
         String suffix = fileName.substring(fileName.indexOf(Constant.DOT) + 1);
-        if (StringUtils.isNotBlank(suffix)) {
-            if (suffix.equals(pattern)) {
-                return true;
-            }
+        if (StringUtils.isNotBlank(suffix) && suffix.equals(pattern)) {
+            return true;
         }
         return false;
     }

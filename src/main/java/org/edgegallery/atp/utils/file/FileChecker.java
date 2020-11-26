@@ -313,10 +313,7 @@ public class FileChecker {
         }
         fileName = Normalizer.normalize(fileName, Normalizer.Form.NFKC);
         Matcher matcher = Pattern.compile(Constant.REG).matcher(fileName);
-        if (!matcher.matches()) {
-            return false;
-        }
-        return true;
+        return matcher.matches();
     }
 
 
