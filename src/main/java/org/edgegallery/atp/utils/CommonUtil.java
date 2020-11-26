@@ -257,7 +257,14 @@ public class CommonUtil {
                 JsonObject responseBody = jsonObject.get("response").getAsJsonObject();
                 LOGGER.info("status: {}, operationalStatus: {}", status,
                         responseBody.get("operationalStatus").getAsString());
-                if (status.equalsIgnoreCase(responseBody.get("operationalStatus").getAsString())) {
+
+                String responseStatus = responseBody.get("operationalStatus").getAsString();
+                if (Constant.INSTANTIATE_FAILED.equalsIgnoreCase(responseStatus)) {
+                    LOGGER.error("instantiate app failed. The status  is {}", responseStatus);
+                    return false;
+                }
+
+                if (status.equalsIgnoreCase(responseStatus)) {
                     LOGGER.info("{} is {}.", appInstanceId, status);
                     break;
                 }
