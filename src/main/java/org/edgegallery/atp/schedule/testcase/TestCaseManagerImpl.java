@@ -24,8 +24,6 @@ public class TestCaseManagerImpl implements TestCaseManager {
 
     ExecutorService virusTreadPool = Executors.newFixedThreadPool(Constant.MAX_TASK_THREAD_NUM);
 
-    private boolean resultStatus = true;
-
     @Autowired
     TestCaseRepository testCaseRepository;
 
@@ -47,9 +45,12 @@ public class TestCaseManagerImpl implements TestCaseManager {
 
         String filePath;
 
+        boolean resultStatus;
+
         public TaskProcessor(TaskRequest task, String filePath) {
             this.task = task;
             this.filePath = filePath;
+            this.resultStatus = true;
         }
 
         @Override
