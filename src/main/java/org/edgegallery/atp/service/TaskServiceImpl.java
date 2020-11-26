@@ -138,8 +138,8 @@ public class TaskServiceImpl implements TaskService {
             Map<String, String> context = new HashMap<String, String>();
             context.put(Constant.ACCESS_TOKEN, AccessTokenFilter.context.get().get(Constant.ACCESS_TOKEN));
             CommonUtil.dependencyCheckSchdule(filePath, dependencyAppList, context);
-            Map<String, String> getDependencyInfo = new HashMap<String, String>();
 
+            Map<String, String> getDependencyInfo = new HashMap<String, String>();
             dependencyAppList.forEach(map -> {
                 JsonObject response =
                         CommonUtil.getAppInfoFromAppStore(map.get(Constant.APP_ID), map.get(Constant.PACKAGE_ID));
