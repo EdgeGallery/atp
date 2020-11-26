@@ -146,7 +146,7 @@ public class BasicInfo {
      * @return boolean
      */
     public static boolean isYamlFile(File file) {
-        return !file.isDirectory() && file.getName().indexOf(".yaml") != -1;
+        return !file.isDirectory() && file.getName().indexOf(PACKAGE_YAML_FORMAT) != -1;
     }
 
     /**
@@ -208,7 +208,7 @@ public class BasicInfo {
             }
             markDownContent = sb.toString();
         } catch (IOException e) {
-            LOGGER.error("readMarkDown exception, {}", e.getMessage());;
+            LOGGER.error("readMarkDown exception, {}", e.getMessage());
         }
     }
 
@@ -242,12 +242,9 @@ public class BasicInfo {
 
     private void readManifest(File file) {
         // Fix the package type to CSAR, temporary
-        BufferedReader reader = null;
-        InputStreamReader isr = null;
-        try {
-            BoundedInputStream boundedInput = new BoundedInputStream(FileUtils.openInputStream(file), 8192);
-            isr = new InputStreamReader(boundedInput, StandardCharsets.UTF_8);
-            reader = new BufferedReader(isr, 2048);
+        try (BoundedInputStream boundedInput = new BoundedInputStream(FileUtils.openInputStream(file), 8192);
+                InputStreamReader isr = new InputStreamReader(boundedInput, StandardCharsets.UTF_8);
+                BufferedReader reader = new BufferedReader(isr, 2048);) {
             for (String tempString; (tempString = readLine(reader)) != null;) {
                 // If line is empty, ignore
                 if ("".equals(tempString)) {
@@ -278,42 +275,28 @@ public class BasicInfo {
                         contact = tempString.substring(count).trim();
                     }
                 } catch (StringIndexOutOfBoundsException e) {
-                    continue;
+                    LOGGER.error("StringIndexOutOfBoundsException.");
                 }
             }
         } catch (IOException e) {
             LOGGER.error("Exception while parsing manifest file" + e, e);
-        } finally {
-            try {
-                if (isr != null) {
-                    isr.close();
-                }
-            } catch (Exception e) {
-                LOGGER.error("Exception while close is" + e, e);
-            }
-            try {
-                if (reader != null) {
-                    reader.close();
-                }
-            } catch (Exception e) {
-                LOGGER.error("Exception while close is" + e, e);
-            }
         }
     }
 
     private boolean isRegularFile(Path filePath) {
         BasicFileAttributes attr = null;
+        String errorMg = "Not a reqgular file.";
         try {
             attr = Files.readAttributes(filePath, BasicFileAttributes.class, LinkOption.NOFOLLOW_LINKS);
             if (!attr.isRegularFile()) {
-                LOGGER.error("Not a reqgular file.");
+                LOGGER.error(errorMg);
                 return false;
             }
         } catch (IOException e) {
-            LOGGER.error("Not a reqgular file.");
+            LOGGER.error(errorMg);
             return false;
         } catch (Exception e) {
-            LOGGER.error("Not a reqgular file.");
+            LOGGER.error(errorMg);
             return false;
         }
         return true;
@@ -321,7 +304,7 @@ public class BasicInfo {
 
     private static FileRelationResponse buildFileStructure(String root, String base) {
         File rootfile = new File(root);
-        if (rootfile != null && !rootfile.isDirectory()) {
+        if (!rootfile.isDirectory()) {
             return new FileRelationResponse(rootfile.getName());
         } else {
             FileRelationResponse current = new FileRelationResponse(rootfile.getName());
