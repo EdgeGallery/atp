@@ -224,6 +224,7 @@ public class CommonUtil {
                         response.getStatusCode());
                 return false;
             }
+            LOGGER.info("instantiateAppFromAppo: {}", response.getStatusCode());
         } catch (RestClientException e) {
             LOGGER.error("Failed to instantiate application from appo which app_instance_id is {} exception {}",
                     appInstanceId, e.getMessage());
@@ -254,9 +255,10 @@ public class CommonUtil {
 
                 JsonObject jsonObject = new JsonParser().parse(response.getBody()).getAsJsonObject();
                 JsonObject responseBody = jsonObject.get("response").getAsJsonObject();
-
+                LOGGER.info("status: {}, operationalStatus: {}", status,
+                        responseBody.get("operationalStatus").getAsString());
                 if (status.equalsIgnoreCase(responseBody.get("operationalStatus").getAsString())) {
-                    LOGGER.info("{} is Created.", appInstanceId);
+                    LOGGER.info("{} is {}.", appInstanceId, status);
                     break;
                 }
 
