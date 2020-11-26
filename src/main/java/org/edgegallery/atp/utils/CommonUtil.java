@@ -121,6 +121,8 @@ public class CommonUtil {
         HttpHeaders headers = new HttpHeaders();
         headers.set(Constant.ACCESS_TOKEN, AccessTokenFilter.context.get().get(Constant.ACCESS_TOKEN));
         HttpEntity<String> request = new HttpEntity<>(headers);
+        LOGGER.info("downloadAppFromAppStore appId: {},appId");
+        LOGGER.info("downloadAppFromAppStore packageId: {},packageId");
 
         String url = String.format(Constant.APP_STORE_DOWNLOAD_CSAR, appId, packageId);
         try {
@@ -174,6 +176,7 @@ public class CommonUtil {
 
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+            LOGGER.info("response is: {}", response.getStatusCode());
             if (HttpStatus.OK.equals(response.getStatusCode())
                     || HttpStatus.ACCEPTED.equals(response.getStatusCode())) {
                 JsonObject jsonObject = new JsonParser().parse(response.getBody()).getAsJsonObject();

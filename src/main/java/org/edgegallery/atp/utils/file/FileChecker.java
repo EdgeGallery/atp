@@ -185,13 +185,16 @@ public class FileChecker {
             }
             // -serName
             while (line != null && line.trim().startsWith(Constant.STRIKE)) {
+                LOGGER.info("app_name: {}", line.split(Constant.COLON)[1].trim());
                 Map<String, String> map = new HashMap<String, String>();
                 map.put(Constant.APP_NAME, line.split(Constant.COLON)[1].trim());
                 while ((line = br.readLine()) != null && !isEnd(line) && !line.trim().startsWith(Constant.STRIKE)) {
                     line = line.trim();
                     if (line.startsWith(Constant.APP_ID)) {
+                        LOGGER.info("appId: {}", line.split(Constant.COLON)[1].trim());
                         map.put(Constant.APP_ID, line.split(Constant.COLON)[1].trim());
                     } else if (line.startsWith(Constant.PACKAGE_ID)) {
+                        LOGGER.info("packageid: {}", line.split(Constant.COLON)[1].trim());
                         map.put(Constant.PACKAGE_ID, line.split(Constant.COLON)[1].trim());
                     }
                 }
