@@ -121,8 +121,8 @@ public class CommonUtil {
         HttpHeaders headers = new HttpHeaders();
         headers.set(Constant.ACCESS_TOKEN, AccessTokenFilter.context.get().get(Constant.ACCESS_TOKEN));
         HttpEntity<String> request = new HttpEntity<>(headers);
-        LOGGER.info("downloadAppFromAppStore appId: {},appId");
-        LOGGER.info("downloadAppFromAppStore packageId: {},packageId");
+        LOGGER.info("downloadAppFromAppStore appId: {}", appId);
+        LOGGER.info("downloadAppFromAppStore packageId: {}", packageId);
 
         String url = String.format(Constant.APP_STORE_DOWNLOAD_CSAR, appId, packageId);
         try {
@@ -249,6 +249,7 @@ public class CommonUtil {
     public static void dependencyCheckSchdule(String filePath, Stack<Map<String, String>> dependencyStack) {
         List<Map<String, String>> dependencyList = FileChecker.dependencyCheck(filePath);
         if (CollectionUtils.isEmpty(dependencyList)) {
+            LOGGER.warn("dependencyCheckSchdule dependencyList is empty.");
             return;
         }
         dependencyStack.addAll(dependencyList);
