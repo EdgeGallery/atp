@@ -66,7 +66,9 @@ public class TestCaseManagerImpl implements TestCaseManager {
             execute(Constant.SANDBOX_TEST, detail.getSandboxTest(), context);
 
             task.setEndTime(taskRepository.getCurrentDate());
+            LOGGER.info("resultStatus" + resultStatus);
             task.setStatus(!resultStatus ? Constant.FAILED : Constant.SUCCESS);
+            LOGGER.info("TASK resultStatus" + task.getStatus());
             taskRepository.update(task);
 
             if (!(new File(filePath).delete())) {
@@ -121,7 +123,9 @@ public class TestCaseManagerImpl implements TestCaseManager {
                     if (null != result) {
                         entry.setValue(result);
                     }
+                    LOGGER.warn("{} result.getResult{}", entry.getKey(), result.getResult());
                     resultStatus = Constant.FAILED.equals(result.getResult()) ? false : resultStatus;
+                    LOGGER.warn("resultStatus", resultStatus);
                 }
             });
         }

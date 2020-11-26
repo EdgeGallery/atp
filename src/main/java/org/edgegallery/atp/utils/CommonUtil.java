@@ -121,10 +121,9 @@ public class CommonUtil {
         HttpHeaders headers = new HttpHeaders();
         headers.set(Constant.ACCESS_TOKEN, context.get(Constant.ACCESS_TOKEN));
         HttpEntity<String> request = new HttpEntity<>(headers);
-        LOGGER.info("downloadAppFromAppStore appId: {}", appId);
-        LOGGER.info("downloadAppFromAppStore packageId: {}", packageId);
 
         String url = String.format(Constant.APP_STORE_DOWNLOAD_CSAR, appId, packageId);
+        LOGGER.info("downloadAppFromAppStore url: {}", url);
         try {
             ResponseEntity<Resource> response = restTemplate.exchange(Constant.PROTOCOL_APPSTORE.concat(url),
                     HttpMethod.GET, request, Resource.class);
