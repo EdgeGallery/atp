@@ -118,6 +118,7 @@ public class CommonUtil {
      * @return response body
      */
     public static InputStream downloadAppFromAppStore(String appId, String packageId) {
+        LOGGER.info("downloadAppFromAppStore in");
         HttpHeaders headers = new HttpHeaders();
         headers.set(Constant.ACCESS_TOKEN, AccessTokenFilter.context.get().get(Constant.ACCESS_TOKEN));
         HttpEntity<String> request = new HttpEntity<>(headers);
@@ -254,9 +255,12 @@ public class CommonUtil {
         }
         dependencyStack.addAll(dependencyList);
 
-        LOGGER.warn("dependencyCheckSchdule dependencyList get end.");
+        LOGGER.warn("dependencyCheckSchdule dependencyList get end.{}", dependencyList);
 
         dependencyList.forEach(map -> {
+            LOGGER.warn("dependencyList tranverse start.");
+            LOGGER.warn("(map.get(Constant.APP_ID),{}", map.get(Constant.APP_ID));
+            LOGGER.warn(" map.get(Constant.PACKAGE_ID),{}", map.get(Constant.PACKAGE_ID));
             InputStream inputStream = downloadAppFromAppStore(map.get(Constant.APP_ID), map.get(Constant.PACKAGE_ID));
             // analysis response and get csar file, get csar file path
             String dependencyFilePath = new StringBuilder().append(FileChecker.getDir()).append(File.separator)
