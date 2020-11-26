@@ -154,10 +154,8 @@ public class FileChecker {
      * @return dependency application info list, contains appName,appId and appPackageId.
      */
     public static List<Map<String, String>> dependencyCheck(String filePath) {
-        LOGGER.info("dependencyCheck filePath: {}", filePath);
         List<Map<String, String>> result = new ArrayList<Map<String, String>>();
         try (ZipFile zipFile = new ZipFile(filePath)) {
-            LOGGER.info("zipFile in.");
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();

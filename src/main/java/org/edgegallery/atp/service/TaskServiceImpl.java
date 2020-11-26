@@ -135,7 +135,9 @@ public class TaskServiceImpl implements TaskService {
             String filePath = tempFile.getCanonicalPath();
             // key is appId, value is packageId
             Stack<Map<String, String>> dependencyAppList = new Stack<Map<String, String>>();
-            CommonUtil.dependencyCheckSchdule(filePath, dependencyAppList);
+            Map<String, String> context = new HashMap<String, String>();
+            context.put(Constant.ACCESS_TOKEN, AccessTokenFilter.context.get().get(Constant.ACCESS_TOKEN));
+            CommonUtil.dependencyCheckSchdule(filePath, dependencyAppList, context);
             Map<String, String> getDependencyInfo = new HashMap<String, String>();
 
             dependencyAppList.forEach(map -> {
