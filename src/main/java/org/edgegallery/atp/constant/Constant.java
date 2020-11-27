@@ -139,4 +139,6 @@ public interface Constant {
     String INSTANTIATED = "instantiated";
 
     String INSTANTIATE_FAILED = "Instantiation failed";
+
+    String CREATED_FAILED = "Create failed";
 }
