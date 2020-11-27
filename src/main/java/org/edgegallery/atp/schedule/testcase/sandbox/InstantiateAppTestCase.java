@@ -81,7 +81,8 @@ public class InstantiateAppTestCase extends TestCaseAbs {
             // analysis response and get csar file, get csar file path
             String dependencyFilePath = new StringBuilder().append(FileChecker.getDir()).append(File.separator)
                     .append("temp").append(File.separator).append(map.get(Constant.APP_ID)).append(Constant.UNDER_LINE)
-                    .append(map.get(Constant.PACKAGE_ID)).toString();
+                    .append(map.get(Constant.PACKAGE_ID)).append(".csar").toString();
+            LOGGER.warn("dependencyFilePath: {}", dependencyFilePath);
             File file = new File(dependencyFilePath);
             try {
                 FileUtils.copyInputStreamToFile(inputStream, file);
