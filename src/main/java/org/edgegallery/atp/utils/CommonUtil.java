@@ -182,6 +182,10 @@ public class CommonUtil {
                 JsonObject responseBody = jsonObject.get("response").getAsJsonObject();
                 if (null != responseBody) {
                     String appInstanceId = responseBody.get("app_instance_id").getAsString();
+                    if (Constant.INSTANTIATED.equalsIgnoreCase(getStatusOfApp(context, appInstanceId))) {
+                        LOGGER.warn("app has already instantiated. {}", appInstanceId);
+                        return "1";
+                    }
                     Thread.sleep(5000);
                     if (getApplicationInstance(context, appInstanceId, Constant.CREATED)
                             && instantiateAppFromAppo(context, appInstanceId)) {
@@ -231,6 +235,36 @@ public class CommonUtil {
             return false;
         }
         return true;
+    }
+
+    public static String getStatusOfApp(Map<String, String> context, String appInstanceId) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(Constant.ACCESS_TOKEN, context.get(Constant.ACCESS_TOKEN));
+        HttpEntity<String> request = new HttpEntity<>(headers);
+
+        String url = Constant.PROTOCAL_APPO
+                .concat(String.format(Constant.APPO_GET_INSTANCE, context.get(Constant.TENANT_ID), appInstanceId));
+
+        while (true) {
+            try {
+                ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, request, String.class);
+                if (!HttpStatus.OK.equals(response.getStatusCode())) {
+                    LOGGER.error("get application instance from appo reponse failed. The status code is {}",
+                            response.getStatusCode());
+                    return null;
+                }
+
+                JsonObject jsonObject = new JsonParser().parse(response.getBody()).getAsJsonObject();
+                JsonObject responseBody = jsonObject.get("response").getAsJsonObject();
+                LOGGER.info(" operationalStatus: {}", responseBody.get("operationalStatus").getAsString());
+
+                return responseBody.get("operationalStatus").getAsString();
+
+            } catch (RestClientException e) {
+                LOGGER.error("Failed to get application instance from appo which app_instance_id is {} exception {}",
+                        appInstanceId, e.getMessage());
+            }
+        }
     }
 
     public static boolean getApplicationInstance(Map<String, String> context, String appInstanceId, String status) {

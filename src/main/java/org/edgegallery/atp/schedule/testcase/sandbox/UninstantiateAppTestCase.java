@@ -33,8 +33,10 @@ public class UninstantiateAppTestCase extends TestCaseAbs {
             String[] dependencyInstanceArray =
                     dependencyInstanceList.substring(dependencyInstanceList.length() - 1).split(Constant.COMMA);
             Arrays.stream(dependencyInstanceArray).forEach(instance -> {
-                if (!CommonUtil.deleteAppInstance(instance, context)) {
-                    failedInstance.add(instance);
+                if (!("1".equals(instance))) {
+                    if (!CommonUtil.deleteAppInstance(instance, context)) {
+                        failedInstance.add(instance);
+                    }
                 }
             });
         }
