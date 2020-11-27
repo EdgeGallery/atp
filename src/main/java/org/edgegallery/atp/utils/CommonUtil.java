@@ -259,8 +259,9 @@ public class CommonUtil {
                         responseBody.get("operationalStatus").getAsString());
 
                 String responseStatus = responseBody.get("operationalStatus").getAsString();
-                if (Constant.INSTANTIATE_FAILED.equalsIgnoreCase(responseStatus)) {
-                    LOGGER.error("instantiate app failed. The status  is {}", responseStatus);
+                if (Constant.INSTANTIATE_FAILED.equalsIgnoreCase(responseStatus)
+                        || Constant.CREATED_FAILED.equalsIgnoreCase(responseStatus)) {
+                    LOGGER.error("instantiate or create app failed. The status  is {}", responseStatus);
                     return false;
                 }
 
