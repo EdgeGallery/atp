@@ -270,14 +270,17 @@ public class CommonUtil {
                     break;
                 }
 
-                if ((System.currentTimeMillis() - startTime) > 60000) {
+                if ((System.currentTimeMillis() - startTime) > 40000) {
                     LOGGER.error("get instance {} from appo time out", appInstanceId);
                     return false;
                 }
+                Thread.sleep(5000);
             } catch (RestClientException e) {
                 LOGGER.error("Failed to get application instance from appo which app_instance_id is {} exception {}",
                         appInstanceId, e.getMessage());
                 return false;
+            } catch (InterruptedException e) {
+                LOGGER.error("thead sleep exception.");
             }
         }
 
