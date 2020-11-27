@@ -182,10 +182,11 @@ public class CommonUtil {
                 JsonObject responseBody = jsonObject.get("response").getAsJsonObject();
                 if (null != responseBody) {
                     String appInstanceId = responseBody.get("app_instance_id").getAsString();
-                    Thread.sleep(5000);
+                    LOGGER.info("appInstanceId: {}", appInstanceId);
+                    Thread.sleep(6000);
                     if (getApplicationInstance(context, appInstanceId, Constant.CREATED)
                             && instantiateAppFromAppo(context, appInstanceId)) {
-                        Thread.sleep(2000);
+                        Thread.sleep(6000);
                         if (getApplicationInstance(context, appInstanceId, Constant.INSTANTIATED)) {
                             return appInstanceId;
                         }
