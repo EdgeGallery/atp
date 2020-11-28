@@ -4,13 +4,11 @@ import java.util.Date;
 import org.edgegallery.atp.model.Entity;
 import org.edgegallery.atp.model.testcase.TestCaseDetail;
 import org.edgegallery.atp.model.user.User;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-@SuppressFBWarnings(value = {"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class TaskRequest implements Entity {
 
     private String id;
