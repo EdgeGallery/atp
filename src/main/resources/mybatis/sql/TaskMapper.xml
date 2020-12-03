@@ -41,7 +41,7 @@
 
 	<select id="findTaskByUserId" resultType="org.edgegallery.atp.model.task.TaskPO"
 		parameterType="String">
-		select * from task_table
+		select * from task_table 
 		<where>
 			<if test="userId != null and userId !=''">
 				userId = #{userId}
@@ -60,6 +60,15 @@
 			</if>
 		</where>
 		ORDER BY createTime DESC
+	</select>
+	
+	<select id="batchFindTaskByUserId"
+		resultType="org.edgegallery.atp.model.task.TaskPO"
+		parameterType="String">
+		select * from task_table where id in 
+	    <foreach collection="taskIdList" item="taskId" open="(" close=")" separator=",">
+	      #{taskId}
+	   </foreach>
 	</select>
 
 	<delete id="delHisTask">

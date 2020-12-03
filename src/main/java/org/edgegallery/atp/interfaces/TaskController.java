@@ -22,6 +22,7 @@ import org.apache.servicecomb.provider.rest.common.RestSchema;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
 import org.edgegallery.atp.model.CommonActionRes;
+import org.edgegallery.atp.model.task.TaskIdList;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.service.TaskService;
 import org.edgegallery.atp.utils.CommonUtil;
@@ -34,6 +35,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -124,6 +126,19 @@ public class TaskController {
         CommonUtil.lengthCheck(appVersion);
         return taskService.getAllTasks(AccessTokenFilter.context.get().get(Constant.USER_ID), appName, status,
                 providerId, appVersion);
+    }
+
+
+    @GetMapping(value = "/tasks/batch", produces = MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "batch get all tasks by taskId and userId.", response = TaskRequest.class)
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
+            @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
+            @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
+    @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT')")
+    public ResponseEntity<List<TaskRequest>> batchGetTasks(
+            @ApiParam(value = "task list") @RequestBody TaskIdList taskList) {
+        CommonUtil.validateContext();
+        return taskService.batchGetAllTasks(AccessTokenFilter.context.get().get(Constant.USER_ID), taskList);
     }
 
     /**

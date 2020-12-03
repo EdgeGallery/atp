@@ -13,6 +13,7 @@ import java.util.Stack;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
 import org.edgegallery.atp.model.CommonActionRes;
+import org.edgegallery.atp.model.task.TaskIdList;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.model.testcase.TestCaseDetail;
@@ -65,6 +66,17 @@ public class TaskServiceImpl implements TaskService {
         try {
             String filePath = tempFile.getCanonicalPath();
             initTaskRequset(task, filePath);
+
+            if (isRun) {
+                Map<String, String> contextInfo = new HashMap<String, String>();
+                contextInfo.put(Constant.ACCESS_TOKEN, context.get(Constant.ACCESS_TOKEN));
+                CommonUtil.dependencyCheckSchdule(filePath, new Stack<Map<String, String>>(), context);
+
+                task.setAccessToken(context.get(Constant.ACCESS_TOKEN));
+                task.setStatus(Constant.WAITING);
+                testCaseManager.executeTestCase(task, task.getPackagePath());
+            }
+
             taskRepository.insert(task);
             return task;
         } catch (IOException e) {
@@ -124,8 +136,15 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public ResponseEntity<List<TaskRequest>> getAllTasks(String userId, String appName, String status,
             String providerId, String appVersion) {
-        return ResponseEntity.ok(taskRepository.findTaskByUserId(userId, appName, status, providerId, appVersion));
+        return ResponseEntity
+                .ok(taskRepository.findTaskByUserId(userId, appName, status, providerId, appVersion));
     }
+
+    @Override
+    public ResponseEntity<List<TaskRequest>> batchGetAllTasks(String userId, TaskIdList taskList) {
+        return ResponseEntity.ok(taskRepository.batchFindTaskByUserId(userId, taskList));
+    }
+
 
     @Override
     public ResponseEntity<TaskRequest> getTaskById(String userId, String taskId) {
