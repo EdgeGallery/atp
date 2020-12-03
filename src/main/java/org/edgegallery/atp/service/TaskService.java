@@ -2,6 +2,7 @@ package org.edgegallery.atp.service;
 
 import java.util.List;
 import org.edgegallery.atp.model.CommonActionRes;
+import org.edgegallery.atp.model.task.TaskIdList;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
@@ -59,4 +60,13 @@ public interface TaskService {
      * @return taskInfo
      */
     public TaskRequest createTask(MultipartFile packages, Boolean isRun);
+    
+    /**
+     * batch get task by taskId and userId
+     * 
+     * @param userId
+     * @param taskList
+     * @return
+     */
+    public ResponseEntity<List<TaskRequest>> batchGetAllTasks(String userId, TaskIdList taskList);
 }

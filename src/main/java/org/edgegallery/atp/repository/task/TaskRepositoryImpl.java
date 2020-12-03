@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.edgegallery.atp.model.task.TaskIdList;
 import org.edgegallery.atp.model.task.TaskPO;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.repository.mapper.TaskMapper;
@@ -64,7 +65,20 @@ public class TaskRepositoryImpl implements TaskRepository {
     @Override
     public List<TaskRequest> findTaskByUserId(String userId, String appName, String status, String providerId,
             String appVersion) {
-        List<TaskPO> taskPOList = taskMapper.findTaskByUserId(userId, appName, status, providerId, appVersion);
+        List<TaskPO> taskPOList =
+                taskMapper.findTaskByUserId(userId, appName, status, providerId, appVersion);
+        List<TaskRequest> taskList = new ArrayList<TaskRequest>();
+        if (!CollectionUtils.isEmpty(taskPOList)) {
+            for (TaskPO task : taskPOList) {
+                taskList.add(task.toDomainModel());
+            }
+        }
+        return taskList;
+    }
+
+    @Override
+    public List<TaskRequest> batchFindTaskByUserId(String userId, TaskIdList taskIdList) {
+        List<TaskPO> taskPOList = taskMapper.batchFindTaskByUserId(userId, taskIdList.getTaskIdList());
         List<TaskRequest> taskList = new ArrayList<TaskRequest>();
         if (!CollectionUtils.isEmpty(taskPOList)) {
             for (TaskPO task : taskPOList) {

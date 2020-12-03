@@ -61,4 +61,13 @@ public interface TaskMapper {
      * delete task created 30 days before
      */
     void delHisTask();
+
+    /**
+     * batch get task
+     * 
+     * @param userId userId
+     * @param taskIdList taskIdList
+     * @return taskInfo List
+     */
+    List<TaskPO> batchFindTaskByUserId(@Param("userId") String userId, @Param("taskIdList") List<String> taskIdList);
 }

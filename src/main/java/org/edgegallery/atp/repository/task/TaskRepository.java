@@ -2,6 +2,7 @@ package org.edgegallery.atp.repository.task;
 
 import java.util.Date;
 import java.util.List;
+import org.edgegallery.atp.model.task.TaskIdList;
 import org.edgegallery.atp.model.task.TaskRequest;
 
 public interface TaskRepository {
@@ -24,6 +25,14 @@ public interface TaskRepository {
     List<TaskRequest> findTaskByUserId(String userId, String appName, String status, String providerId,
             String appVersion);
 
+    /**
+     * batch get task
+     * 
+     * @param userId userId
+     * @param taskIdList taskIdList
+     * @return taskInfo List
+     */
+    List<TaskRequest> batchFindTaskByUserId(String userId, TaskIdList taskIdList);
 
     /**
      * create task info
