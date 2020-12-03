@@ -62,8 +62,9 @@ public class TaskRepositoryImpl implements TaskRepository {
     }
 
     @Override
-    public List<TaskRequest> findTaskByUserId(String userId, String appName, String status) {
-        List<TaskPO> taskPOList = taskMapper.findTaskByUserId(userId, appName, status);
+    public List<TaskRequest> findTaskByUserId(String userId, String appName, String status, String providerId,
+            String appVersion) {
+        List<TaskPO> taskPOList = taskMapper.findTaskByUserId(userId, appName, status, providerId, appVersion);
         List<TaskRequest> taskList = new ArrayList<TaskRequest>();
         if (!CollectionUtils.isEmpty(taskPOList)) {
             for (TaskPO task : taskPOList) {

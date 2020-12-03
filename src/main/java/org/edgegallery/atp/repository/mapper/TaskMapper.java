@@ -26,7 +26,8 @@ public interface TaskMapper {
      * @return
      */
     List<TaskPO> findTaskByUserId(@Param("userId") String userId, @Param("appName") String appName,
-            @Param("status") String status);
+            @Param("status") String status, @Param("providerId") String providerId,
+            @Param("appVersion") String appVersion);
 
     /**
      * create task info

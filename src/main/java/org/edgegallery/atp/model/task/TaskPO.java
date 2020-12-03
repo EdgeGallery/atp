@@ -44,6 +44,12 @@ public class TaskPO implements PersistenceObject<TaskRequest> {
     @Column(name = "testCaseDetail")
     private String testCaseDetail;
 
+    @Column(name = "providerId")
+    private String providerId;
+    
+    @Column(name = "packagePath")
+    private String packagePath;
+    
     public static TaskPO of(TaskRequest startTest) {
         TaskPO taskPO = new TaskPO();
         taskPO.setAppName(startTest.getAppName());
@@ -55,6 +61,8 @@ public class TaskPO implements PersistenceObject<TaskRequest> {
         taskPO.setUserId(startTest.getUser().getUserId());
         taskPO.setUserName(startTest.getUser().getUserName());
         taskPO.setTestCaseDetail(JSONUtil.marshal(startTest.getTestCaseDetail()));
+        taskPO.setPackagePath(startTest.getPackagePath());
+        taskPO.setProviderId(startTest.getProviderId());
 
         return taskPO;
     }
@@ -62,7 +70,7 @@ public class TaskPO implements PersistenceObject<TaskRequest> {
     @Override
     public TaskRequest toDomainModel() {
         return TaskRequest.builder().setAppName(appName).setAppVersion(appVersion).setCreateTime(createTime)
-                .setEndTime(endTime).setId(id).setStatus(status)
+                .setEndTime(endTime).setPackagePath(packagePath).setProviderId(providerId).setId(id).setStatus(status)
                 .setTestCaseDetail(JSONUtil.unMarshal(testCaseDetail, TestCaseDetail.class))
                 .setUser(new User(userId, userName)).build();
 

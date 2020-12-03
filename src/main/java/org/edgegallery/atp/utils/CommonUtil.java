@@ -380,6 +380,9 @@ public class CommonUtil {
                             if (line.trim().startsWith(Constant.APP_VERSION)) {
                                 packageInfo.put(Constant.APP_VERSION, line.split(Constant.COLON)[1].trim());
                             }
+                            if (line.trim().startsWith(Constant.PROVIDER_ID)) {
+                                packageInfo.put(Constant.PROVIDER_ID, line.split(Constant.COLON)[1].trim());
+                            }
                         }
                     }
                 }

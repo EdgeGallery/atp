@@ -16,12 +16,12 @@
 		parameterType="org.edgegallery.atp.model.task.TaskPO">
 		insert into
 		task_table
-		(id, appName, appVersion, status, createTime, endTime, userId, userName,
+		(id, appName, appVersion, status, createTime, endTime, providerId,packagePath,userId, userName,
 		testCaseDetail)
 		VALUES
 		(#{id}, #{appName}, #{appVersion},
 		#{status},
-		#{createTime}, #{endTime}, #{userId}, #{userName},#{testCaseDetail})
+		#{createTime}, #{endTime}, #{providerId},#{packagePath},#{userId}, #{userName},#{testCaseDetail})
 	</insert>
 
 	<update id="update"
@@ -51,6 +51,12 @@
 			</if>
 			<if test="status != null and status !=''">
 				and status = #{status}
+			</if>
+			<if test="providerId != null and providerId !=''">
+				and providerId = #{providerId}
+			</if>
+			<if test="appVersion != null and appVersion !=''">
+				and appVersion = #{appVersion}
 			</if>
 		</where>
 		ORDER BY createTime DESC

@@ -21,7 +21,8 @@ public interface TaskRepository {
      * @param userId userId
      * @return
      */
-    List<TaskRequest> findTaskByUserId(String userId, String appName, String status);
+    List<TaskRequest> findTaskByUserId(String userId, String appName, String status, String providerId,
+            String appVersion);
 
 
     /**
