@@ -6,13 +6,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import org.edgegallery.atp.constant.Constant;
-import org.edgegallery.atp.constant.ExceptionConstant;
 import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
 import org.edgegallery.atp.model.CommonActionRes;
 import org.edgegallery.atp.model.task.TaskRequest;
@@ -25,7 +23,6 @@ import org.edgegallery.atp.repository.testcase.TestCaseRepository;
 import org.edgegallery.atp.schedule.testcase.TestCaseManagerImpl;
 import org.edgegallery.atp.utils.CommonUtil;
 import org.edgegallery.atp.utils.JSONUtil;
-import org.edgegallery.atp.utils.TestCaseUtil;
 import org.edgegallery.atp.utils.file.FileChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,50 +51,80 @@ public class TaskServiceImpl implements TaskService {
     TestCaseManagerImpl testCaseManager;
 
     @Override
-    public List<TaskRequest> createTask(MultipartFile[] packageList) {
-        Map<String, File> tempFileList = new HashMap<String, File>();
-        List<TaskRequest> resultList = new ArrayList<TaskRequest>();
-        StringBuffer subTaskId = new StringBuffer();
-        Arrays.asList(packageList).forEach(file -> {
-            String taskId = CommonUtil.generateId();
-            File tempFile = FileChecker.check(file, taskId);
-            tempFileList.put(taskId, tempFile);
-            subTaskId.append(taskId).append(Constant.COMMA);
-        });
+    public TaskRequest createTask(MultipartFile file, Boolean isRun) {
+        String taskId = CommonUtil.generateId();
+        File tempFile = FileChecker.check(file, taskId);
 
         Map<String, String> context = AccessTokenFilter.context.get();
-        if (null == context) {
-            tempFileList.forEach((taskId, file) -> {
-                if (!file.delete()) {
-                    LOGGER.error("createTask delete file {} failed.", file.getName());
-                }
-            });
-            throw new IllegalArgumentException(ExceptionConstant.CONTEXT_IS_NULL);
-        }
-
         User user = new User(context.get(Constant.USER_ID), context.get(Constant.USER_NAME));
 
-        tempFileList.forEach((taskId, tempFile) -> {
-            try {
-                TaskRequest task = new TaskRequest();
-                task.setId(taskId);
-                task.setUser(user);
-                task.setAccessToken(context.get(Constant.ACCESS_TOKEN));
-                String filePath = tempFile.getCanonicalPath();
-                initTaskRequset(task, filePath);
-                taskRepository.insert(task);
-                testCaseManager.executeTestCase(task, filePath);
-                resultList.add(task);
-            } catch (IOException e) {
-                LOGGER.error("create task {} failed, file name is: {}", taskId, tempFile.getName());
-            }
-        });
-        return resultList;
+        TaskRequest task = new TaskRequest();
+        task.setId(taskId);
+        task.setUser(user);
+
+        try {
+            String filePath = tempFile.getCanonicalPath();
+            initTaskRequset(task, filePath);
+            taskRepository.insert(task);
+            return task;
+        } catch (IOException e) {
+            LOGGER.error("create task {} failed, file name is: {}", taskId, tempFile.getName());
+            throw new IllegalArgumentException("create task faile.");
+        }
     }
 
     @Override
-    public ResponseEntity<List<TaskRequest>> getAllTasks(String userId, String appName, String status) {
-        return ResponseEntity.ok(taskRepository.findTaskByUserId(userId, appName, status));
+    public CommonActionRes preCheck(String taskId) {
+        CommonActionRes result = new CommonActionRes();
+        TaskRequest task =
+                taskRepository.findByTaskIdAndUserId(taskId, AccessTokenFilter.context.get().get(Constant.USER_ID));
+
+        if (null == task) {
+            throw new IllegalArgumentException("taskId do not exists.");
+        }
+
+        String filePath = task.getPackagePath();
+
+        // key is appId, value is packageId
+        Stack<Map<String, String>> dependencyAppList = new Stack<Map<String, String>>();
+        Map<String, String> context = new HashMap<String, String>();
+        context.put(Constant.ACCESS_TOKEN, AccessTokenFilter.context.get().get(Constant.ACCESS_TOKEN));
+        CommonUtil.dependencyCheckSchdule(filePath, dependencyAppList, context);
+
+        Map<String, String> getDependencyInfo = new HashMap<String, String>();
+        dependencyAppList.forEach(map -> {
+            JsonObject response =
+                    CommonUtil.getAppInfoFromAppStore(map.get(Constant.APP_ID), map.get(Constant.PACKAGE_ID));
+            if (null != response) {
+                JsonElement appName = response.get("name");
+                JsonElement appVersion = response.get("version");
+                getDependencyInfo.put(appName.getAsString(), appVersion.getAsString());
+            }
+        });
+        result.setDependency(getDependencyInfo);
+
+        return result;
+    }
+
+    @Override
+    public TaskRequest runTask(String taskId) {
+        Map<String, String> context = AccessTokenFilter.context.get();
+        TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, context.get(Constant.USER_ID));
+
+        task.setAccessToken(context.get(Constant.ACCESS_TOKEN));
+        task.setStatus(Constant.WAITING);
+
+        taskRepository.update(task);
+        String filePath = task.getPackagePath();
+        testCaseManager.executeTestCase(task, filePath);
+
+        return task;
+    }
+
+    @Override
+    public ResponseEntity<List<TaskRequest>> getAllTasks(String userId, String appName, String status,
+            String providerId, String appVersion) {
+        return ResponseEntity.ok(taskRepository.findTaskByUserId(userId, appName, status, providerId, appVersion));
     }
 
     @Override
@@ -124,42 +151,6 @@ public class TaskServiceImpl implements TaskService {
         return new ResponseEntity<>(new InputStreamResource(yamlStream), headers, HttpStatus.OK);
     }
 
-    @Override
-    public CommonActionRes dependencyCheck(MultipartFile packages) {
-        CommonActionRes result = new CommonActionRes();
-        String fileId = CommonUtil.generateId();
-
-        File tempFile = FileChecker.check(packages, fileId);
-
-        try {
-            String filePath = tempFile.getCanonicalPath();
-            // key is appId, value is packageId
-            Stack<Map<String, String>> dependencyAppList = new Stack<Map<String, String>>();
-            Map<String, String> context = new HashMap<String, String>();
-            context.put(Constant.ACCESS_TOKEN, AccessTokenFilter.context.get().get(Constant.ACCESS_TOKEN));
-            CommonUtil.dependencyCheckSchdule(filePath, dependencyAppList, context);
-
-            Map<String, String> getDependencyInfo = new HashMap<String, String>();
-            dependencyAppList.forEach(map -> {
-                JsonObject response =
-                        CommonUtil.getAppInfoFromAppStore(map.get(Constant.APP_ID), map.get(Constant.PACKAGE_ID));
-                if (null != response) {
-                    JsonElement appName = response.get("name");
-                    JsonElement appVersion = response.get("version");
-                    getDependencyInfo.put(appName.getAsString(), appVersion.getAsString());
-                }
-            });
-            result.setDependency(getDependencyInfo);
-        } catch (IOException e) {
-            LOGGER.error("get caninical path failed. {}", e.getMessage());
-        } finally {
-            CommonUtil.deleteTempFile(fileId, packages);
-        }
-
-        return result;
-    }
-
-
     /**
      * init taskRequest Model
      * 
@@ -168,22 +159,20 @@ public class TaskServiceImpl implements TaskService {
      */
     private TaskRequest initTaskRequset(TaskRequest task, String filePath) {
         Map<String, String> context = AccessTokenFilter.context.get();
-        if (null == context) {
-            throw new IllegalArgumentException("AccessTokenFilter.context is null");
-        }
         task.setCreateTime(taskRepository.getCurrentDate());
-        task.setStatus(Constant.WAITING);
+        task.setStatus(Constant.ATP_CREATED);
         task.setUser(new User(context.get(Constant.USER_ID), context.get(Constant.USER_NAME)));
-        task.setAccessToken(context.get(Constant.ACCESS_TOKEN));
+        task.setPackagePath(filePath);
         List<TestCase> testCaseList = testCaseRepository.findAllTestCases();
 
         if (null != testCaseList) {
             task.setTestCaseDetail(initTestCaseDetail(testCaseList));
         }
 
-        Map<String, String> appNameAndVersion = TestCaseUtil.getAppNameAndVersion(filePath);
-        task.setAppName(appNameAndVersion.get(Constant.APP_NAME));
-        task.setAppVersion(appNameAndVersion.get(Constant.APP_VERSION));
+        Map<String, String> packageInfo = CommonUtil.getPackageInfo(filePath);
+        task.setAppName(packageInfo.get(Constant.APP_NAME));
+        task.setAppVersion(packageInfo.get(Constant.APP_VERSION));
+        task.setProviderId(packageInfo.get(Constant.PROVIDER_ID));
 
         return task;
     }

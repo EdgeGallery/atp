@@ -10,12 +10,12 @@ import org.springframework.web.multipart.MultipartFile;
 public interface TaskService {
 
     /**
-     * create a test task
+     * eun a test task
      * 
-     * @param packages scar file
-     * @return taskId
+     * @param taskId taskId
+     * @return task info
      */
-    public List<TaskRequest> createTask(MultipartFile[] packages);
+    public TaskRequest runTask(String taskId);
 
     /**
      * get task info by taskId
@@ -32,7 +32,8 @@ public interface TaskService {
      * @param user userInfo
      * @return taskInformation list
      */
-    public ResponseEntity<List<TaskRequest>> getAllTasks(String userId, String appName, String status);
+    public ResponseEntity<List<TaskRequest>> getAllTasks(String userId, String appName, String status,
+            String providerId, String appVersion);
 
     /**
      * download test report by taskId and userId
@@ -44,10 +45,18 @@ public interface TaskService {
     public ResponseEntity<InputStreamResource> downloadTestReport(String taskId, String userId);
 
     /**
-     * application dependency check.
+     * precheck before run test task.
      * 
-     * @param package package file
+     * @param taskId taskId
      * @return dependency application info.
      */
-    public CommonActionRes dependencyCheck(MultipartFile packages);
+    public CommonActionRes preCheck(String taskId);
+
+    /**
+     * create test task
+     * 
+     * @param packages csar file
+     * @return taskInfo
+     */
+    public TaskRequest createTask(MultipartFile packages, Boolean isRun);
 }

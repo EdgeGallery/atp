@@ -13,6 +13,8 @@ public interface Constant {
 
     int MAX_TASK_THREAD_NUM = 10;
 
+    String PROVIDER_ID = "app_provider_id";
+
     String APP_NAME = "app_product_name";
 
     String APP_VERSION = "app_package_version";
@@ -62,6 +64,10 @@ public interface Constant {
     String FAILED = "failed";
 
     String WAITING = "waiting";
+
+    String ATP_CREATED = "created";
+
+    String ATP_CREATED_FAILED = "create failed";
 
     String WORK_TEMP_DIR = FileChecker.getDir() + File.separator + "temp";
 

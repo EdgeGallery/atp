@@ -1,6 +1,5 @@
 package org.edgegallery.atp.schedule.testcase;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,14 +66,8 @@ public class TestCaseManagerImpl implements TestCaseManager {
             execute(Constant.SANDBOX_TEST, detail.getSandboxTest(), context);
 
             task.setEndTime(taskRepository.getCurrentDate());
-            LOGGER.info("resultStatus" + resultStatus);
             task.setStatus(!resultStatus ? Constant.FAILED : Constant.SUCCESS);
-            LOGGER.info("TASK resultStatus" + task.getStatus());
             taskRepository.update(task);
-
-            if (!(new File(filePath).delete())) {
-                LOGGER.error("TaskProcessor.run.delete file error, the file path is: {}", filePath);
-            }
         }
 
         /**
@@ -124,9 +117,7 @@ public class TestCaseManagerImpl implements TestCaseManager {
                     if (null != result) {
                         entry.setValue(result);
                     }
-                    LOGGER.info("{} result.getResult {}", entry.getKey(), result.getResult());
                     resultStatus = Constant.FAILED.equals(result.getResult()) ? false : resultStatus;
-                    LOGGER.info("resultStatus {}", resultStatus);
                 }
             });
         }

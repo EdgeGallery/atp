@@ -8,6 +8,8 @@ CREATE TABLE TASK_TABLE (
     TESTCASEDETAIL           TEXT               NULL,
     CREATETIME               TIMESTAMP          NULL,
     ENDTIME                  TIMESTAMP          NULL,
+    PROVIDERID               VARCHAR(100)       NULL,
+    PACKAGEPATH              VARCHAR(100)       NULL,
     USERID                   VARCHAR(100)       NULL,
     USERNAME                 VARCHAR(100)       NULL,
     CONSTRAINT task_table_pkey PRIMARY KEY (ID)

@@ -28,6 +28,10 @@ public class TaskRequest implements Entity {
     private TestCaseDetail testCaseDetail;
 
     private String accessToken;
+    
+    private String providerId;
+    
+    private String packagePath;
 
     public TaskRequest() {}
 
@@ -40,6 +44,8 @@ public class TaskRequest implements Entity {
         this.endTime = builder.endTime;
         this.user = builder.user;
         this.testCaseDetail = builder.testCaseDetail;
+        this.packagePath  = builder.packagePath;
+        this.providerId = builder.providerId;
     }
 
     public static Builder builder() {
@@ -58,6 +64,10 @@ public class TaskRequest implements Entity {
         private Date createTime;
 
         private Date endTime;
+        
+        private String providerId;
+        
+        private String packagePath;
 
         private User user;
 
@@ -65,6 +75,16 @@ public class TaskRequest implements Entity {
 
         private Builder() {
             // private construct
+        }
+        
+        public Builder setProviderId(String providerId) {
+            this.providerId = providerId;
+            return this;
+        }
+        
+        public Builder setPackagePath(String packagePath) {
+            this.packagePath = packagePath;
+            return this;
         }
 
         public Builder setId(String id) {

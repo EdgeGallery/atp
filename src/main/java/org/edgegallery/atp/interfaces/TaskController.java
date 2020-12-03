@@ -55,6 +55,32 @@ public class TaskController {
     @Autowired
     private TaskService taskService;
 
+    @PostMapping(value = "/tasks", produces = MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "create test task.", response = String.class)
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
+            @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
+            @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
+    @PreAuthorize("hasRole('ATP_TENANT')")
+    public ResponseEntity<TaskRequest> createTest(
+            @ApiParam(value = "application files", required = true) @RequestPart("file") MultipartFile file,
+            @ApiParam(value = "isRun test task directly",
+                    required = true) @RequestParam("isRun") Boolean isRun) {
+        CommonUtil.validateContext();
+        return ResponseEntity.ok(taskService.createTask(file, isRun));
+    }
+
+    @GetMapping(value = "/tasks/{taskId}/action/pre-check", produces = MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "pre check before run test task.", response = CommonActionRes.class)
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
+            @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
+            @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
+    @PreAuthorize("hasRole('ATP_TENANT')")
+    public ResponseEntity<CommonActionRes> preCheck(
+            @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId) {
+        CommonUtil.validateContext();
+        return ResponseEntity.ok(taskService.preCheck(taskId));
+    }
+
     /**
      * create test task
      * 
@@ -63,16 +89,18 @@ public class TaskController {
      * @param packages csar package
      * @return taskId
      */
-    @PostMapping(value = "/tasks", produces = MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "start test task.", response = String.class)
+    @PostMapping(value = "/tasks/{taskId}/action/run", produces = MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "run test task.", response = String.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_TENANT')")
-    public ResponseEntity<List<TaskRequest>> startTest(
-            @ApiParam(value = "application files", required = true) @RequestParam("file") MultipartFile[] packageList) {
-        return ResponseEntity.ok(taskService.createTask(packageList));
+    public ResponseEntity<TaskRequest> runTest(
+            @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId) {
+        CommonUtil.validateContext();
+        return ResponseEntity.ok(taskService.runTask(taskId));
     }
+
 
     /**
      * get all tasks according userId
@@ -87,11 +115,15 @@ public class TaskController {
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT')")
     public ResponseEntity<List<TaskRequest>> getAllTasks(@QueryParam("appName") String appName,
-            @QueryParam("status") String status) {
+            @QueryParam("status") String status, @QueryParam("providerId") String providerId,
+            @QueryParam("appVersion") String appVersion) {
         CommonUtil.validateContext();
         CommonUtil.lengthCheck(appName);
         CommonUtil.lengthCheck(status);
-        return taskService.getAllTasks(AccessTokenFilter.context.get().get(Constant.USER_ID), appName, status);
+        CommonUtil.lengthCheck(providerId);
+        CommonUtil.lengthCheck(appVersion);
+        return taskService.getAllTasks(AccessTokenFilter.context.get().get(Constant.USER_ID), appName, status,
+                providerId, appVersion);
     }
 
     /**
@@ -125,17 +157,4 @@ public class TaskController {
         CommonUtil.validateContext();
         return taskService.downloadTestReport(taskId, AccessTokenFilter.context.get().get(Constant.USER_ID));
     }
-
-    @PostMapping(value = "/common-action/analysis-app", produces = MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "application dependency check.", response = CommonActionRes.class)
-    @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
-            @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
-            @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
-    @PreAuthorize("hasRole('ATP_TENANT')")
-    public ResponseEntity<CommonActionRes> dependencyCheck(
-            @ApiParam(value = "application files", required = true) @RequestPart("file") MultipartFile packages) {
-        CommonUtil.validateContext();
-        return ResponseEntity.ok(taskService.dependencyCheck(packages));
-    }
-
 }
