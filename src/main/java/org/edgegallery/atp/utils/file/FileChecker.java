@@ -35,6 +35,7 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.edgegallery.atp.constant.Constant;
@@ -188,7 +189,7 @@ public class FileChecker {
             while (line != null && line.trim().startsWith(Constant.STRIKE)) {
                 LOGGER.info("app_name: {}", line.split(Constant.COLON)[1].trim());
                 Map<String, String> map = new HashMap<String, String>();
-                map.put(Constant.APP_NAME, line.split(Constant.COLON)[1].trim());
+                String appName = line.split(Constant.COLON)[1].trim();
                 while ((line = br.readLine()) != null && !isEnd(line) && !line.trim().startsWith(Constant.STRIKE)) {
                     line = line.trim();
                     if (line.startsWith(Constant.APP_ID)) {
@@ -197,9 +198,13 @@ public class FileChecker {
                     } else if (line.startsWith(Constant.PACKAGE_ID)) {
                         LOGGER.info("packageid: {}", line.split(Constant.COLON)[1].trim());
                         map.put(Constant.PACKAGE_ID, line.split(Constant.COLON)[1].trim());
+                        map.put(Constant.APP_NAME, appName);
                     }
                 }
-                result.add(map);
+                if (MapUtils.isNotEmpty(map)) {
+                    LOGGER.info("map is not empty.");
+                    result.add(map);
+                }
             }
 
         } catch (IOException e) {
