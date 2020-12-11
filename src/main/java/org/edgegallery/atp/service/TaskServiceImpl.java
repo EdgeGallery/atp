@@ -54,9 +54,12 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public TaskRequest createTask(MultipartFile file, Boolean isRun) {
         String taskId = CommonUtil.generateId();
+        LOGGER.info("generate task id");
         File tempFile = FileChecker.check(file, taskId);
 
+
         Map<String, String> context = AccessTokenFilter.context.get();
+        LOGGER.info("context: {}", context.toString());
         User user = new User(context.get(Constant.USER_ID), context.get(Constant.USER_NAME));
 
         TaskRequest task = new TaskRequest();
@@ -65,6 +68,7 @@ public class TaskServiceImpl implements TaskService {
 
         try {
             String filePath = tempFile.getCanonicalPath();
+            LOGGER.info("filePath, {}", filePath);
             initTaskRequset(task, filePath);
 
             if (isRun) {
