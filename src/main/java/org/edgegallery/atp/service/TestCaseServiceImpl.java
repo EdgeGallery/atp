@@ -4,12 +4,16 @@ import java.util.List;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.repository.testcase.TestCaseRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service("TestCaseService")
 public class TestCaseServiceImpl implements TestCaseService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseServiceImpl.class);
 
     @Autowired
     TestCaseRepository testCaseRepository;
@@ -21,6 +25,8 @@ public class TestCaseServiceImpl implements TestCaseService {
             return ResponseEntity.ok(testCaseRepository.findTestCasesByType(type));
         }
 
-        return ResponseEntity.ok(testCaseRepository.findAllTestCases());
+        List<TestCase> response = testCaseRepository.findAllTestCases();
+        LOGGER.info("get all test cases successfully.");
+        return ResponseEntity.ok(response);
     }
 }
