@@ -70,7 +70,6 @@ public class TaskController {
             @ApiParam(value = "application files", required = true) @RequestPart("file") MultipartFile file,
             @ApiParam(value = "isRun test task directly",
                     required = true) @RequestParam("isRun") Boolean isRun) {
-        LOGGER.info("create test in.");
         CommonUtil.validateContext();
         return ResponseEntity.ok(taskService.createTask(file, isRun));
     }
