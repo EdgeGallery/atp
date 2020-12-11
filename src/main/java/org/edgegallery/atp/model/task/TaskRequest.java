@@ -4,11 +4,13 @@ import java.util.Date;
 import org.edgegallery.atp.model.Entity;
 import org.edgegallery.atp.model.testcase.TestCaseDetail;
 import org.edgegallery.atp.model.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@JsonIgnoreProperties(value={"packagePath"})
 public class TaskRequest implements Entity {
 
     private String id;

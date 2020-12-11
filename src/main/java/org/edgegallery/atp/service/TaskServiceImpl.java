@@ -78,6 +78,7 @@ public class TaskServiceImpl implements TaskService {
             }
 
             taskRepository.insert(task);
+            LOGGER.info("create task successfully.");
             return task;
         } catch (IOException e) {
             LOGGER.error("create task {} failed, file name is: {}", taskId, tempFile.getName());
@@ -115,6 +116,7 @@ public class TaskServiceImpl implements TaskService {
         });
         result.setDependency(getDependencyInfo);
 
+        LOGGER.info("pre-check successfully.");
         return result;
     }
 
@@ -130,25 +132,31 @@ public class TaskServiceImpl implements TaskService {
         String filePath = task.getPackagePath();
         testCaseManager.executeTestCase(task, filePath);
 
+        LOGGER.info("run task successfully.");
         return task;
     }
 
     @Override
     public ResponseEntity<List<TaskRequest>> getAllTasks(String userId, String appName, String status,
             String providerId, String appVersion) {
-        return ResponseEntity
-                .ok(taskRepository.findTaskByUserId(userId, appName, status, providerId, appVersion));
+        List<TaskRequest> response = taskRepository.findTaskByUserId(userId, appName, status, providerId, appVersion);
+        LOGGER.info("get all task successfully.");
+        return ResponseEntity.ok(response);
     }
 
     @Override
     public ResponseEntity<List<TaskRequest>> batchGetAllTasks(String userId, TaskIdList taskList) {
-        return ResponseEntity.ok(taskRepository.batchFindTaskByUserId(userId, taskList));
+        List<TaskRequest> response = taskRepository.batchFindTaskByUserId(userId, taskList);
+        LOGGER.info("batch get all task successfully.");
+        return ResponseEntity.ok(response);
     }
 
 
     @Override
     public ResponseEntity<TaskRequest> getTaskById(String userId, String taskId) {
-        return ResponseEntity.ok((taskRepository.findByTaskIdAndUserId(taskId, userId)));
+        TaskRequest response = taskRepository.findByTaskIdAndUserId(taskId, userId);
+        LOGGER.info("get task by id successfully.");
+        return ResponseEntity.ok(response);
     }
 
     @Override
@@ -167,6 +175,7 @@ public class TaskServiceImpl implements TaskService {
         InputStream yamlStream = new ByteArrayInputStream(yamlStr.getBytes(StandardCharsets.UTF_8));
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/octet-stream");
+        LOGGER.info("download test report successfully.");
         return new ResponseEntity<>(new InputStreamResource(yamlStream), headers, HttpStatus.OK);
     }
 
