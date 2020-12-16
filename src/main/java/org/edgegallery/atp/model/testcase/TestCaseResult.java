@@ -17,11 +17,23 @@ public class TestCaseResult {
      */
     String reason;
 
+    /**
+     * verification model
+     */
+    String verificationModel;
+    
     public TestCaseResult() {
         this.result = Constant.WAITING;
         this.reason = Constant.EMPTY;
+        this.verificationModel = Constant.EMPTY;
     }
 
+    public TestCaseResult(String result, String reason,String verificationModel) {
+        this.result = result;
+        this.reason = reason;
+        this.verificationModel = verificationModel;
+    }
+    
     public TestCaseResult(String result, String reason) {
         this.result = result;
         this.reason = reason;

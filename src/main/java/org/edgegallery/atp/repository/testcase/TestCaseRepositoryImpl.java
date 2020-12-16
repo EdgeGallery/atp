@@ -27,8 +27,8 @@ public class TestCaseRepositoryImpl implements TestCaseRepository {
     private TestCaseMapper testCaseMapper;
 
     @Override
-    public List<TestCase> findAllTestCases() {
-        return testCaseMapper.findAllTestCases();
+    public List<TestCase> findAllTestCases(String type, String name, String verificationModel) {
+        return testCaseMapper.findAllTestCases(type, name, verificationModel);
     }
 
     @Override
@@ -37,7 +37,32 @@ public class TestCaseRepositoryImpl implements TestCaseRepository {
     }
 
     @Override
-    public List<TestCase> findTestCasesByType(String type) {
-        return testCaseMapper.findTestCasesByType(type);
+    public void insert(TestCase testCase) {
+        testCaseMapper.insert(testCase);
+    }
+
+    @Override
+    public void update(TestCase testCase) {
+        testCaseMapper.update(testCase);
+    }
+
+    @Override
+    public int delete(String id) {
+        return testCaseMapper.delete(id);
+    }
+
+    @Override
+    public TestCase getTestCaseById(String id) {
+        return testCaseMapper.getTestCaseById(id);
+    }
+
+    @Override
+    public TestCase findByName(String name) {
+        return testCaseMapper.findByName(name);
+    }
+
+    @Override
+    public TestCase findByClassName(String className) {
+        return testCaseMapper.findByClassName(className);
     }
 }

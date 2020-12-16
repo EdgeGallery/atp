@@ -322,7 +322,7 @@ public class FileChecker {
     }
 
 
-    private static void createFile(String filePath) throws IOException {
+    public static void createFile(String filePath) throws IOException {
         File tempFile = new File(filePath);
         boolean result = false;
 

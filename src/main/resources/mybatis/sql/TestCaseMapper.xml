@@ -23,20 +23,81 @@
             parameterType="String">
         select * from test_case_table where name = #{name} and type = #{type}
     </select>
-
-    <select id="findAllTestCases"
-            resultType="org.edgegallery.atp.model.testcase.TestCase">
-        select * from test_case_table
+    
+    <select id="findByName"
+            resultType="org.edgegallery.atp.model.testcase.TestCase"
+            parameterType="String">
+        select * from test_case_table where name = #{name}
     </select>
     
-    <select id="findTestCasesByType"
+    <select id="findByClassName"
+            resultType="org.edgegallery.atp.model.testcase.TestCase"
+            parameterType="String">
+        select * from test_case_table where className = #{className}
+    </select>    
+
+    <select id="findAllTestCases"
             resultType="org.edgegallery.atp.model.testcase.TestCase">
         select * from test_case_table
         <where>
           <if test="type != null and type !=''">
             type = #{type}
           </if>
+          <if test="name != null and name !=''">
+            and name = #{name}
+          </if>
+          <if test="verificationModel != null and verificationModel !=''">
+            and verificationModel LIKE  CONCAT('%', #{verificationModel}, '%');
+          </if>                    
         </where>
     </select>
-
+    
+    <insert id="insert"
+		parameterType="org.edgegallery.atp.model.testcase.TestCase">
+		insert into
+		test_case_table
+		(id, name, hashCode, type, className, description, filePath,codeLanguage,expectResult, verificationModel)
+		VALUES
+		(#{id}, #{name}, #{hashCode},
+		#{type},
+		#{className}, #{description}, #{filePath},#{codeLanguage},#{expectResult}, #{verificationModel})
+	</insert>
+    
+    <update id="update" parameterType="org.edgegallery.atp.model.testcase.TestCase">
+        UPDATE
+        test_case_table set       
+          <if test="description != null and description !=''">
+            description = #{description},
+          </if>
+          <if test="codeLanguage != null and codeLanguage !=''">
+            codeLanguage = #{codeLanguage},
+          </if>
+          <if test="expectResult != null and expectResult !=''">
+            expectResult = #{expectResult},
+          </if>  
+          <if test="className != null and className !=''">
+            className = #{className},
+          </if>   
+          <if test="verificationModel != null and verificationModel !=''">
+            verificationModel = #{verificationModel},
+          </if> 
+          <if test="filePath != null and filePath !=''">
+            filePath = #{filePath},
+          </if>                                   
+           id=#{id}
+        where id = #{id}
+    </update>
+    
+    <delete id="delete" parameterType="java.lang.String">
+        DELETE FROM
+        test_case_table
+        WHERE
+        id = #{id}
+    </delete>
+    
+    <select id="getTestCaseById"
+            resultType="org.edgegallery.atp.model.testcase.TestCase"
+            parameterType="String">
+        select * from test_case_table where id = #{id}
+    </select>    
 </mapper>

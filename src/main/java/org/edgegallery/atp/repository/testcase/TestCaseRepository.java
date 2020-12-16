@@ -10,7 +10,7 @@ public interface TestCaseRepository {
      * 
      * @return
      */
-    List<TestCase> findAllTestCases();
+    List<TestCase> findAllTestCases(String type, String name, String verificationModel);
 
     /**
      * find test case by test case name and test case type
@@ -22,9 +22,49 @@ public interface TestCaseRepository {
     TestCase findByNameAndType(String name, String type);
 
     /**
+     * find test case by test case className
      * 
-     * @param type test case type
-     * @return
+     * @param className test case className
+     * @return testCase info
      */
-    List<TestCase> findTestCasesByType(String type);
+    TestCase findByClassName(String className);
+
+    /**
+     * insert into test case table
+     * 
+     * @param testCase test case info.
+     */
+    void insert(TestCase testCase);
+
+    /**
+     * update test case
+     * 
+     * @param testCase test case info
+     * @return test case info
+     */
+    public void update(TestCase testCase);
+
+    /**
+     * delete test case by test case id
+     * 
+     * @param id test case id
+     * @return operation complete
+     */
+    public int delete(String id);
+
+    /**
+     * get specific test case by test case id.
+     * 
+     * @param id test case id
+     * @return test case info
+     */
+    public TestCase getTestCaseById(String id);
+    
+    /**
+     * get test case by test case name
+     * 
+     * @param name name
+     * @return test case info.
+     */
+    public TestCase findByName(String name);
 }

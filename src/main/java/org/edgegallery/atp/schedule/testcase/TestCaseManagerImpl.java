@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.testcase.TestCase;
@@ -12,6 +13,8 @@ import org.edgegallery.atp.model.testcase.TestCaseDetail;
 import org.edgegallery.atp.model.testcase.TestCaseResult;
 import org.edgegallery.atp.repository.task.TaskRepositoryImpl;
 import org.edgegallery.atp.repository.testcase.TestCaseRepository;
+import org.edgegallery.atp.utils.JavaCompileUtil;
+import org.edgegallery.atp.utils.PythonCallUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +65,7 @@ public class TestCaseManagerImpl implements TestCaseManager {
             context.put(Constant.TENANT_ID, task.getUser().getUserId());
 
             execute(Constant.COMPLIANCE_TEST, detail.getComplianceTest(), context);
-            execute(Constant.VIRUS_SCAN_TEST, detail.getVirusScanningTest(), context);
+            execute(Constant.SECURITY_TEST, detail.getSecurityTest(), context);
             execute(Constant.SANDBOX_TEST, detail.getSandboxTest(), context);
 
             task.setEndTime(taskRepository.getCurrentDate());
@@ -80,7 +83,7 @@ public class TestCaseManagerImpl implements TestCaseManager {
             TestCaseDetail detail = task.getTestCaseDetail();
             changeTestCaseRunning(detail.getComplianceTest());
             changeTestCaseRunning(detail.getSandboxTest());
-            changeTestCaseRunning(detail.getVirusScanningTest());
+            changeTestCaseRunning(detail.getSecurityTest());
             taskRepository.update(task);
         }
 
@@ -112,8 +115,25 @@ public class TestCaseManagerImpl implements TestCaseManager {
             testCases.forEach(testCaseMap -> {
                 for (Map.Entry<String, TestCaseResult> entry : testCaseMap.entrySet()) {
                     TestCase testCase = testCaseRepository.findByNameAndType(entry.getKey(), type);
-                    TestCaseResult result =
-                            TestCaseHandler.getInstantce().testCaseHandler(testCase.getClassName(), filePath, context);
+                    TestCaseResult result = entry.getValue();
+                    if (StringUtils.isEmpty(testCase.getFilePath())) {
+                        // fixed test case
+                        result = TestCaseHandler.getInstantce().testCaseHandler(testCase.getClassName(), filePath,
+                                context);
+                    } else {
+                        switch (testCase.getCodeLanguage()) {
+                            case Constant.PYTHON:
+                                PythonCallUtil.callPython(testCase.getFilePath(), filePath, result, context);
+                                break;
+                            case Constant.JAVA:
+                                JavaCompileUtil.executeJava(testCase, filePath, result, context);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    
+                    result.setVerificationModel(testCase.getVerificationModel());
                     if (null != result) {
                         entry.setValue(result);
                     }

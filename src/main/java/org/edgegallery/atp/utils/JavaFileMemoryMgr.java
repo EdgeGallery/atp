@@ -1,0 +1,114 @@
+package org.edgegallery.atp.utils;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FilterOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URI;
+import java.nio.CharBuffer;
+import java.util.HashMap;
+import java.util.Map;
+import javax.tools.FileObject;
+import javax.tools.ForwardingJavaFileManager;
+import javax.tools.JavaFileManager;
+import javax.tools.JavaFileObject;
+import javax.tools.SimpleJavaFileObject;
+import org.edgegallery.atp.constant.Constant;
+
+/**
+ * put class into map
+ */
+public final class JavaFileMemoryMgr extends ForwardingJavaFileManager {
+
+    private static final String MFM = "mfm:///";
+
+    private static final String MFM_JAVA_SOURCE = "mfm:///com/sun/script/java/java_source";
+
+    private Map<String, byte[]> classMap;
+
+    public JavaFileMemoryMgr(JavaFileManager fileManager) {
+        super(fileManager);
+        classMap = new HashMap<String, byte[]>();
+    }
+
+    @Override
+    public void flush() throws IOException {
+    }
+
+    @Override
+    public JavaFileObject getJavaFileForOutput(JavaFileManager.Location location, String className,
+            JavaFileObject.Kind kind, FileObject sibling) throws IOException {
+        if (kind == JavaFileObject.Kind.CLASS) {
+            return new ClassCodeBuffer(className);
+        } else {
+            return super.getJavaFileForOutput(location, className, kind, sibling);
+        }
+    }
+
+    @Override
+    public void close() throws IOException {
+        classMap = new HashMap<String, byte[]>();
+    }
+
+    public Map<String, byte[]> getClassBytes() {
+        return classMap;
+    }
+
+    public static URI convertURI(String className) {
+        File file = new File(className);
+        if (file.exists()) {
+            return file.toURI();
+        } else {
+            try {
+                final StringBuffer result = new StringBuffer();
+                result.append(MFM).append(className.replace(Constant.DOT, Constant.SLASH));;
+                if (className.endsWith(Constant.JAVA_FILE)) {
+                    result.replace(result.length() - Constant.JAVA_FILE.length(), result.length(), Constant.JAVA_FILE);
+                }
+                return URI.create(result.toString());
+            } catch (Exception e) {
+                return URI.create(MFM_JAVA_SOURCE);
+            }
+        }
+    }
+
+    public static JavaFileObject getSourceFromStr(String className, String srcCode) {
+        return new sourceCodeBuffer(className, srcCode);
+    }
+
+    private static class sourceCodeBuffer extends SimpleJavaFileObject {
+        final String sourceCode;
+
+        sourceCodeBuffer(String name, String sourceCode) {
+            super(convertURI(name), Kind.SOURCE);
+            this.sourceCode = sourceCode;
+        }
+
+        @Override
+        public CharBuffer getCharContent(boolean ignoreEncodingErrors) {
+            return CharBuffer.wrap(sourceCode);
+        }
+    }
+
+    private class ClassCodeBuffer extends SimpleJavaFileObject {
+        private String className;
+
+        ClassCodeBuffer(String className) {
+            super(convertURI(className), Kind.CLASS);
+            this.className = className;
+        }
+
+        @Override
+        public OutputStream openOutputStream() {
+            return new FilterOutputStream(new ByteArrayOutputStream()) {
+                @Override
+                public void close() throws IOException {
+                    out.close();
+                    ByteArrayOutputStream bos = (ByteArrayOutputStream) out;
+                    classMap.put(className, bos.toByteArray());
+                }
+            };
+        }
+    }
+}

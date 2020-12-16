@@ -191,7 +191,7 @@ public class TaskServiceImpl implements TaskService {
         task.setStatus(Constant.ATP_CREATED);
         task.setUser(new User(context.get(Constant.USER_ID), context.get(Constant.USER_NAME)));
         task.setPackagePath(filePath);
-        List<TestCase> testCaseList = testCaseRepository.findAllTestCases();
+        List<TestCase> testCaseList = testCaseRepository.findAllTestCases(null, null, null);
 
         if (null != testCaseList) {
             task.setTestCaseDetail(initTestCaseDetail(testCaseList));
@@ -222,7 +222,7 @@ public class TaskServiceImpl implements TaskService {
 
         for (TestCase testCase : testCaseList) {
             switch (testCase.getType()) {
-                case Constant.VIRUS_SCAN_TEST:
+                case Constant.SECURITY_TEST:
                     virusMap.put(testCase.getName(), new TestCaseResult());
                     break;
                 case Constant.COMPLIANCE_TEST:
@@ -241,7 +241,7 @@ public class TaskServiceImpl implements TaskService {
         sandboxList.add(sandboxMap);
         testCaseDetail.setComplianceTest(complianceList);
         testCaseDetail.setSandboxTest(sandboxList);
-        testCaseDetail.setVirusScanningTest(virusList);
+        testCaseDetail.setSecurityTest(virusList);
 
         return testCaseDetail;
     }

@@ -1,12 +1,13 @@
 package org.edgegallery.atp.model.testcase;
 
 import org.edgegallery.atp.model.Entity;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 
 @Setter
 @Getter
+@JsonIgnoreProperties(value={"filePath","className"})
 public class TestCase implements Entity {
 
     /**
@@ -37,17 +38,29 @@ public class TestCase implements Entity {
     /**
      * content of test case souce code. The reserved field.
      */
-    private String content;
+    private String hashCode;
+    
+    /**
+     * file storage path
+     */
+    private String filePath;
+    
+    /**
+     * test case language
+     */
+    private String codeLanguage;
+    
+    /**
+     * expect test result
+     */
+    private String expectResult;
+   
+    /**
+     * verification model
+     */
+    private String verificationModel;
 
     public TestCase() {
 
-    }
-
-    public TestCase(String id, String name, String type, String className, String description) {
-        this.id = id;
-        this.type = type;
-        this.name = name;
-        this.description = description;
-        this.className = className;
     }
 }
