@@ -70,6 +70,7 @@ public class TaskController {
             @ApiParam(value = "application files", required = true) @RequestPart("file") MultipartFile file,
             @ApiParam(value = "isRun test task directly",
                     required = true) @RequestParam("isRun") Boolean isRun) {
+        AccessTokenFilter.test();
         CommonUtil.validateContext();
         return ResponseEntity.ok(taskService.createTask(file, isRun));
     }
@@ -82,6 +83,7 @@ public class TaskController {
     @PreAuthorize("hasRole('ATP_TENANT')")
     public ResponseEntity<CommonActionRes> preCheck(
             @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId) {
+        AccessTokenFilter.test();
         CommonUtil.validateContext();
         return ResponseEntity.ok(taskService.preCheck(taskId));
     }
@@ -102,6 +104,7 @@ public class TaskController {
     @PreAuthorize("hasRole('ATP_TENANT')")
     public ResponseEntity<TaskRequest> runTest(
             @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId) {
+        AccessTokenFilter.test();
         CommonUtil.validateContext();
         return ResponseEntity.ok(taskService.runTask(taskId));
     }
@@ -122,6 +125,7 @@ public class TaskController {
     public ResponseEntity<List<TaskRequest>> getAllTasks(@QueryParam("appName") String appName,
             @QueryParam("status") String status, @QueryParam("providerId") String providerId,
             @QueryParam("appVersion") String appVersion) {
+        AccessTokenFilter.test();
         CommonUtil.validateContext();
         CommonUtil.lengthCheck(appName);
         CommonUtil.lengthCheck(status);

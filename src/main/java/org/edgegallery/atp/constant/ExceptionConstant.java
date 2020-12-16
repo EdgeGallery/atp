@@ -29,4 +29,6 @@ public interface ExceptionConstant {
     String CONTEXT_IS_NULL = "AccessTokenFilter.context is null";
 
     String INVALID_ACCESS_TOKEN = "Invalid access token";
+
+    String METHOD_RETURN_IS_NULL = "The method return is null.";
 }

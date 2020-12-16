@@ -10,6 +10,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
+import org.edgegallery.atp.model.testcase.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,4 +103,16 @@ public class TestCaseUtil {
         return path;
     }
 
+    public static TestCase initTestCase(String id, String name, String type, String description, String codeLanguage,
+            String expectResult, String verificationModel) {
+        TestCase testCase = new TestCase();
+        testCase.setId(StringUtils.isEmpty(id) ? CommonUtil.generateId() : id);
+        testCase.setCodeLanguage(codeLanguage);
+        testCase.setDescription(description);
+        testCase.setExpectResult(expectResult);
+        testCase.setName(name);
+        testCase.setType(type);
+        testCase.setVerificationModel(verificationModel);
+        return testCase;
+    }
 }

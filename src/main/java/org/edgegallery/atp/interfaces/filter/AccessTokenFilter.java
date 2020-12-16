@@ -20,26 +20,30 @@ import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ExceptionConstant;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.ResourceServerTokenServicesConfiguration;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-@Component
-@Import({ResourceServerTokenServicesConfiguration.class})
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+// @Component
+// @Import({ResourceServerTokenServicesConfiguration.class})
+// @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class AccessTokenFilter extends OncePerRequestFilter {
 
     @Autowired
     TokenStore jwtTokenStore;
 
     public static final ThreadLocal<Map<String, String>> context = new ThreadLocal<>();
+
+    public static void test() {
+        Map<String, String> contextMap = new HashMap<>();
+        contextMap.put(Constant.ACCESS_TOKEN, "11111");
+        contextMap.put(Constant.USER_ID, "3dcdfd07-1111-452a-a599-5306d4302083");
+        contextMap.put(Constant.USER_NAME, "lhl");
+        context.set(contextMap);
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

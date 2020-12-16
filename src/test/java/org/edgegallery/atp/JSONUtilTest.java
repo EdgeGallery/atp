@@ -1,7 +1,6 @@
 package org.edgegallery.atp;
 
 import java.io.IOException;
-
 import org.edgegallery.atp.model.testcase.TestCaseResult;
 import org.edgegallery.atp.utils.JSONUtil;
 import org.junit.Test;

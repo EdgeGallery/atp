@@ -95,7 +95,7 @@ public interface Constant {
 
     int TOO_MANY = 1024; // max number of files
 
-    String VIRUS_SCAN_TEST = "virusScanningTest";
+    String SECURITY_TEST = "securityTest";
 
     String COMPLIANCE_TEST = "complianceTest";
 
@@ -147,4 +147,10 @@ public interface Constant {
     String INSTANTIATE_FAILED = "Instantiation failed";
 
     String CREATED_FAILED = "Create failed";
+
+    String JAVA = "java";
+
+    String PYTHON = "python";
+
+    String JAVA_FILE = ".java";
 }
