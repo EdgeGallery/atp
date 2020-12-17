@@ -78,6 +78,7 @@ class TaskSchedule {
                     String className = file.getName().substring(0, file.getName().indexOf(Constant.DOT));
                     TestCase testCase = testCaseRepository.findByClassName(className);
                     String filePath = BASIC_PATH + testCase.getName() + Constant.UNDER_LINE + testCase.getId();
+                    FileChecker.createFile(filePath);
                     File result = new File(filePath);
                     FileCopyUtils.copy(file, result);
 
