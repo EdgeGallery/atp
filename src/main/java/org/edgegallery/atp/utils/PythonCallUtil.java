@@ -18,10 +18,14 @@ public class PythonCallUtil {
             Map<String, String> context) {
         LOGGER.info("start call Python");
         PythonInterpreter interpreter = new PythonInterpreter();
+        LOGGER.info("start call Python，testCasePath: {}", testCasePath);
         interpreter.execfile(testCasePath);
+        LOGGER.info("execfile end");
 
         PyFunction pyFunction = interpreter.get("execute", PyFunction.class);
+        LOGGER.info("pyFunction");
         PyObject pyobj = pyFunction.__call__(new PyString(csarFilePath), new PyString(context.toString()));
+        LOGGER.info("call method end");
         if (null == pyobj) {
             LOGGER.error(ExceptionConstant.METHOD_RETURN_IS_NULL);
             result.setResult(Constant.FAILED);

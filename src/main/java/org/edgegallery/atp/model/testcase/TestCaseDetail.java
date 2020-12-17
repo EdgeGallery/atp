@@ -15,4 +15,14 @@ public class TestCaseDetail {
     List<Map<String, TestCaseResult>> complianceTest;
 
     List<Map<String, TestCaseResult>> sandboxTest;
+    
+    public TestCaseDetail() {
+        
+    }
+    
+    public TestCaseDetail(List<Map<String, TestCaseResult>> securityTest, List<Map<String, TestCaseResult>> complianceTest,List<Map<String, TestCaseResult>> sandboxTest) {
+        this.securityTest = securityTest;
+        this.complianceTest = complianceTest;
+        this.sandboxTest = sandboxTest;
+    }
 }

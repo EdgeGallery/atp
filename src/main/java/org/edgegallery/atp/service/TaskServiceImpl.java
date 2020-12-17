@@ -124,6 +124,8 @@ public class TaskServiceImpl implements TaskService {
     public TaskRequest runTask(String taskId) {
         Map<String, String> context = AccessTokenFilter.context.get();
         TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, context.get(Constant.USER_ID));
+        List<TestCase> testCaseList = testCaseRepository.findAllTestCases(null, null, null);
+        task.setTestCaseDetail(initTestCaseDetail(testCaseList));
 
         task.setAccessToken(context.get(Constant.ACCESS_TOKEN));
         task.setStatus(Constant.WAITING);
