@@ -1,6 +1,7 @@
 package org.edgegallery.atp.utils;
 
 import java.util.Map;
+import java.util.Properties;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ExceptionConstant;
 import org.edgegallery.atp.model.testcase.TestCaseResult;
@@ -18,6 +19,11 @@ public class PythonCallUtil {
             Map<String, String> context) {
         LOGGER.info("start call Python");
         try {
+            Properties props = new Properties();
+            props.put("python.import.site", "false");
+            Properties preprops = System.getProperties();
+            PythonInterpreter.initialize(preprops, props, new String[0]);
+
             PythonInterpreter interpreter = new PythonInterpreter();
             LOGGER.info("start call Python，testCasePath: {}", testCasePath);
             interpreter.execfile(testCasePath);
