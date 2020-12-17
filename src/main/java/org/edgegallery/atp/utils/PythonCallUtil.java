@@ -16,6 +16,7 @@ public class PythonCallUtil {
 
     public static void callPython(String testCasePath, String csarFilePath, TestCaseResult result,
             Map<String, String> context) {
+        LOGGER.info("start call Python");
         PythonInterpreter interpreter = new PythonInterpreter();
         interpreter.execfile(testCasePath);
 
