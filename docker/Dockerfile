@@ -32,7 +32,7 @@ ENV APP_HOME /usr/app
 
 # Create the home directory for the new app user.
 #RUN mkdir -p /usr/app
-#RUN mkdir -p /usr/app/bin
+RUN mkdir -p /usr/atp/testCase
 
 RUN apk update &&\
     apk upgrade &&\
