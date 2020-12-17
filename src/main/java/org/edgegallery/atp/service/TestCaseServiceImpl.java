@@ -23,8 +23,7 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseServiceImpl.class);
 
-    private StringBuilder BASIC_PATH = new StringBuilder().append(FileChecker.getDir()).append(File.separator)
-            .append("testCase").append(File.separator);
+    private static final String BASIC_PATH = FileChecker.getDir() + File.separator + "testCase" + File.separator;
 
     @Autowired
     TestCaseRepository testCaseRepository;
@@ -64,7 +63,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         }
 
         String filePath =
-                BASIC_PATH.append(testCase.getName()).append(Constant.UNDER_LINE).append(testCase.getId()).toString();
+                BASIC_PATH.concat(testCase.getName()).concat(Constant.UNDER_LINE).concat(testCase.getId());
         try {
             FileChecker.createFile(filePath);
             File result = new File(filePath);

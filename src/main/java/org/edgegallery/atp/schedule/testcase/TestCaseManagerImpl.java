@@ -138,6 +138,7 @@ public class TestCaseManagerImpl implements TestCaseManager {
                         entry.setValue(result);
                     }
                     resultStatus = Constant.FAILED.equals(result.getResult()) ? false : resultStatus;
+                    taskRepository.update(task);
                 }
             });
         }

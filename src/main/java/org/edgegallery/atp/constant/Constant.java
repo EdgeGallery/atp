@@ -153,4 +153,14 @@ public interface Constant {
     String PYTHON = "python";
 
     String JAVA_FILE = ".java";
+
+    String EDGE_GALLERY = "EdgeGallery";
+
+    String MOBILE = "Mobile";
+
+    String UNICOM = "Unicom";
+
+    String TELECOM = "Telecom";
+
+    String DEFINE = "Define";
 }
