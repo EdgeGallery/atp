@@ -31,8 +31,6 @@ public class JavaCompileUtil {
             Map<String, String> context) {
         try {
             String className = testCase.getClassName();
-            LOGGER.info("className: {}", className);
-            LOGGER.info("csarFilePath: {}", csarFilePath);
             Map<String, byte[]> bytes =
                     compile(className.concat(Constant.DOT).concat(Constant.JAVA),
                             getFileContent(testCase.getFilePath()));
