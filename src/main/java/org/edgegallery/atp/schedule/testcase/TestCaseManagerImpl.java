@@ -64,8 +64,8 @@ public class TestCaseManagerImpl implements TestCaseManager {
             context.put(Constant.ACCESS_TOKEN, task.getAccessToken());
             context.put(Constant.TENANT_ID, task.getUser().getUserId());
 
-            execute(Constant.COMPLIANCE_TEST, detail.getComplianceTest(), context);
             execute(Constant.SECURITY_TEST, detail.getSecurityTest(), context);
+            execute(Constant.COMPLIANCE_TEST, detail.getComplianceTest(), context);
             execute(Constant.SANDBOX_TEST, detail.getSandboxTest(), context);
 
             task.setEndTime(taskRepository.getCurrentDate());
