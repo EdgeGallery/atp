@@ -1,6 +1,7 @@
-package org.edgegallery.atp;
+package org.edgegallery.atp.util;
 
 import java.io.IOException;
+import org.edgegallery.atp.ATPApplicationTest;
 import org.edgegallery.atp.model.testcase.TestCaseResult;
 import org.edgegallery.atp.utils.JSONUtil;
 import org.junit.Test;

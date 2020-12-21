@@ -15,12 +15,10 @@
 package org.edgegallery.atp;
 
 import java.io.IOException;
-
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.servicecomb.springboot2.starter.EnableServiceComb;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
@@ -31,7 +29,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @SpringBootApplication(scanBasePackages = "org.edgegallery.atp", exclude = {SecurityAutoConfiguration.class})
-@MapperScan(basePackages = {"org.edgegallery.atp.infrastructure.persistence"})
+@MapperScan(basePackages = {"org.edgegallery.atp.repository.mapper"})
 @EnableScheduling
 @EnableServiceComb
 public class ATPApplicationTest {

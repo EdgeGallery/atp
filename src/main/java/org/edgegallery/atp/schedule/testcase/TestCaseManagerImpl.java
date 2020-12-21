@@ -15,14 +15,11 @@ import org.edgegallery.atp.repository.task.TaskRepositoryImpl;
 import org.edgegallery.atp.repository.testcase.TestCaseRepository;
 import org.edgegallery.atp.utils.JavaCompileUtil;
 import org.edgegallery.atp.utils.PythonCallUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TestCaseManagerImpl implements TestCaseManager {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseManagerImpl.class);
 
     ExecutorService virusTreadPool = Executors.newFixedThreadPool(Constant.MAX_TASK_THREAD_NUM);
 

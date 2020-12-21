@@ -125,7 +125,6 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     private String getClassPath(File file) {
-        StringBuffer classPath = new StringBuffer();
         String className = Constant.EMPTY;
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line = "";
