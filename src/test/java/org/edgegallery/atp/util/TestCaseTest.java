@@ -7,13 +7,14 @@
  * License for the specific language governing permissions and limitations/under*the License.
  */
 
-package org.edgegallery.atp;
+package org.edgegallery.atp.util;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.ibatis.io.Resources;
+import org.edgegallery.atp.ATPApplicationTest;
 import org.edgegallery.atp.schedule.testcase.TestCaseHandler;
 import org.junit.Assert;
 import org.junit.Test;

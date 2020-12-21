@@ -74,13 +74,13 @@ public final class JavaFileMemoryMgr extends ForwardingJavaFileManager {
     }
 
     public static JavaFileObject getSourceFromStr(String className, String srcCode) {
-        return new sourceCodeBuffer(className, srcCode);
+        return new SourceCodeBuffer(className, srcCode);
     }
 
-    private static class sourceCodeBuffer extends SimpleJavaFileObject {
+    private static class SourceCodeBuffer extends SimpleJavaFileObject {
         final String sourceCode;
 
-        sourceCodeBuffer(String name, String sourceCode) {
+        SourceCodeBuffer(String name, String sourceCode) {
             super(convertURI(name), Kind.SOURCE);
             this.sourceCode = sourceCode;
         }

@@ -19,8 +19,6 @@ import org.springframework.stereotype.Component;
 class TaskSchedule {
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskSchedule.class);
 
-    private static final String BASIC_PATH = FileChecker.getDir() + File.separator + "testCase" + File.separator;
-
     @Autowired
     TaskRepository taskRepository;
 
@@ -63,28 +61,5 @@ class TaskSchedule {
                 }
             }
         });
-
-        // put inner testCase in storage
-        // try {
-        // File fileDir = ResourceUtils.getFile("classpath:testCase");
-        // if (fileDir.exists()) {
-        // File[] fileArray = fileDir.listFiles();
-        // for (File file : fileArray) {
-        // String className = file.getName().substring(0, file.getName().indexOf(Constant.DOT));
-        // TestCase testCase = testCaseRepository.findByClassName(className);
-        // String filePath = BASIC_PATH + testCase.getName() + Constant.UNDER_LINE + testCase.getId();
-        // FileChecker.createFile(filePath);
-        // File result = new File(filePath);
-        // FileCopyUtils.copy(file, result);
-        //
-        // testCase.setFilePath(filePath);
-        // testCaseRepository.update(testCase);
-        // }
-        // }
-        // } catch (FileNotFoundException e) {
-        // LOGGER.error("resource testCase file can not be found");
-        // } catch (IOException e) {
-        // LOGGER.error("copy test case to path failed.");
-        // }
     }
 }

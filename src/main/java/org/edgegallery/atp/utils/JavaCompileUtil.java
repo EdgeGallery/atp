@@ -35,23 +35,22 @@ public class JavaCompileUtil {
                     compile(className.concat(Constant.DOT).concat(Constant.JAVA),
                             getFileContent(testCase.getFilePath()));
             // put class into storage
-            JavaCompileUtil.MemoryLoader clsLoader = new JavaCompileUtil.MemoryLoader(bytes);
-            Class<?> clazz = clsLoader.loadClass(className);
-            Object response =
-                    clazz.getMethod("execute", String.class, Map.class).invoke(clazz.newInstance(),
-                            csarFilePath, context);
+            try (JavaCompileUtil.MemoryLoader clsLoader = new JavaCompileUtil.MemoryLoader(bytes);) {
+                Class<?> clazz = clsLoader.loadClass(className);
+                Object response = clazz.getMethod("execute", String.class, Map.class).invoke(clazz.newInstance(),
+                        csarFilePath, context);
+                if (null == response) {
+                    LOGGER.error(ExceptionConstant.METHOD_RETURN_IS_NULL);
+                    result.setResult(Constant.FAILED);
+                    result.setReason(ExceptionConstant.METHOD_RETURN_IS_NULL);
+                } else if (Constant.SUCCESS.equalsIgnoreCase(response.toString())) {
+                    result.setResult(Constant.SUCCESS);
+                } else {
+                    result.setResult(Constant.FAILED);
+                    result.setReason(response.toString());
+                }
+            }
 
-            if (null == response) {
-                LOGGER.error(ExceptionConstant.METHOD_RETURN_IS_NULL);
-                result.setResult(Constant.FAILED);
-                result.setReason(ExceptionConstant.METHOD_RETURN_IS_NULL);
-            }
-            if (Constant.SUCCESS.equalsIgnoreCase(response.toString())) {
-                result.setResult(Constant.SUCCESS);
-            } else {
-                result.setResult(Constant.FAILED);
-                result.setReason(response.toString());
-            }
         } catch (Exception e) {
             LOGGER.error("dynamic compile failed. {}", e.getMessage());
         }
@@ -85,7 +84,7 @@ public class JavaCompileUtil {
             }
 
         } catch (IOException e) {
-            LOGGER.error("dynamic compile failed.");;
+            LOGGER.error("dynamic compile failed.");
         }
         return null;
     }

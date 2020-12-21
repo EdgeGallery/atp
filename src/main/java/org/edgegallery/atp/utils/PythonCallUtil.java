@@ -34,7 +34,7 @@ public class PythonCallUtil {
                 result.setResult(Constant.FAILED);
                 result.setReason(ExceptionConstant.METHOD_RETURN_IS_NULL);
             }
-            if (Constant.SUCCESS.equalsIgnoreCase(pyobj.toString())) {
+            else if (Constant.SUCCESS.equalsIgnoreCase(pyobj.toString())) {
                 result.setResult(Constant.SUCCESS);
             } else {
                 result.setResult(Constant.FAILED);
