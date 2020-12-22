@@ -41,10 +41,15 @@ public class AccessTokenFilter extends OncePerRequestFilter {
 
     public static final ThreadLocal<Map<String, String>> context = new ThreadLocal<>();
 
+    private static final String[] NoNeedTokenUrls = {
+        "GET /health",
+        "GET /edgegallery/atp/v1/tasks/[^/]+"
+    };
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        if (request.getRequestURI() == null || !request.getRequestURI().equals("/health")) {
+        if (!isNoNeedToken(request)) {
             Map<String, String> contextMap = new HashMap<>();
             String accessTokenStr = request.getHeader(Constant.ACCESS_TOKEN);
             if (StringUtils.isEmpty(accessTokenStr)) {
@@ -92,4 +97,16 @@ public class AccessTokenFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    private boolean isNoNeedToken(HttpServletRequest request) {
+        if (request.getRequestURI() == null) {
+            return true;
+        }
+        String accessUrl = String.format("%s %s", request.getMethod(), request.getRequestURI());
+        for (String filter : NoNeedTokenUrls) {
+            if (accessUrl.matches(filter)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

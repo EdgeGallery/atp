@@ -25,7 +25,7 @@ public interface TaskService {
      * @param taskid taskId
      * @return task information
      */
-    public ResponseEntity<TaskRequest> getTaskById(String userId, String taskId);
+    public ResponseEntity<TaskRequest> getTaskById(String taskId);
 
     /**
      * get all task info

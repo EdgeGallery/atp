@@ -36,7 +36,10 @@
 	<select id="findByTaskIdAndUserId"
 		resultType="org.edgegallery.atp.model.task.TaskPO"
 		parameterType="String">
-		select * from task_table where id = #{taskId} and userId = #{userId}
+		select * from task_table where id = #{taskId}
+		<if test="userId != null and userId !=''">
+			and userId = #{userId}
+		</if>
 	</select>
 
 	<select id="findTaskByUserId" resultType="org.edgegallery.atp.model.task.TaskPO"
