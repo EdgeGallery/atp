@@ -1,7 +1,7 @@
 package org.edgegallery.atp.constant;
 
 import java.io.File;
-import org.edgegallery.atp.utils.file.FileChecker;
+import org.edgegallery.atp.utils.FileChecker;
 
 public interface Constant {
 

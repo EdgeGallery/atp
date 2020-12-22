@@ -6,6 +6,8 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import org.apache.http.entity.ContentType;
 import org.apache.ibatis.io.Resources;
@@ -13,9 +15,9 @@ import org.edgegallery.atp.ATPApplicationTest;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.model.testcase.TestCaseResult;
+import org.edgegallery.atp.utils.FileChecker;
 import org.edgegallery.atp.utils.JavaCompileUtil;
 import org.edgegallery.atp.utils.PythonCallUtil;
-import org.edgegallery.atp.utils.file.FileChecker;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -131,7 +133,8 @@ public class TestCaseTest {
         FileChecker.createFile(filePathPython);
         File targetPythonFile = new File(filePathPython);
         FileCopyUtils.copy(filePython, targetPythonFile);
-        PythonCallUtil.callPython(filePathPython, "testfile/AR.csar", resultTestCase, null);
+        Map<String, String> context = new HashMap<String, String>();
+        PythonCallUtil.callPython(filePathPython, "testfile/AR.csar", resultTestCase, context);
         targetPythonFile.delete();
 
         // delete
