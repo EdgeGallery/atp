@@ -155,8 +155,8 @@ public class TaskServiceImpl implements TaskService {
 
 
     @Override
-    public ResponseEntity<TaskRequest> getTaskById(String userId, String taskId) {
-        TaskRequest response = taskRepository.findByTaskIdAndUserId(taskId, userId);
+    public ResponseEntity<TaskRequest> getTaskById(String taskId) {
+        TaskRequest response = taskRepository.findByTaskIdAndUserId(taskId, null);
         LOGGER.info("get task by id successfully.");
         return ResponseEntity.ok(response);
     }
