@@ -326,12 +326,6 @@
                 <configuration>
                     <destFile>target/coverage-reports/jacoco-unit.exec</destFile>
                     <dataFile>target/coverage-reports/jacoco-unit.exec</dataFile>
-                     <excludes>
-                        <exclude>org/edgegallery/atp/interfaces/filter/*</exclude>
-                        <exclude>/src/main/java/org/edgegallery/atp/model/*</exclude>
-                        <exclude>/src/main/resources/*</exclude>
-                        <exclude>/src/main/java/org/edgegallery/atp/constant/*</exclude>
-                     </excludes>
                 </configuration>
                 <executions>
                     <execution>

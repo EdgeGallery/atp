@@ -14,11 +14,6 @@
 
 package org.edgegallery.atp.interfaces;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import java.util.List;
 import javax.validation.constraints.Pattern;
 import javax.ws.rs.QueryParam;
@@ -27,7 +22,6 @@ import org.apache.servicecomb.provider.rest.common.RestSchema;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
 import org.edgegallery.atp.model.CommonActionRes;
-import org.edgegallery.atp.model.task.TaskIdList;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.service.TaskService;
 import org.edgegallery.atp.utils.CommonUtil;
@@ -40,11 +34,15 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 @Controller
 @RestSchema(schemaId = "testTask")
@@ -126,19 +124,6 @@ public class TaskController {
         return taskService
             .getAllTasks(AccessTokenFilter.context.get().get(Constant.USER_ID), appName, status, providerId,
                 appVersion);
-    }
-
-    @GetMapping(value = "/tasks/batch", produces = MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "batch get all tasks by taskId and userId.", response = TaskRequest.class)
-    @ApiResponses(value = {
-        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
-        @ApiResponse(code = 500, message = "resource grant error", response = String.class)
-    })
-    @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT')")
-    public ResponseEntity<List<TaskRequest>> batchGetTasks(
-        @ApiParam(value = "task list") @RequestBody TaskIdList taskList) {
-        CommonUtil.validateContext();
-        return taskService.batchGetAllTasks(AccessTokenFilter.context.get().get(Constant.USER_ID), taskList);
     }
 
     /**

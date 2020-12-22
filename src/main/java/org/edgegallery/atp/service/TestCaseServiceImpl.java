@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.repository.testcase.TestCaseRepository;
-import org.edgegallery.atp.utils.file.FileChecker;
+import org.edgegallery.atp.utils.FileChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

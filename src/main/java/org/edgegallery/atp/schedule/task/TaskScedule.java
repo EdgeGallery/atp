@@ -8,7 +8,7 @@ import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.repository.task.TaskRepository;
 import org.edgegallery.atp.repository.testcase.TestCaseRepository;
 import org.edgegallery.atp.schedule.testcase.TestCaseManagerImpl;
-import org.edgegallery.atp.utils.file.FileChecker;
+import org.edgegallery.atp.utils.FileChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

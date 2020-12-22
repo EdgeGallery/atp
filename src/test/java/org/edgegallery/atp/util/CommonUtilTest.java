@@ -15,7 +15,7 @@ import org.edgegallery.atp.ATPApplicationTest;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
 import org.edgegallery.atp.utils.CommonUtil;
-import org.edgegallery.atp.utils.file.FileChecker;
+import org.edgegallery.atp.utils.FileChecker;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
