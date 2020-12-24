@@ -91,7 +91,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         }
 
         try {
-            if (StringUtils.isNotEmpty(file.getOriginalFilename())) {
+            if (null != file) {
                 String filePath = dbData.getFilePath();
                 File result = new File(filePath);
                 file.transferTo(result);

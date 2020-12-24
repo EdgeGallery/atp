@@ -21,6 +21,7 @@ import javax.ws.rs.core.MediaType;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.testcase.TestCase;
+import org.edgegallery.atp.model.testcase.UpdateTestCaseReq;
 import org.edgegallery.atp.service.TestCaseService;
 import org.edgegallery.atp.utils.CommonUtil;
 import org.edgegallery.atp.utils.TestCaseUtil;
@@ -34,6 +35,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -65,7 +67,6 @@ public class TestCaseController {
     @GetMapping(value = "/testcases", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "get all test cases.", response = TaskRequest.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
-            @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT')")
     public ResponseEntity<List<TestCase>> getAllTestCases(@QueryParam("type") String type,
@@ -77,7 +78,6 @@ public class TestCaseController {
     @PostMapping(value = "/testcases", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "create test case.", response = TestCase.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
-            @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_TENANT')")
     public ResponseEntity<TestCase> createTestCase(
@@ -100,28 +100,17 @@ public class TestCaseController {
     @PutMapping(value = "/testcases", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "modify test case.", response = TestCase.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
-            @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_TENANT')")
     public ResponseEntity<TestCase> updateTestCase(
-            @ApiParam(value = "test case id", required = true) @RequestParam("id") String id,
-            @ApiParam(value = "test case file", required = false) @RequestPart("file") MultipartFile file,
-            @ApiParam(value = "test case description",
-                    required = false) @RequestParam("description") String description,
-            @ApiParam(value = "test case code language",
-                    required = false) @RequestParam("codeLanguage") String codeLanguage,
-            @ApiParam(value = "test case expect result",
-                    required = false) @RequestParam("expectResult") String expectResult,
-            @ApiParam(value = "test case verification model",
-                    required = false) @RequestParam(value = "verificationModel") String verificationModel) {
-        return ResponseEntity.ok(testCaseService.updateTestCase(file,
-                TestCaseUtil.initTestCase(id, null, null, description, codeLanguage, expectResult, verificationModel)));
+            @ApiParam(value = "test case req body", required = true) @RequestBody UpdateTestCaseReq testCase) {
+        return ResponseEntity.ok(testCaseService.updateTestCase(testCase.getFile(),
+                testCase));
     }
 
     @DeleteMapping(value = "/testcases/{id}", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "delete test case.", response = Boolean.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
-            @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_TENANT')")
     public ResponseEntity<Boolean> deleteTestCase(
@@ -132,7 +121,6 @@ public class TestCaseController {
     @GetMapping(value = "/testcases/{id}", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "get one test case.", response = TestCase.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
-            @ApiResponse(code = 415, message = "Unprocessable " + "MicroServiceInfo Entity ", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_TENANT')")
     public ResponseEntity<TestCase> queryTestCase(
