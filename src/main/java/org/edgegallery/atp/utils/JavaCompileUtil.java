@@ -84,7 +84,7 @@ public class JavaCompileUtil {
             }
 
         } catch (IOException e) {
-            LOGGER.error("dynamic compile failed.");
+            LOGGER.error("dynamic compile failed.{}", e);
         }
         return null;
     }
