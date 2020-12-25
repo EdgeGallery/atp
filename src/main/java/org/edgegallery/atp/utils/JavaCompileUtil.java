@@ -52,7 +52,7 @@ public class JavaCompileUtil {
             }
 
         } catch (Exception e) {
-            LOGGER.error("dynamic compile failed. {}", e.getMessage());
+            LOGGER.error("dynamic compile failed. {}", e);
         }
 
     }
