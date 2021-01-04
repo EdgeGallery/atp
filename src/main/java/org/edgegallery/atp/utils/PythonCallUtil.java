@@ -57,6 +57,8 @@ public class PythonCallUtil {
         }
         catch (Exception e) {
             LOGGER.error("python error. {}", e);
+            result.setResult(Constant.FAILED);
+            result.setReason("call python failed.");
         }
 
     }

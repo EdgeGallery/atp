@@ -324,6 +324,9 @@
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.7.7.201606060606</version>
                 <configuration>
+                      <excludes>
+                         <exclude>testCase/*</exclude>
+                     </excludes>
                     <destFile>target/coverage-reports/jacoco-unit.exec</destFile>
                     <dataFile>target/coverage-reports/jacoco-unit.exec</dataFile>
                 </configuration>
@@ -346,6 +349,7 @@
            
         </plugins>
     </build>
+   
     <reporting>
         <plugins>
             <plugin>

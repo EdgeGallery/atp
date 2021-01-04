@@ -108,6 +108,7 @@ public class TestCaseServiceImpl implements TestCaseService {
             if (null != file && StringUtils.isNotBlank(file.getOriginalFilename())
                     && StringUtils.isNotBlank(file.getName())) {
                 String filePath = dbData.getFilePath();
+                new File(filePath).delete();
                 File result = new File(filePath);
                 file.transferTo(result);
                 if (Constant.JAVA.equals(testCase.getCodeLanguage())) {

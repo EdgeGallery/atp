@@ -11,7 +11,6 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-
 package org.edgegallery.atp.constant;
 
 import java.io.File;
@@ -165,6 +164,8 @@ public interface Constant {
     String JAVA = "java";
 
     String PYTHON = "python";
+
+    String JAR = "jar";
 
     String JAVA_FILE = ".java";
 

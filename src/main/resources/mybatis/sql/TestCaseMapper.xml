@@ -47,9 +47,10 @@
             and name LIKE CONCAT('%', #{name}, '%')
           </if>
           <if test="verificationModel != null and verificationModel !=''">
-            and verificationModel LIKE  CONCAT('%', #{verificationModel}, '%');
+            and verificationModel LIKE  CONCAT('%', #{verificationModel}, '%')
           </if>                    
         </where>
+        ORDER BY name ASC
     </select>
     
     <insert id="insert"

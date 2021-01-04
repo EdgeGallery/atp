@@ -9,11 +9,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SourcePathTestCaseInner {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SourcePathTestCaseInner.class);
 
     private static final String SLASH = "/";
 
@@ -46,7 +43,6 @@ public class SourcePathTestCaseInner {
                 }
             }
         } catch (IOException e) {
-            LOGGER.error("SourcePathTestCase execute failed. {}", e.getMessage());
             return INNER_EXCEPTION;
         }
         return pathSet.containsAll(sourcePathSet) ? "success" : SOURCE_PATH_FILE_NOT_EXISTS;
@@ -73,7 +69,6 @@ public class SourcePathTestCaseInner {
                 }
             }
         } catch (IOException e) {
-            LOGGER.error("getPathSet io exception. {}", e.getMessage());
         }
 
         return pathSet;
