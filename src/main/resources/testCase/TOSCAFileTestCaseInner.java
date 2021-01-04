@@ -9,15 +9,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of validating TOSCA.meta file.
  */
 public class TOSCAFileTestCaseInner {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(TOSCAFileTestCaseInner.class);
 
     private static final String TOSCA_META = "TOSCA.meta";
 
@@ -60,7 +56,6 @@ public class TOSCAFileTestCaseInner {
                 }
             }
         } catch (IOException e) {
-            LOGGER.error("TOSCAFileTestCase execute failed. {}", e.getMessage());
             return INNER_EXCEPTION;
         }
 
@@ -82,7 +77,6 @@ public class TOSCAFileTestCaseInner {
                 }
             }
         } catch (IOException e) {
-            LOGGER.error("getPathSet io exception. {}", e.getMessage());
         }
 
         return sourcePathSet.containsAll(prefixSet);
@@ -108,7 +102,6 @@ public class TOSCAFileTestCaseInner {
                 }
             }
         } catch (IOException e) {
-            LOGGER.error("getPathSet io exception. {}", e.getMessage());
         }
 
         return pathSet;

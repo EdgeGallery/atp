@@ -1,4 +1,3 @@
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,11 +8,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class MFContentTestCaseInner {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MFContentTestCaseInner.class);
 
     private static final String MF_LOSS_FIELD =
             ".mf file may lost the following fileds:app_product_name,app_provider_id,app_package_version,app_release_date_time or app_package_description.";
@@ -45,7 +41,6 @@ public class MFContentTestCaseInner {
                 }
             }
         } catch (IOException e) {
-            LOGGER.error("TOSCAFileTestCase execute failed. {}", e.getMessage());
             return INNER_EXCEPTION;
         }
 
@@ -73,7 +68,6 @@ public class MFContentTestCaseInner {
                 }
             }
         } catch (IOException e) {
-            LOGGER.error("getPathSet io exception. {}", e.getMessage());
         }
 
         return sourcePathSet.containsAll(prefixSet);

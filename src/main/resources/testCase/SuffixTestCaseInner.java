@@ -4,16 +4,11 @@ import java.util.Enumeration;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of validating .mf file must be in root directory.
  */
 public class SuffixTestCaseInner {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SuffixTestCaseInner.class);
 
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
 
@@ -30,7 +25,6 @@ public class SuffixTestCaseInner {
                 }
             }
         } catch (IOException e) {
-            LOGGER.error("SuffixTestCase execute failed. {}", e.getMessage());
             return INNER_EXCEPTION;
         }
         return FILE_NOT_EXIST;
@@ -38,7 +32,7 @@ public class SuffixTestCaseInner {
 
     public static boolean fileSuffixValidate(String pattern, String fileName) {
         String suffix = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
-        if (StringUtils.isNotBlank(suffix) && suffix.equals(pattern)) {
+        if (null != suffix && "" != suffix && suffix.equals(pattern)) {
             return true;
         }
         return false;

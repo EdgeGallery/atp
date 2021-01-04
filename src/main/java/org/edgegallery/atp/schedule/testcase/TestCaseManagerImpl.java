@@ -27,6 +27,7 @@ import org.edgegallery.atp.model.testcase.TestCaseDetail;
 import org.edgegallery.atp.model.testcase.TestCaseResult;
 import org.edgegallery.atp.repository.task.TaskRepositoryImpl;
 import org.edgegallery.atp.repository.testcase.TestCaseRepository;
+import org.edgegallery.atp.utils.JarCallUtil;
 import org.edgegallery.atp.utils.JavaCompileUtil;
 import org.edgegallery.atp.utils.PythonCallUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -138,6 +139,9 @@ public class TestCaseManagerImpl implements TestCaseManager {
                                 break;
                             case Constant.JAVA:
                                 JavaCompileUtil.executeJava(testCase, filePath, result, context);
+                                break;
+                            case Constant.JAR:
+                                JarCallUtil.executeJar(testCase, filePath, result, context);;
                                 break;
                             default:
                                 break;

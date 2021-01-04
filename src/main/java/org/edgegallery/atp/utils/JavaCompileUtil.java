@@ -67,6 +67,8 @@ public class JavaCompileUtil {
 
         } catch (Exception e) {
             LOGGER.error("dynamic compile failed. {}", e);
+            result.setResult(Constant.FAILED);
+            result.setReason("dynamic compile failed.");
         }
 
     }

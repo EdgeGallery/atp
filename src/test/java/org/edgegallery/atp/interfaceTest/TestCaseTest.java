@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import org.apache.commons.io.FileUtils;
 import org.apache.http.entity.ContentType;
 import org.apache.ibatis.io.Resources;
 import org.edgegallery.atp.ATPApplicationTest;
@@ -16,6 +17,7 @@ import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.model.testcase.TestCaseResult;
 import org.edgegallery.atp.utils.FileChecker;
+import org.edgegallery.atp.utils.JarCallUtil;
 import org.edgegallery.atp.utils.JavaCompileUtil;
 import org.edgegallery.atp.utils.PythonCallUtil;
 import org.junit.Before;
@@ -144,6 +146,23 @@ public class TestCaseTest {
                 .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
         int resultDelete = mvcResultDelete.getResponse().getStatus();
         assertEquals(200, resultDelete);
+    }
+    
+    @Test
+    public void JarTest() throws Exception {
+        // jar call
+        TestCaseResult resultTestCase = new TestCaseResult();
+        TestCase testCase = new TestCase();
+
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("testfile/BombDefenseTestCase.jar");
+        String filePathJar = BASIC_PATH + "jar" + Constant.UNDER_LINE + "111";
+        FileChecker.createFile(filePathJar);
+        File targetJarFile = new File(filePathJar);
+        testCase.setFilePath(filePathJar);
+        FileUtils.copyInputStreamToFile(stream, targetJarFile);
+        Map<String, String> context = new HashMap<String, String>();
+        JarCallUtil.executeJar(testCase, "testfile/AR.csar", resultTestCase, context);
+        targetJarFile.delete();
     }
 
 }
