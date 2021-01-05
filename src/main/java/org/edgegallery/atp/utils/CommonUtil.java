@@ -36,6 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ExceptionConstant;
 import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
+import org.edgegallery.atp.model.testcase.TestCaseResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
@@ -475,6 +476,25 @@ public class CommonUtil {
     public static void validateContext() {
         if (null == AccessTokenFilter.context.get()) {
             throw new IllegalArgumentException(ExceptionConstant.CONTEXT_IS_NULL);
+        }
+    }
+
+    /**
+     * set test case result according to response
+     * 
+     * @param response execute response result
+     * @param result test case result
+     */
+    public static void setResult(Object response, TestCaseResult result) {
+        if (null == response) {
+            LOGGER.error(ExceptionConstant.METHOD_RETURN_IS_NULL);
+            result.setResult(Constant.FAILED);
+            result.setReason(ExceptionConstant.METHOD_RETURN_IS_NULL);
+        } else if (Constant.SUCCESS.equalsIgnoreCase(response.toString())) {
+            result.setResult(Constant.SUCCESS);
+        } else {
+            result.setResult(Constant.FAILED);
+            result.setReason(response.toString());
         }
     }
 }

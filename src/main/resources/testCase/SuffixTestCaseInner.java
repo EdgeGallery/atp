@@ -15,6 +15,10 @@ public class SuffixTestCaseInner {
     private static final String FILE_NOT_EXIST = ".mf file may not exist or it do not in the root directory.";
 
     public String execute(String filePath, Map<String, String> context) {
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException e1) {
+        }
         try (ZipFile zipFile = new ZipFile(filePath)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {

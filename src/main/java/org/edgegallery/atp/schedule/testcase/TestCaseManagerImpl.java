@@ -141,7 +141,7 @@ public class TestCaseManagerImpl implements TestCaseManager {
                                 JavaCompileUtil.executeJava(testCase, filePath, result, context);
                                 break;
                             case Constant.JAR:
-                                JarCallUtil.executeJar(testCase, filePath, result, context);;
+                                JarCallUtil.executeJar(testCase, filePath, result, context);
                                 break;
                             default:
                                 break;

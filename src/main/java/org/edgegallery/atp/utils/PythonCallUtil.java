@@ -17,7 +17,6 @@ package org.edgegallery.atp.utils;
 import java.util.Map;
 import java.util.Properties;
 import org.edgegallery.atp.constant.Constant;
-import org.edgegallery.atp.constant.ExceptionConstant;
 import org.edgegallery.atp.model.testcase.TestCaseResult;
 import org.python.core.PyFunction;
 import org.python.core.PyObject;
@@ -43,17 +42,7 @@ public class PythonCallUtil {
 
             PyFunction pyFunction = interpreter.get("execute", PyFunction.class);
             PyObject pyobj = pyFunction.__call__(new PyString(csarFilePath), new PyString(context.toString()));
-            if (null == pyobj) {
-                LOGGER.error(ExceptionConstant.METHOD_RETURN_IS_NULL);
-                result.setResult(Constant.FAILED);
-                result.setReason(ExceptionConstant.METHOD_RETURN_IS_NULL);
-            }
-            else if (Constant.SUCCESS.equalsIgnoreCase(pyobj.toString())) {
-                result.setResult(Constant.SUCCESS);
-            } else {
-                result.setResult(Constant.FAILED);
-                result.setReason(pyobj.toString());
-            }
+            CommonUtil.setResult(pyobj, result);
         }
         catch (Exception e) {
             LOGGER.error("python error. {}", e);

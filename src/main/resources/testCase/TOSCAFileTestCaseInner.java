@@ -34,6 +34,10 @@ public class TOSCAFileTestCaseInner {
     };
 
     public String execute(String filePath, Map<String, String> context) {
+        try {
+            Thread.sleep(1800);
+        } catch (InterruptedException e1) {
+        }
         Set<String> sourcePathSet = new HashSet<String>();
         boolean isExistTosca = false;
         try (ZipFile zipFile = new ZipFile(filePath)) {
