@@ -27,7 +27,6 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 import org.edgegallery.atp.constant.Constant;
-import org.edgegallery.atp.constant.ExceptionConstant;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.model.testcase.TestCaseResult;
 import org.slf4j.Logger;
@@ -53,16 +52,7 @@ public class JavaCompileUtil {
                 Class<?> clazz = clsLoader.loadClass(className);
                 Object response = clazz.getMethod("execute", String.class, Map.class).invoke(clazz.newInstance(),
                         csarFilePath, context);
-                if (null == response) {
-                    LOGGER.error(ExceptionConstant.METHOD_RETURN_IS_NULL);
-                    result.setResult(Constant.FAILED);
-                    result.setReason(ExceptionConstant.METHOD_RETURN_IS_NULL);
-                } else if (Constant.SUCCESS.equalsIgnoreCase(response.toString())) {
-                    result.setResult(Constant.SUCCESS);
-                } else {
-                    result.setResult(Constant.FAILED);
-                    result.setReason(response.toString());
-                }
+                CommonUtil.setResult(response, result);
             }
 
         } catch (Exception e) {

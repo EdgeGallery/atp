@@ -21,6 +21,10 @@ public class SourcePathTestCaseInner {
     private static Set<String> pathSet = new HashSet<String>();
 
     public String execute(String filePath, Map<String, String> context) {
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e1) {
+        }
         Set<String> sourcePathSet = new HashSet<String>();
         try (ZipFile zipFile = new ZipFile(filePath)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
