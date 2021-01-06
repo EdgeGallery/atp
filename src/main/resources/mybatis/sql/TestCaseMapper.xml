@@ -44,7 +44,7 @@
             type = #{type}
           </if>
           <if test="name != null and name !=''">
-            and name LIKE CONCAT('%', #{name}, '%')
+            and name ~* #{name}
           </if>
           <if test="verificationModel != null and verificationModel !=''">
             and verificationModel LIKE  CONCAT('%', #{verificationModel}, '%')

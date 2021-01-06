@@ -35,7 +35,7 @@ public class TOSCAFileTestCaseInner {
 
     public String execute(String filePath, Map<String, String> context) {
         try {
-            Thread.sleep(1800);
+            Thread.sleep(1000);
         } catch (InterruptedException e1) {
         }
         Set<String> sourcePathSet = new HashSet<String>();

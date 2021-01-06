@@ -9,7 +9,7 @@ public class VirusScanTestCaseInner {
 
     public String execute(String filePath, Map<String, String> context) {
         try {
-            Thread.sleep(2500);
+            Thread.sleep(1300);
         } catch (InterruptedException e1) {
         }
         return "success";

@@ -30,7 +30,7 @@ public class MFContentTestCaseInner {
 
     public String execute(String filePath, Map<String, String> context) {
         try {
-            Thread.sleep(2000);
+            Thread.sleep(1000);
         } catch (InterruptedException e1) {
         }
         try (ZipFile zipFile = new ZipFile(filePath)) {
