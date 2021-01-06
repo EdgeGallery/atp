@@ -103,17 +103,17 @@ class TaskSchedule {
                         getClass().getClassLoader().getResourceAsStream("testCase/UninstantiateAppTestCaseInner.jar");
                 InputStream stream8 =
                         getClass().getClassLoader().getResourceAsStream("testCase/VirusScanTestCaseInner.java")) {
-            testCaseList.put("BombDefenseTestCase", stream1);
-            testCaseList.put("InstantiateAppTestCaseInner", stream2);
-            testCaseList.put("MFContentTestCaseInner", stream3);
-            testCaseList.put("SourcePathTestCaseInner", stream4);
-            testCaseList.put("SuffixTestCaseInner", stream5);
-            testCaseList.put("TOSCAFileTestCaseInner", stream6);
-            testCaseList.put("UninstantiateAppTestCaseInner", stream7);
-            testCaseList.put("VirusScanTestCaseInner", stream8);
+            testCaseList.put("Bomb Defense", stream1);
+            testCaseList.put("Instantiate Application", stream2);
+            testCaseList.put("Manifest File Field Validation", stream3);
+            testCaseList.put("Manifest File Source Path Validation", stream4);
+            testCaseList.put("Manifest File Path Validation", stream5);
+            testCaseList.put("Tosca File Validation", stream6);
+            testCaseList.put("UnInstantiate Application", stream7);
+            testCaseList.put("Virus Scanning", stream8);
 
             for (Map.Entry<String, InputStream> map : testCaseList.entrySet()) {
-                TestCase testCase = testCaseRepository.findByClassName(map.getKey());
+                TestCase testCase = testCaseRepository.findByName(map.getKey());
                 String filePath = BASIC_PATH + testCase.getName() + Constant.UNDER_LINE + testCase.getId();
                 FileChecker.createFile(filePath);
                 File result = new File(filePath);

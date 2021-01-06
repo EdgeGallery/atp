@@ -22,7 +22,7 @@ public class SourcePathTestCaseInner {
 
     public String execute(String filePath, Map<String, String> context) {
         try {
-            Thread.sleep(2000);
+            Thread.sleep(1000);
         } catch (InterruptedException e1) {
         }
         Set<String> sourcePathSet = new HashSet<String>();
