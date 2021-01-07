@@ -57,7 +57,7 @@ public interface TaskService {
      * @param userId
      * @return
      */
-    public ResponseEntity<InputStreamResource> downloadTestReport(String taskId, String userId);
+    public ResponseEntity<InputStreamResource> downloadTestReport(String taskId);
 
     /**
      * precheck before run test task.

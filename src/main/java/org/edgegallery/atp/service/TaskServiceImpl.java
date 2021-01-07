@@ -176,10 +176,10 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public ResponseEntity<InputStreamResource> downloadTestReport(String taskId, String userId) {
+    public ResponseEntity<InputStreamResource> downloadTestReport(String taskId) {
         Map<String, Object> result = new HashMap<String, Object>();
         Yaml yaml = new Yaml();
-        TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, userId);
+        TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, null);
 
         if (null != task) {
             TestCaseDetail testcaseDetail = task.getTestCaseDetail();
