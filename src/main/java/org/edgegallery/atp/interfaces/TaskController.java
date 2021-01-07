@@ -149,10 +149,8 @@ public class TaskController {
         @ApiResponse(code = 404, message = "microservice not found", response = String.class),
         @ApiResponse(code = 500, message = "resource grant error", response = String.class)
     })
-    @PreAuthorize("hasRole('ATP_TENANT')")
     public ResponseEntity<InputStreamResource> downloadTestReport(
         @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId) {
-        CommonUtil.validateContext();
-        return taskService.downloadTestReport(taskId, AccessTokenFilter.context.get().get(Constant.USER_ID));
+        return taskService.downloadTestReport(taskId);
     }
 }

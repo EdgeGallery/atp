@@ -98,7 +98,7 @@ public class TestCaseTest {
 
     @WithMockUser(roles = "ATP_TENANT")
     @Test
-    public void TestCaseTest() throws Exception {
+    public void TestTestCase() throws Exception {
         File file = Resources.getResourceAsFile("testfile/Test.java");
         InputStream csarInputStream = new FileInputStream(file);
         MultipartFile csarMultiFile = new MockMultipartFile(file.getName(), file.getName(),
