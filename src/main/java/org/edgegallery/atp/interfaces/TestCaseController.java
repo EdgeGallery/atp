@@ -25,6 +25,7 @@ import org.edgegallery.atp.service.TestCaseService;
 import org.edgegallery.atp.utils.CommonUtil;
 import org.edgegallery.atp.utils.TestCaseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -133,5 +134,15 @@ public class TestCaseController {
     public ResponseEntity<TestCase> queryTestCase(
             @ApiParam(value = "test case id") @PathVariable("id") @Pattern(regexp = REG_ID) String id) {
         return ResponseEntity.ok(testCaseService.getTestCase(id));
+    }
+
+    @GetMapping(value = "/testcases/{id}/action/download", produces = MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "download test case", response = InputStreamResource.class)
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
+            @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
+    @PreAuthorize("hasRole('ATP_TENANT')")
+    public ResponseEntity<InputStreamResource> downloadTestReport(
+            @ApiParam(value = "test case id") @PathVariable("id") @Pattern(regexp = REG_ID) String id) {
+        return testCaseService.downloadTestCase(id);
     }
 }

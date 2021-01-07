@@ -16,8 +16,11 @@ package org.edgegallery.atp.service;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
@@ -28,6 +31,9 @@ import org.edgegallery.atp.utils.FileChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -155,8 +161,30 @@ public class TestCaseServiceImpl implements TestCaseService {
 
             return className;
         } catch (IOException e) {
-            LOGGER.warn("get class path failed.");
+            LOGGER.error("get class path failed.");
             throw new IllegalArgumentException("get class path failed.");
+        }
+    }
+
+    @Override
+    public ResponseEntity<InputStreamResource> downloadTestCase(String id) {
+        TestCase testCase = testCaseRepository.getTestCaseById(id);
+        if (null == testCase) {
+            String msg = "test case not exists.";
+            LOGGER.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+        File file = new File(testCase.getFilePath());
+        try {
+            InputStream fileContent = new FileInputStream(file);
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Type", "application/octet-stream");
+            LOGGER.info("download test case successfully.");
+            return new ResponseEntity<>(new InputStreamResource(fileContent), headers, HttpStatus.OK);
+        } catch (FileNotFoundException e) {
+            String msg = "file not exists.";
+            LOGGER.error(msg);
+            throw new IllegalArgumentException(msg);
         }
     }
 }

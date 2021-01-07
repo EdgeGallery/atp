@@ -16,6 +16,7 @@ package org.edgegallery.atp.service;
 
 import java.util.List;
 import org.edgegallery.atp.model.testcase.TestCase;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -62,4 +63,12 @@ public interface TestCaseService {
      * @return test case info
      */
     public TestCase getTestCase(String id);
+
+    /**
+     * download test case.
+     * 
+     * @param id test case id
+     * @return test case binary stream.
+     */
+    public ResponseEntity<InputStreamResource> downloadTestCase(String id);
 }
