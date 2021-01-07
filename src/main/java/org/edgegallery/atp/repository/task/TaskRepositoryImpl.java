@@ -22,6 +22,8 @@ import org.edgegallery.atp.model.task.TaskIdList;
 import org.edgegallery.atp.model.task.TaskPO;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.repository.mapper.TaskMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
@@ -29,62 +31,105 @@ import org.springframework.util.CollectionUtils;
 @Repository
 public class TaskRepositoryImpl implements TaskRepository {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TaskRepositoryImpl.class);
+
     @Autowired
     TaskMapper taskMapper;
 
     @Override
     public void insert(TaskRequest task) {
-        taskMapper.insert(TaskPO.of(task));
+        try {
+            taskMapper.insert(TaskPO.of(task));
+        } catch (Exception e) {
+            LOGGER.error("insert task failed. {}", e);
+            throw new IllegalArgumentException("insert task failed.");
+        }
     }
 
     @Override
     public List<TaskRequest> queryAllRunningTasks() {
-        return taskMapper.queryAllRunningTasks().stream().map(TaskPO::toDomainModel).collect(Collectors.toList());
+        try {
+            return taskMapper.queryAllRunningTasks().stream().map(TaskPO::toDomainModel).collect(Collectors.toList());
+        } catch (Exception e) {
+            LOGGER.error("queryAllRunningTasks failed. {}", e);
+            throw new IllegalArgumentException("queryAllRunningTasks failed.");
+        }
+
     }
 
     @Override
     public void update(TaskRequest task) {
-        taskMapper.update(TaskPO.of(task));
+        try {
+            taskMapper.update(TaskPO.of(task));
+        } catch (Exception e) {
+            LOGGER.error("update failed. {}", e);
+            throw new IllegalArgumentException("update failed.");
+        }
     }
 
     @Override
     public Date getCurrentDate() {
-        return taskMapper.getCurrentDate();
+        try {
+            return taskMapper.getCurrentDate();
+        } catch (Exception e) {
+            LOGGER.error("getCurrentDate failed. {}", e);
+            throw new IllegalArgumentException("getCurrentDate failed.");
+        }
     }
 
     @Override
     public void delHisTask() {
-        taskMapper.delHisTask();
+        try {
+            taskMapper.delHisTask();
+        } catch (Exception e) {
+            LOGGER.error("delHisTask failed. {}", e);
+            throw new IllegalArgumentException("delHisTask failed.");
+        }
     }
 
     @Override
     public TaskRequest findByTaskIdAndUserId(String taskId, String userId) {
-        return taskMapper.findByTaskIdAndUserId(taskId, userId).toDomainModel();
+        try {
+            return taskMapper.findByTaskIdAndUserId(taskId, userId).toDomainModel();
+        } catch (Exception e) {
+            LOGGER.error("findByTaskIdAndUserId failed. {}", e);
+            throw new IllegalArgumentException("findByTaskIdAndUserId failed.");
+        }
     }
 
     @Override
     public List<TaskRequest> findTaskByUserId(String userId, String appName, String status, String providerId,
             String appVersion) {
-        List<TaskPO> taskPOList =
-                taskMapper.findTaskByUserId(userId, appName, status, providerId, appVersion);
-        List<TaskRequest> taskList = new ArrayList<TaskRequest>();
-        if (!CollectionUtils.isEmpty(taskPOList)) {
-            for (TaskPO task : taskPOList) {
-                taskList.add(task.toDomainModel());
+        try {
+            List<TaskPO> taskPOList = taskMapper.findTaskByUserId(userId, appName, status, providerId, appVersion);
+            List<TaskRequest> taskList = new ArrayList<TaskRequest>();
+            if (!CollectionUtils.isEmpty(taskPOList)) {
+                for (TaskPO task : taskPOList) {
+                    taskList.add(task.toDomainModel());
+                }
             }
+            return taskList;
+        } catch (Exception e) {
+            LOGGER.error("findTaskByUserId failed. {}", e);
+            throw new IllegalArgumentException("findTaskByUserId failed.");
         }
-        return taskList;
     }
 
     @Override
     public List<TaskRequest> batchFindTaskByUserId(String userId, TaskIdList taskIdList) {
-        List<TaskPO> taskPOList = taskMapper.batchFindTaskByUserId(userId, taskIdList.getTaskIdList());
-        List<TaskRequest> taskList = new ArrayList<TaskRequest>();
-        if (!CollectionUtils.isEmpty(taskPOList)) {
-            for (TaskPO task : taskPOList) {
-                taskList.add(task.toDomainModel());
+        try {
+            List<TaskPO> taskPOList = taskMapper.batchFindTaskByUserId(userId, taskIdList.getTaskIdList());
+            List<TaskRequest> taskList = new ArrayList<TaskRequest>();
+            if (!CollectionUtils.isEmpty(taskPOList)) {
+                for (TaskPO task : taskPOList) {
+                    taskList.add(task.toDomainModel());
+                }
             }
+            return taskList;
+        } catch (Exception e) {
+            LOGGER.error("batchFindTaskByUserId failed. {}", e);
+            throw new IllegalArgumentException("batchFindTaskByUserId failed.");
         }
-        return taskList;
+
     }
 }
