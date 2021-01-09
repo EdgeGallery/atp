@@ -17,12 +17,8 @@ package org.edgegallery.atp.schedule.task;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.annotation.PostConstruct;
-import org.apache.commons.io.FileUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.testcase.TestCase;
@@ -108,29 +104,6 @@ class TaskSchedule {
                     testCase.setFilePath(filePath);
                     testCaseRepository.update(testCase);
                 }
-            }
-
-            // can not generate jar file in linux, has to hard code
-            Map<String, InputStream> testCaseList = new HashMap<String, InputStream>();
-            InputStream stream1 = getClass().getClassLoader().getResourceAsStream("testCase/Bomb Defense.jar");
-            InputStream stream2 =
-                    getClass().getClassLoader().getResourceAsStream("testCase/Application Instantiation.jar");
-            InputStream stream3 =
-                    getClass().getClassLoader().getResourceAsStream("testCase/Application Termination.jar");
-
-            testCaseList.put("Bomb Defense", stream1);
-            testCaseList.put("Application Instantiation", stream2);
-            testCaseList.put("Application Termination", stream3);
-
-            for (Map.Entry<String, InputStream> map : testCaseList.entrySet()) {
-                TestCase testCase = testCaseRepository.findByName(map.getKey());
-                String filePath = BASIC_PATH + testCase.getName() + Constant.UNDER_LINE + testCase.getId();
-                FileChecker.createFile(filePath);
-                File result = new File(filePath);
-                FileUtils.copyInputStreamToFile(map.getValue(), result);
-
-                testCase.setFilePath(filePath);
-                testCaseRepository.update(testCase);
             }
 
         } catch (FileNotFoundException e) {
