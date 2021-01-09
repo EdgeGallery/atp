@@ -17,12 +17,8 @@ package org.edgegallery.atp.schedule.task;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.annotation.PostConstruct;
-import org.apache.commons.io.FileUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.testcase.TestCase;
@@ -30,11 +26,13 @@ import org.edgegallery.atp.repository.task.TaskRepository;
 import org.edgegallery.atp.repository.testcase.TestCaseRepository;
 import org.edgegallery.atp.schedule.testcase.TestCaseManagerImpl;
 import org.edgegallery.atp.utils.FileChecker;
+import org.edgegallery.atp.utils.PropertiesUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.util.FileCopyUtils;
 
 @Component
 class TaskSchedule {
@@ -85,42 +83,27 @@ class TaskSchedule {
             }
         });
 
-        // put inner testCase in storage, get file dir can not run in jar and linux,maybe need to find other
-        // methods
-        Map<String, InputStream> testCaseList = new HashMap<String, InputStream>();
-        try (InputStream stream1 = getClass().getClassLoader().getResourceAsStream("testCase/BombDefenseTestCase.jar");
-                InputStream stream2 =
-                        getClass().getClassLoader().getResourceAsStream("testCase/InstantiateAppTestCaseInner.jar");
-                InputStream stream3 =
-                        getClass().getClassLoader().getResourceAsStream("testCase/MFContentTestCaseInner.java");
-                InputStream stream4 =
-                        getClass().getClassLoader().getResourceAsStream("testCase/SourcePathTestCaseInner.java");
-                InputStream stream5 =
-                        getClass().getClassLoader().getResourceAsStream("testCase/SuffixTestCaseInner.java");
-                InputStream stream6 =
-                        getClass().getClassLoader().getResourceAsStream("testCase/TOSCAFileTestCaseInner.java");
-                InputStream stream7 =
-                        getClass().getClassLoader().getResourceAsStream("testCase/UninstantiateAppTestCaseInner.jar");
-                InputStream stream8 =
-                        getClass().getClassLoader().getResourceAsStream("testCase/VirusScanTestCaseInner.java")) {
-            testCaseList.put("Bomb Defense", stream1);
-            testCaseList.put("Instantiate Application", stream2);
-            testCaseList.put("Manifest File Field Validation", stream3);
-            testCaseList.put("Manifest File Source Path Validation", stream4);
-            testCaseList.put("Manifest File Path Validation", stream5);
-            testCaseList.put("Tosca File Validation", stream6);
-            testCaseList.put("UnInstantiate Application", stream7);
-            testCaseList.put("Virus Scanning", stream8);
+        // put inner testCase in storage
+        try {
+            String basePath = System.getProperty("os.name").toLowerCase().contains("windows")
+                    ? PropertiesUtil.getProperties("workspace_base_dir_windows")
+                    : PropertiesUtil.getProperties("workspace_base_dir_linux");
 
-            for (Map.Entry<String, InputStream> map : testCaseList.entrySet()) {
-                TestCase testCase = testCaseRepository.findByName(map.getKey());
-                String filePath = BASIC_PATH + testCase.getName() + Constant.UNDER_LINE + testCase.getId();
-                FileChecker.createFile(filePath);
-                File result = new File(filePath);
-                FileUtils.copyInputStreamToFile(map.getValue(), result);
+            File fileDir = new File(basePath.concat(Constant.SLASH)
+                    .concat(Constant.TEST_CASE_DIR));
+            if (fileDir.exists()) {
+                File[] fileArray = fileDir.listFiles();
+                for (File file : fileArray) {
+                    TestCase testCase = testCaseRepository
+                            .findByName(file.getName().substring(0, file.getName().indexOf(Constant.DOT)));
+                    String filePath = BASIC_PATH + testCase.getName() + Constant.UNDER_LINE + testCase.getId();
+                    FileChecker.createFile(filePath);
+                    File result = new File(filePath);
+                    FileCopyUtils.copy(file, result);
 
-                testCase.setFilePath(filePath);
-                testCaseRepository.update(testCase);
+                    testCase.setFilePath(filePath);
+                    testCaseRepository.update(testCase);
+                }
             }
         } catch (FileNotFoundException e) {
             LOGGER.error("resource testCase file can not be found");
