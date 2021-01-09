@@ -139,6 +139,15 @@ public class TestCaseTest {
         PythonCallUtil.callPython(filePathPython, "testfile/AR.csar", resultTestCase, context);
         targetPythonFile.delete();
 
+        // dowload test case
+        MvcResult mvcResultReport = mvc
+                .perform(MockMvcRequestBuilders.get("/edgegallery/atp/v1/testcases/" + id + "/action/download")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE).with(csrf())
+                        .accept(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+        int resultReport = mvcResultReport.getResponse().getStatus();
+        assertEquals(200, resultReport);
+
         // delete
         MvcResult mvcResultDelete = mvc
                 .perform(MockMvcRequestBuilders.delete("/edgegallery/atp/v1/testcases/" + id).with(csrf())
@@ -146,18 +155,6 @@ public class TestCaseTest {
                 .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
         int resultDelete = mvcResultDelete.getResponse().getStatus();
         assertEquals(200, resultDelete);
-    }
-    
-    @WithMockUser(roles = "ATP_TENANT")
-    @Test
-    public void DownloadTestCaseTest() throws Exception {
-        MvcResult mvcResultReport = mvc
-                .perform(MockMvcRequestBuilders.get("/edgegallery/atp/v1/testcases/4d203173-1111-4f62-aabb-8ebcec357f87/action/download")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE).with(csrf())
-                        .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
-        int resultReport = mvcResultReport.getResponse().getStatus();
-        assertEquals(200, resultReport);
     }
     
     @Test
