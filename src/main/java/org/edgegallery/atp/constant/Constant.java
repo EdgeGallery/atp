@@ -178,4 +178,6 @@ public interface Constant {
     String TELECOM = "Telecom";
 
     String DEFINE = "Define";
+
+    String TEST_CASE_DIR = "testCases";
 }
