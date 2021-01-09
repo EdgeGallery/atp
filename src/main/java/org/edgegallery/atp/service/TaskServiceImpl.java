@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -234,7 +235,7 @@ public class TaskServiceImpl implements TaskService {
         List<Map<String, TestCaseResult>> sandboxList = new ArrayList<Map<String, TestCaseResult>>();
         Map<String, TestCaseResult> virusMap = new HashMap<String, TestCaseResult>();
         Map<String, TestCaseResult> complianceMap = new HashMap<String, TestCaseResult>();
-        Map<String, TestCaseResult> sandboxMap = new HashMap<String, TestCaseResult>();
+        Map<String, TestCaseResult> sandboxMap = new LinkedHashMap<String, TestCaseResult>();
 
         for (TestCase testCase : testCaseList) {
             switch (testCase.getType()) {
