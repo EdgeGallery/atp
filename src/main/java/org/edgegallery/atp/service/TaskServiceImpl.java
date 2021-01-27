@@ -19,7 +19,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -28,6 +32,7 @@ import java.util.Stack;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
 import org.edgegallery.atp.model.CommonActionRes;
+import org.edgegallery.atp.model.task.AnalysisResult;
 import org.edgegallery.atp.model.task.TaskIdList;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.testcase.TestCase;
@@ -196,6 +201,73 @@ public class TaskServiceImpl implements TaskService {
         return new ResponseEntity<>(new InputStreamResource(yamlStream), headers, HttpStatus.OK);
     }
 
+    @Override
+    public ResponseEntity<Map<String, List<String>>> batchDelete(List<String> taskIds) {
+        Map<String, List<String>> response = taskRepository.batchDelete(taskIds);
+        LOGGER.info("batch delete successfully.");
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<AnalysisResult> taskAnalysis() {
+        List<TaskRequest> response = taskRepository.findTaskByUserId(null, null, null, null, null);
+        AnalysisResult analysisResult = new AnalysisResult();
+
+        Date curTime = taskRepository.getCurrentDate();
+        Calendar calendar = Calendar.getInstance(); 
+        int date = curTime.getDate();
+        calendar.setTime(curTime);
+        //first day of month
+        calendar.add(Calendar.DATE, -date);
+        Date firstDayOfMonth = calendar.getTime();
+        int oneMonthDays = firstDayOfMonth.getDate();
+        calendar.add(Calendar.DATE, -oneMonthDays);
+        int twoMonthDays = calendar.getTime().getDate();
+        calendar.add(Calendar.DATE, -twoMonthDays);
+        int threeMonthDays = calendar.getTime().getDate();
+        calendar.add(Calendar.DATE, -threeMonthDays);
+        int fourMonthDays = calendar.getTime().getDate();
+        calendar.add(Calendar.DATE, -fourMonthDays);
+        int fiveMonthDays = calendar.getTime().getDate();
+        // get days of * month
+        int last2Days = oneMonthDays + twoMonthDays;
+        int last3Days = last2Days + threeMonthDays;
+        int last4Days = last3Days + fourMonthDays;
+        int last5Days = last4Days + fiveMonthDays;
+
+        response.forEach(task -> {
+            if (task.getCreateTime().getYear() == curTime.getYear()
+                    && task.getCreateTime().getMonth() == curTime.getMonth()) {
+                analysisResult.increaseCurrentMonth();
+            } else {
+                // just consider day, not hours
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                try {
+                    int day = (int) ((dateFormat.parse(dateFormat.format(firstDayOfMonth)).getTime()
+                            - dateFormat.parse(dateFormat.format(task.getCreateTime())).getTime())
+                            / (1000 * 3600 * 24));
+                    if (day < oneMonthDays) {
+                        analysisResult.increaseOneMonthAgo();
+                    } else if (oneMonthDays <= day && day < last2Days) {
+                        analysisResult.increaseTwoMonthAgo();
+                    } else if (last2Days <= day && day < last3Days) {
+                        analysisResult.increaseThreeMonthAgo();
+                    } else if (last3Days <= day && day < last4Days) {
+                        analysisResult.increaseFourMonthAgo();
+                    } else if (last4Days <= day && day < last5Days) {
+                        analysisResult.increaseFiveMonthAgo();
+                    }
+                } catch (ParseException e) {
+                    LOGGER.error("data format parse failed.");
+                }
+            }
+        });
+
+        analysisResult.setTotal();
+        return ResponseEntity.ok(analysisResult);
+    }
+
+
     /**
      * init taskRequest Model
      * 
@@ -221,6 +293,7 @@ public class TaskServiceImpl implements TaskService {
 
         return task;
     }
+
 
     /**
      * init testCaseDetail model

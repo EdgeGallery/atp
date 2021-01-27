@@ -15,7 +15,9 @@
 package org.edgegallery.atp.service;
 
 import java.util.List;
+import java.util.Map;
 import org.edgegallery.atp.model.CommonActionRes;
+import org.edgegallery.atp.model.task.AnalysisResult;
 import org.edgegallery.atp.model.task.TaskIdList;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.springframework.core.io.InputStreamResource;
@@ -83,4 +85,18 @@ public interface TaskService {
      * @return
      */
     public ResponseEntity<List<TaskRequest>> batchGetAllTasks(String userId, TaskIdList taskList);
+    
+    /**
+     * batch delete tasks by task ids
+     * @param taskIds
+     * @return delete failed ids
+     */
+    public ResponseEntity<Map<String, List<String>>> batchDelete(List<String> taskIds);
+    
+    /**
+     * task number analysis
+     * 
+     * @return analysis result
+     */
+    public ResponseEntity<AnalysisResult> taskAnalysis();
 }

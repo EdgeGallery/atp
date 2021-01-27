@@ -16,7 +16,9 @@ package org.edgegallery.atp.repository.task;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.edgegallery.atp.model.task.TaskIdList;
 import org.edgegallery.atp.model.task.TaskPO;
@@ -118,7 +120,7 @@ public class TaskRepositoryImpl implements TaskRepository {
     @Override
     public List<TaskRequest> batchFindTaskByUserId(String userId, TaskIdList taskIdList) {
         try {
-            List<TaskPO> taskPOList = taskMapper.batchFindTaskByUserId(userId, taskIdList.getTaskIdList());
+            List<TaskPO> taskPOList = taskMapper.batchFindTaskByUserId(userId, taskIdList.getTaskIds());
             List<TaskRequest> taskList = new ArrayList<TaskRequest>();
             if (!CollectionUtils.isEmpty(taskPOList)) {
                 for (TaskPO task : taskPOList) {
@@ -130,6 +132,22 @@ public class TaskRepositoryImpl implements TaskRepository {
             LOGGER.error("batchFindTaskByUserId failed. {}", e);
             throw new IllegalArgumentException("batchFindTaskByUserId failed.");
         }
+    }
 
+    @Override
+    public Map<String, List<String>> batchDelete(List<String> ids) {
+        Map<String, List<String>> result = new HashMap<String, List<String>>();
+        List<String> failIds = new ArrayList<String>();
+        for (String id : ids) {
+            try {
+                taskMapper.deleteTaskById(id);
+            } catch (Exception e) {
+                LOGGER.error("delete task by id {} failed. {}", id, e);
+                failIds.add(id);
+            }
+        }
+
+        result.put("failed", failIds);
+        return result;
     }
 }

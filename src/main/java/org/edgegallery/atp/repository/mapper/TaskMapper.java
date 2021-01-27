@@ -84,4 +84,11 @@ public interface TaskMapper {
      * @return taskInfo List
      */
     List<TaskPO> batchFindTaskByUserId(@Param("userId") String userId, @Param("taskIdList") List<String> taskIdList);
+
+    /**
+     * delete task by id
+     * 
+     * @param id id
+     */
+    void deleteTaskById(String id);
 }
