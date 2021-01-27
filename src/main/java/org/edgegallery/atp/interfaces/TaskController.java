@@ -15,13 +15,14 @@
 package org.edgegallery.atp.interfaces;
 
 import java.util.List;
+import java.util.Map;
 import javax.validation.constraints.Pattern;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
-import org.edgegallery.atp.constant.Constant;
-import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
 import org.edgegallery.atp.model.CommonActionRes;
+import org.edgegallery.atp.model.task.AnalysisResult;
+import org.edgegallery.atp.model.task.TaskIdList;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.service.TaskService;
 import org.edgegallery.atp.utils.CommonUtil;
@@ -34,6 +35,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -116,13 +118,12 @@ public class TaskController {
     public ResponseEntity<List<TaskRequest>> getAllTasks(@QueryParam("appName") String appName,
         @QueryParam("status") String status, @QueryParam("providerId") String providerId,
         @QueryParam("appVersion") String appVersion) {
-        CommonUtil.validateContext();
         CommonUtil.lengthCheck(appName);
         CommonUtil.lengthCheck(status);
         CommonUtil.lengthCheck(providerId);
         CommonUtil.lengthCheck(appVersion);
         return taskService
-            .getAllTasks(AccessTokenFilter.context.get().get(Constant.USER_ID), appName, status, providerId,
+                .getAllTasks(null, appName, status, providerId,
                 appVersion);
     }
 
@@ -153,4 +154,23 @@ public class TaskController {
         @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId) {
         return taskService.downloadTestReport(taskId);
     }
+
+    @PostMapping(value = "/tasks/batch_delete", produces = MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "batch delete test tasks.", response = String.class)
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
+            @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
+    @PreAuthorize("hasRole('ATP_TENANT')")
+    public ResponseEntity<Map<String, List<String>>> batchDelete(
+            @ApiParam(value = "test task id list") @RequestBody TaskIdList taskIds) {
+        return taskService.batchDelete(taskIds.getTaskIds());
+    }
+
+    @GetMapping(value = "/tasks/action/analysize", produces = MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "test tasks number analysis", response = String.class)
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
+            @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
+    public ResponseEntity<AnalysisResult> taskAnalysis() {
+        return taskService.taskAnalysis();
+    }
+
 }

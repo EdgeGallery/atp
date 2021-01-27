@@ -87,4 +87,10 @@
 	<select id="queryAllRunningTasks" resultType="org.edgegallery.atp.model.task.TaskPO">
 		select * from task_table where status = 'running'
 	</select>
+	
+	<delete id="deleteTaskById">
+		delete from
+		task_table
+		where id = #{id}
+	</delete>
 </mapper>

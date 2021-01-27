@@ -16,6 +16,7 @@ package org.edgegallery.atp.repository.task;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import org.edgegallery.atp.model.task.TaskIdList;
 import org.edgegallery.atp.model.task.TaskRequest;
 
@@ -76,4 +77,11 @@ public interface TaskRepository {
      */
     void delHisTask();
 
+    /**
+     * batch delete tasks
+     * 
+     * @param ids task id list
+     * @return delete failed id list
+     */
+    Map<String, List<String>> batchDelete(List<String> ids);
 }
