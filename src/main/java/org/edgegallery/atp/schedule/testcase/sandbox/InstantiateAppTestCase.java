@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ExceptionConstant;
 import org.edgegallery.atp.model.testcase.TestCaseResult;
@@ -52,8 +53,13 @@ public class InstantiateAppTestCase extends TestCaseAbs {
     @Override
     public TestCaseResult execute(String filePath, Map<String, String> context) {
         Map<String, String> packageInfo = CommonUtil.getPackageInfo(filePath);
+        String hostIp = getMecHost(context, packageInfo);
+        if (StringUtils.isEmpty(hostIp)) {
+            return setTestCaseResult(Constant.FAILED, "host ip is empty", testCaseResult);
+        }
+
         ResponseEntity<String> response =
-                CommonUtil.uploadFileToAPM(filePath, context, getMecHost(context), packageInfo);
+                CommonUtil.uploadFileToAPM(filePath, context, hostIp, packageInfo);
         if (null == response || !(HttpStatus.OK.equals(response.getStatusCode())
                 || HttpStatus.ACCEPTED.equals(response.getStatusCode()))) {
             LOGGER.error("uploadFileToAPM failed, response: {}", response);
@@ -74,7 +80,7 @@ public class InstantiateAppTestCase extends TestCaseAbs {
         };
 
         // instantiate original app
-        String appInstanceId = CommonUtil.createInstanceFromAppo(context, appInfo, getMecHost(context));
+        String appInstanceId = CommonUtil.createInstanceFromAppo(context, appInfo, hostIp);
         context.put(Constant.APP_INSTANCE_ID, appInstanceId);
 
         LOGGER.info("original appInstanceId: {}", appInstanceId);
@@ -90,8 +96,12 @@ public class InstantiateAppTestCase extends TestCaseAbs {
      * @param context context info
      * @return mecHostIp
      */
-    private String getMecHost(Map<String, String> context) {
+    private String getMecHost(Map<String, String> context, Map<String, String> packageInfo) {
         List<String> mecHostIpList = new ArrayList<String>();
+        if (StringUtils.isEmpty(packageInfo.get(Constant.ARCHITECTURE))) {
+            LOGGER.info("not contain architecture field, default is X86");
+            packageInfo.put(Constant.ARCHITECTURE, "X86");
+        }
 
         HttpHeaders headers = new HttpHeaders();
         headers.set(Constant.ACCESS_TOKEN, context.get(Constant.ACCESS_TOKEN));
@@ -111,8 +121,11 @@ public class InstantiateAppTestCase extends TestCaseAbs {
             JsonArray jsonArray = new JsonParser().parse(response.getBody()).getAsJsonArray();
             jsonArray.forEach(mecHost -> {
                 JsonElement mecHostIp = mecHost.getAsJsonObject().get("mechostIp");
-                if (null != mecHostIp) {
-                    mecHostIpList.add(mecHostIp.getAsString());
+                JsonElement affinity = mecHost.getAsJsonObject().get("affinity");
+                if (null != mecHostIp && null != affinity) {
+                    if (packageInfo.get(Constant.ARCHITECTURE).equals(affinity.getAsString())) {
+                        mecHostIpList.add(mecHostIp.getAsString());
+                    }
                 }
             });
         } catch (RestClientException e) {
@@ -120,7 +133,7 @@ public class InstantiateAppTestCase extends TestCaseAbs {
             return null;
         }
 
-        return mecHostIpList.get(0);
+        return mecHostIpList.size() == 0 ? null : mecHostIpList.get(0);
     }
 
 }
