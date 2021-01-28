@@ -22,4 +22,12 @@ public interface TestScenarioRepository {
      * @param testScenario testScenario
      */
     void createTestScenario(TestScenario testScenario);
+
+    /**
+     * get test scenario by name
+     * 
+     * @param name
+     * @return
+     */
+    TestScenario getTestScenarioByName(String nameZh, String nameEn);
 }

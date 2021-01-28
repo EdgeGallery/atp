@@ -24,7 +24,7 @@ public class SuffixTestCaseInner {
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
                 // root directory and file is end of mf
-                if (entry.getName().split("/").length == 2 && fileSuffixValidate("mf", entry.getName())) {
+                if (entry.getName().split("/").length == 1 && fileSuffixValidate("mf", entry.getName())) {
                     return "success";
                 }
             }

@@ -15,7 +15,6 @@
  */
 package org.edgegallery.atp.model.testscenario;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,25 +30,21 @@ public class TestScenario {
     /**
      * test scenario chinese name
      */
-    @JsonProperty("name_zh")
     String nameZh;
     
     /**
      * test scenario english name
      */
-    @JsonProperty("name_en")
     String nameEn;
     
     /**
      * test scenario chinese description
      */
-    @JsonProperty("description_zh")
     String descriptionZh;
     
     /**
      * test scenario english description
      */
-    @JsonProperty("description_en")
     String descriptionEn;
     
     public TestScenario(Builder builder) {

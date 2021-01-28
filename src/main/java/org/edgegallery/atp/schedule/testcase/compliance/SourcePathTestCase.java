@@ -47,13 +47,9 @@ public class SourcePathTestCase extends TestCaseAbs {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
-                String entryName = entry.getName();
-
-                String path = entryName.substring(entryName.indexOf(Constant.SLASH) + 1).trim();
-                pathSet.add(TestCaseUtil.removeLastSlash(path));
-
+                pathSet.add(TestCaseUtil.removeLastSlash(entry.getName()));
                 // root directory and file is end of mf
-                if (entry.getName().split(Constant.SLASH).length == 2
+                if (entry.getName().split(Constant.SLASH).length == 1
                         && TestCaseUtil.fileSuffixValidate("mf", entry.getName())) {
                     Set<String> prefix = new HashSet<String>() {
                         {

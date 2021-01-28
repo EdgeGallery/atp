@@ -14,15 +14,37 @@
 package org.edgegallery.atp.repository.testScenario;
 
 import org.edgegallery.atp.model.testscenario.TestScenario;
+import org.edgegallery.atp.repository.mapper.TestScenarioMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class TestScenarioRepositoryImpl implements TestScenarioRepository {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestScenarioRepositoryImpl.class);
+
+    @Autowired
+    TestScenarioMapper testScenarioMapper;
 
     @Override
     public void createTestScenario(TestScenario testScenario) {
-        // TODO Auto-generated method stub
+        try {
+            testScenarioMapper.createTestScenario(testScenario);
+        } catch (Exception e) {
+            LOGGER.error("insert test scenario failed. {}", e);
+            throw new IllegalArgumentException("insert test scenario failed.");
+        }
+    }
 
+    @Override
+    public TestScenario getTestScenarioByName(String nameZh, String nameEn) {
+        try {
+            return testScenarioMapper.getTestScenarioByName(nameZh, nameEn);
+        } catch (Exception e) {
+            LOGGER.error("get test scenario by name {} failed. {}", nameEn, e);
+            throw new IllegalArgumentException("get test scenario by name failed.");
+        }
     }
 
 }

@@ -54,10 +54,7 @@ public class TOSCAFileTestCase extends TestCaseAbs {
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
                 String entryName = entry.getName();
-                String path = entryName.substring(entryName.indexOf("/") + 1).trim();
-
-                // suit for pattern of Artifacts/test,not Artifacts/test/
-                pathSet.add(TestCaseUtil.removeLastSlash(path));
+                pathSet.add(TestCaseUtil.removeLastSlash(entry.getName()));
 
                 if (TOSCA_META.equals(entryName.substring(entryName.lastIndexOf("/") + 1).trim())) {
                     isExistTosca = true;
