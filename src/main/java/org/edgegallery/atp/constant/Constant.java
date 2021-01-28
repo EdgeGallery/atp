@@ -32,6 +32,8 @@ public interface Constant {
 
     String APP_VERSION = "app_package_version";
 
+    String ARCHITECTURE = "app_architecture";
+
     String ACCESS_TOKEN = "access_token";
 
     String USER_ID = "userId";
