@@ -45,6 +45,7 @@ public class MFContentTestCase extends TestCaseAbs {
             add("app_package_version");
             add("app_release_data_time");
             add("app_package_description");
+            add("app_type");
         }
     };
 
@@ -54,7 +55,7 @@ public class MFContentTestCase extends TestCaseAbs {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
-                if (entry.getName().split(Constant.SLASH).length == 2
+                if (entry.getName().split(Constant.SLASH).length == 1
                         && TestCaseUtil.fileSuffixValidate("mf", entry.getName())) {
                     // some fields not exist in tosca.meta file
                     return TestCaseUtil.isExistAll(zipFile, entry, field)

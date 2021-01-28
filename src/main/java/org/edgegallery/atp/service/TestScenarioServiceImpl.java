@@ -14,15 +14,23 @@
 package org.edgegallery.atp.service;
 
 import org.edgegallery.atp.model.testscenario.TestScenario;
+import org.edgegallery.atp.repository.testScenario.TestScenarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service("TestScenarioService")
 public class TestScenarioServiceImpl implements TestScenarioService {
+    @Autowired
+    TestScenarioRepository testScenarioRepository;
 
     @Override
     public TestScenario creatTestScenario(TestScenario testScenario) {
-        // TODO Auto-generated method stub
-        return null;
+        if (null != testScenarioRepository.getTestScenarioByName(testScenario.getNameZh(), null)
+                || null != testScenarioRepository.getTestScenarioByName(null, testScenario.getNameEn())) {
+            throw new IllegalArgumentException("name of test scenario already exist.");
+        }
+        testScenarioRepository.createTestScenario(testScenario);
+        return testScenario;
     }
 
 }

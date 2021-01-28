@@ -162,7 +162,7 @@ public class FileChecker {
                 String[] pathSplit = entry.getName().split(Constant.SLASH);
 
                 // fileName/APPD/Definition/MainServiceTemplate.yaml
-                if (pathSplit.length == 4 && Constant.DEFINITIONS.equals(pathSplit[2].trim())
+                if (pathSplit.length == 3 && Constant.DEFINITIONS.equals(pathSplit[2].trim())
                         && pathSplit[3].trim().endsWith(Constant.PACKAGE_YAML_FORMAT)) {
                     analysisDependency(result, zipFile, entry);
                     break;

@@ -31,6 +31,25 @@ CREATE TABLE TEST_CASE_TABLE (
     CONSTRAINT test_case_table_pkey PRIMARY KEY (ID)
 );
 
+CREATE TABLE TEST_SCENARIO_TABLE (
+    ID                       VARCHAR(200)       NOT NULL,
+    NAMEZH                   VARCHAR(200)       NULL,
+    NAMEEN                   VARCHAR(200)       NULL,
+    DESCRIPTIONZH            TEXT               NULL,
+    DESCRIPTIONEN            TEXT               NULL, 
+    CONSTRAINT test_scenario_table_pkey PRIMARY KEY (ID)
+);
+
+CREATE TABLE TEST_SUITE_TABLE (
+    ID                       VARCHAR(200)       NOT NULL,
+    NAMEZH                   VARCHAR(200)       NULL,
+    NAMEEN                   VARCHAR(200)       NULL,
+    DESCRIPTIONZH            TEXT               NULL,
+    DESCRIPTIONEN            TEXT               NULL, 
+    SCENARIOIDLIST           VARCHAR(255)       NULL,
+    CONSTRAINT test_suite_table_pkey PRIMARY KEY (ID)
+);
+
 
 INSERT INTO public.test_case_table(
   id, name, hashCode,type, classname,  description,filePath,codeLanguage,expectResult,verificationModel)

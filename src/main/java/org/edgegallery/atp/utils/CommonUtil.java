@@ -381,7 +381,7 @@ public class CommonUtil {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
-                if (entry.getName().split(Constant.SLASH).length == 2
+                if (entry.getName().split(Constant.SLASH).length == 1
                         && TestCaseUtil.fileSuffixValidate("mf", entry.getName())) {
                     try (BufferedReader br = new BufferedReader(
                             new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {

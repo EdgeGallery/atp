@@ -43,7 +43,7 @@ public class SuffixTestCase extends TestCaseAbs {
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
                 // root directory and file is end of mf
-                if (entry.getName().split(Constant.SLASH).length == 2
+                if (entry.getName().split(Constant.SLASH).length == 1
                         && TestCaseUtil.fileSuffixValidate("mf", entry.getName())) {
                     return setTestCaseResult(Constant.SUCCESS, Constant.EMPTY, testCaseResult);
                 }

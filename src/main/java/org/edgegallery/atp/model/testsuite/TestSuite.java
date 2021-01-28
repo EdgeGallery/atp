@@ -16,7 +16,6 @@
 package org.edgegallery.atp.model.testsuite;
 
 import java.util.List;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,25 +31,21 @@ public class TestSuite {
     /**
      * test suite chinese name
      */
-    @JsonProperty("name_zh")
     String nameZh;
     
     /**
      * test suite english name
      */
-    @JsonProperty("name_en")
     String nameEn;
     
     /**
      * test suite chinese description
      */
-    @JsonProperty("description_zh")
     String descriptionZh;
     
     /**
      * test suite english description
      */
-    @JsonProperty("description_en")
     String descriptionEn;
     
     /**

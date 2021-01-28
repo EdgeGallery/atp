@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import org.edgegallery.atp.utils.TestCaseUtil;
 
 /**
  * Implementation of validating TOSCA.meta file.
@@ -45,10 +46,7 @@ public class TOSCAFileTestCaseInner {
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
                 String entryName = entry.getName();
-                String path = entryName.substring(entryName.indexOf("/") + 1).trim();
-
-                // suit for pattern of Artifacts/test,not Artifacts/test/
-                pathSet.add(removeLastSlash(path));
+                pathSet.add(TestCaseUtil.removeLastSlash(entry.getName()));
 
                 if (TOSCA_META.equals(entryName.substring(entryName.lastIndexOf("/") + 1).trim())) {
                     isExistTosca = true;
