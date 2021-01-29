@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import org.edgegallery.atp.utils.TestCaseUtil;
 
 public class SourcePathTestCaseInner {
 
@@ -31,7 +30,7 @@ public class SourcePathTestCaseInner {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
-                pathSet.add(TestCaseUtil.removeLastSlash(entry.getName()));
+                pathSet.add(removeLastSlash(entry.getName()));
 
                 // root directory and file is end of mf
                 if (entry.getName().split(SLASH).length == 1
