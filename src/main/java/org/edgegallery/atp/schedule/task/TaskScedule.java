@@ -26,7 +26,6 @@ import org.edgegallery.atp.utils.FileChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -43,14 +42,6 @@ class TaskSchedule {
 
     @Autowired
     TestCaseRepository testCaseRepository;
-
-    /**
-     * clean task data before one week every 2 clock.
-     */
-    @Scheduled(cron = "0 0 2 * * ?")
-    public void cleanHistoryData() {
-        taskRepository.delHisTask();
-    }
 
     /**
      * handle exception running task when the atp service start.
