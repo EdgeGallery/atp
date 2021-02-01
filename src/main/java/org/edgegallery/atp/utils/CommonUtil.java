@@ -425,10 +425,6 @@ public class CommonUtil {
         return packageInfo;
     }
 
-    public static void main(String args[]) {
-        getPackageInfo("D:\\package\\v1.1\\AR.csar");
-    }
-
     /**
      * upload file to apm service.
      * 
