@@ -13,8 +13,48 @@
  */
 package org.edgegallery.atp.service;
 
+import java.util.List;
 import org.edgegallery.atp.model.testscenario.TestScenario;
 
 public interface TestScenarioService {
+    /**
+     * create test scenario
+     * 
+     * @param testScenario test scenario info
+     * @return test scenario info
+     */
     TestScenario creatTestScenario(TestScenario testScenario);
+
+    /**
+     * update test scenario
+     * 
+     * @param testScenario test scenario info
+     * @return test scenario
+     */
+    TestScenario updateTestScenario(TestScenario testScenario);
+
+    /**
+     * delete test scenario by id
+     * 
+     * @param id test scenario id
+     * @return true
+     */
+    Boolean deleteTestScenario(String id);
+
+    /**
+     * get test scenario by id
+     * 
+     * @param id test scenario id
+     * @return test scenario info
+     */
+    TestScenario getTestScenario(String id);
+
+    /**
+     * get all test scenarios
+     * 
+     * @param locale locale language
+     * @param name test case name
+     * @return test scenario list
+     */
+    List<TestScenario> queryAllTestScenario(String locale, String name);
 }

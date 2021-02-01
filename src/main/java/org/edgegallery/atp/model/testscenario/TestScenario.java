@@ -30,7 +30,7 @@ public class TestScenario {
     /**
      * test scenario chinese name
      */
-    String nameZh;
+    String nameCh;
     
     /**
      * test scenario english name
@@ -40,19 +40,23 @@ public class TestScenario {
     /**
      * test scenario chinese description
      */
-    String descriptionZh;
+    String descriptionCh;
     
     /**
      * test scenario english description
      */
     String descriptionEn;
     
+    public TestScenario() {
+        
+    }
+    
     public TestScenario(Builder builder) {
         this.id = builder.id;
         this.nameEn = builder.nameEn;
-        this.nameZh = builder.nameZh;
+        this.nameCh = builder.nameCh;
         this.descriptionEn = builder.descriptionEn;
-        this.descriptionZh = builder.descriptionZh;
+        this.descriptionCh = builder.descriptionCh;
     }
     
     public static Builder builder() {
@@ -62,11 +66,11 @@ public class TestScenario {
     public static final class Builder{
         String id;
         
-        String nameZh;
+        String nameCh;
         
         String nameEn;
         
-        String descriptionZh;
+        String descriptionCh;
         
         String descriptionEn;
         
@@ -79,8 +83,8 @@ public class TestScenario {
             return this;
         }
         
-        public Builder setNameZh(String nameZh) {
-            this.nameZh = nameZh;
+        public Builder setnameCh(String nameCh) {
+            this.nameCh = nameCh;
             return this;
         }
         
@@ -89,8 +93,8 @@ public class TestScenario {
             return this;
         }
         
-        public Builder setDescriptionZh(String descriptionZh) {
-            this.descriptionZh = descriptionZh;
+        public Builder setdescriptionCh(String descriptionCh) {
+            this.descriptionCh = descriptionCh;
             return this;
         }
         
