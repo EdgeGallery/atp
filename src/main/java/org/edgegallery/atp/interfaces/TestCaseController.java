@@ -19,7 +19,6 @@ import javax.validation.constraints.Pattern;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
-import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.service.TestCaseService;
 import org.edgegallery.atp.utils.CommonUtil;
@@ -64,7 +63,7 @@ public class TestCaseController {
      * @return task list
      */
     @GetMapping(value = "/testcases", produces = MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "get all test cases.", response = TaskRequest.class)
+    @ApiOperation(value = "get all test cases.", response = TestCase.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT')")

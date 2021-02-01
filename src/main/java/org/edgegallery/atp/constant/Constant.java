@@ -182,4 +182,8 @@ public interface Constant {
     String DEFINE = "Define";
 
     String TEST_CASE_DIR = "testCases";
+
+    String LOCALE_CH = "ch";
+
+    String LOCALE_EN = "en";
 }

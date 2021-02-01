@@ -13,6 +13,8 @@
  */
 package org.edgegallery.atp.repository.testScenario;
 
+import java.util.List;
+import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.model.testscenario.TestScenario;
 import org.edgegallery.atp.repository.mapper.TestScenarioMapper;
 import org.slf4j.Logger;
@@ -38,12 +40,54 @@ public class TestScenarioRepositoryImpl implements TestScenarioRepository {
     }
 
     @Override
-    public TestScenario getTestScenarioByName(String nameZh, String nameEn) {
+    public TestScenario getTestScenarioByName(String nameCh, String nameEn) {
         try {
-            return testScenarioMapper.getTestScenarioByName(nameZh, nameEn);
+            return testScenarioMapper.getTestScenarioByName(nameCh, nameEn);
         } catch (Exception e) {
             LOGGER.error("get test scenario by name {} failed. {}", nameEn, e);
             throw new IllegalArgumentException("get test scenario by name failed.");
+        }
+    }
+
+    @Override
+    public TestScenario getTestScenarioById(String id) {
+        try {
+            return testScenarioMapper.getTestScenarioById(id);
+        } catch (Exception e) {
+            LOGGER.error("get test scenario by id {} failed. {}", id, e);
+            throw new IllegalArgumentException("get test scenario by id failed.");
+        }
+    }
+
+    @Override
+    public void updateTestScenario(TestScenario testScenario) {
+        try {
+            testScenarioMapper.updateTestScenario(testScenario);
+        } catch (Exception e) {
+            LOGGER.error("update test scenario failed. {}", e);
+            throw new IllegalArgumentException("update test scenario failed.");
+        }
+    }
+
+    @Override
+    public void deleteTestScenario(String id) {
+        try {
+            testScenarioMapper.deleteTestScenario(id);;
+        } catch (Exception e) {
+            LOGGER.error("delete test scenario {} failed. {}", id, e);
+            throw new IllegalArgumentException("delete test scenario failed.");
+        }
+    }
+
+    @Override
+    public List<TestScenario> getAllTestScenarios(String locale, String name) {
+        try {
+            String nameCh = Constant.LOCALE_CH.equalsIgnoreCase(locale) ? name : null;
+            String nameEn = Constant.LOCALE_EN.equalsIgnoreCase(locale) ? name : null;
+            return testScenarioMapper.getAllTestScenario(nameCh, nameEn);
+        } catch (Exception e) {
+            LOGGER.error("get all test scenario failed. {}", e);
+            throw new IllegalArgumentException("get all test scenario failed.");
         }
     }
 

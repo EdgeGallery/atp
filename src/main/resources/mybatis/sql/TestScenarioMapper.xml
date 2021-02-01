@@ -25,8 +25,22 @@
           <if test="nameEn != null and nameEn !=''">
             nameEn = #{nameEn}
           </if>
-          <if test="nameZn != null and nameZn !=''">
-            and nameZn = #{nameZn}
+          <if test="nameCh != null and nameCh !=''">
+            and nameCh = #{nameCh}
+          </if>
+        </where>
+    </select>
+    
+    <select id="getAllTestScenario"
+            resultType="org.edgegallery.atp.model.testscenario.TestScenario"
+            parameterType="String">
+        select * from test_scenario_table
+         <where>
+          <if test="nameEn != null and nameEn !=''">
+            nameEn ~* #{nameEn}
+          </if>
+          <if test="nameCh != null and nameCh !=''">
+             nameCh ~* #{nameCh}
           </if>
         </where>
     </select>
@@ -35,11 +49,42 @@
 		parameterType="org.edgegallery.atp.model.testscenario.TestScenario">
 		insert into
 		test_scenario_table
-		(id, nameZh, nameEn, descriptionZh, descriptionEn)
+		(id, nameCh, nameEn, descriptionCh, descriptionEn)
 		VALUES
-		(#{id}, #{nameZh}, #{nameEn},
-		#{descriptionZh},
+		(#{id}, #{nameCh}, #{nameEn},
+		#{descriptionCh},
 		#{descriptionEn})
 	</insert>
   
+   <update id="updateTestScenario" parameterType="org.edgegallery.atp.model.testscenario.TestScenario">
+        UPDATE
+        test_scenario_table set       
+          <if test="nameEn != null and nameEn !=''">
+            nameEn = #{nameEn},
+          </if>
+          <if test="nameCh != null and nameCh !=''">
+            nameCh = #{nameCh},
+          </if>
+          <if test="descriptionCh != null and descriptionCh !=''">
+            descriptionCh = #{descriptionCh},
+          </if>  
+          <if test="descriptionEn != null and descriptionEn !=''">
+            descriptionEn = #{descriptionEn},
+          </if>                               
+           id=#{id}
+        where id = #{id}
+    </update>
+    
+    <delete id="deleteTestScenario" parameterType="java.lang.String">
+        DELETE FROM
+        test_scenario_table
+        WHERE
+        id = #{id}
+    </delete>
+    
+    <select id="getTestScenarioById"
+            resultType="org.edgegallery.atp.model.testscenario.TestScenario"
+            parameterType="String">
+        select * from test_scenario_table where id = #{id}
+    </select>
 </mapper>

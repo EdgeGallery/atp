@@ -31,20 +31,24 @@ CREATE TABLE TEST_CASE_TABLE (
     CONSTRAINT test_case_table_pkey PRIMARY KEY (ID)
 );
 
+DROP TABLE IF EXISTS TEST_SCENARIO_TABLE;
+
 CREATE TABLE TEST_SCENARIO_TABLE (
     ID                       VARCHAR(200)       NOT NULL,
-    NAMEZH                   VARCHAR(200)       NULL,
+    NAMECH                   VARCHAR(200)       NULL,
     NAMEEN                   VARCHAR(200)       NULL,
-    DESCRIPTIONZH            TEXT               NULL,
+    DESCRIPTIONCh            TEXT               NULL,
     DESCRIPTIONEN            TEXT               NULL, 
     CONSTRAINT test_scenario_table_pkey PRIMARY KEY (ID)
 );
 
+DROP TABLE IF EXISTS TEST_SUITE_TABLE;
+
 CREATE TABLE TEST_SUITE_TABLE (
     ID                       VARCHAR(200)       NOT NULL,
-    NAMEZH                   VARCHAR(200)       NULL,
+    NAMECH                   VARCHAR(200)       NULL,
     NAMEEN                   VARCHAR(200)       NULL,
-    DESCRIPTIONZH            TEXT               NULL,
+    DESCRIPTIONCh            TEXT               NULL,
     DESCRIPTIONEN            TEXT               NULL, 
     SCENARIOIDLIST           VARCHAR(255)       NULL,
     CONSTRAINT test_suite_table_pkey PRIMARY KEY (ID)

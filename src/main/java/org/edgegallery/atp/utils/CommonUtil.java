@@ -397,8 +397,22 @@ public class CommonUtil {
                             if (line.trim().startsWith(Constant.PROVIDER_ID)) {
                                 packageInfo.put(Constant.PROVIDER_ID, line.split(Constant.COLON)[1].trim());
                             }
-                            if (line.trim().startsWith(Constant.ARCHITECTURE)) {
-                                packageInfo.put(Constant.ARCHITECTURE, line.split(Constant.COLON)[1].trim());
+                        }
+                    }
+                }
+                
+                if (entry.getName().split(Constant.SLASH).length == 2
+                        && "SwImageDesc.json"
+                                .equals(entry.getName().substring(entry.getName().lastIndexOf(Constant.SLASH) + 1))) {
+                    try (BufferedReader br = new BufferedReader(
+                            new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
+                        String line = "";
+                        while ((line = br.readLine()) != null) {
+                            // prefix: path
+                            if (line.trim().startsWith("\"architecture\"")) {
+                                String architecture = line.split(Constant.COLON)[1].trim();
+                                architecture = architecture.replaceAll("[\",]", "");
+                                packageInfo.put(Constant.ARCHITECTURE, architecture);
                             }
                         }
                     }
@@ -410,7 +424,6 @@ public class CommonUtil {
 
         return packageInfo;
     }
-
 
     /**
      * upload file to apm service.
