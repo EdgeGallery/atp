@@ -68,37 +68,43 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public TaskRequest createTask(MultipartFile file, Boolean isRun) {
-        String taskId = CommonUtil.generateId();
-        File tempFile = FileChecker.check(file, taskId);
-
-        Map<String, String> context = AccessTokenFilter.context.get();
-        User user = new User(context.get(Constant.USER_ID), context.get(Constant.USER_NAME));
-
-        TaskRequest task = new TaskRequest();
-        task.setId(taskId);
-        task.setUser(user);
-
         try {
-            String filePath = tempFile.getCanonicalPath();
-            initTaskRequset(task, filePath);
+            String taskId = CommonUtil.generateId();
+            File tempFile = FileChecker.check(file, taskId);
 
-            if (isRun) {
-                Map<String, String> contextInfo = new HashMap<String, String>();
-                contextInfo.put(Constant.ACCESS_TOKEN, context.get(Constant.ACCESS_TOKEN));
-                CommonUtil.dependencyCheckSchdule(filePath, new Stack<Map<String, String>>(), context);
+            Map<String, String> context = AccessTokenFilter.context.get();
+            User user = new User(context.get(Constant.USER_ID), context.get(Constant.USER_NAME));
 
-                task.setAccessToken(context.get(Constant.ACCESS_TOKEN));
-                task.setStatus(Constant.WAITING);
-                testCaseManager.executeTestCase(task, task.getPackagePath());
+            TaskRequest task = new TaskRequest();
+            task.setId(taskId);
+            task.setUser(user);
+
+            try {
+                String filePath = tempFile.getCanonicalPath();
+                initTaskRequset(task, filePath);
+
+                if (isRun) {
+                    Map<String, String> contextInfo = new HashMap<String, String>();
+                    contextInfo.put(Constant.ACCESS_TOKEN, context.get(Constant.ACCESS_TOKEN));
+                    CommonUtil.dependencyCheckSchdule(filePath, new Stack<Map<String, String>>(), context);
+
+                    task.setAccessToken(context.get(Constant.ACCESS_TOKEN));
+                    task.setStatus(Constant.WAITING);
+                    testCaseManager.executeTestCase(task, task.getPackagePath());
+                }
+
+                taskRepository.insert(task);
+                LOGGER.info("create task successfully.");
+                return task;
+            } catch (IOException e) {
+                LOGGER.error("create task {} failed, file name is: {}", taskId, tempFile.getName());
+                throw new IllegalArgumentException("create task faile.");
             }
-
-            taskRepository.insert(task);
-            LOGGER.info("create task successfully.");
-            return task;
-        } catch (IOException e) {
-            LOGGER.error("create task {} failed, file name is: {}", taskId, tempFile.getName());
+        } catch (Exception e) {
+            LOGGER.error("create task failed. {}", e);
             throw new IllegalArgumentException("create task faile.");
         }
+
     }
 
     @Override
