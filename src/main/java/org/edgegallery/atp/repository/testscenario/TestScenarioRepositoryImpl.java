@@ -11,7 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.edgegallery.atp.repository.testScenario;
+package org.edgegallery.atp.repository.testscenario;
 
 import java.util.List;
 import org.edgegallery.atp.constant.Constant;
@@ -91,4 +91,14 @@ public class TestScenarioRepositoryImpl implements TestScenarioRepository {
         }
     }
 
+    @Override
+    public List<TestScenario> batchQueryTestScenario(List<String> ids)
+    {
+        try {
+            return testScenarioMapper.batchQueryTestScenario(ids);
+        } catch (Exception e) {
+            LOGGER.error("batch query test scenario failed. {}", e);
+            throw new IllegalArgumentException("batch query test scenario failed.");
+        }
+    }
 }

@@ -14,47 +14,48 @@
 package org.edgegallery.atp.service;
 
 import java.util.List;
-import org.edgegallery.atp.model.testscenario.TestScenario;
+import org.edgegallery.atp.model.testsuite.TestSuite;
 
-public interface TestScenarioService {
+public interface TestSuiteService {
     /**
-     * create test scenario
+     * create test suite
      * 
-     * @param testScenario test scenario info
-     * @return test scenario info
+     * @param testSuite test suite info
+     * @return test suite info
      */
-    TestScenario createTestScenario(TestScenario testScenario);
+    TestSuite createTestSuite(TestSuite testSuite);
 
     /**
-     * update test scenario
+     * update test suite
      * 
-     * @param testScenario test scenario info
-     * @return test scenario
+     * @param testSuite test suite info
+     * @return test suite info
      */
-    TestScenario updateTestScenario(TestScenario testScenario);
+    TestSuite updateTestSuite(TestSuite testSuite);
 
     /**
-     * delete test scenario by id
+     * delete test suite by id
      * 
-     * @param id test scenario id
+     * @param id test suite id
      * @return true
      */
-    Boolean deleteTestScenario(String id);
+    Boolean deleteTestSuite(String id);
 
     /**
-     * get test scenario by id
+     * get test suite by id
      * 
-     * @param id test scenario id
-     * @return test scenario info
+     * @param id test suite id
+     * @return test suite info
      */
-    TestScenario getTestScenario(String id);
+    TestSuite getTestSuite(String id);
 
     /**
-     * get all test scenarios
+     * get all test suites
      * 
      * @param locale locale language
      * @param name test case name
-     * @return test scenario list
+     * @param scenarioIdList scenario id list test suite belongs to
+     * @return test suite list
      */
-    List<TestScenario> queryAllTestScenario(String locale, String name);
+    List<TestSuite> queryAllTestSuite(String locale, String name, List<String> scenarioIdList);
 }

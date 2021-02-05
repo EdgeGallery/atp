@@ -15,7 +15,7 @@ package org.edgegallery.atp.service;
 
 import java.util.List;
 import org.edgegallery.atp.model.testscenario.TestScenario;
-import org.edgegallery.atp.repository.testScenario.TestScenarioRepository;
+import org.edgegallery.atp.repository.testscenario.TestScenarioRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,13 @@ public class TestScenarioServiceImpl implements TestScenarioService {
     TestScenarioRepository testScenarioRepository;
 
     @Override
-    public TestScenario creatTestScenario(TestScenario testScenario) {
+    public TestScenario createTestScenario(TestScenario testScenario) {
+        // nameCh or nameEn must exist one
+        testScenario.setNameCh(null != testScenario.getNameCh() ? testScenario.getNameCh() : testScenario.getNameEn());
+        testScenario.setNameEn(null != testScenario.getNameEn() ? testScenario.getNameEn() : testScenario.getNameCh());
+        if (null == testScenario.getNameCh() && null == testScenario.getNameEn()) {
+            throw new IllegalArgumentException("both nameCh and nameEn is null.");
+        }
         checkNameExists(testScenario);
         testScenarioRepository.createTestScenario(testScenario);
         LOGGER.info("create test scenario successfully.");

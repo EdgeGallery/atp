@@ -57,16 +57,16 @@ public class TestScenarioController {
             @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
     @PreAuthorize("hasRole('ATP_TENANT')")
     public ResponseEntity<TestScenario> createTestScenario(
-            @ApiParam(value = "test scenario chinese name", required = true) @RequestParam("name_zh") String nameCh,
-            @ApiParam(value = "test scenario english name", required = true) @RequestParam("name_en") String nameEn,
+            @ApiParam(value = "test scenario chinese name", required = true) @RequestParam("nameCh") String nameCh,
+            @ApiParam(value = "test scenario english name", required = true) @RequestParam("nameEn") String nameEn,
             @ApiParam(value = "test scenario chinese description",
-                    required = true) @RequestParam("description_zh") String descriptionZn,
+                    required = true) @RequestParam("descriptionCh") String descriptionZn,
             @ApiParam(value = "test scenario english description",
-                    required = true) @RequestParam("description_en") String descriptionEn) {
+                    required = true) @RequestParam("descriptionEn") String descriptionEn) {
         TestScenario testScenario =
                 TestScenario.builder().setId(CommonUtil.generateId()).setDescriptionEn(descriptionEn)
                 .setdescriptionCh(descriptionZn).setNameEn(nameEn).setnameCh(nameCh).build();
-        return ResponseEntity.ok(testScenarioService.creatTestScenario(testScenario));
+        return ResponseEntity.ok(testScenarioService.createTestScenario(testScenario));
     }
 
     @PutMapping(value = "/testscenarios/{id}", produces = MediaType.APPLICATION_JSON)
@@ -76,12 +76,12 @@ public class TestScenarioController {
     @PreAuthorize("hasRole('ATP_TENANT')")
     public ResponseEntity<TestScenario> updateTestScenario(
             @ApiParam(value = "test scenario id") @PathVariable("id") @Pattern(regexp = REG_ID) String id,
-            @ApiParam(value = "test scenario chinese name", required = false) @RequestParam("name_zh") String nameCh,
-            @ApiParam(value = "test scenario english name", required = false) @RequestParam("name_en") String nameEn,
+            @ApiParam(value = "test scenario chinese name", required = false) @RequestParam("nameCh") String nameCh,
+            @ApiParam(value = "test scenario english name", required = false) @RequestParam("nameEn") String nameEn,
             @ApiParam(value = "test scenario chinese description",
-                    required = false) @RequestParam("description_zh") String descriptionZn,
+                    required = false) @RequestParam("descriptionCh") String descriptionZn,
             @ApiParam(value = "test scenario english description",
-                    required = false) @RequestParam("description_en") String descriptionEn) {
+                    required = false) @RequestParam("descriptionEn") String descriptionEn) {
         TestScenario testScenario = TestScenario.builder().setId(id).setDescriptionEn(descriptionEn)
                 .setdescriptionCh(descriptionZn).setNameEn(nameEn).setnameCh(nameCh).build();
         return ResponseEntity.ok(testScenarioService.updateTestScenario(testScenario));
@@ -103,7 +103,7 @@ public class TestScenarioController {
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_TENANT')")
     public ResponseEntity<TestScenario> queryTestScenario(
-            @ApiParam(value = "test case id") @PathVariable("id") @Pattern(regexp = REG_ID) String id) {
+            @ApiParam(value = "test scenario id") @PathVariable("id") @Pattern(regexp = REG_ID) String id) {
         return ResponseEntity.ok(testScenarioService.getTestScenario(id));
     }
 

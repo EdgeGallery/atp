@@ -25,27 +25,27 @@ public class TestScenario {
     /**
      * test scenario id
      */
-    String id;
+    private String id;
     
     /**
      * test scenario chinese name
      */
-    String nameCh;
+    private String nameCh;
     
     /**
      * test scenario english name
      */
-    String nameEn;
+    private String nameEn;
     
     /**
      * test scenario chinese description
      */
-    String descriptionCh;
+    private String descriptionCh;
     
     /**
      * test scenario english description
      */
-    String descriptionEn;
+    private String descriptionEn;
     
     public TestScenario() {
         
@@ -64,15 +64,15 @@ public class TestScenario {
     }
     
     public static final class Builder{
-        String id;
+        private String id;
         
-        String nameCh;
+        private String nameCh;
         
-        String nameEn;
+        private String nameEn;
         
-        String descriptionCh;
+        private String descriptionCh;
         
-        String descriptionEn;
+        private String descriptionEn;
         
         private Builder() {
             

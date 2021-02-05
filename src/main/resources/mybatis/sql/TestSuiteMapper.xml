@@ -16,11 +16,11 @@
   -->
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.edgegallery.atp.repository.mapper.TestScenarioMapper">
-    <select id="getTestScenarioByName"
-            resultType="org.edgegallery.atp.model.testscenario.TestScenario"
+<mapper namespace="org.edgegallery.atp.repository.mapper.TestSuiteMapper">
+    <select id="getTestSuiteByName"
+            resultType="org.edgegallery.atp.model.testsuite.TestSuitePo"
             parameterType="String">
-        select * from test_scenario_table
+        select * from test_suite_table
          <where>
           <if test="nameEn != null and nameEn !=''">
             nameEn = #{nameEn}
@@ -31,10 +31,10 @@
         </where>
     </select>
     
-    <select id="getAllTestScenario"
-            resultType="org.edgegallery.atp.model.testscenario.TestScenario"
+    <select id="getAllTestSuite"
+            resultType="org.edgegallery.atp.model.testsuite.TestSuitePo"
             parameterType="String">
-        select * from test_scenario_table
+        select * from test_suite_table
          <where>
           <if test="nameEn != null and nameEn !=''">
             nameEn ~* #{nameEn}
@@ -42,23 +42,26 @@
           <if test="nameCh != null and nameCh !=''">
              nameCh ~* #{nameCh}
           </if>
+          <if test="scenarioId != null and scenarioId !=''">
+            and scenarioIdList ~* #{scenarioId}
+          </if>
         </where>
     </select>
     
-    <insert id="createTestScenario"
-		parameterType="org.edgegallery.atp.model.testscenario.TestScenario">
+    <insert id="createTestSuite"
+		parameterType="org.edgegallery.atp.model.testsuite.TestSuitePo">
 		insert into
-		test_scenario_table
-		(id, nameCh, nameEn, descriptionCh, descriptionEn)
+		test_suite_table
+		(id, nameCh, nameEn, descriptionCh, descriptionEn,scenarioIdList)
 		VALUES
 		(#{id}, #{nameCh}, #{nameEn},
 		#{descriptionCh},
-		#{descriptionEn})
+		#{descriptionEn},#{scenarioIdList})
 	</insert>
   
-   <update id="updateTestScenario" parameterType="org.edgegallery.atp.model.testscenario.TestScenario">
+   <update id="updateTestSuite" parameterType="org.edgegallery.atp.model.testsuite.TestSuitePo">
         UPDATE
-        test_scenario_table set       
+        test_suite_table set       
           <if test="nameEn != null and nameEn !=''">
             nameEn = #{nameEn},
           </if>
@@ -70,30 +73,25 @@
           </if>  
           <if test="descriptionEn != null and descriptionEn !=''">
             descriptionEn = #{descriptionEn},
-          </if>                               
+          </if>   
+          <if test="scenarioIdList != null">
+            scenarioIdList = #{scenarioIdList},
+          </if>                              
            id=#{id}
         where id = #{id}
     </update>
     
-    <delete id="deleteTestScenario" parameterType="java.lang.String">
+    <delete id="deleteTestSuite" parameterType="java.lang.String">
         DELETE FROM
-        test_scenario_table
+        test_suite_table
         WHERE
         id = #{id}
     </delete>
     
-    <select id="getTestScenarioById"
-            resultType="org.edgegallery.atp.model.testscenario.TestScenario"
+    <select id="getTestSuiteById"
+            resultType="org.edgegallery.atp.model.testsuite.TestSuitePo"
             parameterType="String">
-        select * from test_scenario_table where id = #{id}
+        select * from test_suite_table where id = #{id}
     </select>
     
-    <select id="batchQueryTestScenario"
-            resultType="org.edgegallery.atp.model.testscenario.TestScenario"
-            parameterType="String">
-        select * from test_scenario_table where id in 
-	    <foreach collection="ids" item="id" open="(" close=")" separator=",">
-	      #{id}
-	   </foreach>
-    </select>
 </mapper>

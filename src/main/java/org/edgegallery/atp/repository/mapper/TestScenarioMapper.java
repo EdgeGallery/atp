@@ -55,4 +55,11 @@ public interface TestScenarioMapper {
      */
     void deleteTestScenario(String id);
 
+    /**
+     * batch query test scenario by ids
+     * 
+     * @param ids test scenario ids
+     * @return test scenario list
+     */
+    List<TestScenario> batchQueryTestScenario(@Param("ids") List<String> ids);
 }
