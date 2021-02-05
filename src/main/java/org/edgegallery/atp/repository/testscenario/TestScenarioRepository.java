@@ -11,7 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.edgegallery.atp.repository.testScenario;
+package org.edgegallery.atp.repository.testscenario;
 
 import java.util.List;
 import org.edgegallery.atp.model.testscenario.TestScenario;
@@ -64,4 +64,11 @@ public interface TestScenarioRepository {
      */
     List<TestScenario> getAllTestScenarios(String locale, String name);
 
+    /**
+     * batch query test scenario by ids
+     * 
+     * @param ids test scenario ids
+     * @return test scenario list
+     */
+    List<TestScenario> batchQueryTestScenario(List<String> ids);
 }

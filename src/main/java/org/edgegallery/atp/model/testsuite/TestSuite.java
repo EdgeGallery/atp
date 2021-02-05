@@ -14,7 +14,6 @@
 package org.edgegallery.atp.model.testsuite;
 
 import java.util.List;
-import org.edgegallery.atp.model.testscenario.TestScenario.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,32 +24,32 @@ public class TestSuite {
     /**
      * test suite id
      */
-    String id;
+    private String id;
 
     /**
      * test suite chinese name
      */
-    String nameCh;
+    private String nameCh;
 
     /**
      * test suite english name
      */
-    String nameEn;
+    private String nameEn;
 
     /**
      * test suite chinese description
      */
-    String descriptionCh;
+    private String descriptionCh;
 
     /**
      * test suite english description
      */
-    String descriptionEn;
+    private String descriptionEn;
 
     /**
      * the test scenario id list that the test suite belong to
      */
-    List<String> scenarioIdList;
+    private List<String> scenarioIdList;
 
     public TestSuite() {
 
@@ -69,17 +68,15 @@ public class TestSuite {
     }
 
     public static final class Builder {
-        String id;
+        private String id;
 
-        String nameCh;
+        private String nameCh;
 
-        String nameEn;
+        private String nameEn;
 
-        String descriptionCh;
+        private String descriptionCh;
 
-        String descriptionEn;
-
-        List<String> scenarioIdList;
+        private String descriptionEn;
 
         private Builder() {
 
@@ -109,7 +106,7 @@ public class TestSuite {
             this.descriptionCh = descriptionCh;
             return this;
         }
-
+        
         public TestSuite build() {
             return new TestSuite(this);
 
