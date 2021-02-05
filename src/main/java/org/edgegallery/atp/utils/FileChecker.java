@@ -161,16 +161,16 @@ public class FileChecker {
                 ZipEntry entry = entries.nextElement();
                 String[] pathSplit = entry.getName().split(Constant.SLASH);
 
-                // fileName/APPD/Definition/MainServiceTemplate.yaml
-                if (pathSplit.length == 3 && Constant.DEFINITIONS.equals(pathSplit[2].trim())
-                        && pathSplit[3].trim().endsWith(Constant.PACKAGE_YAML_FORMAT)) {
+                // APPD/Definition/MainServiceTemplate.yaml
+                if (pathSplit.length == 3 && Constant.DEFINITIONS.equals(pathSplit[1].trim())
+                        && pathSplit[2].trim().endsWith(Constant.PACKAGE_YAML_FORMAT)) {
                     analysisDependency(result, zipFile, entry);
                     break;
                 }
             }
             LOGGER.info("dependencyCheck end.");
-        } catch (IOException e) {
-            LOGGER.error("dependency Check failed. {}", e.getMessage());
+        } catch (Exception e) {
+            LOGGER.error("dependency Check failed. {}", e);
         }
         return result;
     }

@@ -73,40 +73,35 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public TaskRequest createTask(MultipartFile file, Boolean isRun) {
+        String taskId = CommonUtil.generateId();
+        File tempFile = FileChecker.check(file, taskId);
+
+        Map<String, String> context = AccessTokenFilter.context.get();
+        User user = new User(context.get(Constant.USER_ID), context.get(Constant.USER_NAME));
+
+        TaskRequest task = new TaskRequest();
+        task.setId(taskId);
+        task.setUser(user);
+
         try {
-            String taskId = CommonUtil.generateId();
-            File tempFile = FileChecker.check(file, taskId);
+            String filePath = tempFile.getCanonicalPath();
+            initTaskRequset(task, filePath);
 
-            Map<String, String> context = AccessTokenFilter.context.get();
-            User user = new User(context.get(Constant.USER_ID), context.get(Constant.USER_NAME));
+            if (isRun) {
+                Map<String, String> contextInfo = new HashMap<String, String>();
+                contextInfo.put(Constant.ACCESS_TOKEN, context.get(Constant.ACCESS_TOKEN));
+                CommonUtil.dependencyCheckSchdule(filePath, new Stack<Map<String, String>>(), context);
 
-            TaskRequest task = new TaskRequest();
-            task.setId(taskId);
-            task.setUser(user);
-
-            try {
-                String filePath = tempFile.getCanonicalPath();
-                initTaskRequset(task, filePath);
-
-                if (isRun) {
-                    Map<String, String> contextInfo = new HashMap<String, String>();
-                    contextInfo.put(Constant.ACCESS_TOKEN, context.get(Constant.ACCESS_TOKEN));
-                    CommonUtil.dependencyCheckSchdule(filePath, new Stack<Map<String, String>>(), context);
-
-                    task.setAccessToken(context.get(Constant.ACCESS_TOKEN));
-                    task.setStatus(Constant.WAITING);
-                    testCaseManager.executeTestCase(task, task.getPackagePath());
-                }
-
-                taskRepository.insert(task);
-                LOGGER.info("create task successfully.");
-                return task;
-            } catch (IOException e) {
-                LOGGER.error("create task {} failed, file name is: {}", taskId, tempFile.getName());
-                throw new IllegalArgumentException("create task failed.");
+                task.setAccessToken(context.get(Constant.ACCESS_TOKEN));
+                task.setStatus(Constant.WAITING);
+                testCaseManager.executeTestCase(task, task.getPackagePath());
             }
-        } catch (Exception e) {
-            LOGGER.error("create task failed. {}", e);
+
+            taskRepository.insert(task);
+            LOGGER.info("create task successfully.");
+            return task;
+        } catch (IOException e) {
+            LOGGER.error("create task {} failed, file name is: {}", taskId, tempFile.getName());
             throw new IllegalArgumentException("create task failed.");
         }
     }
@@ -219,10 +214,10 @@ public class TaskServiceImpl implements TaskService {
         AnalysisResult analysisResult = new AnalysisResult();
 
         Date curTime = taskRepository.getCurrentDate();
-        Calendar calendar = Calendar.getInstance(); 
+        Calendar calendar = Calendar.getInstance();
         int date = curTime.getDate();
         calendar.setTime(curTime);
-        //first day of month
+        // first day of month
         calendar.add(Calendar.DATE, -date);
         Date firstDayOfMonth = calendar.getTime();
         int oneMonthDays = firstDayOfMonth.getDate();
