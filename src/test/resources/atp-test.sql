@@ -54,6 +54,16 @@ CREATE TABLE TEST_SUITE_TABLE (
     CONSTRAINT test_suite_table_pkey PRIMARY KEY (ID)
 );
 
+DROP TABLE IF EXISTS FILE_TABLE;
+
+CREATE TABLE FILE_TABLE (
+    FILEID                   VARCHAR(200)       NOT NULL,
+    TYPE                     VARCHAR(200)       NOT NULL,
+    CREATETIME               TIMESTAMP          NULL,
+    FILEPATH                 VARCHAR(200)       NULL
+);
+alter table FILE_TABLE add constraint file_table_pkey unique(FILEID,TYPE);
+
 
 INSERT INTO public.test_case_table(
   id, name, hashCode,type, classname,  description,filePath,codeLanguage,expectResult,verificationModel)

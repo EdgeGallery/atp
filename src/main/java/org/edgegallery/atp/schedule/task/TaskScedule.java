@@ -37,7 +37,7 @@ import org.springframework.util.FileCopyUtils;
 class TaskSchedule {
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskSchedule.class);
 
-    private static final String BASIC_PATH = FileChecker.getDir() + File.separator + "testCase" + File.separator;
+    private static final String BASIC_PATH = FileChecker.getDir() + "/file/testCase/";
 
     @Autowired
     TaskRepository taskRepository;

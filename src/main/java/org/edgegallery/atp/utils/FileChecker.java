@@ -135,6 +135,22 @@ public class FileChecker {
     }
 
     /**
+     * copy file to target path
+     * 
+     * @param file source file
+     * @param path target path
+     */
+    public static void copyFileToDir(MultipartFile file, String path) {
+        try {
+            createFile(path);
+            File targetFile = new File(path);
+            file.transferTo(targetFile);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("copy file to dir with IOException");
+        }
+    }
+
+    /**
      * get directory of different system
      * 
      * @return

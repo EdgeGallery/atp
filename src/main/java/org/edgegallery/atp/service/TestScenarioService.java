@@ -15,6 +15,7 @@ package org.edgegallery.atp.service;
 
 import java.util.List;
 import org.edgegallery.atp.model.testscenario.TestScenario;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface TestScenarioService {
     /**
@@ -23,7 +24,7 @@ public interface TestScenarioService {
      * @param testScenario test scenario info
      * @return test scenario info
      */
-    TestScenario createTestScenario(TestScenario testScenario);
+    TestScenario createTestScenario(TestScenario testScenario, MultipartFile icon);
 
     /**
      * update test scenario
@@ -31,7 +32,7 @@ public interface TestScenarioService {
      * @param testScenario test scenario info
      * @return test scenario
      */
-    TestScenario updateTestScenario(TestScenario testScenario);
+    TestScenario updateTestScenario(TestScenario testScenario, MultipartFile icon);
 
     /**
      * delete test scenario by id

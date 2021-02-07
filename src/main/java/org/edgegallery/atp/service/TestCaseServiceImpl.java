@@ -43,7 +43,7 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseServiceImpl.class);
 
-    private static final String BASIC_PATH = FileChecker.getDir() + File.separator + "testCase" + File.separator;
+    private static final String BASIC_PATH = FileChecker.getDir() + "/file/testCase/";
 
     @Autowired
     TestCaseRepository testCaseRepository;

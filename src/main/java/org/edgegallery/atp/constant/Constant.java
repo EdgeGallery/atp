@@ -186,4 +186,6 @@ public interface Constant {
     String LOCALE_CH = "ch";
 
     String LOCALE_EN = "en";
+
+    String FILE_TYPE_SCENARIO = "scenario";
 }

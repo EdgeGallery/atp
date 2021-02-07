@@ -34,6 +34,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -62,11 +64,12 @@ public class TestScenarioController {
             @ApiParam(value = "test scenario chinese description",
                     required = true) @RequestParam("descriptionCh") String descriptionZn,
             @ApiParam(value = "test scenario english description",
-                    required = true) @RequestParam("descriptionEn") String descriptionEn) {
+                    required = true) @RequestParam("descriptionEn") String descriptionEn,
+            @ApiParam(value = "test scenario icon", required = true) @RequestPart("icon") MultipartFile icon) {
         TestScenario testScenario =
                 TestScenario.builder().setId(CommonUtil.generateId()).setDescriptionEn(descriptionEn)
                 .setdescriptionCh(descriptionZn).setNameEn(nameEn).setnameCh(nameCh).build();
-        return ResponseEntity.ok(testScenarioService.createTestScenario(testScenario));
+        return ResponseEntity.ok(testScenarioService.createTestScenario(testScenario, icon));
     }
 
     @PutMapping(value = "/testscenarios/{id}", produces = MediaType.APPLICATION_JSON)
@@ -81,10 +84,11 @@ public class TestScenarioController {
             @ApiParam(value = "test scenario chinese description",
                     required = false) @RequestParam("descriptionCh") String descriptionZn,
             @ApiParam(value = "test scenario english description",
-                    required = false) @RequestParam("descriptionEn") String descriptionEn) {
+                    required = false) @RequestParam("descriptionEn") String descriptionEn,
+            @ApiParam(value = "test scenario icon", required = false) @RequestPart("icon") MultipartFile icon) {
         TestScenario testScenario = TestScenario.builder().setId(id).setDescriptionEn(descriptionEn)
                 .setdescriptionCh(descriptionZn).setNameEn(nameEn).setnameCh(nameCh).build();
-        return ResponseEntity.ok(testScenarioService.updateTestScenario(testScenario));
+        return ResponseEntity.ok(testScenarioService.updateTestScenario(testScenario, icon));
     }
 
     @DeleteMapping(value = "/testscenarios/{id}", produces = MediaType.APPLICATION_JSON)
