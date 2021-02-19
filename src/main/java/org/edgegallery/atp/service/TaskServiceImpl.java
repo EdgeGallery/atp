@@ -108,36 +108,42 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public CommonActionRes preCheck(String taskId) {
-        CommonActionRes result = new CommonActionRes();
-        TaskRequest task =
-                taskRepository.findByTaskIdAndUserId(taskId, AccessTokenFilter.context.get().get(Constant.USER_ID));
+        try {
+            CommonActionRes result = new CommonActionRes();
+            TaskRequest task =
+                    taskRepository.findByTaskIdAndUserId(taskId, AccessTokenFilter.context.get().get(Constant.USER_ID));
 
-        if (null == task) {
-            throw new IllegalArgumentException("taskId do not exists.");
+            if (null == task) {
+                throw new IllegalArgumentException("taskId do not exists.");
+            }
+
+            String filePath = task.getPackagePath();
+
+            // key is appId, value is packageId
+            Stack<Map<String, String>> dependencyAppList = new Stack<Map<String, String>>();
+            Map<String, String> context = new HashMap<String, String>();
+            context.put(Constant.ACCESS_TOKEN, AccessTokenFilter.context.get().get(Constant.ACCESS_TOKEN));
+            CommonUtil.dependencyCheckSchdule(filePath, dependencyAppList, context);
+
+            Map<String, String> getDependencyInfo = new HashMap<String, String>();
+            dependencyAppList.forEach(map -> {
+                JsonObject response =
+                        CommonUtil.getAppInfoFromAppStore(map.get(Constant.APP_ID), map.get(Constant.PACKAGE_ID));
+                if (null != response) {
+                    JsonElement appName = response.get("name");
+                    JsonElement appVersion = response.get("version");
+                    getDependencyInfo.put(appName.getAsString(), appVersion.getAsString());
+                }
+            });
+            result.setDependency(getDependencyInfo);
+
+            LOGGER.info("pre-check successfully.");
+            return result;
+        } catch (Exception e) {
+            LOGGER.error("pre-check failed. {}", e);
+            throw new IllegalArgumentException("pre-check failed.");
         }
 
-        String filePath = task.getPackagePath();
-
-        // key is appId, value is packageId
-        Stack<Map<String, String>> dependencyAppList = new Stack<Map<String, String>>();
-        Map<String, String> context = new HashMap<String, String>();
-        context.put(Constant.ACCESS_TOKEN, AccessTokenFilter.context.get().get(Constant.ACCESS_TOKEN));
-        CommonUtil.dependencyCheckSchdule(filePath, dependencyAppList, context);
-
-        Map<String, String> getDependencyInfo = new HashMap<String, String>();
-        dependencyAppList.forEach(map -> {
-            JsonObject response =
-                    CommonUtil.getAppInfoFromAppStore(map.get(Constant.APP_ID), map.get(Constant.PACKAGE_ID));
-            if (null != response) {
-                JsonElement appName = response.get("name");
-                JsonElement appVersion = response.get("version");
-                getDependencyInfo.put(appName.getAsString(), appVersion.getAsString());
-            }
-        });
-        result.setDependency(getDependencyInfo);
-
-        LOGGER.info("pre-check successfully.");
-        return result;
     }
 
     @Override
