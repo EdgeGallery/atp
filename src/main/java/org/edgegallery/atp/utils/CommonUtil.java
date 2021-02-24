@@ -36,7 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ExceptionConstant;
 import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
-import org.edgegallery.atp.model.testcase.TestCaseResult;
+import org.edgegallery.atp.model.task.testScenarios.TaskTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
@@ -87,7 +87,7 @@ public class CommonUtil {
      * @param file csar file
      */
     public static boolean deleteTempFile(String fileId, MultipartFile file) {
-        return new File(new StringBuilder().append(FileChecker.getDir()).append(File.separator).append("temp")
+        return new File(new StringBuilder().append(Constant.WORK_TEMP_DIR)
                 .append(File.separator).append(fileId).append(Constant.UNDER_LINE).append(file.getOriginalFilename())
                 .toString()).delete();
     }
@@ -501,16 +501,16 @@ public class CommonUtil {
      * @param response execute response result
      * @param result test case result
      */
-    public static void setResult(Object response, TestCaseResult result) {
+    public static void setResult(Object response, TaskTestCase taskTestCase) {
         if (null == response) {
             LOGGER.error(ExceptionConstant.METHOD_RETURN_IS_NULL);
-            result.setResult(Constant.FAILED);
-            result.setReason(ExceptionConstant.METHOD_RETURN_IS_NULL);
+            taskTestCase.setResult(Constant.FAILED);
+            taskTestCase.setReason(ExceptionConstant.METHOD_RETURN_IS_NULL);
         } else if (Constant.SUCCESS.equalsIgnoreCase(response.toString())) {
-            result.setResult(Constant.SUCCESS);
+            taskTestCase.setResult(Constant.SUCCESS);
         } else {
-            result.setResult(Constant.FAILED);
-            result.setReason(response.toString());
+            taskTestCase.setResult(Constant.FAILED);
+            taskTestCase.setReason(response.toString());
         }
     }
 }

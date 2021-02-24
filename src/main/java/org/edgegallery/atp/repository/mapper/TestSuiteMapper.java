@@ -58,4 +58,11 @@ public interface TestSuiteMapper {
      */
     void deleteTestSuite(String id);
 
+    /**
+     * batch query test suites
+     * 
+     * @param ids test suite ids
+     * @return test suite list
+     */
+    List<TestSuitePo> batchQueryTestSuites(@Param("ids") List<String> ids);
 }

@@ -94,4 +94,12 @@
         select * from test_suite_table where id = #{id}
     </select>
     
+    <select id="batchQueryTestSuites"
+            resultType="org.edgegallery.atp.model.testsuite.TestSuitePo"
+            parameterType="String">
+        select * from test_suite_table where id in 
+	    <foreach collection="ids" item="id" open="(" close=")" separator=",">
+	      #{id}
+	   </foreach>
+    </select>
 </mapper>

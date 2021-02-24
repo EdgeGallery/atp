@@ -27,8 +27,8 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 import org.edgegallery.atp.constant.Constant;
+import org.edgegallery.atp.model.task.testScenarios.TaskTestCase;
 import org.edgegallery.atp.model.testcase.TestCase;
-import org.edgegallery.atp.model.testcase.TestCaseResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +40,7 @@ public class JavaCompileUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JavaCompileUtil.class);
 
-    public static void executeJava(TestCase testCase, String csarFilePath, TestCaseResult result,
+    public static void executeJava(TestCase testCase, String csarFilePath, TaskTestCase taskTestCase,
             Map<String, String> context) {
         try {
             String className = testCase.getClassName();
@@ -52,13 +52,13 @@ public class JavaCompileUtil {
                 Class<?> clazz = clsLoader.loadClass(className);
                 Object response = clazz.getMethod("execute", String.class, Map.class).invoke(clazz.newInstance(),
                         csarFilePath, context);
-                CommonUtil.setResult(response, result);
+                CommonUtil.setResult(response, taskTestCase);
             }
 
         } catch (Exception e) {
             LOGGER.error("dynamic compile failed. {}", e);
-            result.setResult(Constant.FAILED);
-            result.setReason("dynamic compile failed.");
+            taskTestCase.setResult(Constant.FAILED);
+            taskTestCase.setReason("dynamic compile failed.");
         }
 
     }

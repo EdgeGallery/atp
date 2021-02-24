@@ -65,4 +65,11 @@ public interface TestSuiteRepository {
      */
     List<TestSuite> getAllTestSuites(String locale, String name, String scenarioId);
 
+    /**
+     * batch query test suites
+     * 
+     * @param ids test suite ids
+     * @return test suite list
+     */
+    List<TestSuite> batchQueryTestSuites(List<String> ids);
 }

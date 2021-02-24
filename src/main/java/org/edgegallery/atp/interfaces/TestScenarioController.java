@@ -20,6 +20,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
 import org.edgegallery.atp.model.testscenario.TestScenario;
+import org.edgegallery.atp.model.testscenario.testcase.AllTestScenarios;
 import org.edgegallery.atp.service.TestScenarioService;
 import org.edgegallery.atp.utils.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,7 +69,7 @@ public class TestScenarioController {
             @ApiParam(value = "test scenario icon", required = true) @RequestPart("icon") MultipartFile icon) {
         TestScenario testScenario =
                 TestScenario.builder().setId(CommonUtil.generateId()).setDescriptionEn(descriptionEn)
-                .setdescriptionCh(descriptionZn).setNameEn(nameEn).setnameCh(nameCh).build();
+                        .setdescriptionCh(descriptionZn).setNameEn(nameEn).setnameCh(nameCh).build();
         return ResponseEntity.ok(testScenarioService.createTestScenario(testScenario, icon));
     }
 
@@ -120,6 +121,16 @@ public class TestScenarioController {
             @ApiParam(value = "locale language") @QueryParam("locale") String locale,
             @ApiParam(value = "test scenario name") @QueryParam("name") String name) {
         return ResponseEntity.ok(testScenarioService.queryAllTestScenario(locale, name));
+    }
+
+    @PostMapping(value = "/testscenarios/testcases", produces = MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "get all test cases belonged to special test scenario id list.", response = String.class)
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
+            @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
+    @PreAuthorize("hasRole('ATP_TENANT')")
+    public ResponseEntity<List<AllTestScenarios>> getTestCasesByScenarioIds(@ApiParam(value = "test scenario id list",
+            required = true) @RequestParam("scenarioIds") List<String> ids) {
+        return ResponseEntity.ok(testScenarioService.getTestCasesByScenarioIds(ids));
     }
 }
 

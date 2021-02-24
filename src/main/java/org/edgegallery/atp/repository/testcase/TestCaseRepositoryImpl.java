@@ -15,7 +15,10 @@
 package org.edgegallery.atp.repository.testcase;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.model.testcase.TestCase;
+import org.edgegallery.atp.model.testcase.TestCasePo;
 import org.edgegallery.atp.repository.mapper.TestCaseMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,9 +34,13 @@ public class TestCaseRepositoryImpl implements TestCaseRepository {
     private TestCaseMapper testCaseMapper;
 
     @Override
-    public List<TestCase> findAllTestCases(String type, String name, String verificationModel) {
+    public List<TestCase> findAllTestCases(String type, String locale, String name, String testSuiteId) {
         try {
-            return testCaseMapper.findAllTestCases(type, name, verificationModel);
+            String nameCh = Constant.LOCALE_CH.equalsIgnoreCase(locale) ? name : null;
+            String nameEn = Constant.LOCALE_EN.equalsIgnoreCase(locale) ? name : null;
+            List<TestCasePo> testCasePoList = testCaseMapper.findAllTestCases(type, nameCh, nameEn, testSuiteId);
+            return null == testCasePoList ? null
+                    : testCasePoList.stream().map(testCasePo -> testCasePo.toDomain()).collect(Collectors.toList());
         } catch (Exception e) {
             LOGGER.error("findAllTestCases failed. {}", e);
             throw new IllegalArgumentException("findAllTestCases failed.");
@@ -43,7 +50,8 @@ public class TestCaseRepositoryImpl implements TestCaseRepository {
     @Override
     public TestCase findByNameAndType(String name, String type) {
         try {
-            return testCaseMapper.findByNameAndType(name, type);
+            return null == testCaseMapper.findByNameAndType(name, type) ? null
+                    : testCaseMapper.findByNameAndType(name, type).toDomain();
         } catch (Exception e) {
             LOGGER.error("findByNameAndType failed. {}", e);
             throw new IllegalArgumentException("findByNameAndType failed.");
@@ -53,7 +61,7 @@ public class TestCaseRepositoryImpl implements TestCaseRepository {
     @Override
     public void insert(TestCase testCase) {
         try {
-            testCaseMapper.insert(testCase);
+            testCaseMapper.insert(testCase.of());
         } catch (Exception e) {
             LOGGER.error("insert test case failed. {}", e);
             throw new IllegalArgumentException("insert test case failed.");
@@ -63,7 +71,7 @@ public class TestCaseRepositoryImpl implements TestCaseRepository {
     @Override
     public void update(TestCase testCase) {
         try {
-            testCaseMapper.update(testCase);
+            testCaseMapper.update(testCase.of());
         } catch (Exception e) {
             LOGGER.error("update test case failed. {}", e);
             throw new IllegalArgumentException("update test case failed.");
@@ -83,7 +91,7 @@ public class TestCaseRepositoryImpl implements TestCaseRepository {
     @Override
     public TestCase getTestCaseById(String id) {
         try {
-            return testCaseMapper.getTestCaseById(id);
+            return null == testCaseMapper.getTestCaseById(id) ? null : testCaseMapper.getTestCaseById(id).toDomain();
         } catch (Exception e) {
             LOGGER.error("getTestCaseById failed. {}", e);
             throw new IllegalArgumentException("getTestCaseById failed.");
@@ -91,9 +99,10 @@ public class TestCaseRepositoryImpl implements TestCaseRepository {
     }
 
     @Override
-    public TestCase findByName(String name) {
+    public TestCase findByName(String nameCh, String nameEn) {
         try {
-            return testCaseMapper.findByName(name);
+            return null == testCaseMapper.findByName(nameCh, nameEn) ? null
+                    : testCaseMapper.findByName(nameCh, nameEn).toDomain();
         } catch (Exception e) {
             LOGGER.error("findByName failed. {}", e);
             throw new IllegalArgumentException("findByName failed.");
@@ -103,7 +112,8 @@ public class TestCaseRepositoryImpl implements TestCaseRepository {
     @Override
     public TestCase findByClassName(String className) {
         try {
-            return testCaseMapper.findByClassName(className);
+            return null == testCaseMapper.findByClassName(className) ? null
+                    : testCaseMapper.findByClassName(className).toDomain();
         } catch (Exception e) {
             LOGGER.error("findByClassName failed. {}", e);
             throw new IllegalArgumentException("findByClassName failed.");

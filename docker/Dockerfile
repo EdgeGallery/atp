@@ -46,6 +46,7 @@ RUN apk update &&\
 COPY target/*.jar $APP_HOME/
 
 COPY target/classes/testCase/ $APP_HOME/testCases/
+COPY target/classes/icon/ $APP_HOME/icon/
 
 WORKDIR $APP_HOME
 

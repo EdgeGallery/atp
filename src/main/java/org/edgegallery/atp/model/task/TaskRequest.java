@@ -17,8 +17,9 @@
 package org.edgegallery.atp.model.task;
 
 import java.util.Date;
+import java.util.List;
 import org.edgegallery.atp.model.Entity;
-import org.edgegallery.atp.model.testcase.TestCaseDetail;
+import org.edgegallery.atp.model.task.testScenarios.TaskTestScenario;
 import org.edgegallery.atp.model.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
@@ -43,7 +44,7 @@ public class TaskRequest implements Entity {
 
     private User user;
 
-    private TestCaseDetail testCaseDetail;
+    private List<TaskTestScenario> testScenarios;
 
     private String accessToken;
     
@@ -61,7 +62,7 @@ public class TaskRequest implements Entity {
         this.createTime = builder.createTime;
         this.endTime = builder.endTime;
         this.user = builder.user;
-        this.testCaseDetail = builder.testCaseDetail;
+        this.testScenarios = builder.testScenarios;
         this.packagePath  = builder.packagePath;
         this.providerId = builder.providerId;
     }
@@ -89,7 +90,7 @@ public class TaskRequest implements Entity {
 
         private User user;
 
-        private TestCaseDetail testCaseDetail;
+        private List<TaskTestScenario> testScenarios;
 
         private Builder() {
             // private construct
@@ -140,8 +141,8 @@ public class TaskRequest implements Entity {
             return this;
         }
 
-        public Builder setTestCaseDetail(TestCaseDetail testCaseDetail) {
-            this.testCaseDetail = testCaseDetail;
+        public Builder setTestCaseDetail(List<TaskTestScenario> testScenarios) {
+            this.testScenarios = testScenarios;
             return this;
         }
 

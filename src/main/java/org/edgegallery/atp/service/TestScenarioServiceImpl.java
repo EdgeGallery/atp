@@ -15,14 +15,21 @@ package org.edgegallery.atp.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.model.file.ATPFile;
+import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.model.testscenario.TestScenario;
+import org.edgegallery.atp.model.testscenario.testcase.AllTestScenarios;
+import org.edgegallery.atp.model.testscenario.testcase.AllTestSuites;
+import org.edgegallery.atp.model.testsuite.TestSuite;
 import org.edgegallery.atp.repository.file.FileRepository;
 import org.edgegallery.atp.repository.task.TaskRepository;
+import org.edgegallery.atp.repository.testcase.TestCaseRepository;
 import org.edgegallery.atp.repository.testscenario.TestScenarioRepository;
+import org.edgegallery.atp.repository.testsuite.TestSuiteRepository;
 import org.edgegallery.atp.utils.FileChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,8 +41,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class TestScenarioServiceImpl implements TestScenarioService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestScenarioServiceImpl.class);
 
-    private static final String BASIC_PATH = FileChecker.getDir() + "/file/icon/";
-
     @Autowired
     TestScenarioRepository testScenarioRepository;
 
@@ -44,6 +49,12 @@ public class TestScenarioServiceImpl implements TestScenarioService {
 
     @Autowired
     TaskRepository taskRepository;
+
+    @Autowired
+    TestCaseRepository testCaseRepository;
+
+    @Autowired
+    TestSuiteRepository testSuiteRepository;
 
     @Override
     public TestScenario createTestScenario(TestScenario testScenario, MultipartFile icon) {
@@ -54,7 +65,10 @@ public class TestScenarioServiceImpl implements TestScenarioService {
             throw new IllegalArgumentException("both nameCh and nameEn is null.");
         }
         checkNameExists(testScenario);
-        String filePath = BASIC_PATH.concat(Constant.FILE_TYPE_SCENARIO).concat(Constant.UNDER_LINE).concat(testScenario.getId());
+        String iconName = icon.getOriginalFilename();
+        String suffix = iconName.substring(icon.getOriginalFilename().indexOf(Constant.DOT) + 1);
+        String filePath = Constant.BASIC_ICON_PATH.concat(Constant.FILE_TYPE_SCENARIO).concat(Constant.UNDER_LINE)
+                .concat(testScenario.getId()).concat(Constant.DOT).concat(suffix);
         FileChecker.copyFileToDir(icon, filePath);
         ATPFile atpFile = new ATPFile(testScenario.getId(), Constant.FILE_TYPE_SCENARIO,
                 taskRepository.getCurrentDate(), filePath);
@@ -86,7 +100,7 @@ public class TestScenarioServiceImpl implements TestScenarioService {
                 File result = new File(filePath);
                 icon.transferTo(result);
             } catch (IOException e) {
-                LOGGER.error("file store failed, {}",e);
+                LOGGER.error("file store failed, {}", e);
             }
         }
         LOGGER.info("update test scenario successfully.");
@@ -114,6 +128,32 @@ public class TestScenarioServiceImpl implements TestScenarioService {
         List<TestScenario> testScenarioList = testScenarioRepository.getAllTestScenarios(locale, name);
         LOGGER.info("get all test scenarios successfully.");
         return testScenarioList;
+    }
+
+    @Override
+    public List<AllTestScenarios> getTestCasesByScenarioIds(List<String> ids) {
+        List<AllTestScenarios> result = new ArrayList<AllTestScenarios>();
+        ids.forEach(scenarioId -> {
+            TestScenario testScenario = testScenarioRepository.getTestScenarioById(scenarioId);
+            if (null == testScenario) {
+                LOGGER.error("scenarioId {} not exists", scenarioId);
+                throw new IllegalArgumentException("scenarioId not exists.");
+            }
+
+            AllTestScenarios allTestScenarios = new AllTestScenarios(testScenario);
+            List<AllTestSuites> testSuites = new ArrayList<AllTestSuites>();
+
+            List<TestSuite> testSuiteList = testSuiteRepository.getAllTestSuites(null, null, scenarioId);
+            testSuiteList.forEach(testSuite -> {
+                AllTestSuites allTestSuite = new AllTestSuites(testSuite);
+                List<TestCase> testCaseList = testCaseRepository.findAllTestCases(null, null, null, testSuite.getId());
+                allTestSuite.setTestCases(testCaseList);
+                testSuites.add(allTestSuite);
+            });
+            allTestScenarios.setTestSuites(testSuites);
+            result.add(allTestScenarios);
+        });
+        return result;
     }
 
     private void checkNameExists(TestScenario testScenario) {

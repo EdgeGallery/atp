@@ -20,9 +20,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
 import org.edgegallery.atp.model.testcase.TestCase;
+import org.edgegallery.atp.model.testsuite.TestSuiteIdList;
 import org.edgegallery.atp.service.TestCaseService;
 import org.edgegallery.atp.utils.CommonUtil;
-import org.edgegallery.atp.utils.TestCaseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
@@ -68,9 +68,12 @@ public class TestCaseController {
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT')")
     public ResponseEntity<List<TestCase>> getAllTestCases(@QueryParam("type") String type,
-            @QueryParam("name") String name, @QueryParam("verificationModel") String verificationModel) {
+            @QueryParam("locale") String locale, @QueryParam("name") String name,
+            @QueryParam("testSuiteIdList") TestSuiteIdList testSuiteIds) {
         CommonUtil.lengthCheck(type);
-        return testCaseService.getAllTestCases(type, name, verificationModel);
+        CommonUtil.lengthCheck(locale);
+        CommonUtil.lengthCheck(name);
+        return testCaseService.getAllTestCases(type, locale, name, testSuiteIds.getTestSuiteIdList());
     }
 
     @PostMapping(value = "/testcases", produces = MediaType.APPLICATION_JSON)
@@ -80,19 +83,31 @@ public class TestCaseController {
     @PreAuthorize("hasRole('ATP_TENANT')")
     public ResponseEntity<TestCase> createTestCase(
             @ApiParam(value = "test case file", required = true) @RequestPart("file") MultipartFile file,
-            @ApiParam(value = "test case name", required = true) @RequestParam("name") String name,
+            @ApiParam(value = "test case chinese name", required = true) @RequestParam("nameCh") String nameCh,
+            @ApiParam(value = "test case english name", required = true) @RequestParam("nameEn") String nameEn,
             @ApiParam(value = "test case type", required = true) @RequestParam("type") String type,
-            @ApiParam(value = "test case description",
-                    required = true) @RequestParam("description") String description,
+            @ApiParam(value = "test case chinese description",
+                    required = true) @RequestParam("descriptionCh") String descriptionCh,
+            @ApiParam(value = "test case english description",
+            required = true) @RequestParam("descriptionEn") String descriptionEn,
             @ApiParam(value = "test case code language",
                     required = true) @RequestParam("codeLanguage") String codeLanguage,
-            @ApiParam(value = "test case expect result",
-                    required = true) @RequestParam("expectResult") String expectResult,
-            @ApiParam(value = "test case verification model",
-                    required = true) @RequestParam("verificationModel") String verificationModel) {
-        return ResponseEntity.ok(testCaseService.createTestCase(file,
-                TestCaseUtil.initTestCase(null, name, type, description, codeLanguage, expectResult,
-                        verificationModel)));
+            @ApiParam(value = "test case expect result in chinese",
+                    required = true) @RequestParam("expectResultCh") String expectResultCh,
+            @ApiParam(value = "test case expect result in english",
+            required = true) @RequestParam("expectResultEn") String expectResultEn,
+            @ApiParam(value = "test case expect result in chinese",
+            required = true) @RequestParam("testStepCh") String testStepCh,
+            @ApiParam(value = "test case expect result in english",
+                    required = true) @RequestParam("testStepEn") String testStepEn,
+            @ApiParam(value = "test suite list the test case belong to",
+                    required = true) @RequestParam("testSuiteIdList") List<String> testSuiteIds) {
+        TestCase testCase = TestCase.builder().setId(CommonUtil.generateId()).setCodeLanguage(codeLanguage)
+                .setdescriptionCh(descriptionCh).setDescriptionEn(descriptionEn).setExpectResultCh(expectResultCh)
+                .setExpectResultEn(expectResultEn).setNameCh(nameCh).setNameEn(nameEn).setTestStepCh(testStepCh)
+                .setTestStepEn(testStepEn).setType(type).build().toTestCase();
+        testCase.setTestSuiteIdList(testSuiteIds);
+        return ResponseEntity.ok(testCaseService.createTestCase(file, testCase));
     }
 
     @PutMapping(value = "/testcases", produces = MediaType.APPLICATION_JSON)
@@ -103,16 +118,28 @@ public class TestCaseController {
     public ResponseEntity<TestCase> updateTestCase(
             @ApiParam(value = "test case id", required = true) @RequestParam("id") String id,
             @ApiParam(value = "test case file", required = false) @RequestPart("file") MultipartFile file,
-            @ApiParam(value = "test case description",
-                    required = false) @RequestParam("description") String description,
+            @ApiParam(value = "test case chinese description",
+                    required = false) @RequestParam("descriptionCh") String descriptionCh,
+            @ApiParam(value = "test case english description",
+                    required = false) @RequestParam("descriptionEn") String descriptionEn,
             @ApiParam(value = "test case code language",
                     required = false) @RequestParam("codeLanguage") String codeLanguage,
-            @ApiParam(value = "test case expect result",
-                    required = false) @RequestParam("expectResult") String expectResult,
-            @ApiParam(value = "test case verification model",
-                    required = false) @RequestParam(value = "verificationModel") String verificationModel) {
-        return ResponseEntity.ok(testCaseService.updateTestCase(file,
-                TestCaseUtil.initTestCase(id, null, null, description, codeLanguage, expectResult, verificationModel)));
+            @ApiParam(value = "test case expect result in chinese",
+                    required = false) @RequestParam("expectResultCh") String expectResultCh,
+            @ApiParam(value = "test case expect result in english",
+                    required = false) @RequestParam("expectResultEn") String expectResultEn,
+            @ApiParam(value = "test case test step in chinese",
+                    required = false) @RequestParam(value = "testStepCh") String testStepCh,
+            @ApiParam(value = "test case test step in english",
+                    required = false) @RequestParam(value = "testStepEn") String testStepEn,
+            @ApiParam(value = "test suite list the test case belong to",
+                    required = false) @RequestParam("testSuiteIdList") List<String> testSuiteIds) {
+        TestCase testCase = TestCase.builder().setId(id).setCodeLanguage(codeLanguage)
+                .setdescriptionCh(descriptionCh).setDescriptionEn(descriptionEn).setExpectResultCh(expectResultCh)
+                .setExpectResultEn(expectResultEn).setTestStepCh(testStepCh).setTestStepEn(testStepEn).build()
+                .toTestCase();
+        testCase.setTestSuiteIdList(testSuiteIds);
+        return ResponseEntity.ok(testCaseService.updateTestCase(file, testCase));
     }
 
     @DeleteMapping(value = "/testcases/{id}", produces = MediaType.APPLICATION_JSON)
@@ -140,7 +167,7 @@ public class TestCaseController {
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
     @PreAuthorize("hasRole('ATP_TENANT')")
-    public ResponseEntity<InputStreamResource> downloadTestReport(
+    public ResponseEntity<InputStreamResource> downloadTestCase(
             @ApiParam(value = "test case id") @PathVariable("id") @Pattern(regexp = REG_ID) String id) {
         return testCaseService.downloadTestCase(id);
     }

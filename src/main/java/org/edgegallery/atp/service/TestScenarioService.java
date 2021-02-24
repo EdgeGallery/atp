@@ -15,6 +15,7 @@ package org.edgegallery.atp.service;
 
 import java.util.List;
 import org.edgegallery.atp.model.testscenario.TestScenario;
+import org.edgegallery.atp.model.testscenario.testcase.AllTestScenarios;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface TestScenarioService {
@@ -58,4 +59,12 @@ public interface TestScenarioService {
      * @return test scenario list
      */
     List<TestScenario> queryAllTestScenario(String locale, String name);
+
+    /**
+     * get all test cases according to scenario ids
+     * 
+     * @param ids test scenario ids
+     * @return test scenario info
+     */
+    List<AllTestScenarios> getTestCasesByScenarioIds(List<String> ids);
 }

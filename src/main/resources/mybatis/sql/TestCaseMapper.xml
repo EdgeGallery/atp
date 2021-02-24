@@ -19,72 +19,93 @@
 <mapper namespace="org.edgegallery.atp.repository.mapper.TestCaseMapper">
 
     <select id="findByNameAndType"
-            resultType="org.edgegallery.atp.model.testcase.TestCase"
+            resultType="org.edgegallery.atp.model.testcase.TestCasePo"
             parameterType="String">
         select * from test_case_table where name = #{name} and type = #{type}
     </select>
     
     <select id="findByName"
-            resultType="org.edgegallery.atp.model.testcase.TestCase"
+            resultType="org.edgegallery.atp.model.testcase.TestCasePo"
             parameterType="String">
-        select * from test_case_table where name = #{name}
+        select * from test_case_table 
+        <where>
+          <if test="nameEn != null and nameEn !=''">
+            nameEn = #{nameEn}
+          </if>
+          <if test="nameCh != null and nameCh !=''">
+            and nameCh = #{nameCh}
+          </if>
+        </where>
     </select>
     
     <select id="findByClassName"
-            resultType="org.edgegallery.atp.model.testcase.TestCase"
+            resultType="org.edgegallery.atp.model.testcase.TestCasePo"
             parameterType="String">
         select * from test_case_table where className = #{className}
     </select>    
 
     <select id="findAllTestCases"
-            resultType="org.edgegallery.atp.model.testcase.TestCase">
+            resultType="org.edgegallery.atp.model.testcase.TestCasePo">
         select * from test_case_table
         <where>
           <if test="type != null and type !=''">
             type = #{type}
           </if>
-          <if test="name != null and name !=''">
-            and name ~* #{name}
+          <if test="nameEn != null and nameEn !=''">
+            and nameEn ~* #{nameEn}
           </if>
-          <if test="verificationModel != null and verificationModel !=''">
-            and verificationModel LIKE  CONCAT('%', #{verificationModel}, '%')
-          </if>                    
+          <if test="nameCh != null and nameCh !=''">
+             and nameCh ~* #{nameCh}
+          </if>
+          <if test="testSuiteId != null and testSuiteId !=''">
+            and testSuiteIdList ~* #{testSuiteId}
+          </if>                   
         </where>
-        ORDER BY name ASC
+        ORDER BY nameEn ASC
     </select>
     
     <insert id="insert"
-		parameterType="org.edgegallery.atp.model.testcase.TestCase">
+		parameterType="org.edgegallery.atp.model.testcase.TestCasePo">
 		insert into
 		test_case_table
-		(id, name, hashCode, type, className, description, filePath,codeLanguage,expectResult, verificationModel)
+		(id, nameCh,nameEn, hashCode, type, className, descriptionCh,descriptionEn, filePath,codeLanguage,expectResultCh,expectResultEn, testStepCh,testStepEn,testSuiteIdList)
 		VALUES
-		(#{id}, #{name}, #{hashCode},
-		#{type},
-		#{className}, #{description}, #{filePath},#{codeLanguage},#{expectResult}, #{verificationModel})
+		(#{id}, #{nameCh}, #{nameEn}, #{hashCode},#{type},#{className}, #{descriptionCh},#{descriptionEn}, #{filePath},#{codeLanguage},#{expectResultCh},#{expectResultEn},#{testStepCh},#{testStepEn}, #{testSuiteIdList})
 	</insert>
     
-    <update id="update" parameterType="org.edgegallery.atp.model.testcase.TestCase">
+    <update id="update" parameterType="org.edgegallery.atp.model.testcase.TestCasePo">
         UPDATE
         test_case_table set       
-          <if test="description != null and description !=''">
-            description = #{description},
+          <if test="descriptionCh != null and descriptionCh !=''">
+            descriptionCh = #{descriptionCh},
+          </if>
+          <if test="descriptionEn != null and descriptionEn !=''">
+            descriptionEn = #{descriptionEn},
           </if>
           <if test="codeLanguage != null and codeLanguage !=''">
             codeLanguage = #{codeLanguage},
           </if>
-          <if test="expectResult != null and expectResult !=''">
-            expectResult = #{expectResult},
-          </if>  
+          <if test="expectResultCh != null and expectResultCh !=''">
+            expectResultCh = #{expectResultCh},
+          </if> 
+          <if test="expectResultEn != null and expectResultEn !=''">
+            expectResultEn = #{expectResultEn},
+          </if> 
           <if test="className != null and className !=''">
             className = #{className},
           </if>   
-          <if test="verificationModel != null and verificationModel !=''">
-            verificationModel = #{verificationModel},
-          </if> 
           <if test="filePath != null and filePath !=''">
             filePath = #{filePath},
-          </if>                                   
+          </if> 
+          <if test="testStepCh != null and testStepCh !=''">
+            testStepCh = #{testStepCh},
+          </if> 
+          <if test="testStepEn != null and testStepEn !=''">
+            testStepEn = #{testStepEn},
+          </if>
+          <if test="testSuiteIdList != null and testSuiteIdList !=''">
+            testSuiteIdList = #{testSuiteIdList},
+          </if>                                  
            id=#{id}
         where id = #{id}
     </update>
@@ -97,7 +118,7 @@
     </delete>
     
     <select id="getTestCaseById"
-            resultType="org.edgegallery.atp.model.testcase.TestCase"
+            resultType="org.edgegallery.atp.model.testcase.TestCasePo"
             parameterType="String">
         select * from test_case_table where id = #{id}
     </select>    

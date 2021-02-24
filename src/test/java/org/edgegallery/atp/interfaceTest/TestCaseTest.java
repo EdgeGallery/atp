@@ -14,6 +14,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.ibatis.io.Resources;
 import org.edgegallery.atp.ATPApplicationTest;
 import org.edgegallery.atp.constant.Constant;
+import org.edgegallery.atp.model.task.testScenarios.TaskTestCase;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.model.testcase.TestCaseResult;
 import org.edgegallery.atp.utils.FileChecker;
@@ -77,9 +78,9 @@ public class TestCaseTest {
     @Test
     public void getAllTestCaesWithParameters() throws Exception {
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get("/edgegallery/atp/v1/testcases")
-                .param("verificationModel", "EdgeGallery,Mobile")
-            .contentType(MediaType.APPLICATION_JSON_VALUE).with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+                .param("testSuiteIdList", "522684bd-d6df-4b47-aab8-b43f1b4c19c0")
+                .contentType(MediaType.APPLICATION_JSON_VALUE).with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
         int result = mvcResult.getResponse().getStatus();
         assertEquals(200, result);
     }
@@ -103,10 +104,13 @@ public class TestCaseTest {
         InputStream csarInputStream = new FileInputStream(file);
         MultipartFile csarMultiFile = new MockMultipartFile(file.getName(), file.getName(),
                 ContentType.APPLICATION_OCTET_STREAM.toString(), csarInputStream);
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/testcases")
-                .file("file", csarMultiFile.getBytes()).with(csrf()).param("name", "test")
-                .param("type", "complianceTest").param("description", "test").param("codeLanguage", "java")
-                .param("expectResult", "test").param("verificationModel", "EdgeGallery")).andReturn();
+        MvcResult mvcResult = mvc.perform(
+                MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/testcases").file("file", csarMultiFile.getBytes())
+                        .with(csrf()).param("nameEn", "test").param("nameCh", "test").param("type", "automatic")
+                        .param("descriptionCh", "test").param("descriptionEn", "test").param("codeLanguage", "java")
+                        .param("expectResultCh", "test").param("expectResultEn", "test").param("testStepEn", "test")
+                        .param("testStepCh", "test").param("testSuiteIdList", "522684bd-d6df-4b47-aab8-b43f1b4c19c0"))
+                .andReturn();
         int result = mvcResult.getResponse().getStatus();
         assertEquals(200, result);
 
@@ -118,12 +122,18 @@ public class TestCaseTest {
         TestCaseResult resultTestCase = new TestCaseResult();
         testCase.setClassName("Test");
 
-        String filePath = BASIC_PATH + testCase.getName() + Constant.UNDER_LINE + testCase.getId();
+        String filePath = BASIC_PATH + testCase.getNameEn() + Constant.UNDER_LINE + testCase.getId();
         FileChecker.createFile(filePath);
         File targetFile = new File(filePath);
         FileCopyUtils.copy(file, targetFile);
         testCase.setFilePath(filePath);
-        JavaCompileUtil.executeJava(testCase, "testfile/AR.csar", resultTestCase, null);
+        TaskTestCase taskTestCase = new TaskTestCase();
+        taskTestCase.setId(testCase.getId());
+        taskTestCase.setNameCh(testCase.getNameCh());
+        taskTestCase.setNameEn(testCase.getNameEn());
+        taskTestCase.setReason(Constant.EMPTY);
+        taskTestCase.setResult(Constant.RUNNING);
+        JavaCompileUtil.executeJava(testCase, "testfile/AR.csar", taskTestCase, null);
 
         // python call
         new MockUp<PythonInterpreter>() {
@@ -136,8 +146,19 @@ public class TestCaseTest {
         File targetPythonFile = new File(filePathPython);
         FileCopyUtils.copy(filePython, targetPythonFile);
         Map<String, String> context = new HashMap<String, String>();
-        PythonCallUtil.callPython(filePathPython, "testfile/AR.csar", resultTestCase, context);
+        testCase.setFilePath(filePathPython);
+        PythonCallUtil.callPython(testCase, "testfile/AR.csar", taskTestCase, context);
         targetPythonFile.delete();
+
+        // jar call
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("testfile/Bomb Defense.jar");
+        String filePathJar = BASIC_PATH + "jar" + Constant.UNDER_LINE + "111";
+        FileChecker.createFile(filePathJar);
+        File targetJarFile = new File(filePathJar);
+        testCase.setFilePath(filePathJar);
+        FileUtils.copyInputStreamToFile(stream, targetJarFile);
+        JarCallUtil.executeJar(testCase, "testfile/AR.csar", taskTestCase, context);
+        targetJarFile.delete();
 
         // dowload test case
         MvcResult mvcResultReport = mvc
@@ -156,22 +177,4 @@ public class TestCaseTest {
         int resultDelete = mvcResultDelete.getResponse().getStatus();
         assertEquals(200, resultDelete);
     }
-    
-    @Test
-    public void JarTest() throws Exception {
-        // jar call
-        TestCaseResult resultTestCase = new TestCaseResult();
-        TestCase testCase = new TestCase();
-
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("testfile/Bomb Defense.jar");
-        String filePathJar = BASIC_PATH + "jar" + Constant.UNDER_LINE + "111";
-        FileChecker.createFile(filePathJar);
-        File targetJarFile = new File(filePathJar);
-        testCase.setFilePath(filePathJar);
-        FileUtils.copyInputStreamToFile(stream, targetJarFile);
-        Map<String, String> context = new HashMap<String, String>();
-        JarCallUtil.executeJar(testCase, "testfile/AR.csar", resultTestCase, context);
-        targetJarFile.delete();
-    }
-
 }

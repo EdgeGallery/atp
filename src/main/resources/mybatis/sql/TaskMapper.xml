@@ -13,7 +13,7 @@
 	namespace="org.edgegallery.atp.repository.mapper.TaskMapper">
 
 	<insert id="insert"
-		parameterType="org.edgegallery.atp.model.task.TaskPO">
+		parameterType="org.edgegallery.atp.model.task.TaskPo">
 		insert into
 		task_table
 		(id, appName, appVersion, status, createTime, endTime, providerId,packagePath,userId, userName,
@@ -25,7 +25,7 @@
 	</insert>
 
 	<update id="update"
-		parameterType="org.edgegallery.atp.model.task.TaskPO">
+		parameterType="org.edgegallery.atp.model.task.TaskPo">
 		update
 		task_table
 		SET status = #{status}, endTime = #{endTime}, testCaseDetail =
@@ -34,7 +34,7 @@
 	</update>
 
 	<select id="findByTaskIdAndUserId"
-		resultType="org.edgegallery.atp.model.task.TaskPO"
+		resultType="org.edgegallery.atp.model.task.TaskPo"
 		parameterType="String">
 		select * from task_table where id = #{taskId}
 		<if test="userId != null and userId !=''">
@@ -42,7 +42,7 @@
 		</if>
 	</select>
 
-	<select id="findTaskByUserId" resultType="org.edgegallery.atp.model.task.TaskPO"
+	<select id="findTaskByUserId" resultType="org.edgegallery.atp.model.task.TaskPo"
 		parameterType="String">
 		select * from task_table 
 		<where>
@@ -65,15 +65,6 @@
 		ORDER BY createTime DESC
 	</select>
 	
-	<select id="batchFindTaskByUserId"
-		resultType="org.edgegallery.atp.model.task.TaskPO"
-		parameterType="String">
-		select * from task_table where id in 
-	    <foreach collection="taskIdList" item="taskId" open="(" close=")" separator=",">
-	      #{taskId}
-	   </foreach>
-	</select>
-
 	<delete id="delHisTask">
 		delete from
 		task_table
@@ -84,7 +75,7 @@
 		select now()::timestamp without time zone
 	</select>
 
-	<select id="queryAllRunningTasks" resultType="org.edgegallery.atp.model.task.TaskPO">
+	<select id="queryAllRunningTasks" resultType="org.edgegallery.atp.model.task.TaskPo">
 		select * from task_table where status = 'running'
 	</select>
 	

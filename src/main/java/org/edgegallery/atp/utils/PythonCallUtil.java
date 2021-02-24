@@ -17,7 +17,8 @@ package org.edgegallery.atp.utils;
 import java.util.Map;
 import java.util.Properties;
 import org.edgegallery.atp.constant.Constant;
-import org.edgegallery.atp.model.testcase.TestCaseResult;
+import org.edgegallery.atp.model.task.testScenarios.TaskTestCase;
+import org.edgegallery.atp.model.testcase.TestCase;
 import org.python.core.PyFunction;
 import org.python.core.PyObject;
 import org.python.core.PyString;
@@ -28,7 +29,7 @@ import org.slf4j.LoggerFactory;
 public class PythonCallUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(PythonCallUtil.class);
 
-    public static void callPython(String testCasePath, String csarFilePath, TestCaseResult result,
+    public static void callPython(TestCase testCase, String csarFilePath, TaskTestCase taskTestCase,
             Map<String, String> context) {
         LOGGER.info("start call Python");
         try {
@@ -38,16 +39,16 @@ public class PythonCallUtil {
             PythonInterpreter.initialize(preprops, props, new String[0]);
 
             PythonInterpreter interpreter = new PythonInterpreter();
-            interpreter.execfile(testCasePath);
+            interpreter.execfile(testCase.getFilePath());
 
             PyFunction pyFunction = interpreter.get("execute", PyFunction.class);
             PyObject pyobj = pyFunction.__call__(new PyString(csarFilePath), new PyString(context.toString()));
-            CommonUtil.setResult(pyobj, result);
+            CommonUtil.setResult(pyobj, taskTestCase);
         }
         catch (Exception e) {
             LOGGER.error("python error. {}", e);
-            result.setResult(Constant.FAILED);
-            result.setReason("call python failed.");
+            taskTestCase.setResult(Constant.FAILED);
+            taskTestCase.setReason("call python failed.");
         }
 
     }
