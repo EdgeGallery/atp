@@ -29,7 +29,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class TaskPo {
+public class TaskPO {
 
     @Column(name = "id")
     private String id;
@@ -64,8 +64,8 @@ public class TaskPo {
     @Column(name = "packagePath")
     private String packagePath;
 
-    public static TaskPo of(TaskRequest startTest) {
-        TaskPo taskPo = new TaskPo();
+    public static TaskPO of(TaskRequest startTest) {
+        TaskPO taskPo = new TaskPO();
         taskPo.setAppName(startTest.getAppName());
         taskPo.setAppVersion(startTest.getAppVersion());
         taskPo.setCreateTime(startTest.getCreateTime());
