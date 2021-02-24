@@ -18,7 +18,7 @@ import java.util.Date;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.edgegallery.atp.model.task.TaskPo;
+import org.edgegallery.atp.model.task.TaskPO;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -31,7 +31,7 @@ public interface TaskMapper {
      * @param taskId taskId
      * @return taskInfo
      */
-    TaskPo findByTaskIdAndUserId(@Param("taskId") String taskId, @Param("userId") String userId);
+    TaskPO findByTaskIdAndUserId(@Param("taskId") String taskId, @Param("userId") String userId);
 
     /**
      * get task list by userId
@@ -39,7 +39,7 @@ public interface TaskMapper {
      * @param userId
      * @return
      */
-    List<TaskPo> findTaskByUserId(@Param("userId") String userId, @Param("appName") String appName,
+    List<TaskPO> findTaskByUserId(@Param("userId") String userId, @Param("appName") String appName,
             @Param("status") String status, @Param("providerId") String providerId,
             @Param("appVersion") String appVersion);
 
@@ -48,21 +48,21 @@ public interface TaskMapper {
      * 
      * @param taskPO
      */
-    void insert(TaskPo taskPO);
+    void insert(TaskPO taskPO);
 
     /**
      * query all running tasks
      * 
      * @return running task info list
      */
-    List<TaskPo> queryAllRunningTasks();
+    List<TaskPO> queryAllRunningTasks();
 
     /**
      * update task info.
      * 
      * @param taskPO
      */
-    void update(TaskPo taskPO);
+    void update(TaskPO taskPO);
 
     /**
      * get current db time
@@ -83,7 +83,7 @@ public interface TaskMapper {
      * @param taskIdList taskIdList
      * @return taskInfo List
      */
-    List<TaskPo> batchFindTaskByUserId(@Param("userId") String userId, @Param("taskIdList") List<String> taskIdList);
+    List<TaskPO> batchFindTaskByUserId(@Param("userId") String userId, @Param("taskIdList") List<String> taskIdList);
 
     /**
      * delete task by id
