@@ -18,21 +18,20 @@ import java.util.List;
 import java.util.Map;
 import org.edgegallery.atp.model.CommonActionRes;
 import org.edgegallery.atp.model.task.AnalysisResult;
-import org.edgegallery.atp.model.task.TaskIdList;
 import org.edgegallery.atp.model.task.TaskRequest;
-import org.springframework.core.io.InputStreamResource;
+import org.edgegallery.atp.model.task.TestCaseStatusReq;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface TaskService {
 
     /**
-     * eun a test task
+     * run a test task
      * 
      * @param taskId taskId
      * @return task info
      */
-    public TaskRequest runTask(String taskId);
+    public TaskRequest runTask(String taskId, List<String> scenarioIdList);
 
     /**
      * get task info by taskId
@@ -53,15 +52,6 @@ public interface TaskService {
             String providerId, String appVersion);
 
     /**
-     * download test report by taskId and userId
-     * 
-     * @param taskId test taskId
-     * @param userId
-     * @return
-     */
-    public ResponseEntity<InputStreamResource> downloadTestReport(String taskId);
-
-    /**
      * precheck before run test task.
      * 
      * @param taskId taskId
@@ -75,28 +65,30 @@ public interface TaskService {
      * @param packages csar file
      * @return taskInfo
      */
-    public TaskRequest createTask(MultipartFile packages, Boolean isRun);
-    
-    /**
-     * batch get task by taskId and userId
-     * 
-     * @param userId
-     * @param taskList
-     * @return
-     */
-    public ResponseEntity<List<TaskRequest>> batchGetAllTasks(String userId, TaskIdList taskList);
-    
+    public TaskRequest createTask(MultipartFile packages);
+
+
     /**
      * batch delete tasks by task ids
+     * 
      * @param taskIds
      * @return delete failed ids
      */
     public ResponseEntity<Map<String, List<String>>> batchDelete(List<String> taskIds);
-    
+
     /**
      * task number analysis
      * 
      * @return analysis result
      */
     public ResponseEntity<AnalysisResult> taskAnalysis();
+
+    /**
+     * modify test case status
+     * 
+     * @param testCaseStatus test case info
+     * @param taskId taskid
+     * @return true or throw exception
+     */
+    public ResponseEntity<Boolean> modifyTestCaseStatus(List<TestCaseStatusReq> testCaseStatus, String taskId);
 }

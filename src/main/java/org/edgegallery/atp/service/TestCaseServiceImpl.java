@@ -21,12 +21,14 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.model.testcase.TestCase;
+import org.edgegallery.atp.model.testsuite.TestSuite;
 import org.edgegallery.atp.repository.testcase.TestCaseRepository;
+import org.edgegallery.atp.repository.testsuite.TestSuiteRepository;
 import org.edgegallery.atp.utils.FileChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,47 +45,63 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseServiceImpl.class);
 
-    private static final String BASIC_PATH = FileChecker.getDir() + "/file/testCase/";
-
     @Autowired
     TestCaseRepository testCaseRepository;
 
+    @Autowired
+    TestSuiteRepository testSuiteRepository;
+
     @Override
-    public ResponseEntity<List<TestCase>> getAllTestCases(String type, String name, String verificationModel) {
-        if (StringUtils.isNotEmpty(verificationModel)) {
-            String[] vfc = verificationModel.split(Constant.COMMA);
-            List<TestCase> response = testCaseRepository.findAllTestCases(type, name, vfc[0]);
-            for (int i = 1; i < vfc.length; i++) {
-                List<TestCase> filter = testCaseRepository.findAllTestCases(type, name, vfc[i]);
-                List<TestCase> result = new ArrayList<TestCase>();
-                filter.forEach(testCase -> {
-                    for (TestCase rsp : response) {
-                        if (rsp.getId().equals(testCase.getId())) {
-                            result.add(testCase);
-                            break;
-                        }
-                    }
-                });
-                response.clear();
-                response.addAll(result);
-            }
-            LOGGER.info("get all test cases successfully.");
-            return ResponseEntity.ok(response);
+    public ResponseEntity<List<TestCase>> getAllTestCases(String type, String locale, String name,
+            List<String> testSuiteIds) {
+        List<TestCase> result = new LinkedList<TestCase>();
+        if (null == testSuiteIds || 0 == testSuiteIds.size()) {
+            result = testCaseRepository.findAllTestCases(type, locale, name, null);
         } else {
-            LOGGER.info("get all test cases successfully.");
-            List<TestCase> response = testCaseRepository.findAllTestCases(type, name, verificationModel);
-            return ResponseEntity.ok(response);
+            List<TestCase> testCaseList = testCaseRepository.findAllTestCases(type, locale, name, testSuiteIds.get(0));
+            for (TestCase testCase : testCaseList) {
+                boolean isSatisfy = true;
+                for (String id : testSuiteIds) {
+                    if (!testCase.getTestSuiteIdList().contains(id)) {
+                        isSatisfy = false;
+                        break;
+                    }
+                }
+                if (isSatisfy) {
+                    result.add(testCase);
+                }
+            }
         }
+        LOGGER.info("query all test cases successfully.");
+        return ResponseEntity.ok(result);
     }
 
     @Override
     public TestCase createTestCase(MultipartFile file, TestCase testCase) {
-        if (null != testCaseRepository.findByName(testCase.getName())) {
-            throw new IllegalArgumentException("the file name has already exists.");
+        // nameCh or nameEn must exist one
+        testCase.setNameCh(null != testCase.getNameCh() ? testCase.getNameCh() : testCase.getNameEn());
+        testCase.setNameEn(null != testCase.getNameEn() ? testCase.getNameEn() : testCase.getNameCh());
+        if (null == testCase.getNameCh() && null == testCase.getNameEn()) {
+            throw new IllegalArgumentException("both nameCh and nameEn is null.");
         }
+        if (null != testCaseRepository.findByName(testCase.getNameCh(), null)
+                || null != testCaseRepository.findByName(null, testCase.getNameEn())) {
+            throw new IllegalArgumentException("name of test case already exist.");
+        }
+        checkTestSuiteIdsExist(testCase);
+
+        // check one test case type must same in one test suite
+        testCase.getTestSuiteIdList().forEach(testSuiteId -> {
+            List<TestCase> testCaseList = testCaseRepository.findAllTestCases(null, null, null, testSuiteId);
+            testCaseList.forEach(testCaseDb -> {
+                if (!testCaseDb.getType().equals(testCase.getType())) {
+                    throw new IllegalArgumentException("test case type in testSuiteIds is not the same as others.");
+                }
+            });
+        });
 
         String filePath =
-                BASIC_PATH.concat(testCase.getName()).concat(Constant.UNDER_LINE).concat(testCase.getId());
+                Constant.BASIC_TEST_CASE_PATH.concat(testCase.getNameEn()).concat(Constant.UNDER_LINE).concat(testCase.getId());
         try {
             FileChecker.createFile(filePath);
             File result = new File(filePath);
@@ -95,7 +113,7 @@ public class TestCaseServiceImpl implements TestCaseService {
             }
             testCaseRepository.insert(testCase);
         } catch (IOException e) {
-            LOGGER.error("create file failed, test case name is: {}", testCase.getName());
+            LOGGER.error("create file failed, test case name is: {}", testCase.getNameEn());
             throw new IllegalArgumentException("create file failed.");
         }
         LOGGER.info("create test case successfully.");
@@ -185,6 +203,18 @@ public class TestCaseServiceImpl implements TestCaseService {
             String msg = "file not exists.";
             LOGGER.error(msg);
             throw new IllegalArgumentException(msg);
+        }
+    }
+
+    /**
+     * check test suite ids is right
+     * 
+     * @param testSuite test suite info
+     */
+    private void checkTestSuiteIdsExist(TestCase testCase) {
+        List<TestSuite> testSuiteList = testSuiteRepository.batchQueryTestSuites(testCase.getTestSuiteIdList());
+        if (testSuiteList.size() != testCase.getTestSuiteIdList().size()) {
+            throw new IllegalArgumentException("some test suite ids do not exist.");
         }
     }
 }

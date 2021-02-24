@@ -25,10 +25,14 @@ public interface TestCaseService {
     /**
      * query all test cases
      * 
-     * @param type test case type
-     * @return all test cases info.
+     * @param type manual or automatic
+     * @param locale ch or zh
+     * @param name test case name
+     * @param testSuiteIds test suite id list the test case belong to
+     * @return test case info list
      */
-    public ResponseEntity<List<TestCase>> getAllTestCases(String type, String name, String verificationModel);
+    public ResponseEntity<List<TestCase>> getAllTestCases(String type, String locale, String name,
+            List<String> testSuiteIds);
 
     /**
      * create test cases

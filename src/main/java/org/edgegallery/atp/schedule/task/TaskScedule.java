@@ -17,11 +17,11 @@ package org.edgegallery.atp.schedule.task;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.List;
 import javax.annotation.PostConstruct;
 import org.edgegallery.atp.constant.Constant;
-import org.edgegallery.atp.model.task.TaskRequest;
+import org.edgegallery.atp.model.file.ATPFile;
 import org.edgegallery.atp.model.testcase.TestCase;
+import org.edgegallery.atp.repository.file.FileRepository;
 import org.edgegallery.atp.repository.task.TaskRepository;
 import org.edgegallery.atp.repository.testcase.TestCaseRepository;
 import org.edgegallery.atp.schedule.testcase.TestCaseManagerImpl;
@@ -37,8 +37,6 @@ import org.springframework.util.FileCopyUtils;
 class TaskSchedule {
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskSchedule.class);
 
-    private static final String BASIC_PATH = FileChecker.getDir() + "/file/testCase/";
-
     @Autowired
     TaskRepository taskRepository;
 
@@ -48,52 +46,64 @@ class TaskSchedule {
     @Autowired
     TestCaseRepository testCaseRepository;
 
+    @Autowired
+    FileRepository fileRepository;
+
     /**
      * handle exception running task when the atp service start.
      */
     @PostConstruct
     public void handleData() {
-        // handle running data
-        List<TaskRequest> runningTaskList = taskRepository.queryAllRunningTasks();
-        LOGGER.info("handleRunningData runningTaskList: {}", runningTaskList);
-
-        File tempFile = new File(
-                new StringBuilder().append(FileChecker.getDir()).append(File.separator).append("temp").toString());
-        File[] fileList = tempFile.listFiles();
-
-        runningTaskList.forEach(task -> {
-            for (File file : fileList) {
-                if (file.getName().startsWith(task.getId())) {
-                    try {
-                        LOGGER.info("execute task: {}", task.getId());
-                        testCaseManager.executeTestCase(task, file.getCanonicalPath());
-                    } catch (IOException e) {
-                        LOGGER.error("{} get canonical path failed.", file.getName());
-                    }
-                }
-            }
-        });
-
-        // put inner testCase in storage
+        // put inner testCases and scenario icons in storage
         try {
             String basePath = System.getProperty("os.name").toLowerCase().contains("windows")
                     ? PropertiesUtil.getProperties("workspace_base_dir_windows")
                     : PropertiesUtil.getProperties("workspace_base_dir_linux");
 
-            File fileDir = new File(basePath.concat(Constant.SLASH)
-                    .concat(Constant.TEST_CASE_DIR));
+            // handle test case
+            File fileDir = new File(basePath.concat(Constant.SLASH).concat(Constant.TEST_CASE_DIR));
             if (fileDir.exists()) {
                 File[] fileArray = fileDir.listFiles();
                 for (File file : fileArray) {
-                    TestCase testCase = testCaseRepository
-                            .findByName(file.getName().substring(0, file.getName().indexOf(Constant.DOT)));
-                    String filePath = BASIC_PATH + testCase.getName() + Constant.UNDER_LINE + testCase.getId();
-                    FileChecker.createFile(filePath);
-                    File result = new File(filePath);
-                    FileCopyUtils.copy(file, result);
+                    TestCase testCase = testCaseRepository.findByName(null,
+                            file.getName().substring(0, file.getName().indexOf(Constant.DOT)));
+                    if (null != testCase) {
+                        String filePath = Constant.BASIC_TEST_CASE_PATH + testCase.getNameEn() + Constant.UNDER_LINE
+                                + testCase.getId();
+                        FileChecker.createFile(filePath);
+                        File result = new File(filePath);
+                        FileCopyUtils.copy(file, result);
 
-                    testCase.setFilePath(filePath);
-                    testCaseRepository.update(testCase);
+                        testCase.setFilePath(filePath);
+                        testCaseRepository.update(testCase);
+                    } else {
+                        LOGGER.error("init test case failed, find by name from db is null.");
+                    }
+
+                }
+            }
+
+            // handle scenario icon
+            File iconDir = new File(basePath.concat(Constant.SLASH).concat(Constant.ICON));
+            if (iconDir.exists()) {
+                File[] iconArray = iconDir.listFiles();
+                for (File icon : iconArray) {
+                    String iconPath = Constant.BASIC_ICON_PATH + icon.getName();
+                    FileChecker.createFile(iconPath);
+                    File result = new File(iconPath);
+                    FileCopyUtils.copy(icon, result);
+
+                    // insert to db
+                    String name = icon.getName();
+                    String scenarioId =
+                            name.substring(name.indexOf(Constant.UNDER_LINE) + 1, name.indexOf(Constant.DOT));
+
+                    ATPFile fileFromDb = fileRepository.getFileContent(scenarioId, Constant.FILE_TYPE_SCENARIO);
+                    if (null == fileFromDb) {
+                        ATPFile atpFile = new ATPFile(scenarioId, Constant.FILE_TYPE_SCENARIO,
+                                taskRepository.getCurrentDate(), iconPath);
+                        fileRepository.insertFile(atpFile);
+                    }
                 }
             }
 

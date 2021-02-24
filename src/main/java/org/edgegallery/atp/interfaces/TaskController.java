@@ -20,14 +20,13 @@ import javax.validation.constraints.Pattern;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
-import org.edgegallery.atp.model.CommonActionRes;
 import org.edgegallery.atp.model.task.AnalysisResult;
 import org.edgegallery.atp.model.task.TaskIdList;
 import org.edgegallery.atp.model.task.TaskRequest;
+import org.edgegallery.atp.model.task.TestCaseStatusReq;
 import org.edgegallery.atp.service.TaskService;
 import org.edgegallery.atp.utils.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -35,6 +34,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -57,50 +57,39 @@ public class TaskController {
     @Autowired
     private TaskService taskService;
 
+    /**
+     * create test task
+     * 
+     * @param file csar package
+     * @return test task info
+     */
     @PostMapping(value = "/tasks", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "create test task.", response = String.class)
-    @ApiResponses(value = {
-        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
-        @ApiResponse(code = 500, message = "resource grant error", response = String.class)
-    })
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
+            @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
     @PreAuthorize("hasRole('ATP_TENANT')")
     public ResponseEntity<TaskRequest> createTest(
-        @ApiParam(value = "application files", required = true) @RequestPart("file") MultipartFile file,
-        @ApiParam(value = "isRun test task directly", required = true) @RequestParam("isRun") Boolean isRun) {
+            @ApiParam(value = "application files", required = true) @RequestPart("file") MultipartFile file) {
         CommonUtil.validateContext();
-        return ResponseEntity.ok(taskService.createTask(file, isRun));
-    }
-
-    @GetMapping(value = "/tasks/{taskId}/action/pre-check", produces = MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "pre check before run test task.", response = CommonActionRes.class)
-    @ApiResponses(value = {
-        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
-        @ApiResponse(code = 500, message = "resource grant error", response = String.class)
-    })
-    @PreAuthorize("hasRole('ATP_TENANT')")
-    public ResponseEntity<CommonActionRes> preCheck(
-        @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId) {
-        CommonUtil.validateContext();
-        return ResponseEntity.ok(taskService.preCheck(taskId));
+        return ResponseEntity.ok(taskService.createTask(file));
     }
 
     /**
-     * create test task
+     * run test task
      *
      * @param taskId taskId
-     * @return taskId
+     * @return test task info
      */
     @PostMapping(value = "/tasks/{taskId}/action/run", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "run test task.", response = String.class)
-    @ApiResponses(value = {
-        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
-        @ApiResponse(code = 500, message = "resource grant error", response = String.class)
-    })
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
+            @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
     @PreAuthorize("hasRole('ATP_TENANT')")
     public ResponseEntity<TaskRequest> runTest(
-        @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId) {
+            @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId, @ApiParam(
+                    value = "id of test scenarios selected") @RequestParam("scenarioIdList") List<String> scenarioIdList) {
         CommonUtil.validateContext();
-        return ResponseEntity.ok(taskService.runTask(taskId));
+        return ResponseEntity.ok(taskService.runTask(taskId, scenarioIdList));
     }
 
     /**
@@ -110,51 +99,41 @@ public class TaskController {
      */
     @GetMapping(value = "/tasks", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "get all tasks by userId.", response = TaskRequest.class)
-    @ApiResponses(value = {
-        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
-        @ApiResponse(code = 500, message = "resource grant error", response = String.class)
-    })
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
+            @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
     @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT')")
     public ResponseEntity<List<TaskRequest>> getAllTasks(@QueryParam("appName") String appName,
-        @QueryParam("status") String status, @QueryParam("providerId") String providerId,
-        @QueryParam("appVersion") String appVersion) {
+            @QueryParam("status") String status, @QueryParam("providerId") String providerId,
+            @QueryParam("appVersion") String appVersion) {
         CommonUtil.lengthCheck(appName);
         CommonUtil.lengthCheck(status);
         CommonUtil.lengthCheck(providerId);
         CommonUtil.lengthCheck(appVersion);
-        return taskService
-                .getAllTasks(null, appName, status, providerId,
-                appVersion);
+        return taskService.getAllTasks(null, appName, status, providerId, appVersion);
     }
 
     /**
-     * get task by taskId and userId. <br/> this api can be accessed by everyone.
+     * get task by taskId and userId. <br/>
+     * this api can be accessed by everyone.
      *
      * @param taskId taskid
      * @return task info
      */
     @GetMapping(value = "/tasks/{taskId}", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "get tasks by taskId and userId.", response = TaskRequest.class)
-    @ApiResponses(value = {
-        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
-        @ApiResponse(code = 500, message = "resource grant error", response = String.class)
-    })
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
+            @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
     public ResponseEntity<TaskRequest> getTaskById(
-        @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId) {
+            @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId) {
         return taskService.getTaskById(taskId);
     }
 
-    @GetMapping(value = "/tasks/{taskId}/action/download", produces = MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "download test report", response = InputStreamResource.class)
-    @ApiResponses(value = {
-        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
-        @ApiResponse(code = 500, message = "resource grant error", response = String.class)
-    })
-    public ResponseEntity<InputStreamResource> downloadTestReport(
-        @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId) {
-        return taskService.downloadTestReport(taskId);
-    }
-
+    /**
+     * batch delete test tasks
+     * 
+     * @param taskIds the test task id which will be deleted
+     * @return fail task id list
+     */
     @PostMapping(value = "/tasks/batch_delete", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "batch delete test tasks.", response = String.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
@@ -165,6 +144,11 @@ public class TaskController {
         return taskService.batchDelete(taskIds.getTaskIds());
     }
 
+    /**
+     * test task analysis
+     * 
+     * @return analysis result
+     */
     @GetMapping(value = "/tasks/action/analysize", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "test tasks number analysis", response = String.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
@@ -173,4 +157,13 @@ public class TaskController {
         return taskService.taskAnalysis();
     }
 
+    @PutMapping(value = "/tasks/{taskId}/testcase", produces = MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "update test case status", response = Boolean.class)
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
+            @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
+    public ResponseEntity<Boolean> updateTestCaseStatus(
+            @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId, @ApiParam(
+                    value = "modify test case status request body") @RequestBody List<TestCaseStatusReq> testCaseStatus) {
+        return taskService.modifyTestCaseStatus(testCaseStatus, taskId);
+    }
 }

@@ -114,9 +114,8 @@ public class FileChecker {
         }
 
         // temp/taskId_fileName
-        String tempFileAddress = new StringBuilder().append(FileChecker.getDir()).append(File.separator).append("temp")
-                .append(File.separator).append(taskId).append(Constant.UNDER_LINE).append(file.getOriginalFilename())
-                .toString();
+        String tempFileAddress = new StringBuilder().append(Constant.WORK_TEMP_DIR).append(File.separator)
+                .append(taskId).append(Constant.UNDER_LINE).append(file.getOriginalFilename()).toString();
         try {
             createFile(tempFileAddress);
             result = new File(tempFileAddress);

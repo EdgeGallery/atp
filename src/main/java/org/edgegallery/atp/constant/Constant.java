@@ -188,4 +188,14 @@ public interface Constant {
     String LOCALE_EN = "en";
 
     String FILE_TYPE_SCENARIO = "scenario";
+
+    String BASIC_TEST_CASE_PATH = FileChecker.getDir() + "/file/testCase/";
+
+    String BASIC_ICON_PATH = FileChecker.getDir() + "/file/icon/";
+    
+    String ICON = "icon";
+
+    String TASK_TYPE_MANUAL = "manual";
+
+    String TASK_TYPE_AUTOMATIC = "automatic";
 }

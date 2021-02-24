@@ -98,4 +98,15 @@ public class TestSuiteRepositoryImpl implements TestSuiteRepository {
         }
     }
 
+    @Override
+    public List<TestSuite> batchQueryTestSuites(List<String> ids) {
+        try {
+            List<TestSuitePo> testSuitePoList = testSuiteMapper.batchQueryTestSuites(ids);
+            return testSuitePoList.stream().map(testSuitePo -> testSuitePo.toDomain()).collect(Collectors.toList());
+        } catch (Exception e) {
+            LOGGER.error("batch query test suite failed. {}", e);
+            throw new IllegalArgumentException("batch query test suite failed.");
+        }
+    }
+
 }

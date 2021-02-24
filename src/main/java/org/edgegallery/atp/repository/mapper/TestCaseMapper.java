@@ -17,14 +17,14 @@ package org.edgegallery.atp.repository.mapper;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.edgegallery.atp.model.testcase.TestCase;
+import org.edgegallery.atp.model.testcase.TestCasePo;
 import org.springframework.stereotype.Component;
 
 @Component
 @Mapper
 public interface TestCaseMapper {
 
-    TestCase findByTestCaseId(String taskCaseId);
+    TestCasePo findByTestCaseId(String taskCaseId);
 
     /**
      * get test case by test case name and type.
@@ -33,23 +33,24 @@ public interface TestCaseMapper {
      * @param type virusScanningTest,complianceTest or sandboxTest
      * @return test case info.
      */
-    TestCase findByNameAndType(@Param("name") String name, @Param("type") String type);
+    TestCasePo findByNameAndType(@Param("name") String name, @Param("type") String type);
 
     /**
      * get test case by test case name
      * 
-     * @param name name
+     * @param nameCh chinese name
+     * @param nameEn english name
      * @return test case info.
      */
-    TestCase findByName(String name);
+    TestCasePo findByName(@Param("nameCh") String nameCh, @Param("nameEn") String nameEn);
 
     /**
      * get all test cases.
      * 
      * @return test case list
      */
-    List<TestCase> findAllTestCases(@Param("type") String type, @Param("name") String name,
-            @Param("verificationModel") String verificationModel);
+    List<TestCasePo> findAllTestCases(@Param("type") String type, @Param("nameCh") String nameCh,
+            @Param("nameEn") String nameEn, @Param("testSuiteId") String testSuiteId);
 
     /**
      * find test case by test case className
@@ -57,7 +58,7 @@ public interface TestCaseMapper {
      * @param className test case className
      * @return testCase info
      */
-    TestCase findByClassName(String className);
+    TestCasePo findByClassName(String className);
 
     /**
      * find test cases by type.
@@ -65,14 +66,14 @@ public interface TestCaseMapper {
      * @param type test case type
      * @return test case info list.
      */
-    List<TestCase> findTestCasesByType(@Param("type") String type);
+    List<TestCasePo> findTestCasesByType(@Param("type") String type);
 
     /**
      * insert into test case table
      * 
      * @param testCase test case info.
      */
-    void insert(TestCase testCase);
+    void insert(TestCasePo testCase);
 
     /**
      * find one test case by id
@@ -80,7 +81,7 @@ public interface TestCaseMapper {
      * @param id id
      * @return test case info
      */
-    public TestCase findById(String id);
+    public TestCasePo findById(String id);
 
     /**
      * update test case
@@ -88,7 +89,7 @@ public interface TestCaseMapper {
      * @param testCase test case info
      * @return test case info
      */
-    public void update(TestCase testCase);
+    public void update(TestCasePo testCase);
 
     /**
      * delete test case by test case id
@@ -104,5 +105,5 @@ public interface TestCaseMapper {
      * @param id test case id
      * @return test case info
      */
-    public TestCase getTestCaseById(String id);
+    public TestCasePo getTestCaseById(String id);
 }

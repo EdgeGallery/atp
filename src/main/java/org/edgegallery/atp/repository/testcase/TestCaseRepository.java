@@ -22,9 +22,13 @@ public interface TestCaseRepository {
     /**
      * find all test case
      * 
-     * @return
+     * @param type manual or automatic
+     * @param locale ch or en
+     * @param name test case name
+     * @param testSuiteIds test suite id list the test case belong to
+     * @return test case list
      */
-    List<TestCase> findAllTestCases(String type, String name, String verificationModel);
+    List<TestCase> findAllTestCases(String type, String locale, String name, String testSuiteId);
 
     /**
      * find test case by test case name and test case type
@@ -77,8 +81,10 @@ public interface TestCaseRepository {
     /**
      * get test case by test case name
      * 
-     * @param name name
+     * @param nameCh chinese name
+     * @param nameEn english name
      * @return test case info.
      */
-    public TestCase findByName(String name);
+    public TestCase findByName(String nameCh, String nameEn);
+
 }
