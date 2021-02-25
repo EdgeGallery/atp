@@ -17,7 +17,7 @@ package org.edgegallery.atp.model.task;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import org.edgegallery.atp.model.task.testScenarios.TaskTestScenario;
+import org.edgegallery.atp.model.task.testscenarios.TaskTestScenario;
 import org.edgegallery.atp.model.user.User;
 import org.edgegallery.atp.utils.JSONUtil;
 import com.alibaba.fastjson.JSONObject;

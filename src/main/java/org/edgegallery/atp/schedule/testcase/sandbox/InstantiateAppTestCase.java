@@ -31,6 +31,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import com.google.gson.JsonArray;
@@ -133,7 +134,7 @@ public class InstantiateAppTestCase extends TestCaseAbs {
             return null;
         }
 
-        return mecHostIpList.size() == 0 ? null : mecHostIpList.get(0);
+        return CollectionUtils.isEmpty(mecHostIpList) ? null : mecHostIpList.get(0);
     }
 
 }

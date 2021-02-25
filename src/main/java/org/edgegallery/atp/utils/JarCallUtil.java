@@ -22,7 +22,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
-import org.edgegallery.atp.model.task.testScenarios.TaskTestCase;
+import org.edgegallery.atp.model.task.testscenarios.TaskTestCase;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

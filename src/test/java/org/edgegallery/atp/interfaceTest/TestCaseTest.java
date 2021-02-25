@@ -14,7 +14,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.ibatis.io.Resources;
 import org.edgegallery.atp.ATPApplicationTest;
 import org.edgegallery.atp.constant.Constant;
-import org.edgegallery.atp.model.task.testScenarios.TaskTestCase;
+import org.edgegallery.atp.model.task.testscenarios.TaskTestCase;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.model.testcase.TestCaseResult;
 import org.edgegallery.atp.utils.FileChecker;

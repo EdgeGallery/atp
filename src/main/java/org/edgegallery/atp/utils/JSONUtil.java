@@ -26,6 +26,10 @@ public class JSONUtil {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
+    private JSONUtil() {
+
+    }
+
     /**
      * transfer object to String.
      * 

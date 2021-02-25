@@ -72,7 +72,7 @@ public class TestScenarioRepositoryImpl implements TestScenarioRepository {
     @Override
     public void deleteTestScenario(String id) {
         try {
-            testScenarioMapper.deleteTestScenario(id);;
+            testScenarioMapper.deleteTestScenario(id);
         } catch (Exception e) {
             LOGGER.error("delete test scenario {} failed. {}", id, e);
             throw new IllegalArgumentException("delete test scenario failed.");

@@ -32,9 +32,9 @@ import org.edgegallery.atp.model.CommonActionRes;
 import org.edgegallery.atp.model.task.AnalysisResult;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.task.TestCaseStatusReq;
-import org.edgegallery.atp.model.task.testScenarios.TaskTestCase;
-import org.edgegallery.atp.model.task.testScenarios.TaskTestScenario;
-import org.edgegallery.atp.model.task.testScenarios.TaskTestSuite;
+import org.edgegallery.atp.model.task.testscenarios.TaskTestCase;
+import org.edgegallery.atp.model.task.testscenarios.TaskTestScenario;
+import org.edgegallery.atp.model.task.testscenarios.TaskTestSuite;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.model.testscenario.TestScenario;
 import org.edgegallery.atp.model.testsuite.TestSuite;
@@ -330,7 +330,6 @@ public class TaskServiceImpl implements TaskService {
                         for (TaskTestCase testCase : testCases) {
                             if (Constant.RUNNING.equals(testCase.getResult())) {
                                 status = Constant.RUNNING;
-                                continue;
                             } else {
                                 if (!Constant.RUNNING.equals(status)) {
                                     status = (Constant.FAILED.equals(testCase.getResult()) ? Constant.FAILED : status);

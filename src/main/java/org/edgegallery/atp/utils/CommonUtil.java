@@ -36,7 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ExceptionConstant;
 import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
-import org.edgegallery.atp.model.task.testScenarios.TaskTestCase;
+import org.edgegallery.atp.model.task.testscenarios.TaskTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
@@ -60,6 +60,10 @@ public class CommonUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(CommonUtil.class);
 
     private static RestTemplate restTemplate = new RestTemplate();
+
+    private CommonUtil() {
+
+    }
 
     /**
      * get time according to special format

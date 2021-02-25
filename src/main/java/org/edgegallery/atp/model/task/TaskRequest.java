@@ -19,7 +19,7 @@ package org.edgegallery.atp.model.task;
 import java.util.Date;
 import java.util.List;
 import org.edgegallery.atp.model.Entity;
-import org.edgegallery.atp.model.task.testScenarios.TaskTestScenario;
+import org.edgegallery.atp.model.task.testscenarios.TaskTestScenario;
 import org.edgegallery.atp.model.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;

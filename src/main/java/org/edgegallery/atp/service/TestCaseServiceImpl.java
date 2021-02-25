@@ -38,6 +38,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service("TestCaseService")
@@ -55,7 +56,7 @@ public class TestCaseServiceImpl implements TestCaseService {
     public ResponseEntity<List<TestCase>> getAllTestCases(String type, String locale, String name,
             List<String> testSuiteIds) {
         List<TestCase> result = new LinkedList<TestCase>();
-        if (null == testSuiteIds || 0 == testSuiteIds.size()) {
+        if (null == testSuiteIds || CollectionUtils.isEmpty(testSuiteIds)) {
             result = testCaseRepository.findAllTestCases(type, locale, name, null);
         } else {
             List<TestCase> testCaseList = testCaseRepository.findAllTestCases(type, locale, name, testSuiteIds.get(0));

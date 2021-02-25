@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 @Service("TestSuiteService")
 public class TestSuiteServiceImpl implements TestSuiteService {
@@ -86,7 +87,7 @@ public class TestSuiteServiceImpl implements TestSuiteService {
     @Override
     public List<TestSuite> queryAllTestSuite(String locale, String name, List<String> scenarioIdList) {
         List<TestSuite> result = new LinkedList<TestSuite>();
-        if (null == scenarioIdList || 0 == scenarioIdList.size()) {
+        if (null == scenarioIdList || CollectionUtils.isEmpty(scenarioIdList)) {
             result = testSuiteRepository.getAllTestSuites(locale, name, null);
         } else {
             List<TestSuite> testSuiteList = testSuiteRepository.getAllTestSuites(locale, name, scenarioIdList.get(0));
