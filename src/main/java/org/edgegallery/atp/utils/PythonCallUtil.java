@@ -17,7 +17,7 @@ package org.edgegallery.atp.utils;
 import java.util.Map;
 import java.util.Properties;
 import org.edgegallery.atp.constant.Constant;
-import org.edgegallery.atp.model.task.testScenarios.TaskTestCase;
+import org.edgegallery.atp.model.task.testscenarios.TaskTestCase;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.python.core.PyFunction;
 import org.python.core.PyObject;

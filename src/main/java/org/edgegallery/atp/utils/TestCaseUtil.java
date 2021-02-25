@@ -34,6 +34,10 @@ public class TestCaseUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseUtil.class);
 
+    private TestCaseUtil() {
+
+    }
+
     /**
      * validate fileName is .pattern
      * 
@@ -43,10 +47,7 @@ public class TestCaseUtil {
      */
     public static boolean fileSuffixValidate(String pattern, String fileName) {
         String suffix = fileName.substring(fileName.lastIndexOf(Constant.DOT) + 1, fileName.length());
-        if (StringUtils.isNotBlank(suffix) && suffix.equals(pattern)) {
-            return true;
-        }
-        return false;
+        return StringUtils.isNotBlank(suffix) && suffix.equals(pattern);
     }
 
     /**

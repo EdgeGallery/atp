@@ -14,7 +14,7 @@ public interface TestSuiteMapper {
      * 
      * @param TestSuitePo TestSuitePo
      */
-    void createTestSuite(TestSuitePo TestSuitePo);
+    void createTestSuite(TestSuitePo testSuitePo);
 
     /**
      * get test suite by name
@@ -41,7 +41,7 @@ public interface TestSuiteMapper {
      * @param TestSuitePo TestSuitePo
      * @return TestSuitePo
      */
-    void updateTestSuite(TestSuitePo TestSuitePo);
+    void updateTestSuite(TestSuitePo testSuitePo);
     
     /**
      * get test suite by id

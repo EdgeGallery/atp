@@ -13,32 +13,52 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.edgegallery.atp.model.task.testScenarios;
+package org.edgegallery.atp.model.task.testscenarios;
 
-import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class TaskTestScenario {
+public class TaskTestCase {
+
     /**
-     * test scenario id
+     * test case id
      */
     String id;
-    
+
     /**
-     * test scenario chinese name
+     * test case chinese name
      */
     String nameCh;
-    
+
     /**
-     * test scenario english name
+     * test case english name
      */
     String nameEn;
-    
+
     /**
-     * test suite list the test scenario contains
+     * test case chinese description
      */
-    List<TaskTestSuite> testSuites;
+    String descriptionCh;
+
+    /**
+     * test case english description
+     */
+    String descriptionEn;
+
+    /**
+     * test case type: automatic or manual
+     */
+    String type;
+
+    /**
+     * test case execute result. The value is enum:success,failed or running.
+     */
+    String result;
+
+    /**
+     * test case fail reason,it can be empty when the result is not failed.
+     */
+    String reason;
 }

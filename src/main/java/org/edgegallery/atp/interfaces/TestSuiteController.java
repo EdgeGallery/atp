@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -89,7 +90,7 @@ public class TestSuiteController {
                     required = false) @RequestParam("scenarioIdList") List<String> scenarioIdList) {
         TestSuite testSuite = TestSuite.builder().setId(id).setDescriptionEn(descriptionEn)
                 .setdescriptionCh(descriptionCh).setNameEn(nameEn).setnameCh(nameCh).build();
-        testSuite.setScenarioIdList(0 == scenarioIdList.size() ? null : scenarioIdList);
+        testSuite.setScenarioIdList(CollectionUtils.isEmpty(scenarioIdList) ? null : scenarioIdList);
         return ResponseEntity.ok(testSuiteService.updateTestSuite(testSuite));
     }
 

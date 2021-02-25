@@ -76,7 +76,7 @@ public final class JavaFileMemoryMgr extends ForwardingJavaFileManager {
         } else {
             try {
                 final StringBuffer result = new StringBuffer();
-                result.append(MFM).append(className.replace(Constant.DOT, Constant.SLASH));;
+                result.append(MFM).append(className.replace(Constant.DOT, Constant.SLASH));
                 if (className.endsWith(Constant.JAVA_FILE)) {
                     result.replace(result.length() - Constant.JAVA_FILE.length(), result.length(), Constant.JAVA_FILE);
                 }

@@ -76,7 +76,7 @@ public class TestSuiteRepositoryImpl implements TestSuiteRepository {
     @Override
     public void deleteTestSuite(String id) {
         try {
-            testSuiteMapper.deleteTestSuite(id);;
+            testSuiteMapper.deleteTestSuite(id);
         } catch (Exception e) {
             LOGGER.error("delete test suite {} failed. {}", id, e);
             throw new IllegalArgumentException("delete test suite failed.");
