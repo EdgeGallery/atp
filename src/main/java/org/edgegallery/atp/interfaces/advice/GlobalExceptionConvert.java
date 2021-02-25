@@ -18,9 +18,6 @@ import java.io.FileNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.Response;
-import org.edgegallery.atp.utils.exception.EntityNotFoundException;
-import org.edgegallery.atp.utils.exception.RedundantCommentsException;
-import org.edgegallery.atp.utils.exception.UnknownReleaseExecption;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -142,19 +139,6 @@ public class GlobalExceptionConvert {
     }
 
     /**
-     * Handle EntityNotFoundException.
-     *
-     * @return
-     */
-    @ExceptionHandler(value = EntityNotFoundException.class)
-    @ResponseBody
-    public RestReturn entityNotFoundException(HttpServletRequest request, EntityNotFoundException e) {
-        return RestReturn.builder().code(Response.Status.NOT_FOUND.getStatusCode())
-                .error(Response.Status.NOT_FOUND.getReasonPhrase()).message(e.getMessage())
-                .path(request.getRequestURI()).build();
-    }
-
-    /**
      * Handle FileNotFoundException.
      *
      * @return
@@ -166,29 +150,5 @@ public class GlobalExceptionConvert {
                 .error(Response.Status.NOT_FOUND.getReasonPhrase()).message(e.getMessage())
                 .path(request.getRequestURI()).build();
 
-    }
-
-    /**
-     * Handle UnknownReleaseExecption.
-     *
-     * @return
-     */
-    @ExceptionHandler(value = UnknownReleaseExecption.class)
-    @ResponseBody
-    public RestReturn unknownReleaseExecption(HttpServletRequest request, UnknownReleaseExecption e) {
-        return RestReturn.builder().code(Response.Status.NOT_FOUND.getStatusCode())
-                .error(Response.Status.NOT_FOUND.getReasonPhrase()).message(e.getMessage())
-                .path(request.getRequestURI()).build();
-    }
-
-    /**
-     * Handle RedundantCommentsException.
-     *
-     * @return
-     */
-    @ExceptionHandler(value = RedundantCommentsException.class)
-    @ResponseBody
-    public RestReturn redundantCommentsException(HttpServletRequest request, RedundantCommentsException e) {
-        return badRequestResponse(request, e);
     }
 }

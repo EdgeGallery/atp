@@ -15,14 +15,10 @@
 package org.edgegallery.atp.interfaces.exception;
 
 import javax.validation.ConstraintViolationException;
-
 import org.apache.servicecomb.swagger.invocation.Response;
 import org.apache.servicecomb.swagger.invocation.SwaggerInvocation;
 import org.apache.servicecomb.swagger.invocation.exception.ExceptionToProducerResponseConverter;
-import org.edgegallery.atp.utils.exception.EntityNotFoundException;
-import org.edgegallery.atp.utils.exception.RedundantCommentsException;
 import org.edgegallery.atp.utils.exception.UnAuthorizedExecption;
-import org.edgegallery.atp.utils.exception.UnknownReleaseExecption;
 
 public class ExceptionConverter implements ExceptionToProducerResponseConverter<Exception> {
     @Override
@@ -35,19 +31,10 @@ public class ExceptionConverter implements ExceptionToProducerResponseConverter<
         if (e instanceof IllegalArgumentException) {
             return Response.status(javax.ws.rs.core.Response.Status.BAD_REQUEST);
         }
-        if (e instanceof EntityNotFoundException) {
-            return Response.status(javax.ws.rs.core.Response.Status.NOT_FOUND);
-        }
-        if (e instanceof UnknownReleaseExecption) {
-            return Response.status(javax.ws.rs.core.Response.Status.NOT_FOUND);
-        }
         if (e instanceof UnAuthorizedExecption) {
             return Response.status(javax.ws.rs.core.Response.Status.UNAUTHORIZED);
         }
         if (e instanceof ConstraintViolationException) {
-            return Response.status(javax.ws.rs.core.Response.Status.BAD_REQUEST);
-        }
-        if (e instanceof RedundantCommentsException) {
             return Response.status(javax.ws.rs.core.Response.Status.BAD_REQUEST);
         }
         return Response.status(javax.ws.rs.core.Response.Status.BAD_REQUEST);
