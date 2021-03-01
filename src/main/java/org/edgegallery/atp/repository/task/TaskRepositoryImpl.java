@@ -19,15 +19,26 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import org.apache.commons.collections4.CollectionUtils;
 import org.edgegallery.atp.model.task.TaskPO;
 import org.edgegallery.atp.model.task.TaskRequest;
+import org.edgegallery.atp.model.task.testscenarios.TaskTestCase;
+import org.edgegallery.atp.model.task.testscenarios.TaskTestScenario;
+import org.edgegallery.atp.model.task.testscenarios.TaskTestScenarioPo;
+import org.edgegallery.atp.model.task.testscenarios.TaskTestSuite;
+import org.edgegallery.atp.model.testcase.TestCase;
+import org.edgegallery.atp.model.testscenario.TestScenario;
+import org.edgegallery.atp.model.testsuite.TestSuite;
+import org.edgegallery.atp.model.user.User;
 import org.edgegallery.atp.repository.mapper.TaskMapper;
+import org.edgegallery.atp.repository.testcase.TestCaseRepository;
+import org.edgegallery.atp.repository.testscenario.TestScenarioRepository;
+import org.edgegallery.atp.repository.testsuite.TestSuiteRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.CollectionUtils;
+import com.alibaba.fastjson.JSONObject;
 
 @Repository
 public class TaskRepositoryImpl implements TaskRepository {
@@ -36,6 +47,15 @@ public class TaskRepositoryImpl implements TaskRepository {
 
     @Autowired
     TaskMapper taskMapper;
+
+    @Autowired
+    TestCaseRepository testCaseRepository;
+
+    @Autowired
+    TestScenarioRepository testScenarioRepository;
+
+    @Autowired
+    TestSuiteRepository testSuiteRepository;
 
     @Override
     public void insert(TaskRequest task) {
@@ -50,7 +70,13 @@ public class TaskRepositoryImpl implements TaskRepository {
     @Override
     public List<TaskRequest> queryAllRunningTasks() {
         try {
-            return taskMapper.queryAllRunningTasks().stream().map(TaskPO::toDomainModel).collect(Collectors.toList());
+            List<TaskRequest> taskRequest = new ArrayList<TaskRequest>();
+            taskMapper.queryAllRunningTasks().forEach(taskPo -> {
+                if (null != taskPo) {
+                    taskRequest.add(toDomain(taskPo));
+                }
+            });
+            return taskRequest;
         } catch (Exception e) {
             LOGGER.error("queryAllRunningTasks failed. {}", e);
             throw new IllegalArgumentException("queryAllRunningTasks failed.");
@@ -92,7 +118,7 @@ public class TaskRepositoryImpl implements TaskRepository {
     public TaskRequest findByTaskIdAndUserId(String taskId, String userId) {
         try {
             return null != taskMapper.findByTaskIdAndUserId(taskId, userId)
-                    ? taskMapper.findByTaskIdAndUserId(taskId, userId).toDomainModel()
+                    ? toDomain(taskMapper.findByTaskIdAndUserId(taskId, userId))
                     : null;
         } catch (Exception e) {
             LOGGER.error("findByTaskIdAndUserId failed. {}", e);
@@ -105,8 +131,13 @@ public class TaskRepositoryImpl implements TaskRepository {
             String appVersion) {
         try {
             List<TaskPO> taskPoList = taskMapper.findTaskByUserId(userId, appName, status, providerId, appVersion);
-            return CollectionUtils.isEmpty(taskPoList) ? new ArrayList<TaskRequest>()
-                    : taskPoList.stream().map(taskPo -> taskPo.toDomainModel()).collect(Collectors.toList());
+            List<TaskRequest> taskRequest = new ArrayList<TaskRequest>();
+            taskPoList.forEach(taskPo -> {
+                if (null != taskPo) {
+                    taskRequest.add(toDomain(taskPo));
+                }
+            });
+            return taskRequest;
         } catch (Exception e) {
             LOGGER.error("findTaskByUserId failed. {}", e);
             throw new IllegalArgumentException("findTaskByUserId failed.");
@@ -128,5 +159,67 @@ public class TaskRepositoryImpl implements TaskRepository {
 
         result.put("failed", failIds);
         return result;
+    }
+
+    private TaskRequest toDomain(TaskPO taskRequsetPo) {
+        List<TaskTestScenarioPo> taskTestScenarioPoList =
+                JSONObject.parseArray(taskRequsetPo.getTestCaseDetail(), TaskTestScenarioPo.class);
+        List<TaskTestScenario> testScenarios = new ArrayList<TaskTestScenario>();
+        if (CollectionUtils.isNotEmpty(taskTestScenarioPoList)) {
+            taskTestScenarioPoList.forEach(taskTestScenarioPo -> {
+                String scenarioId = taskTestScenarioPo.getId();
+                TestScenario testScenario = testScenarioRepository.getTestScenarioById(scenarioId);
+                if (null == testScenario) {
+                    LOGGER.error("scenarioId {} not exists", scenarioId);
+                    throw new IllegalArgumentException("scenarioId not exists.");
+                }
+                TaskTestScenario scenario = new TaskTestScenario(taskTestScenarioPo);
+                scenario.setNameCh(testScenario.getNameCh());
+                scenario.setNameEn(testScenario.getNameEn());
+                scenario.setLabel(testScenario.getLabel());
+
+                List<TaskTestSuite> testSuites = new ArrayList<TaskTestSuite>();
+                if (CollectionUtils.isNotEmpty(taskTestScenarioPo.getTestSuites())) {
+                    taskTestScenarioPo.getTestSuites().forEach(testSuitePo -> {
+                        TaskTestSuite taskTestSuite = new TaskTestSuite(testSuitePo);
+                        TestSuite testSuite = testSuiteRepository.getTestSuiteById(testSuitePo.getId());
+                        if (null == testSuite) {
+                            LOGGER.error("testSuiteId {} not exists", testSuitePo.getId());
+                            throw new IllegalArgumentException("testSuiteId not exists.");
+                        }
+                        taskTestSuite.setNameCh(testSuite.getNameCh());
+                        taskTestSuite.setNameEn(testSuite.getNameEn());
+                        List<TaskTestCase> testCases = new ArrayList<TaskTestCase>();
+                        if (CollectionUtils.isNotEmpty(testSuitePo.getTestCases())) {
+                            testSuitePo.getTestCases().forEach(testCasePo -> {
+                                TestCase testCaseDb = testCaseRepository.getTestCaseById(testCasePo.getId());
+                                if (null == testCaseDb) {
+                                    LOGGER.error("testCaseId {} not exists", testCasePo.getId());
+                                    throw new IllegalArgumentException("testCaseId not exists.");
+                                }
+                                TaskTestCase taskTestCase = new TaskTestCase(testCasePo);
+                                taskTestCase.setDescriptionCh(testCaseDb.getDescriptionCh());
+                                taskTestCase.setDescriptionEn(testCaseDb.getDescriptionEn());
+                                taskTestCase.setNameCh(testCaseDb.getNameCh());
+                                taskTestCase.setNameEn(testCaseDb.getNameEn());
+                                taskTestCase.setType(testCaseDb.getType());
+                                testCases.add(taskTestCase);
+                            });
+                            taskTestSuite.setTestCases(testCases);
+                            testSuites.add(taskTestSuite);
+                        }
+                    });
+                    scenario.setTestSuites(testSuites);
+                    testScenarios.add(scenario);
+                }
+            });
+        }
+
+        return TaskRequest.builder().setAppName(taskRequsetPo.getAppName()).setAppVersion(taskRequsetPo.getAppVersion())
+                .setCreateTime(taskRequsetPo.getCreateTime()).setEndTime(taskRequsetPo.getEndTime())
+                .setPackagePath(taskRequsetPo.getPackagePath()).setProviderId(taskRequsetPo.getProviderId())
+                .setId(taskRequsetPo.getId()).setStatus(taskRequsetPo.getStatus())
+                .setTestCaseDetail(testScenarios)
+                .setUser(new User(taskRequsetPo.getUserId(), taskRequsetPo.getUserName())).build();
     }
 }

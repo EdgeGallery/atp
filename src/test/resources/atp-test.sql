@@ -43,7 +43,8 @@ CREATE TABLE TEST_SCENARIO_TABLE (
     NAMECH                   VARCHAR(200)       NULL,
     NAMEEN                   VARCHAR(200)       NULL,
     DESCRIPTIONCh            TEXT               NULL,
-    DESCRIPTIONEN            TEXT               NULL, 
+    DESCRIPTIONEN            TEXT               NULL,
+    LABEL                    VARCHAR(200)       NULL,
     CONSTRAINT test_scenario_table_pkey PRIMARY KEY (ID)
 );
 
@@ -70,11 +71,11 @@ CREATE TABLE FILE_TABLE (
 alter table FILE_TABLE add constraint file_table_pkey unique(FILEID,TYPE);
 
 INSERT INTO public.test_scenario_table(
-  id, nameCh,nameEn, descriptionCh,descriptionEn)
-  VALUES ('4d203111-1111-4f62-aabb-8ebcec357f87','社区场景','EdgeGallery Community Scenario','适用于社区场景的测试','suite for EdgeGallery community test'),
-  ('e71718a5-864a-49e5-855a-5805a5e9f97d','中国联通','China Unicom Scenario','适用于中国联通场景的测试','suite for China Unicom test'),
-  ('6fe8581c-b83f-40c2-8f5b-505478f9e30b','中国移动','China Mobile Scenario','适用于中国移动场景的测试','suite for China Mobile test'),
-  ('96a82e85-d40d-4ce5-beec-2dd1c9a3d41d','中国电信','China Telecom Scenario','适用于中国电信场景的测试','suite for China Telecom test');
+  id, nameCh,nameEn, descriptionCh,descriptionEn,label)
+  VALUES ('4d203111-1111-4f62-aabb-8ebcec357f87','社区场景','EdgeGallery Community Scenario','适用于社区场景的测试','suite for EdgeGallery community test','EdgeGallery'),
+  ('e71718a5-864a-49e5-855a-5805a5e9f97d','中国联通','China Unicom Scenario','适用于中国联通场景的测试','suite for China Unicom test','China Unicom'),
+  ('6fe8581c-b83f-40c2-8f5b-505478f9e30b','中国移动','China Mobile Scenario','适用于中国移动场景的测试','suite for China Mobile test','China Mobile'),
+  ('96a82e85-d40d-4ce5-beec-2dd1c9a3d41d','中国电信','China Telecom Scenario','适用于中国电信场景的测试','suite for China Telecom test','China Telecom');
 
 INSERT INTO public.test_suite_table(
   id, nameCh,nameEn, descriptionCh,descriptionEn,scenarioIdList)

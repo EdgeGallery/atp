@@ -15,49 +15,25 @@
  */
 package org.edgegallery.atp.model.task.testscenarios;
 
-import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class TaskTestScenario {
+public class TaskTestCasePo {
+
     /**
-     * test scenario id
+     * test case id
      */
     String id;
-    
+
     /**
-     * test scenario chinese name
+     * test case execute result. The value is enum:success,failed or running.
      */
-    String nameCh;
-    
+    String result;
+
     /**
-     * test scenario english name
+     * test case fail reason,it can be empty when the result is not failed.
      */
-    String nameEn;
-    
-    /**
-     * test scenario label
-     */
-    String label;
-    
-    /**
-     * test suite list the test scenario contains
-     */
-    List<TaskTestSuite> testSuites;
-    
-    public TaskTestScenario() {
-        
-    }
-    
-    public TaskTestScenario(TaskTestScenarioPo taskPo) {
-        this.id = taskPo.getId();
-    }
-    
-    public TaskTestScenarioPo of() {
-        TaskTestScenarioPo taskPo = new TaskTestScenarioPo();
-        taskPo.setId(this.getId());
-        return taskPo;
-    }
+    String reason;
 }

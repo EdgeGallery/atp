@@ -26,7 +26,7 @@ public class TaskTestSuite {
      * test suite id
      */
     String id;
-
+    
     /**
      * test suite chinese name
      */
@@ -41,4 +41,18 @@ public class TaskTestSuite {
      * test case the test suite contains
      */
     List<TaskTestCase> testCases;
+    
+    public TaskTestSuite() {
+        
+    }
+    
+    public TaskTestSuite(TaskTestSuitePo testSuite) {
+        this.id = testSuite.getId();
+    }
+    
+    public TaskTestSuitePo of() {
+        TaskTestSuitePo testSuitePo = new TaskTestSuitePo();
+        testSuitePo.setId(this.getId());
+        return testSuitePo;
+    }
 }

@@ -21,43 +21,14 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class TaskTestScenario {
+public class TaskTestScenarioPo {
     /**
      * test scenario id
      */
     String id;
     
     /**
-     * test scenario chinese name
-     */
-    String nameCh;
-    
-    /**
-     * test scenario english name
-     */
-    String nameEn;
-    
-    /**
-     * test scenario label
-     */
-    String label;
-    
-    /**
      * test suite list the test scenario contains
      */
-    List<TaskTestSuite> testSuites;
-    
-    public TaskTestScenario() {
-        
-    }
-    
-    public TaskTestScenario(TaskTestScenarioPo taskPo) {
-        this.id = taskPo.getId();
-    }
-    
-    public TaskTestScenarioPo of() {
-        TaskTestScenarioPo taskPo = new TaskTestScenarioPo();
-        taskPo.setId(this.getId());
-        return taskPo;
-    }
+    List<TaskTestSuitePo> testSuites;
 }
