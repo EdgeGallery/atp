@@ -70,6 +70,20 @@ CREATE TABLE FILE_TABLE (
 );
 alter table FILE_TABLE add constraint file_table_pkey unique(FILEID,TYPE);
 
+DROP TABLE IF EXISTS CONTRIBUTION_TABLE;
+
+CREATE TABLE CONTRIBUTION_TABLE (
+    ID                       VARCHAR(200)       NOT NULL,
+    NAME                     VARCHAR(200)       NULL,
+    OBJECTIVE                VARCHAR(200)       NULL,
+    STEP                     TEXT               NULL,
+    EXPECTRESULT             TEXT               NULL, 
+    TYPE                     VARCHAR(255)       NULL,
+    CREATETIME               TIMESTAMP          NULL,
+    FILEPATH                 VARCHAR(200)       NULL,
+    CONSTRAINT contribution_table_pkey PRIMARY KEY (ID)
+);
+
 INSERT INTO public.test_scenario_table(
   id, nameCh,nameEn, descriptionCh,descriptionEn,label)
   VALUES ('4d203111-1111-4f62-aabb-8ebcec357f87','社区场景','EdgeGallery Community Scenario','适用于社区场景的测试','suite for EdgeGallery community test','EdgeGallery'),
