@@ -171,6 +171,7 @@ public class TaskServiceImpl implements TaskService {
             scenario.setId(scenarioId);
             scenario.setNameCh(testScenario.getNameCh());
             scenario.setNameEn(testScenario.getNameEn());
+            scenario.setLabel(testScenario.getLabel());
 
             List<TestSuite> testSuiteList = testSuiteRepository.getAllTestSuites(null, null, scenarioId);
             List<TaskTestSuite> testSuites = new ArrayList<TaskTestSuite>();

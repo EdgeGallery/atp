@@ -31,5 +31,6 @@ public class AllTestScenarios extends TestScenario{
        this.setId(testScenario.getId());
        this.setNameCh(testScenario.getNameCh());
        this.setNameEn(testScenario.getNameEn());
+       this.setLabel(testScenario.getLabel());
     }
 }

@@ -20,8 +20,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class TaskTestCase {
-
+public class TaskTestCase{
     /**
      * test case id
      */
@@ -51,7 +50,7 @@ public class TaskTestCase {
      * test case type: automatic or manual
      */
     String type;
-
+    
     /**
      * test case execute result. The value is enum:success,failed or running.
      */
@@ -61,4 +60,22 @@ public class TaskTestCase {
      * test case fail reason,it can be empty when the result is not failed.
      */
     String reason;
+    
+    public TaskTestCase() {
+        
+    }
+    
+    public TaskTestCase(TaskTestCasePo testCasePo) {
+        this.id = testCasePo.getId();
+        this.reason = testCasePo.getReason();
+        this.result = testCasePo.getResult();
+    }
+    
+    public TaskTestCasePo of() {
+        TaskTestCasePo testCasePo = new TaskTestCasePo();
+        testCasePo.setId(this.getId());
+        testCasePo.setReason(this.getReason());
+        testCasePo.setResult(this.getResult());
+        return testCasePo;
+    }
 }

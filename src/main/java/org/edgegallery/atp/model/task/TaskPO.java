@@ -14,13 +14,18 @@
 
 package org.edgegallery.atp.model.task;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import org.edgegallery.atp.model.task.testscenarios.TaskTestScenario;
-import org.edgegallery.atp.model.user.User;
+import org.apache.commons.collections4.CollectionUtils;
+import org.edgegallery.atp.model.task.testscenarios.TaskTestCase;
+import org.edgegallery.atp.model.task.testscenarios.TaskTestCasePo;
+import org.edgegallery.atp.model.task.testscenarios.TaskTestScenarioPo;
+import org.edgegallery.atp.model.task.testscenarios.TaskTestSuite;
+import org.edgegallery.atp.model.task.testscenarios.TaskTestSuitePo;
 import org.edgegallery.atp.utils.JSONUtil;
-import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
@@ -74,17 +79,35 @@ public class TaskPO {
         taskPo.setStatus(startTest.getStatus());
         taskPo.setUserId(startTest.getUser().getUserId());
         taskPo.setUserName(startTest.getUser().getUserName());
-        taskPo.setTestCaseDetail(JSONUtil.marshal(startTest.getTestScenarios()));
+        List<TaskTestScenarioPo> taskTestScenarioPoList = new ArrayList<TaskTestScenarioPo>(); 
+        if(CollectionUtils.isNotEmpty(startTest.getTestScenarios())) {
+            startTest.getTestScenarios().forEach(taskTestScenario->{
+                TaskTestScenarioPo scenarioPo = taskTestScenario.of();
+                taskTestScenarioPoList.add(scenarioPo);
+                List<TaskTestSuitePo> testSuites = new ArrayList<TaskTestSuitePo>();
+                List<TaskTestSuite> taskTestSuite = taskTestScenario.getTestSuites();
+                if(CollectionUtils.isNotEmpty(taskTestSuite)) {
+                    taskTestSuite.forEach(testSuite->{
+                        TaskTestSuitePo suitePo = testSuite.of();
+                        testSuites.add(suitePo);
+                        List<TaskTestCasePo> testCasePo = new ArrayList<TaskTestCasePo>();
+                        List<TaskTestCase> testCases = testSuite.getTestCases();
+                        if(CollectionUtils.isNotEmpty(testCases)) {
+                            testCases.forEach(testCase->{
+                                testCasePo.add(testCase.of());
+                            });
+                            suitePo.setTestCases(testCasePo); 
+                        }
+                    });
+                    scenarioPo.setTestSuites(testSuites); 
+                }
+            }); 
+        }
+        taskPo.setTestCaseDetail(JSONUtil.marshal(taskTestScenarioPoList));
         taskPo.setPackagePath(startTest.getPackagePath());
         taskPo.setProviderId(startTest.getProviderId());
 
         return taskPo;
     }
     
-    public TaskRequest toDomainModel() {
-        return TaskRequest.builder().setAppName(appName).setAppVersion(appVersion).setCreateTime(createTime)
-                .setEndTime(endTime).setPackagePath(packagePath).setProviderId(providerId).setId(id).setStatus(status)
-                .setTestCaseDetail(JSONObject.parseArray(testCaseDetail, TaskTestScenario.class))
-                .setUser(new User(userId, userName)).build();
-    }
 }

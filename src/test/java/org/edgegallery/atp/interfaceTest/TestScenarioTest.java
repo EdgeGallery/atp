@@ -57,7 +57,7 @@ public class TestScenarioTest {
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/testscenarios")
                 .file("icon", iconMultiFile.getBytes()).with(csrf()).param("nameEn", "testScenario")
                 .param("nameCh", "testScenario").param("descriptionCh", "testScenario")
-                .param("descriptionEn", "testScenario")).andReturn();
+                .param("descriptionEn", "testScenario").param("label", "EdgeGallery")).andReturn();
         int result = mvcResult.getResponse().getStatus();
         assertEquals(200, result);
 

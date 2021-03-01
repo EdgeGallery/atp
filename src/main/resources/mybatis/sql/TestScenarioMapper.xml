@@ -49,11 +49,12 @@
 		parameterType="org.edgegallery.atp.model.testscenario.TestScenario">
 		insert into
 		test_scenario_table
-		(id, nameCh, nameEn, descriptionCh, descriptionEn)
+		(id, nameCh, nameEn, descriptionCh, descriptionEn,label)
 		VALUES
 		(#{id}, #{nameCh}, #{nameEn},
 		#{descriptionCh},
-		#{descriptionEn})
+		#{descriptionEn},
+		#{label})
 	</insert>
   
    <update id="updateTestScenario" parameterType="org.edgegallery.atp.model.testscenario.TestScenario">
@@ -70,6 +71,9 @@
           </if>  
           <if test="descriptionEn != null and descriptionEn !=''">
             descriptionEn = #{descriptionEn},
+          </if> 
+          <if test="label != null and label !=''">
+            label = #{label},
           </if>                               
            id=#{id}
         where id = #{id}
