@@ -193,9 +193,15 @@ public interface Constant {
 
     String BASIC_ICON_PATH = FileChecker.getDir() + "/file/icon/";
     
+    String BASIC_CONTRIBUTION_PATH = FileChecker.getDir() + "/file/contribution/";
+
     String ICON = "icon";
 
     String TASK_TYPE_MANUAL = "manual";
 
     String TASK_TYPE_AUTOMATIC = "automatic";
+    
+    String CONTRIBUTION_TYPE_TEXT = "text";
+    
+    String CONTRIBUTION_TYPE_SCRIPT = "script";
 }

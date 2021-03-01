@@ -46,7 +46,7 @@ import io.swagger.annotations.ApiResponses;
 @Controller
 @RestSchema(schemaId = "testScenario")
 @RequestMapping("/edgegallery/atp/v1")
-@Api(tags = {"APT Test Case Controller"})
+@Api(tags = {"APT Test Scenario Controller"})
 @Validated
 public class TestScenarioController {
     private static final String REG_ID = "[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}";
