@@ -38,7 +38,7 @@ import io.swagger.annotations.ApiResponses;
 @Controller
 @RestSchema(schemaId = "contribution")
 @RequestMapping("/edgegallery/atp/v1")
-@Api(tags = {"APT Contribution Controller"})
+@Api(tags = {"ATP Contribution Controller"})
 @Validated
 public class ContributionController {
 
