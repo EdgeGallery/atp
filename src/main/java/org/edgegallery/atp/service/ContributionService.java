@@ -13,6 +13,7 @@
  */
 package org.edgegallery.atp.service;
 
+import java.util.List;
 import org.edgegallery.atp.model.contribution.Contribution;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,4 +26,11 @@ public interface ContributionService {
      * @return contribution file
      */
     public Contribution createContribution(Contribution contribution, MultipartFile file);
+
+    /**
+     * get all contributions
+     * 
+     * @return
+     */
+    public List<Contribution> getAllContribution();
 }

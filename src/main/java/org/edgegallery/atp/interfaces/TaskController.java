@@ -67,7 +67,7 @@ public class TaskController {
     @ApiOperation(value = "create test task.", response = String.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
-    @PreAuthorize("hasRole('ATP_TENANT')")
+    @PreAuthorize("hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<TaskRequest> createTest(
             @ApiParam(value = "application files", required = true) @RequestPart("file") MultipartFile file) {
         CommonUtil.validateContext();
@@ -84,7 +84,7 @@ public class TaskController {
     @ApiOperation(value = "run test task.", response = String.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
-    @PreAuthorize("hasRole('ATP_TENANT')")
+    @PreAuthorize("hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<TaskRequest> runTest(
             @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId, @ApiParam(
                     value = "id of test scenarios selected") @RequestParam("scenarioIdList") List<String> scenarioIdList) {
@@ -101,7 +101,7 @@ public class TaskController {
     @ApiOperation(value = "get all tasks by userId.", response = TaskRequest.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
-    @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT')")
+    @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<List<TaskRequest>> getAllTasks(@QueryParam("appName") String appName,
             @QueryParam("status") String status, @QueryParam("providerId") String providerId,
             @QueryParam("appVersion") String appVersion) {
@@ -138,7 +138,7 @@ public class TaskController {
     @ApiOperation(value = "batch delete test tasks.", response = String.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
-    @PreAuthorize("hasRole('ATP_TENANT')")
+    @PreAuthorize("hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<Map<String, List<String>>> batchDelete(
             @ApiParam(value = "test task id list") @RequestBody TaskIdList taskIds) {
         return taskService.batchDelete(taskIds.getTaskIds());
@@ -153,6 +153,7 @@ public class TaskController {
     @ApiOperation(value = "test tasks number analysis", response = String.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
+    @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<AnalysisResult> taskAnalysis() {
         return taskService.taskAnalysis();
     }
@@ -161,6 +162,7 @@ public class TaskController {
     @ApiOperation(value = "update test case status", response = Boolean.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
+    @PreAuthorize("hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<Boolean> updateTestCaseStatus(
             @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId, @ApiParam(
                     value = "modify test case status request body") @RequestBody List<TestCaseStatusReq> testCaseStatus) {

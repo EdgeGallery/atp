@@ -13,6 +13,7 @@
  */
 package org.edgegallery.atp.repository.contribution;
 
+import java.util.List;
 import org.edgegallery.atp.model.contribution.Contribution;
 import org.edgegallery.atp.repository.mapper.ContributionMapper;
 import org.slf4j.Logger;
@@ -35,6 +36,16 @@ public class ContributionRepositoryImpl implements ContributionRepository {
         } catch (Exception e) {
             LOGGER.error("insert contribution failed. {}", e);
             throw new IllegalArgumentException("insert contribution failed.");
+        }
+    }
+
+    @Override
+    public List<Contribution> getAllContributions() {
+        try {
+            return contributionMapper.getAllContributions();
+        } catch (Exception e) {
+            LOGGER.error("query all contributions failed. {}", e);
+            throw new IllegalArgumentException("query all contributions failed.");
         }
     }
 }

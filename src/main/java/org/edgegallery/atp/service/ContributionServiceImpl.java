@@ -15,6 +15,7 @@ package org.edgegallery.atp.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.model.contribution.Contribution;
 import org.edgegallery.atp.repository.contribution.ContributionRepository;
@@ -60,5 +61,13 @@ public class ContributionServiceImpl implements ContributionService {
         contributionRepository.insert(contribution);
         LOGGER.info("create contribution successfully.");
         return contribution;
+    }
+
+
+    @Override
+    public List<Contribution> getAllContribution() {
+        List<Contribution> contributionList = contributionRepository.getAllContributions();
+        LOGGER.info("query all contributions successfully.");
+        return contributionList;
     }
 }

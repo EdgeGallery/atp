@@ -57,7 +57,7 @@ public class TestSuiteController {
     @ApiOperation(value = "create test suite.", response = String.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
-    @PreAuthorize("hasRole('ATP_TENANT')")
+    @PreAuthorize("hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<TestSuite> createTestSuite(
             @ApiParam(value = "test suite chinese name", required = true) @RequestParam("nameCh") String nameCh,
             @ApiParam(value = "test suite english name", required = true) @RequestParam("nameEn") String nameEn,
@@ -77,7 +77,7 @@ public class TestSuiteController {
     @ApiOperation(value = "modify test suite.", response = TestSuite.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
-    @PreAuthorize("hasRole('ATP_TENANT')")
+    @PreAuthorize("hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<TestSuite> updateTestSuite(
             @ApiParam(value = "test suite id") @PathVariable("id") @Pattern(regexp = REG_ID) String id,
             @ApiParam(value = "test suite chinese name", required = false) @RequestParam("nameCh") String nameCh,
@@ -98,7 +98,7 @@ public class TestSuiteController {
     @ApiOperation(value = "delete test suite.", response = Boolean.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
-    @PreAuthorize("hasRole('ATP_TENANT')")
+    @PreAuthorize("hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<Boolean> deleteTestSuite(
             @ApiParam(value = "test suite id") @PathVariable("id") @Pattern(regexp = REG_ID) String id) {
         return ResponseEntity.ok(testSuiteService.deleteTestSuite(id));
@@ -108,7 +108,7 @@ public class TestSuiteController {
     @ApiOperation(value = "get one test suite.", response = TestSuite.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
-    @PreAuthorize("hasRole('ATP_TENANT')")
+    @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<TestSuite> queryTestSuite(
             @ApiParam(value = "test suite id") @PathVariable("id") @Pattern(regexp = REG_ID) String id) {
         return ResponseEntity.ok(testSuiteService.getTestSuite(id));
@@ -118,7 +118,7 @@ public class TestSuiteController {
     @ApiOperation(value = "get all test suites.", response = TestSuite.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
-    @PreAuthorize("hasRole('ATP_TENANT')")
+    @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<List<TestSuite>> queryAllTestSuite(
             @ApiParam(value = "locale language") @QueryParam("locale") String locale,
             @ApiParam(value = "test Suite name") @QueryParam("name") String name,

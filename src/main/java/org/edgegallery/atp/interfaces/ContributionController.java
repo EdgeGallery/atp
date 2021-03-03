@@ -14,6 +14,7 @@
 
 package org.edgegallery.atp.interfaces;
 
+import java.util.List;
 import javax.ws.rs.core.MediaType;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
 import org.edgegallery.atp.model.contribution.Contribution;
@@ -24,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -49,7 +51,7 @@ public class ContributionController {
     @ApiOperation(value = "create test contribution.", response = String.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
-    @PreAuthorize("hasRole('ATP_TENANT')")
+    @PreAuthorize("hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<Contribution> createContribution(
             @ApiParam(value = "contribution name") @RequestParam("name") String name,
             @ApiParam(value = "contribution objective") @RequestParam("objective") String objective,
@@ -60,6 +62,15 @@ public class ContributionController {
         Contribution contribution = Contribution.builder().setId(CommonUtil.generateId()).setExpectResult(expectResult)
                 .setName(name).setObjective(objective).setStep(step).setType(type).build();
         return ResponseEntity.ok(contributionService.createContribution(contribution, file));
+    }
+
+    @GetMapping(value = "/contribution", produces = MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "get all contributions.", response = Contribution.class)
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
+            @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
+    @PreAuthorize("hasRole('ATP_ADMIN')")
+    public ResponseEntity<List<Contribution>> queryAllContribution() {
+        return ResponseEntity.ok(contributionService.getAllContribution());
     }
 }
 
