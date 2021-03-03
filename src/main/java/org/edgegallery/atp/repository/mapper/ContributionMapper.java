@@ -13,6 +13,7 @@
  */
 package org.edgegallery.atp.repository.mapper;
 
+import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.edgegallery.atp.model.contribution.Contribution;
 import org.springframework.stereotype.Component;
@@ -26,4 +27,10 @@ public interface ContributionMapper {
      * @param contribution
      */
     public void insert(Contribution contribution);
+
+    /**
+     * 
+     * @return
+     */
+    public List<Contribution> getAllContributions();
 }

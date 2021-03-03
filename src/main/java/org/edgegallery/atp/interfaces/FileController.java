@@ -48,7 +48,7 @@ public class FileController {
     @ApiOperation(value = "get one file.", response = InputStreamResource.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
-    @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT')")
+    @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<InputStreamResource> getAllFile(
             @ApiParam(value = "file id") @PathVariable("id") @Pattern(regexp = REG_ID) String id,
             @ApiParam(value = "file type") @QueryParam("type") String type) {

@@ -26,4 +26,10 @@
 		#{filePath},
 		#{createTime})
 	</insert>
+	
+	<select id="getAllContributions"
+            resultType="org.edgegallery.atp.model.contribution.Contribution"
+            parameterType="String">
+        select * from contribution_table
+    </select>
 </mapper>

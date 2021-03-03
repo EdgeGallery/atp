@@ -13,6 +13,7 @@
  */
 package org.edgegallery.atp.repository.contribution;
 
+import java.util.List;
 import org.edgegallery.atp.model.contribution.Contribution;
 
 public interface ContributionRepository {
@@ -23,4 +24,11 @@ public interface ContributionRepository {
      * @param contribution
      */
     public void insert(Contribution contribution);
+
+    /**
+     * get all contributions
+     * 
+     * @return
+     */
+    public List<Contribution> getAllContributions();
 }

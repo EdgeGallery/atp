@@ -66,7 +66,7 @@ public class TestCaseController {
     @ApiOperation(value = "get all test cases.", response = TestCase.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
-    @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT')")
+    @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<List<TestCase>> getAllTestCases(@QueryParam("type") String type,
             @QueryParam("locale") String locale, @QueryParam("name") String name,
             @QueryParam("testSuiteIdList") TestSuiteIdList testSuiteIds) {
@@ -80,7 +80,7 @@ public class TestCaseController {
     @ApiOperation(value = "create test case.", response = TestCase.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
-    @PreAuthorize("hasRole('ATP_TENANT')")
+    @PreAuthorize("hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<TestCase> createTestCase(
             @ApiParam(value = "test case file", required = true) @RequestPart("file") MultipartFile file,
             @ApiParam(value = "test case chinese name", required = true) @RequestParam("nameCh") String nameCh,
@@ -114,7 +114,7 @@ public class TestCaseController {
     @ApiOperation(value = "modify test case.", response = TestCase.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
-    @PreAuthorize("hasRole('ATP_TENANT')")
+    @PreAuthorize("hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<TestCase> updateTestCase(
             @ApiParam(value = "test case id", required = true) @RequestParam("id") String id,
             @ApiParam(value = "test case file", required = false) @RequestPart("file") MultipartFile file,
@@ -146,7 +146,7 @@ public class TestCaseController {
     @ApiOperation(value = "delete test case.", response = Boolean.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
-    @PreAuthorize("hasRole('ATP_TENANT')")
+    @PreAuthorize("hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<Boolean> deleteTestCase(
             @ApiParam(value = "test case id") @PathVariable("id") @Pattern(regexp = REG_ID) String id) {
         return ResponseEntity.ok(testCaseService.deleteTestCase(id));
@@ -156,7 +156,7 @@ public class TestCaseController {
     @ApiOperation(value = "get one test case.", response = TestCase.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
-    @PreAuthorize("hasRole('ATP_TENANT')")
+    @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<TestCase> queryTestCase(
             @ApiParam(value = "test case id") @PathVariable("id") @Pattern(regexp = REG_ID) String id) {
         return ResponseEntity.ok(testCaseService.getTestCase(id));
@@ -166,7 +166,7 @@ public class TestCaseController {
     @ApiOperation(value = "download test case", response = InputStreamResource.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
-    @PreAuthorize("hasRole('ATP_TENANT')")
+    @PreAuthorize("hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<InputStreamResource> downloadTestCase(
             @ApiParam(value = "test case id") @PathVariable("id") @Pattern(regexp = REG_ID) String id) {
         return testCaseService.downloadTestCase(id);
