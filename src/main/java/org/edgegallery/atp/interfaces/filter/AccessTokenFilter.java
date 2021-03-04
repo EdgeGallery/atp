@@ -24,8 +24,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ExceptionConstant;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.ResourceServerTokenServicesConfiguration;
 import org.springframework.context.annotation.Import;
@@ -42,8 +40,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Import({ResourceServerTokenServicesConfiguration.class})
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class AccessTokenFilter extends OncePerRequestFilter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccessTokenFilter.class);
-
     @Autowired
     TokenStore jwtTokenStore;
 
@@ -95,8 +91,6 @@ public class AccessTokenFilter extends OncePerRequestFilter {
                 response.sendError(HttpStatus.UNAUTHORIZED.value(), ExceptionConstant.INVALID_ACCESS_TOKEN);
                 return;
             }
-            LOGGER.info("USER_NAME: {}", userNameFromToken);
-            LOGGER.info("USER_ID: {}", userIdFromToken);
             contextMap.put(Constant.ACCESS_TOKEN, accessTokenStr);
             contextMap.put(Constant.USER_ID, userIdFromToken);
             contextMap.put(Constant.USER_NAME, userNameFromToken);
