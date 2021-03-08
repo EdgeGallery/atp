@@ -39,7 +39,7 @@ public class TestSuiteTest {
         this.mvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).apply(springSecurity()).build();
     }
 
-    @WithMockUser(roles = "ATP_TENANT")
+    @WithMockUser(roles = "ATP_ADMIN")
     @Test
     public void testSuiteTest() throws Exception {
         // create test suite

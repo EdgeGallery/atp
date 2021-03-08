@@ -64,7 +64,7 @@ public class TaskTest {
         this.mvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).apply(springSecurity()).build();
     }
 
-    @WithMockUser(roles = "ATP_TENANT")
+    @WithMockUser(roles = "ATP_ADMIN")
     @Test
     public void TasksTest() throws Exception {
         new MockUp<FileChecker>() {
