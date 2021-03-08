@@ -97,7 +97,7 @@ public class TestCaseTest {
         assertEquals(200, result);
     }
 
-    @WithMockUser(roles = "ATP_TENANT")
+    @WithMockUser(roles = "ATP_ADMIN")
     @Test
     public void TestTestCase() throws Exception {
         File file = Resources.getResourceAsFile("testfile/Test.java");
