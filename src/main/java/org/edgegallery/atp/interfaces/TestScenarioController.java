@@ -58,7 +58,7 @@ public class TestScenarioController {
     @ApiOperation(value = "create test scenario.", response = String.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
-    @PreAuthorize("hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
+    @PreAuthorize("hasRole('ATP_ADMIN')")
     public ResponseEntity<TestScenario> createTestScenario(
             @ApiParam(value = "test scenario chinese name", required = true) @RequestParam("nameCh") String nameCh,
             @ApiParam(value = "test scenario english name", required = true) @RequestParam("nameEn") String nameEn,
@@ -78,7 +78,7 @@ public class TestScenarioController {
     @ApiOperation(value = "modify test scenario.", response = TestScenario.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
-    @PreAuthorize("hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
+    @PreAuthorize("hasRole('ATP_ADMIN')")
     public ResponseEntity<TestScenario> updateTestScenario(
             @ApiParam(value = "test scenario id") @PathVariable("id") @Pattern(regexp = REG_ID) String id,
             @ApiParam(value = "test scenario chinese name", required = false) @RequestParam("nameCh") String nameCh,
@@ -98,7 +98,7 @@ public class TestScenarioController {
     @ApiOperation(value = "delete test scenario.", response = Boolean.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
-    @PreAuthorize("hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
+    @PreAuthorize("hasRole('ATP_ADMIN')")
     public ResponseEntity<Boolean> deleteTestScenario(
             @ApiParam(value = "test scenario id") @PathVariable("id") @Pattern(regexp = REG_ID) String id) {
         return ResponseEntity.ok(testScenarioService.deleteTestScenario(id));
