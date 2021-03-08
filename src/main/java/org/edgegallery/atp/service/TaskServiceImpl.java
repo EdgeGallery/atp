@@ -141,10 +141,17 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public TaskRequest runTask(String taskId, List<String> scenarioIdList) {
         Map<String, String> context = AccessTokenFilter.context.get();
+        if (CollectionUtils.isEmpty(scenarioIdList)) {
+            String msg = "scenarioIdList is empty.";
+            LOGGER.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
         initTestScenarios(scenarioIdList);
         TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, context.get(Constant.USER_ID));
         if(Constant.RUNNING.equals(task.getStatus())) {
-            throw new IllegalArgumentException("this task already in running.");
+            String msg = "this task already in running.";
+            LOGGER.error(msg);
+            throw new IllegalArgumentException(msg);
         }
         task.setTestScenarios(initTestScenarios(scenarioIdList));
         task.setAccessToken(context.get(Constant.ACCESS_TOKEN));
