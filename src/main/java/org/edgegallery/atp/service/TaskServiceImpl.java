@@ -140,29 +140,34 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public TaskRequest runTask(String taskId, List<String> scenarioIdList) {
-        Map<String, String> context = AccessTokenFilter.context.get();
-        if (CollectionUtils.isEmpty(scenarioIdList)) {
-            String msg = "scenarioIdList is empty.";
-            LOGGER.error(msg);
-            throw new IllegalArgumentException(msg);
-        }
-        initTestScenarios(scenarioIdList);
-        TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, context.get(Constant.USER_ID));
-        if(Constant.RUNNING.equals(task.getStatus())) {
-            String msg = "this task already in running.";
-            LOGGER.error(msg);
-            throw new IllegalArgumentException(msg);
-        }
-        task.setTestScenarios(initTestScenarios(scenarioIdList));
-        task.setAccessToken(context.get(Constant.ACCESS_TOKEN));
-        task.setStatus(Constant.WAITING);
+        try {
+            Map<String, String> context = AccessTokenFilter.context.get();
+            if (CollectionUtils.isEmpty(scenarioIdList)) {
+                String msg = "scenarioIdList is empty.";
+                LOGGER.error(msg);
+                throw new IllegalArgumentException(msg);
+            }
+            initTestScenarios(scenarioIdList);
+            TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, context.get(Constant.USER_ID));
+            if (Constant.RUNNING.equals(task.getStatus())) {
+                String msg = "this task already in running.";
+                LOGGER.error(msg);
+                throw new IllegalArgumentException(msg);
+            }
+            task.setTestScenarios(initTestScenarios(scenarioIdList));
+            task.setAccessToken(context.get(Constant.ACCESS_TOKEN));
+            task.setStatus(Constant.WAITING);
 
-        taskRepository.update(task);
-        String filePath = task.getPackagePath();
-        testCaseManager.executeTestCase(task, filePath);
+            taskRepository.update(task);
+            String filePath = task.getPackagePath();
+            testCaseManager.executeTestCase(task, filePath);
 
-        LOGGER.info("run task successfully.");
-        return task;
+            LOGGER.info("run task successfully.");
+            return task;
+        } catch (Exception e) {
+            LOGGER.error("run task failed. {}", e);
+            throw new IllegalArgumentException("run task failed");
+        }
     }
 
     private List<TaskTestScenario> initTestScenarios(List<String> scenarioIdList) {
