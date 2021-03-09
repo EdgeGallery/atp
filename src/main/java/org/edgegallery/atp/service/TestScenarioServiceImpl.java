@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.model.file.ATPFile;
@@ -109,6 +110,11 @@ public class TestScenarioServiceImpl implements TestScenarioService {
 
     @Override
     public Boolean deleteTestScenario(String id) {
+        List<TestSuite> testSuiteList = testSuiteRepository.getAllTestSuites(null, null, id);
+        if (CollectionUtils.isNotEmpty(testSuiteList)) {
+            LOGGER.error("scenario id {} is used by some test suites, so can not be delete.", id);
+            throw new IllegalArgumentException("this scenario is used by some test suites, so can not be delete.");
+        }
         ATPFile file = fileRepository.getFileContent(id, Constant.FILE_TYPE_SCENARIO);
         new File(file.getFilePath()).delete();
         testScenarioRepository.deleteTestScenario(id);
