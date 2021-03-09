@@ -15,8 +15,10 @@ package org.edgegallery.atp.service;
 
 import java.util.LinkedList;
 import java.util.List;
+import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.model.testscenario.TestScenario;
 import org.edgegallery.atp.model.testsuite.TestSuite;
+import org.edgegallery.atp.repository.testcase.TestCaseRepository;
 import org.edgegallery.atp.repository.testscenario.TestScenarioRepository;
 import org.edgegallery.atp.repository.testsuite.TestSuiteRepository;
 import org.slf4j.Logger;
@@ -34,6 +36,9 @@ public class TestSuiteServiceImpl implements TestSuiteService {
 
     @Autowired
     TestScenarioRepository testScenarioRepository;
+
+    @Autowired
+    TestCaseRepository testCaseRepository;
 
     @Override
     public TestSuite createTestSuite(TestSuite testSuite) {
@@ -72,6 +77,11 @@ public class TestSuiteServiceImpl implements TestSuiteService {
 
     @Override
     public Boolean deleteTestSuite(String id) {
+        List<TestCase> testCaseList = testCaseRepository.findAllTestCases(null, null, null, id);
+        if (!CollectionUtils.isEmpty(testCaseList)) {
+            LOGGER.error("test suite {} is used by some test cases, can not be deleted.", id);
+            throw new IllegalArgumentException("this test suite is used by some test cases, can not be deleted..");
+        }
         testSuiteRepository.deleteTestSuite(id);
         LOGGER.info("delete test suite successfully.");
         return true;
