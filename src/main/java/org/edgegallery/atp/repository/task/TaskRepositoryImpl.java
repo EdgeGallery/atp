@@ -169,13 +169,15 @@ public class TaskRepositoryImpl implements TaskRepository {
                 JSONObject.parseArray(taskRequsetPo.getTestCaseDetail(), TaskTestScenarioPo.class);
         List<TaskTestScenario> testScenarios = new ArrayList<TaskTestScenario>();
         String status = Constant.SUCCESS;
+        boolean isChanged = false;
         if (CollectionUtils.isNotEmpty(taskTestScenarioPoList)) {
             for (TaskTestScenarioPo taskTestScenarioPo : taskTestScenarioPoList) {
                 String scenarioId = taskTestScenarioPo.getId();
                 TestScenario testScenario = testScenarioRepository.getTestScenarioById(scenarioId);
                 if (null == testScenario) {
                     // if the test scenario has been deleted, just ignore it
-                    LOGGER.error("scenarioId {} not exists", scenarioId);
+                    isChanged = true;
+                    LOGGER.warn("scenarioId {} not exists", scenarioId);
                     continue;
                 }
                 TaskTestScenario scenario = new TaskTestScenario(taskTestScenarioPo);
@@ -189,7 +191,8 @@ public class TaskRepositoryImpl implements TaskRepository {
                         TaskTestSuite taskTestSuite = new TaskTestSuite(testSuitePo);
                         TestSuite testSuite = testSuiteRepository.getTestSuiteById(testSuitePo.getId());
                         if (null == testSuite) {
-                            LOGGER.error("testSuiteId {} not exists", testSuitePo.getId());
+                            isChanged = true;
+                            LOGGER.warn("testSuiteId {} not exists", testSuitePo.getId());
                             continue;
                         }
                         taskTestSuite.setNameCh(testSuite.getNameCh());
@@ -199,7 +202,8 @@ public class TaskRepositoryImpl implements TaskRepository {
                             for (TaskTestCasePo testCasePo : testSuitePo.getTestCases()) {
                                 TestCase testCaseDb = testCaseRepository.getTestCaseById(testCasePo.getId());
                                 if (null == testCaseDb) {
-                                    LOGGER.error("testCaseId {} not exists", testCasePo.getId());
+                                    isChanged = true;
+                                    LOGGER.warn("testCaseId {} not exists", testCasePo.getId());
                                     continue;
                                 }
                                 TaskTestCase taskTestCase = new TaskTestCase(testCasePo);
@@ -227,12 +231,18 @@ public class TaskRepositoryImpl implements TaskRepository {
             }
         }
 
-        return TaskRequest.builder().setAppName(taskRequsetPo.getAppName()).setAppVersion(taskRequsetPo.getAppVersion())
+        TaskRequest result = TaskRequest.builder().setAppName(taskRequsetPo.getAppName())
+                .setAppVersion(taskRequsetPo.getAppVersion())
                 .setCreateTime(taskRequsetPo.getCreateTime()).setEndTime(taskRequsetPo.getEndTime())
                 .setPackagePath(taskRequsetPo.getPackagePath()).setProviderId(taskRequsetPo.getProviderId())
                 .setId(taskRequsetPo.getId()).setStatus(taskRequsetPo.getStatus())
                 .setTestCaseDetail(testScenarios)
                 .setUser(new User(taskRequsetPo.getUserId(), taskRequsetPo.getUserName())).build();
+        // some test scenario or test suite or test case is changed, need to update
+        if (isChanged) {
+            update(result);
+        }
+        return result;
     }
 
     private static String calStatus(String status, TaskTestCasePo testCasePo) {
