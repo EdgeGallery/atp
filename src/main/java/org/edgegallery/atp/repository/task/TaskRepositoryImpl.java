@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.collections4.CollectionUtils;
+import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.model.task.TaskPO;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.task.testscenarios.TaskTestCase;
@@ -167,11 +168,13 @@ public class TaskRepositoryImpl implements TaskRepository {
         List<TaskTestScenarioPo> taskTestScenarioPoList =
                 JSONObject.parseArray(taskRequsetPo.getTestCaseDetail(), TaskTestScenarioPo.class);
         List<TaskTestScenario> testScenarios = new ArrayList<TaskTestScenario>();
+        String status = Constant.SUCCESS;
         if (CollectionUtils.isNotEmpty(taskTestScenarioPoList)) {
             for (TaskTestScenarioPo taskTestScenarioPo : taskTestScenarioPoList) {
                 String scenarioId = taskTestScenarioPo.getId();
                 TestScenario testScenario = testScenarioRepository.getTestScenarioById(scenarioId);
                 if (null == testScenario) {
+                    // if the test scenario has been deleted, just ignore it
                     LOGGER.error("scenarioId {} not exists", scenarioId);
                     continue;
                 }
@@ -205,6 +208,7 @@ public class TaskRepositoryImpl implements TaskRepository {
                                 taskTestCase.setNameCh(testCaseDb.getNameCh());
                                 taskTestCase.setNameEn(testCaseDb.getNameEn());
                                 taskTestCase.setType(testCaseDb.getType());
+                                status = calStatus(status, testCasePo);
                                 testCases.add(taskTestCase);
                             }
                             taskTestSuite.setTestCases(testCases);
@@ -215,6 +219,12 @@ public class TaskRepositoryImpl implements TaskRepository {
                     testScenarios.add(scenario);
                 }
             }
+
+            if (!status.equals(taskRequsetPo.getStatus())) {
+                // status refesh because of deleting test scenario or test suite or test case
+                taskRequsetPo.setStatus(status);
+                taskMapper.update(taskRequsetPo);
+            }
         }
 
         return TaskRequest.builder().setAppName(taskRequsetPo.getAppName()).setAppVersion(taskRequsetPo.getAppVersion())
@@ -223,5 +233,16 @@ public class TaskRepositoryImpl implements TaskRepository {
                 .setId(taskRequsetPo.getId()).setStatus(taskRequsetPo.getStatus())
                 .setTestCaseDetail(testScenarios)
                 .setUser(new User(taskRequsetPo.getUserId(), taskRequsetPo.getUserName())).build();
+    }
+
+    private static String calStatus(String status, TaskTestCasePo testCasePo) {
+        if (Constant.RUNNING.equals(testCasePo.getResult())) {
+            status = Constant.RUNNING;
+        } else {
+            if (!Constant.RUNNING.equals(status)) {
+                status = (Constant.FAILED.equals(testCasePo.getResult()) ? Constant.FAILED : status);
+            }
+        }
+        return status;
     }
 }
