@@ -80,8 +80,8 @@ public class TestCaseServiceImpl implements TestCaseService {
     @Override
     public TestCase createTestCase(MultipartFile file, TestCase testCase) {
         // nameCh or nameEn must exist one
-        testCase.setNameCh(null != testCase.getNameCh() ? testCase.getNameCh() : testCase.getNameEn());
-        testCase.setNameEn(null != testCase.getNameEn() ? testCase.getNameEn() : testCase.getNameCh());
+        testCase.setNameCh(StringUtils.isNotBlank(testCase.getNameCh()) ? testCase.getNameCh() : testCase.getNameEn());
+        testCase.setNameEn(StringUtils.isNotBlank(testCase.getNameEn()) ? testCase.getNameEn() : testCase.getNameCh());
         if (null == testCase.getNameCh() && null == testCase.getNameEn()) {
             throw new IllegalArgumentException("both nameCh and nameEn is null.");
         }
