@@ -23,9 +23,11 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.edgegallery.atp.model.task.TaskPO;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.task.testscenarios.TaskTestCase;
+import org.edgegallery.atp.model.task.testscenarios.TaskTestCasePo;
 import org.edgegallery.atp.model.task.testscenarios.TaskTestScenario;
 import org.edgegallery.atp.model.task.testscenarios.TaskTestScenarioPo;
 import org.edgegallery.atp.model.task.testscenarios.TaskTestSuite;
+import org.edgegallery.atp.model.task.testscenarios.TaskTestSuitePo;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.model.testscenario.TestScenario;
 import org.edgegallery.atp.model.testsuite.TestSuite;
@@ -166,12 +168,12 @@ public class TaskRepositoryImpl implements TaskRepository {
                 JSONObject.parseArray(taskRequsetPo.getTestCaseDetail(), TaskTestScenarioPo.class);
         List<TaskTestScenario> testScenarios = new ArrayList<TaskTestScenario>();
         if (CollectionUtils.isNotEmpty(taskTestScenarioPoList)) {
-            taskTestScenarioPoList.forEach(taskTestScenarioPo -> {
+            for (TaskTestScenarioPo taskTestScenarioPo : taskTestScenarioPoList) {
                 String scenarioId = taskTestScenarioPo.getId();
                 TestScenario testScenario = testScenarioRepository.getTestScenarioById(scenarioId);
                 if (null == testScenario) {
                     LOGGER.error("scenarioId {} not exists", scenarioId);
-                    throw new IllegalArgumentException("scenarioId not exists.");
+                    continue;
                 }
                 TaskTestScenario scenario = new TaskTestScenario(taskTestScenarioPo);
                 scenario.setNameCh(testScenario.getNameCh());
@@ -180,22 +182,22 @@ public class TaskRepositoryImpl implements TaskRepository {
 
                 List<TaskTestSuite> testSuites = new ArrayList<TaskTestSuite>();
                 if (CollectionUtils.isNotEmpty(taskTestScenarioPo.getTestSuites())) {
-                    taskTestScenarioPo.getTestSuites().forEach(testSuitePo -> {
+                    for (TaskTestSuitePo testSuitePo : taskTestScenarioPo.getTestSuites()) {
                         TaskTestSuite taskTestSuite = new TaskTestSuite(testSuitePo);
                         TestSuite testSuite = testSuiteRepository.getTestSuiteById(testSuitePo.getId());
                         if (null == testSuite) {
                             LOGGER.error("testSuiteId {} not exists", testSuitePo.getId());
-                            throw new IllegalArgumentException("testSuiteId not exists.");
+                            continue;
                         }
                         taskTestSuite.setNameCh(testSuite.getNameCh());
                         taskTestSuite.setNameEn(testSuite.getNameEn());
                         List<TaskTestCase> testCases = new ArrayList<TaskTestCase>();
                         if (CollectionUtils.isNotEmpty(testSuitePo.getTestCases())) {
-                            testSuitePo.getTestCases().forEach(testCasePo -> {
+                            for (TaskTestCasePo testCasePo : testSuitePo.getTestCases()) {
                                 TestCase testCaseDb = testCaseRepository.getTestCaseById(testCasePo.getId());
                                 if (null == testCaseDb) {
                                     LOGGER.error("testCaseId {} not exists", testCasePo.getId());
-                                    throw new IllegalArgumentException("testCaseId not exists.");
+                                    continue;
                                 }
                                 TaskTestCase taskTestCase = new TaskTestCase(testCasePo);
                                 taskTestCase.setDescriptionCh(testCaseDb.getDescriptionCh());
@@ -204,15 +206,15 @@ public class TaskRepositoryImpl implements TaskRepository {
                                 taskTestCase.setNameEn(testCaseDb.getNameEn());
                                 taskTestCase.setType(testCaseDb.getType());
                                 testCases.add(taskTestCase);
-                            });
+                            }
                             taskTestSuite.setTestCases(testCases);
                             testSuites.add(taskTestSuite);
                         }
-                    });
+                    }
                     scenario.setTestSuites(testSuites);
                     testScenarios.add(scenario);
                 }
-            });
+            }
         }
 
         return TaskRequest.builder().setAppName(taskRequsetPo.getAppName()).setAppVersion(taskRequsetPo.getAppVersion())
