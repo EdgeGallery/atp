@@ -48,6 +48,10 @@ public class FileChecker {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileChecker.class);
 
+    private FileChecker() {
+
+    }
+
     /**
      * check if file path is valid.
      * 
@@ -58,11 +62,13 @@ public class FileChecker {
         filePath = Normalizer.normalize(filePath, Normalizer.Form.NFKC);
 
         if (StringUtils.isEmpty(filePath)) {
+            LOGGER.error("filepath is empty.");
             throw new IllegalArgumentException(filePath + " :filepath is empty");
         }
 
         // file name should not contains blank.
         if (filePath != null && filePath.split("\\s").length > 1) {
+            LOGGER.error("filepath contain blank.");
             throw new IllegalArgumentException(filePath + " :filepath contain blank");
         }
 
@@ -71,6 +77,7 @@ public class FileChecker {
                 || name.endsWith(Constant.PACKAGE_XML_FORMAT) || name.endsWith(Constant.PACKAGE_YAML_FORMAT)
                 || name.endsWith(Constant.PACKAGE_CSH_FORMAT) || name.endsWith(Constant.PACKAGE_META_FORMAT)
                 || name.endsWith(Constant.PACKAGE_TXT_FORMAT))) {
+            LOGGER.error("file suffix is wrong.");
             throw new IllegalArgumentException();
         }
 
@@ -78,6 +85,7 @@ public class FileChecker {
         for (String dir : dirs) {
             Matcher matcher = Pattern.compile(Constant.REG).matcher(dir);
             if (!matcher.matches()) {
+                LOGGER.error("file dir contains illegal character.");
                 throw new IllegalArgumentException();
             }
         }
@@ -95,14 +103,17 @@ public class FileChecker {
 
         // file name should not contains blank.
         if (originalFilename != null && originalFilename.split("\\s").length > 1) {
+            LOGGER.error("fileName contain blank");
             throw new IllegalArgumentException(originalFilename + " :fileName contain blank");
         }
 
         if (originalFilename != null && !isAllowedFileName(originalFilename)) {
+            LOGGER.error("fileName is Illegal");
             throw new IllegalArgumentException(originalFilename + " :fileName is Illegal");
         }
 
         if (file.getSize() > getMaxFileSize()) {
+            LOGGER.error("fileSize is too big");
             throw new IllegalArgumentException(originalFilename + " :fileSize is too big");
         }
 
@@ -110,6 +121,7 @@ public class FileChecker {
         String originalFileName = file.getOriginalFilename();
 
         if (originalFileName == null) {
+            LOGGER.error("Package File name is null.");
             throw new IllegalArgumentException("Package File name is null.");
         }
 
@@ -125,9 +137,11 @@ public class FileChecker {
             if (!CommonUtil.deleteTempFile(taskId, file)) {
                 LOGGER.warn("check delete file {} failed.", file.getOriginalFilename());
             }
+            LOGGER.error("create temp file with IOException. {}", e.getMessage());
             throw new IllegalArgumentException("create temp file with IOException");
         } catch (IllegalStateException e) {
             CommonUtil.deleteTempFile(taskId, file);
+            LOGGER.error("Illegal state exception, {}", e.getMessage());
             throw new IllegalArgumentException(e.getMessage());
         }
         return result;
@@ -145,6 +159,7 @@ public class FileChecker {
             File targetFile = new File(path);
             file.transferTo(targetFile);
         } catch (IOException e) {
+            LOGGER.error("copy file to dir with IOException,{}", e.getMessage());
             throw new IllegalArgumentException("copy file to dir with IOException");
         }
     }
@@ -308,6 +323,7 @@ public class FileChecker {
             }
         } catch (IOException e) {
             FileUtils.cleanDirectory(new File(Constant.WORK_TEMP_DIR));
+            LOGGER.error("unzip csar with exception. {}", e.getMessage());
             throw new IllegalArgumentException("unzip csar with exception.");
         } finally {
             zis.close();
@@ -344,6 +360,7 @@ public class FileChecker {
             result = tempFile.getParentFile().mkdirs();
         }
         if (!tempFile.exists() && !tempFile.isDirectory() && !tempFile.createNewFile() && !result) {
+            LOGGER.error("create temp file failed.");
             throw new IllegalArgumentException("create temp file failed");
         }
     }

@@ -40,6 +40,10 @@ public class JavaCompileUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JavaCompileUtil.class);
 
+    private JavaCompileUtil() {
+
+    }
+
     public static void executeJava(TestCase testCase, String csarFilePath, TaskTestCase taskTestCase,
             Map<String, String> context) {
         try {

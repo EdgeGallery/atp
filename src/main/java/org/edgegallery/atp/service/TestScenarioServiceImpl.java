@@ -63,7 +63,9 @@ public class TestScenarioServiceImpl implements TestScenarioService {
         testScenario.setNameCh(null != testScenario.getNameCh() ? testScenario.getNameCh() : testScenario.getNameEn());
         testScenario.setNameEn(null != testScenario.getNameEn() ? testScenario.getNameEn() : testScenario.getNameCh());
         if (null == testScenario.getNameCh() && null == testScenario.getNameEn()) {
-            throw new IllegalArgumentException("both nameCh and nameEn is null.");
+            String msg = "both nameCh and nameEn is null.";
+            LOGGER.error(msg);
+            throw new IllegalArgumentException(msg);
         }
         checkNameExists(testScenario);
         String iconName = icon.getOriginalFilename();
@@ -84,10 +86,14 @@ public class TestScenarioServiceImpl implements TestScenarioService {
         TestScenario dbData = testScenarioRepository.getTestScenarioById(testScenario.getId());
         if (!dbData.getNameCh().equalsIgnoreCase(testScenario.getNameCh())
                 && null != testScenarioRepository.getTestScenarioByName(testScenario.getNameCh(), null)) {
-            throw new IllegalArgumentException("chinese name of test scenario already exist.");
+            String msg = "chinese name of test scenario already exist.";
+            LOGGER.error(msg);
+            throw new IllegalArgumentException(msg);
         }
         if (!dbData.getNameEn().equalsIgnoreCase(testScenario.getNameEn())
                 && null != testScenarioRepository.getTestScenarioByName(null, testScenario.getNameEn())) {
+            String msg = "english name of test suite already exist.";
+            LOGGER.error(msg);
             throw new IllegalArgumentException("english name of test suite already exist.");
         }
         testScenarioRepository.updateTestScenario(testScenario);
@@ -165,7 +171,9 @@ public class TestScenarioServiceImpl implements TestScenarioService {
     private void checkNameExists(TestScenario testScenario) {
         if (null != testScenarioRepository.getTestScenarioByName(testScenario.getNameCh(), null)
                 || null != testScenarioRepository.getTestScenarioByName(null, testScenario.getNameEn())) {
-            throw new IllegalArgumentException("name of test scenario already exist.");
+            String msg = "name of test scenario already exist.";
+            LOGGER.error(msg);
+            throw new IllegalArgumentException(msg);
         }
     }
 

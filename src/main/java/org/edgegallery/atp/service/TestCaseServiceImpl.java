@@ -83,11 +83,15 @@ public class TestCaseServiceImpl implements TestCaseService {
         testCase.setNameCh(StringUtils.isNotBlank(testCase.getNameCh()) ? testCase.getNameCh() : testCase.getNameEn());
         testCase.setNameEn(StringUtils.isNotBlank(testCase.getNameEn()) ? testCase.getNameEn() : testCase.getNameCh());
         if (null == testCase.getNameCh() && null == testCase.getNameEn()) {
-            throw new IllegalArgumentException("both nameCh and nameEn is null.");
+            String msg = "both nameCh and nameEn is null";
+            LOGGER.error(msg);
+            throw new IllegalArgumentException(msg);
         }
         if (null != testCaseRepository.findByName(testCase.getNameCh(), null)
                 || null != testCaseRepository.findByName(null, testCase.getNameEn())) {
-            throw new IllegalArgumentException("name of test case already exist.");
+            String msg = "name of test case already exist.";
+            LOGGER.error(msg);
+            throw new IllegalArgumentException(msg);
         }
         checkTestSuiteIdsExist(testCase);
 
@@ -96,7 +100,9 @@ public class TestCaseServiceImpl implements TestCaseService {
             List<TestCase> testCaseList = testCaseRepository.findAllTestCases(null, null, null, testSuiteId);
             testCaseList.forEach(testCaseDb -> {
                 if (!testCaseDb.getType().equals(testCase.getType())) {
-                    throw new IllegalArgumentException("test case type in testSuiteIds is not the same as others.");
+                    String msg = "test case type in testSuiteIds is not the same as others.";
+                    LOGGER.error(msg);
+                    throw new IllegalArgumentException(msg);
                 }
             });
         });
@@ -215,7 +221,9 @@ public class TestCaseServiceImpl implements TestCaseService {
     private void checkTestSuiteIdsExist(TestCase testCase) {
         List<TestSuite> testSuiteList = testSuiteRepository.batchQueryTestSuites(testCase.getTestSuiteIdList());
         if (testSuiteList.size() != testCase.getTestSuiteIdList().size()) {
-            throw new IllegalArgumentException("some test suite ids do not exist.");
+            String msg = "some test suite ids do not exist.";
+            LOGGER.error(msg);
+            throw new IllegalArgumentException(msg);
         }
     }
 }
