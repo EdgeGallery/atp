@@ -474,6 +474,7 @@ public class CommonUtil {
     public static void isUuidPattern(String param) {
         Pattern pattern = Pattern.compile("[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}");
         if (!pattern.matcher(param).matches()) {
+            LOGGER.error("param is not uuid pattern.");
             throw new IllegalArgumentException(String.format("%s is not uuid pattern.", param));
         }
     }
@@ -486,6 +487,7 @@ public class CommonUtil {
      */
     public static void lengthCheck(String param) {
         if (!StringUtils.isEmpty(param) && param.length() > 128) {
+            LOGGER.error("the length of param must less than 128");
             throw new IllegalArgumentException(String.format("the length of %s must less than 128.", param));
         }
     }
@@ -495,6 +497,7 @@ public class CommonUtil {
      */
     public static void validateContext() {
         if (null == AccessTokenFilter.context.get()) {
+            LOGGER.error("context is null.");
             throw new IllegalArgumentException(ExceptionConstant.CONTEXT_IS_NULL);
         }
     }

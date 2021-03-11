@@ -29,6 +29,10 @@ import org.slf4j.LoggerFactory;
 public class PythonCallUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(PythonCallUtil.class);
 
+    private PythonCallUtil() {
+
+    }
+
     public static void callPython(TestCase testCase, String csarFilePath, TaskTestCase taskTestCase,
             Map<String, String> context) {
         LOGGER.info("start call Python");

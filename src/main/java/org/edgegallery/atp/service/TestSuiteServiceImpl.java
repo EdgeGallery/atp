@@ -46,11 +46,15 @@ public class TestSuiteServiceImpl implements TestSuiteService {
         testSuite.setNameCh(null != testSuite.getNameCh() ? testSuite.getNameCh() : testSuite.getNameEn());
         testSuite.setNameEn(null != testSuite.getNameEn() ? testSuite.getNameEn() : testSuite.getNameCh());
         if (null == testSuite.getNameCh() && null == testSuite.getNameEn()) {
-            throw new IllegalArgumentException("both nameCh and nameEn is null.");
+            String msg = "both nameCh and nameEn is null.";
+            LOGGER.error(msg);
+            throw new IllegalArgumentException(msg);
         }
         if (null != testSuiteRepository.getTestSuiteByName(testSuite.getNameCh(), null)
                 || null != testSuiteRepository.getTestSuiteByName(null, testSuite.getNameEn())) {
-            throw new IllegalArgumentException("name of test suite already exist.");
+            String msg = "name of test suite already exist.";
+            LOGGER.error(msg);
+            throw new IllegalArgumentException(msg);
         }
         checkTestScenarioIdsExist(testSuite);
         testSuiteRepository.createTestSuite(testSuite);
@@ -63,11 +67,15 @@ public class TestSuiteServiceImpl implements TestSuiteService {
         TestSuite dbData = testSuiteRepository.getTestSuiteById(testSuite.getId());
         if (!dbData.getNameCh().equalsIgnoreCase(testSuite.getNameCh())
                 && null != testSuiteRepository.getTestSuiteByName(testSuite.getNameCh(), null)) {
-            throw new IllegalArgumentException("chinese name of test suite already exist.");
+            String msg = "chinese name of test suite already exist.";
+            LOGGER.error(msg);
+            throw new IllegalArgumentException(msg);
         }
         if (!dbData.getNameEn().equalsIgnoreCase(testSuite.getNameEn())
                 && null != testSuiteRepository.getTestSuiteByName(null, testSuite.getNameEn())) {
-            throw new IllegalArgumentException("english name of test suite already exist.");
+            String msg = "english name of test suite already exist.";
+            LOGGER.error(msg);
+            throw new IllegalArgumentException(msg);
         }
         checkTestScenarioIdsExist(testSuite);
         testSuiteRepository.updateTestSuite(testSuite);
@@ -127,7 +135,9 @@ public class TestSuiteServiceImpl implements TestSuiteService {
         List<TestScenario> testScenarioList =
                 testScenarioRepository.batchQueryTestScenario(testSuite.getScenarioIdList());
         if (testScenarioList.size() != testSuite.getScenarioIdList().size()) {
-            throw new IllegalArgumentException("some test scenario ids do not exist.");
+            String msg = "some test scenario ids do not exist.";
+            LOGGER.error(msg);
+            throw new IllegalArgumentException(msg);
         }
     }
 }
