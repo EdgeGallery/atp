@@ -149,6 +149,11 @@ public class TaskServiceImpl implements TaskService {
             }
             initTestScenarios(scenarioIdList);
             TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, context.get(Constant.USER_ID));
+            if (null == task) {
+                LOGGER.error("get task from db is null.taskId: {}, userId: {}, userName: {}", taskId,
+                        context.get(Constant.USER_ID), context.get(Constant.USER_NAME));
+                throw new IllegalArgumentException("get task from db is null");
+            }
             if (Constant.RUNNING.equals(task.getStatus())) {
                 String msg = "this task already in running.";
                 LOGGER.error(msg);
