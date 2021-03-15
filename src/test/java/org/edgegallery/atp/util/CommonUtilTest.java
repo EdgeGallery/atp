@@ -78,19 +78,10 @@ public class CommonUtilTest {
         CommonUtil.downloadAppFromAppStore("111", "111", context);
         context.put(Constant.TENANT_ID,"tenant");
         
-        //createInstanceFromAppo
-        Map<String, String> appInfo = new HashMap<String,String>();
+        Map<String, String> appInfo = new HashMap<String, String>();
         appInfo.put(Constant.APP_NAME, "name");
         appInfo.put(Constant.PACKAGE_ID, "111");
         appInfo.put(Constant.APP_ID, "111");
-        CommonUtil.createInstanceFromAppo(context, appInfo, "127.0.0.1");
-
-        // instantiateApp
-        CommonUtil.instantiateAppFromAppo(context, "111");
-
-        // getAppInstance
-        CommonUtil.getApplicationInstance(context, "111", "create");
-
         // deleteAppInstance
         CommonUtil.deleteAppInstance("111", context);
 
