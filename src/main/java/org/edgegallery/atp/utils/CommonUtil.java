@@ -163,148 +163,6 @@ public class CommonUtil {
         return null;
     }
 
-    /**
-     * create app instance from appo.
-     * 
-     * @param filePath csar file path
-     * @param context context info
-     * @param appInfo contains appName,appId,appPackageId
-     * @param hostIp mec host ip
-     * @param ipPort protocl://ip:port
-     * @return create app instance sucess or not.s
-     */
-    public static String createInstanceFromAppo(Map<String, String> context, Map<String, String> appInfo,
-            String hostIp) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("appInstanceDescription", CommonUtil.generateId());
-        body.put("appName", appInfo.get(Constant.APP_NAME));
-        body.put("appPackageId", appInfo.get(Constant.PACKAGE_ID));
-        body.put("appId", appInfo.get(Constant.APP_ID));
-        body.put("mecHost", hostIp);
-        LOGGER.info("create instance body: {}", JSONUtil.marshal(body));
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set(Constant.ACCESS_TOKEN, context.get(Constant.ACCESS_TOKEN));
-        headers.set(Constant.CONTENT_TYPE, Constant.APPLICATION_JSON);
-
-        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
-        String url = Constant.PROTOCAL_APPO
-                .concat(String.format(Constant.APPO_CREATE_APPINSTANCE, context.get(Constant.TENANT_ID)));
-
-        try {
-            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
-            LOGGER.info("response is: {}", response.getStatusCode());
-            if (HttpStatus.OK.equals(response.getStatusCode())
-                    || HttpStatus.ACCEPTED.equals(response.getStatusCode())) {
-                JsonObject jsonObject = new JsonParser().parse(response.getBody()).getAsJsonObject();
-                JsonObject responseBody = jsonObject.get("response").getAsJsonObject();
-                if (null != responseBody) {
-                    String appInstanceId = responseBody.get("app_instance_id").getAsString();
-                    LOGGER.info("appInstanceId: {}", appInstanceId);
-                    Thread.sleep(6000);
-                    if (getApplicationInstance(context, appInstanceId, Constant.CREATED)
-                            && instantiateAppFromAppo(context, appInstanceId)) {
-                        Thread.sleep(6000);
-                        if (getApplicationInstance(context, appInstanceId, Constant.INSTANTIATED)) {
-                            return appInstanceId;
-                        }
-                    }
-                    return null;
-                }
-            }
-        } catch (RestClientException e) {
-            LOGGER.error("Failed to create app instance from appo which appId is {} exception {}",
-                    appInfo.get(Constant.APP_ID), e.getMessage());
-        } catch (InterruptedException e) {
-            LOGGER.error("thread sleep failed.");
-        }
-        return null;
-    }
-
-    /**
-     * instantiate application by appo
-     * 
-     * @param context context info.
-     * @param appInstanceId appInstanceId
-     * @return instantiate app successful
-     */
-    public static boolean instantiateAppFromAppo(Map<String, String> context, String appInstanceId) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set(Constant.ACCESS_TOKEN, context.get(Constant.ACCESS_TOKEN));
-        HttpEntity<String> request = new HttpEntity<>(headers);
-
-        String url = Constant.PROTOCAL_APPO
-                .concat(String.format(Constant.APPO_INSTANTIATE_APP, context.get(Constant.TENANT_ID), appInstanceId));
-        LOGGER.info("instantiateAppFromAppo URL : {}", url);
-        try {
-            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
-            if (!HttpStatus.ACCEPTED.equals(response.getStatusCode())) {
-                LOGGER.error("instantiate application from appo reponse failed. The status code is {}",
-                        response.getStatusCode());
-                return false;
-            }
-            LOGGER.info("instantiateAppFromAppo: {}", response.getStatusCode());
-        } catch (RestClientException e) {
-            LOGGER.error("Failed to instantiate application from appo which app_instance_id is {} exception {}",
-                    appInstanceId, e.getMessage());
-            return false;
-        }
-        return true;
-    }
-
-    public static boolean getApplicationInstance(Map<String, String> context, String appInstanceId, String status) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set(Constant.ACCESS_TOKEN, context.get(Constant.ACCESS_TOKEN));
-        HttpEntity<String> request = new HttpEntity<>(headers);
-
-        String url = Constant.PROTOCAL_APPO
-                .concat(String.format(Constant.APPO_GET_INSTANCE, context.get(Constant.TENANT_ID), appInstanceId));
-
-        LOGGER.warn("getApplicationInstance URL: " + url);
-
-        long startTime = System.currentTimeMillis();
-        while (true) {
-            try {
-                ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, request, String.class);
-                if (!HttpStatus.OK.equals(response.getStatusCode())) {
-                    LOGGER.error("get application instance from appo reponse failed. The status code is {}",
-                            response.getStatusCode());
-                    return false;
-                }
-
-                JsonObject jsonObject = new JsonParser().parse(response.getBody()).getAsJsonObject();
-                JsonObject responseBody = jsonObject.get("response").getAsJsonObject();
-                LOGGER.info("status: {}, operationalStatus: {}", status,
-                        responseBody.get("operationalStatus").getAsString());
-
-                String responseStatus = responseBody.get("operationalStatus").getAsString();
-                if (Constant.INSTANTIATE_FAILED.equalsIgnoreCase(responseStatus)
-                        || Constant.CREATED_FAILED.equalsIgnoreCase(responseStatus)) {
-                    LOGGER.error("instantiate or create app failed. The status  is {}", responseStatus);
-                    return false;
-                }
-
-                if (status.equalsIgnoreCase(responseStatus)) {
-                    LOGGER.info("{} is {}.", appInstanceId, status);
-                    break;
-                }
-
-                if ((System.currentTimeMillis() - startTime) > 40000) {
-                    LOGGER.error("get instance {} from appo time out", appInstanceId);
-                    return false;
-                }
-                Thread.sleep(5000);
-            } catch (RestClientException e) {
-                LOGGER.error("Failed to get application instance from appo which app_instance_id is {} exception {}",
-                        appInstanceId, e.getMessage());
-                return false;
-            } catch (InterruptedException e) {
-                LOGGER.error("thead sleep exception.");
-            }
-        }
-
-        return true;
-    }
 
     /**
      * 
@@ -386,7 +244,7 @@ public class CommonUtil {
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
                 if (entry.getName().split(Constant.SLASH).length == 1
-                        && TestCaseUtil.fileSuffixValidate("mf", entry.getName())) {
+                        && fileSuffixValidate("mf", entry.getName())) {
                     try (BufferedReader br = new BufferedReader(
                             new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
                         String line = "";
@@ -519,5 +377,17 @@ public class CommonUtil {
             taskTestCase.setResult(Constant.FAILED);
             taskTestCase.setReason(response.toString());
         }
+    }
+    
+    /**
+     * validate fileName is .pattern
+     * 
+     * @param pattern filePattern
+     * @param fileName fileName
+     * @return
+     */
+    public static boolean fileSuffixValidate(String pattern, String fileName) {
+        String suffix = fileName.substring(fileName.lastIndexOf(Constant.DOT) + 1, fileName.length());
+        return StringUtils.isNotBlank(suffix) && suffix.equals(pattern);
     }
 }

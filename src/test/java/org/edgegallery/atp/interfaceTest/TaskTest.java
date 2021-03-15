@@ -18,6 +18,7 @@ import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
 import org.edgegallery.atp.model.task.TaskIdList;
 import org.edgegallery.atp.model.task.TaskRequest;
+import org.edgegallery.atp.model.task.TestCaseStatusReq;
 import org.edgegallery.atp.utils.CommonUtil;
 import org.edgegallery.atp.utils.FileChecker;
 import org.junit.Before;
@@ -118,6 +119,19 @@ public class TaskTest {
                         .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
         int resultAnalysis = mvcResultAnalysis.getResponse().getStatus();
         assertEquals(200, resultAnalysis);
+
+        // update test case status
+        TestCaseStatusReq req = new TestCaseStatusReq();
+        req.setTestScenarioId("4d203111-1111-4f62-aabb-8ebcec357f87");
+        req.setTestSuiteId("522684bd-d6df-4b47-aab8-b43f1b4c19c0");
+        req.setTestCaseId("4d203173-1111-4f62-aabb-8ebcec357f87");
+        req.setResult("success");
+        req.setReason("");
+        List<TestCaseStatusReq> reqList = new ArrayList<TestCaseStatusReq>();
+        reqList.add(req);
+        mvc.perform(MockMvcRequestBuilders.put("/edgegallery/atp/v1/tasks/" + id + "/testcase").with(csrf())
+                .content(gson.toJson(reqList)).contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8)).andExpect(MockMvcResultMatchers.status().isOk());
 
         // batch delete
         TaskIdList list = new TaskIdList();
