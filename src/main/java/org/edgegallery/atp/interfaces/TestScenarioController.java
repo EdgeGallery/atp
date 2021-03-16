@@ -66,11 +66,10 @@ public class TestScenarioController {
                     required = true) @RequestParam("descriptionCh") String descriptionZn,
             @ApiParam(value = "test scenario english description",
                     required = true) @RequestParam("descriptionEn") String descriptionEn,
-            @ApiParam(value = "test scenario icon", required = true) @RequestPart("icon") MultipartFile icon,
-            @ApiParam(value = "test scenario label", required = true) @RequestParam("label") String label) {
+            @ApiParam(value = "test scenario icon", required = true) @RequestPart("icon") MultipartFile icon) {
         TestScenario testScenario =
                 TestScenario.builder().setId(CommonUtil.generateId()).setDescriptionEn(descriptionEn)
-                        .setdescriptionCh(descriptionZn).setNameEn(nameEn).setnameCh(nameCh).setLabel(label).build();
+                        .setdescriptionCh(descriptionZn).setNameEn(nameEn).setnameCh(nameCh).build();
         return ResponseEntity.ok(testScenarioService.createTestScenario(testScenario, icon));
     }
 
@@ -87,10 +86,9 @@ public class TestScenarioController {
                     required = false) @RequestParam("descriptionCh") String descriptionZn,
             @ApiParam(value = "test scenario english description",
                     required = false) @RequestParam("descriptionEn") String descriptionEn,
-            @ApiParam(value = "test scenario label", required = false) @RequestParam("label") String label,
             @ApiParam(value = "test scenario icon", required = false) @RequestPart("icon") MultipartFile icon) {
         TestScenario testScenario = TestScenario.builder().setId(id).setDescriptionEn(descriptionEn)
-                .setdescriptionCh(descriptionZn).setNameEn(nameEn).setnameCh(nameCh).setLabel(label).build();
+                .setdescriptionCh(descriptionZn).setNameEn(nameEn).setnameCh(nameCh).build();
         return ResponseEntity.ok(testScenarioService.updateTestScenario(testScenario, icon));
     }
 
