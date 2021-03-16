@@ -82,8 +82,8 @@ public class TestCaseServiceImpl implements TestCaseService {
         // nameCh or nameEn must exist one
         testCase.setNameCh(StringUtils.isNotBlank(testCase.getNameCh()) ? testCase.getNameCh() : testCase.getNameEn());
         testCase.setNameEn(StringUtils.isNotBlank(testCase.getNameEn()) ? testCase.getNameEn() : testCase.getNameCh());
-        if (null == testCase.getNameCh() && null == testCase.getNameEn()) {
-            String msg = "both nameCh and nameEn is null";
+        if (StringUtils.isEmpty(testCase.getNameCh()) && StringUtils.isEmpty(testCase.getNameEn())) {
+            String msg = "both nameCh and nameEn is empty";
             LOGGER.error(msg);
             throw new IllegalArgumentException(msg);
         }

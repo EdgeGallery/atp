@@ -60,10 +60,12 @@ public class TestScenarioServiceImpl implements TestScenarioService {
     @Override
     public TestScenario createTestScenario(TestScenario testScenario, MultipartFile icon) {
         // nameCh or nameEn must exist one
-        testScenario.setNameCh(null != testScenario.getNameCh() ? testScenario.getNameCh() : testScenario.getNameEn());
-        testScenario.setNameEn(null != testScenario.getNameEn() ? testScenario.getNameEn() : testScenario.getNameCh());
-        if (null == testScenario.getNameCh() && null == testScenario.getNameEn()) {
-            String msg = "both nameCh and nameEn is null.";
+        testScenario.setNameCh(StringUtils.isNoneBlank(testScenario.getNameCh()) ? testScenario.getNameCh()
+                : testScenario.getNameEn());
+        testScenario.setNameEn(StringUtils.isNoneBlank(testScenario.getNameEn()) ? testScenario.getNameEn()
+                : testScenario.getNameCh());
+        if (StringUtils.isEmpty(testScenario.getNameCh()) && StringUtils.isEmpty(testScenario.getNameEn())) {
+            String msg = "both nameCh and nameEn is empty.";
             LOGGER.error(msg);
             throw new IllegalArgumentException(msg);
         }
