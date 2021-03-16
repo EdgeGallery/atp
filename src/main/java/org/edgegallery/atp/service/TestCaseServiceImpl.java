@@ -95,6 +95,19 @@ public class TestCaseServiceImpl implements TestCaseService {
         }
         checkTestSuiteIdsExist(testCase);
 
+        testCase.setDescriptionCh(StringUtils.isNotBlank(testCase.getDescriptionCh()) ? testCase.getDescriptionCh()
+                : testCase.getDescriptionEn());
+        testCase.setDescriptionEn(StringUtils.isNotBlank(testCase.getDescriptionEn()) ? testCase.getDescriptionEn()
+                : testCase.getDescriptionCh());
+        testCase.setExpectResultCh(StringUtils.isNotBlank(testCase.getExpectResultCh()) ? testCase.getExpectResultCh()
+                : testCase.getExpectResultEn());
+        testCase.setExpectResultEn(StringUtils.isNotBlank(testCase.getExpectResultEn()) ? testCase.getExpectResultEn()
+                : testCase.getExpectResultCh());
+        testCase.setTestStepCh(
+                StringUtils.isNotBlank(testCase.getTestStepCh()) ? testCase.getTestStepCh() : testCase.getTestStepEn());
+        testCase.setTestStepEn(
+                StringUtils.isNotBlank(testCase.getTestStepEn()) ? testCase.getTestStepEn() : testCase.getTestStepCh());
+
         // check one test case type must same in one test suite
         testCase.getTestSuiteIdList().forEach(testSuiteId -> {
             List<TestCase> testCaseList = testCaseRepository.findAllTestCases(null, null, null, testSuiteId);
@@ -107,8 +120,8 @@ public class TestCaseServiceImpl implements TestCaseService {
             });
         });
 
-        String filePath =
-                Constant.BASIC_TEST_CASE_PATH.concat(testCase.getNameEn()).concat(Constant.UNDER_LINE).concat(testCase.getId());
+        String filePath = Constant.BASIC_TEST_CASE_PATH.concat(testCase.getNameEn()).concat(Constant.UNDER_LINE)
+                .concat(testCase.getId());
         try {
             FileChecker.createFile(filePath);
             File result = new File(filePath);
