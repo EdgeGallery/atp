@@ -15,6 +15,7 @@ package org.edgegallery.atp.service;
 
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.model.testscenario.TestScenario;
 import org.edgegallery.atp.model.testsuite.TestSuite;
@@ -43,9 +44,11 @@ public class TestSuiteServiceImpl implements TestSuiteService {
     @Override
     public TestSuite createTestSuite(TestSuite testSuite) {
         // nameCh or nameEn must exist one
-        testSuite.setNameCh(null != testSuite.getNameCh() ? testSuite.getNameCh() : testSuite.getNameEn());
-        testSuite.setNameEn(null != testSuite.getNameEn() ? testSuite.getNameEn() : testSuite.getNameCh());
-        if (null == testSuite.getNameCh() && null == testSuite.getNameEn()) {
+        testSuite.setNameCh(
+                StringUtils.isNotBlank(testSuite.getNameCh()) ? testSuite.getNameCh() : testSuite.getNameEn());
+        testSuite.setNameEn(
+                StringUtils.isNotBlank(testSuite.getNameEn()) ? testSuite.getNameEn() : testSuite.getNameCh());
+        if (StringUtils.isEmpty(testSuite.getNameCh()) && StringUtils.isEmpty(testSuite.getNameEn())) {
             String msg = "both nameCh and nameEn is null.";
             LOGGER.error(msg);
             throw new IllegalArgumentException(msg);
