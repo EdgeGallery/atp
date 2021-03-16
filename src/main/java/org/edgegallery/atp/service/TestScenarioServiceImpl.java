@@ -60,15 +60,22 @@ public class TestScenarioServiceImpl implements TestScenarioService {
     @Override
     public TestScenario createTestScenario(TestScenario testScenario, MultipartFile icon) {
         // nameCh or nameEn must exist one
-        testScenario.setNameCh(StringUtils.isNoneBlank(testScenario.getNameCh()) ? testScenario.getNameCh()
+        testScenario.setNameCh(StringUtils.isNotBlank(testScenario.getNameCh()) ? testScenario.getNameCh()
                 : testScenario.getNameEn());
-        testScenario.setNameEn(StringUtils.isNoneBlank(testScenario.getNameEn()) ? testScenario.getNameEn()
+        testScenario.setNameEn(StringUtils.isNotBlank(testScenario.getNameEn()) ? testScenario.getNameEn()
                 : testScenario.getNameCh());
         if (StringUtils.isEmpty(testScenario.getNameCh()) && StringUtils.isEmpty(testScenario.getNameEn())) {
             String msg = "both nameCh and nameEn is empty.";
             LOGGER.error(msg);
             throw new IllegalArgumentException(msg);
         }
+        testScenario.setDescriptionCh(
+                StringUtils.isNotBlank(testScenario.getDescriptionCh()) ? testScenario.getDescriptionCh()
+                        : testScenario.getDescriptionEn());
+        testScenario.setDescriptionEn(
+                StringUtils.isNotBlank(testScenario.getDescriptionEn()) ? testScenario.getDescriptionEn()
+                        : testScenario.getDescriptionCh());
+
         checkNameExists(testScenario);
         String iconName = icon.getOriginalFilename();
         String suffix = iconName.substring(icon.getOriginalFilename().indexOf(Constant.DOT) + 1);

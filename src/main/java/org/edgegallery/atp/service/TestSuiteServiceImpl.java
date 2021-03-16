@@ -53,6 +53,11 @@ public class TestSuiteServiceImpl implements TestSuiteService {
             LOGGER.error(msg);
             throw new IllegalArgumentException(msg);
         }
+        testSuite.setDescriptionCh(StringUtils.isNotBlank(testSuite.getDescriptionCh()) ? testSuite.getDescriptionCh()
+                : testSuite.getDescriptionEn());
+        testSuite.setDescriptionEn(StringUtils.isNotBlank(testSuite.getDescriptionEn()) ? testSuite.getDescriptionEn()
+                : testSuite.getDescriptionCh());
+
         if (null != testSuiteRepository.getTestSuiteByName(testSuite.getNameCh(), null)
                 || null != testSuiteRepository.getTestSuiteByName(null, testSuite.getNameEn())) {
             String msg = "name of test suite already exist.";
