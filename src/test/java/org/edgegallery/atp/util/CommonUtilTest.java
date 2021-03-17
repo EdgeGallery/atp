@@ -96,13 +96,6 @@ public class CommonUtilTest {
 
         }
 
-        // length check exception
-        try {
-            CommonUtil.lengthCheck("");
-        } catch (IllegalArgumentException e) {
-
-        }
-
         // dependencyCheck exception
         File csarFile = Resources.getResourceAsFile("testfile/AR.csar");
         String filePath = BASIC_PATH + "AR";

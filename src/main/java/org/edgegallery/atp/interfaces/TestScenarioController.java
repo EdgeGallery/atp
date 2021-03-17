@@ -16,13 +16,16 @@ package org.edgegallery.atp.interfaces;
 
 import java.util.List;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
+import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.model.testscenario.TestScenario;
 import org.edgegallery.atp.model.testscenario.testcase.AllTestScenarios;
 import org.edgegallery.atp.service.TestScenarioService;
 import org.edgegallery.atp.utils.CommonUtil;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -60,12 +63,16 @@ public class TestScenarioController {
             @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
     @PreAuthorize("hasRole('ATP_ADMIN')")
     public ResponseEntity<TestScenario> createTestScenario(
-            @ApiParam(value = "test scenario chinese name", required = true) @RequestParam("nameCh") String nameCh,
-            @ApiParam(value = "test scenario english name", required = true) @RequestParam("nameEn") String nameEn,
+            @ApiParam(value = "test scenario chinese name",
+                    required = true) @Size(max = Constant.LENGTH_64) @RequestParam("nameCh") String nameCh,
+            @ApiParam(value = "test scenario english name",
+                    required = true) @Size(max = Constant.LENGTH_64) @RequestParam("nameEn") String nameEn,
             @ApiParam(value = "test scenario chinese description",
-                    required = true) @RequestParam("descriptionCh") String descriptionZn,
+                    required = true) @Size(
+                            max = Constant.LENGTH_255) @RequestParam("descriptionCh") String descriptionZn,
             @ApiParam(value = "test scenario english description",
-                    required = true) @RequestParam("descriptionEn") String descriptionEn,
+                    required = true) @Size(
+                            max = Constant.LENGTH_255) @RequestParam("descriptionEn") String descriptionEn,
             @ApiParam(value = "test scenario icon", required = true) @RequestPart("icon") MultipartFile icon) {
         TestScenario testScenario =
                 TestScenario.builder().setId(CommonUtil.generateId()).setDescriptionEn(descriptionEn)
@@ -80,12 +87,16 @@ public class TestScenarioController {
     @PreAuthorize("hasRole('ATP_ADMIN')")
     public ResponseEntity<TestScenario> updateTestScenario(
             @ApiParam(value = "test scenario id") @PathVariable("id") @Pattern(regexp = REG_ID) String id,
-            @ApiParam(value = "test scenario chinese name", required = false) @RequestParam("nameCh") String nameCh,
-            @ApiParam(value = "test scenario english name", required = false) @RequestParam("nameEn") String nameEn,
+            @ApiParam(value = "test scenario chinese name",
+                    required = false) @Size(max = Constant.LENGTH_64) @RequestParam("nameCh") String nameCh,
+            @ApiParam(value = "test scenario english name",
+                    required = false) @Size(max = Constant.LENGTH_64) @RequestParam("nameEn") String nameEn,
             @ApiParam(value = "test scenario chinese description",
-                    required = false) @RequestParam("descriptionCh") String descriptionZn,
+                    required = false) @Size(
+                            max = Constant.LENGTH_255) @RequestParam("descriptionCh") String descriptionZn,
             @ApiParam(value = "test scenario english description",
-                    required = false) @RequestParam("descriptionEn") String descriptionEn,
+                    required = false) @Size(
+                            max = Constant.LENGTH_255) @RequestParam("descriptionEn") String descriptionEn,
             @ApiParam(value = "test scenario icon", required = false) @RequestPart("icon") MultipartFile icon) {
         TestScenario testScenario = TestScenario.builder().setId(id).setDescriptionEn(descriptionEn)
                 .setdescriptionCh(descriptionZn).setNameEn(nameEn).setnameCh(nameCh).build();
@@ -118,8 +129,8 @@ public class TestScenarioController {
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<List<TestScenario>> queryAllTestScenario(
-            @ApiParam(value = "locale language") @QueryParam("locale") String locale,
-            @ApiParam(value = "test scenario name") @QueryParam("name") String name) {
+            @ApiParam(value = "locale language") @Length(max = Constant.LENGTH_64) @QueryParam("locale") String locale,
+            @ApiParam(value = "test scenario name") @Length(max = Constant.LENGTH_64) @QueryParam("name") String name) {
         return ResponseEntity.ok(testScenarioService.queryAllTestScenario(locale, name));
     }
 

@@ -17,15 +17,18 @@ package org.edgegallery.atp.interfaces;
 import java.util.List;
 import java.util.Map;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
+import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.model.task.AnalysisResult;
 import org.edgegallery.atp.model.task.TaskIdList;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.task.TestCaseStatusReq;
 import org.edgegallery.atp.service.TaskService;
 import org.edgegallery.atp.utils.CommonUtil;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -87,7 +90,8 @@ public class TaskController {
     @PreAuthorize("hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<TaskRequest> runTest(
             @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId, @ApiParam(
-                    value = "id of test scenarios selected") @RequestParam("scenarioIdList") List<String> scenarioIdList) {
+                    value = "id of test scenarios selected") @RequestParam("scenarioIdList") @Size(
+                            max = Constant.LENGTH_255) List<String> scenarioIdList) {
         CommonUtil.validateContext();
         return ResponseEntity.ok(taskService.runTask(taskId, scenarioIdList));
     }
@@ -102,13 +106,11 @@ public class TaskController {
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
     @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
-    public ResponseEntity<List<TaskRequest>> getAllTasks(@QueryParam("appName") String appName,
-            @QueryParam("status") String status, @QueryParam("providerId") String providerId,
-            @QueryParam("appVersion") String appVersion) {
-        CommonUtil.lengthCheck(appName);
-        CommonUtil.lengthCheck(status);
-        CommonUtil.lengthCheck(providerId);
-        CommonUtil.lengthCheck(appVersion);
+    public ResponseEntity<List<TaskRequest>> getAllTasks(
+            @QueryParam("appName") @Length(max = Constant.LENGTH_64) String appName,
+            @QueryParam("status") @Length(max = Constant.LENGTH_64) String status,
+            @QueryParam("providerId") @Length(max = Constant.LENGTH_64) String providerId,
+            @QueryParam("appVersion") @Length(max = Constant.LENGTH_64) String appVersion) {
         return taskService.getAllTasks(null, appName, status, providerId, appVersion);
     }
 

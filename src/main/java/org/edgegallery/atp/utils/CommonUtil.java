@@ -338,19 +338,6 @@ public class CommonUtil {
     }
 
     /**
-     * name validate
-     * 
-     * @param name name
-     * @return is legal name pattern
-     */
-    public static void lengthCheck(String param) {
-        if (!StringUtils.isEmpty(param) && param.length() > 128) {
-            LOGGER.error("the length of param must less than 128");
-            throw new IllegalArgumentException(String.format("the length of %s must less than 128.", param));
-        }
-    }
-
-    /**
      * validate context is not empty.
      */
     public static void validateContext() {

@@ -204,4 +204,8 @@ public interface Constant {
     String CONTRIBUTION_TYPE_TEXT = "text";
     
     String CONTRIBUTION_TYPE_SCRIPT = "script";
+
+    int LENGTH_64 = 64;
+
+    int LENGTH_255 = 255;
 }

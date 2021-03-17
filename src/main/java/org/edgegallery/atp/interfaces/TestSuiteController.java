@@ -16,13 +16,16 @@ package org.edgegallery.atp.interfaces;
 
 import java.util.List;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
+import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.model.testscenario.TestScenarioIds;
 import org.edgegallery.atp.model.testsuite.TestSuite;
 import org.edgegallery.atp.service.TestSuiteService;
 import org.edgegallery.atp.utils.CommonUtil;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -59,14 +62,19 @@ public class TestSuiteController {
             @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
     @PreAuthorize("hasRole('ATP_ADMIN')")
     public ResponseEntity<TestSuite> createTestSuite(
-            @ApiParam(value = "test suite chinese name", required = true) @RequestParam("nameCh") String nameCh,
-            @ApiParam(value = "test suite english name", required = true) @RequestParam("nameEn") String nameEn,
+            @ApiParam(value = "test suite chinese name",
+                    required = true) @Size(max = Constant.LENGTH_64) @RequestParam("nameCh") String nameCh,
+            @ApiParam(value = "test suite english name",
+                    required = true) @Size(max = Constant.LENGTH_64) @RequestParam("nameEn") String nameEn,
             @ApiParam(value = "test suite chinese description",
-                    required = true) @RequestParam("descriptionCh") String descriptionCh,
+                    required = true) @Size(
+                            max = Constant.LENGTH_255) @RequestParam("descriptionCh") String descriptionCh,
             @ApiParam(value = "test suite english description",
-                    required = true) @RequestParam("descriptionEn") String descriptionEn,
+                    required = true) @Size(
+                            max = Constant.LENGTH_255) @RequestParam("descriptionEn") String descriptionEn,
             @ApiParam(value = "test scenario it belongs to",
-                    required = true) @RequestParam("scenarioIdList") List<String> scenarioIdList) {
+                    required = true) @Size(
+                            max = Constant.LENGTH_255) @RequestParam("scenarioIdList") List<String> scenarioIdList) {
         TestSuite testSuite = TestSuite.builder().setId(CommonUtil.generateId()).setDescriptionEn(descriptionEn)
                 .setdescriptionCh(descriptionCh).setNameEn(nameEn).setnameCh(nameCh).build();
         testSuite.setScenarioIdList(scenarioIdList);
@@ -80,14 +88,18 @@ public class TestSuiteController {
     @PreAuthorize("hasRole('ATP_ADMIN')")
     public ResponseEntity<TestSuite> updateTestSuite(
             @ApiParam(value = "test suite id") @PathVariable("id") @Pattern(regexp = REG_ID) String id,
-            @ApiParam(value = "test suite chinese name", required = false) @RequestParam("nameCh") String nameCh,
-            @ApiParam(value = "test suite english name", required = false) @RequestParam("nameEn") String nameEn,
+            @ApiParam(value = "test suite chinese name", required = false)@Size(max = Constant.LENGTH_64) @RequestParam("nameCh") String nameCh,
+            @ApiParam(value = "test suite english name",
+                    required = false) @Size(max = Constant.LENGTH_64) @RequestParam("nameEn") String nameEn,
             @ApiParam(value = "test suite chinese description",
-                    required = false) @RequestParam("descriptionCh") String descriptionCh,
+                    required = false) @Size(
+                            max = Constant.LENGTH_255) @RequestParam("descriptionCh") String descriptionCh,
             @ApiParam(value = "test suite english description",
-                    required = false) @RequestParam("descriptionEn") String descriptionEn,
+                    required = false) @Size(
+                            max = Constant.LENGTH_255) @RequestParam("descriptionEn") String descriptionEn,
             @ApiParam(value = "test scenario id list belongs to test suite",
-                    required = false) @RequestParam("scenarioIdList") List<String> scenarioIdList) {
+                    required = false) @Size(
+                            max = Constant.LENGTH_255) @RequestParam("scenarioIdList") List<String> scenarioIdList) {
         TestSuite testSuite = TestSuite.builder().setId(id).setDescriptionEn(descriptionEn)
                 .setdescriptionCh(descriptionCh).setNameEn(nameEn).setnameCh(nameCh).build();
         testSuite.setScenarioIdList(CollectionUtils.isEmpty(scenarioIdList) ? null : scenarioIdList);
@@ -120,8 +132,8 @@ public class TestSuiteController {
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<List<TestSuite>> queryAllTestSuite(
-            @ApiParam(value = "locale language") @QueryParam("locale") String locale,
-            @ApiParam(value = "test Suite name") @QueryParam("name") String name,
+            @ApiParam(value = "locale language") @Length(max = Constant.LENGTH_64) @QueryParam("locale") String locale,
+            @ApiParam(value = "test Suite name") @Length(max = Constant.LENGTH_64) @QueryParam("name") String name,
             @ApiParam(
                     value = "test scenario id list belongs to test suite") @QueryParam("scenarioIdList") TestScenarioIds scenarioIdList) {
         return ResponseEntity.ok(testSuiteService.queryAllTestSuite(locale, name, scenarioIdList.getScenarioIdList()));
