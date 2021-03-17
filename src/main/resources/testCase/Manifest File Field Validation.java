@@ -12,7 +12,7 @@ import java.util.zip.ZipFile;
 public class MFContentTestCaseInner {
 
     private static final String MF_LOSS_FIELD =
-            ".mf file may lost the following fileds:app_product_name,app_provider_id,app_package_version,app_release_date_time or app_package_description.";
+            ".mf file may lost the following fileds:app_product_name,app_provider_id,app_package_version,app_class,app_release_date_time or app_package_description.";
 
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
 
@@ -25,7 +25,7 @@ public class MFContentTestCaseInner {
             add("app_package_version");
             add("app_release_data_time");
             add("app_package_description");
-            add("app_type");
+            add("app_class");
         }
     };
 
