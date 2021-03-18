@@ -14,6 +14,7 @@
 package org.edgegallery.atp.service;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -138,8 +139,12 @@ public class TestScenarioServiceImpl implements TestScenarioService {
     }
 
     @Override
-    public TestScenario getTestScenario(String id) {
+    public TestScenario getTestScenario(String id) throws FileNotFoundException {
         TestScenario result = testScenarioRepository.getTestScenarioById(id);
+        if (null == result) {
+            LOGGER.error("test scenario id does not exists: {}", id);
+            throw new FileNotFoundException("test scenario id does not exists.");
+        }
         LOGGER.info("get test scenario by id successfully.");
         return result;
     }

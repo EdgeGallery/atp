@@ -14,6 +14,7 @@
 
 package org.edgegallery.atp.service;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.springframework.core.io.InputStreamResource;
@@ -66,7 +67,7 @@ public interface TestCaseService {
      * @param id id
      * @return test case info
      */
-    public TestCase getTestCase(String id);
+    public TestCase getTestCase(String id) throws FileNotFoundException;
 
     /**
      * download test case.

@@ -14,6 +14,7 @@
 
 package org.edgegallery.atp.service;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
 import org.edgegallery.atp.model.CommonActionRes;
@@ -40,7 +41,7 @@ public interface TaskService {
      * @param taskid taskId
      * @return task information
      */
-    public ResponseEntity<TaskRequest> getTaskById(String taskId);
+    public ResponseEntity<TaskRequest> getTaskById(String taskId) throws FileNotFoundException;
 
     /**
      * get all task info

@@ -180,8 +180,14 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
-    public TestCase getTestCase(String id) {
-        return testCaseRepository.getTestCaseById(id);
+    public TestCase getTestCase(String id) throws FileNotFoundException {
+        TestCase response = testCaseRepository.getTestCaseById(id);
+        if (null == response) {
+            LOGGER.error("test case id does not exists: {}", id);
+            throw new FileNotFoundException("test case id does not exists.");
+        }
+        LOGGER.info("get test case successfully.");
+        return response;
     }
 
     private String getClassPath(File file) {

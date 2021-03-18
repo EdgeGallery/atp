@@ -13,6 +13,7 @@
  */
 package org.edgegallery.atp.interfaces;
 
+import java.io.FileNotFoundException;
 import javax.validation.constraints.Pattern;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -51,7 +52,7 @@ public class FileController {
     @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<InputStreamResource> getAllFile(
             @ApiParam(value = "file id") @PathVariable("id") @Pattern(regexp = REG_ID) String id,
-            @ApiParam(value = "file type") @QueryParam("type") String type) {
+            @ApiParam(value = "file type") @QueryParam("type") String type) throws FileNotFoundException {
         return fileService.getFileContent(id, type);
     }
 }

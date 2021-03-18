@@ -13,6 +13,7 @@
  */
 package org.edgegallery.atp.service;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 import org.edgegallery.atp.model.testscenario.TestScenario;
 import org.edgegallery.atp.model.testscenario.testcase.AllTestScenarios;
@@ -49,7 +50,7 @@ public interface TestScenarioService {
      * @param id test scenario id
      * @return test scenario info
      */
-    TestScenario getTestScenario(String id);
+    TestScenario getTestScenario(String id) throws FileNotFoundException;
 
     /**
      * get all test scenarios

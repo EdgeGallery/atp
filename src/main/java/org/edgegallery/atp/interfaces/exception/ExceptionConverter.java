@@ -14,6 +14,7 @@
 
 package org.edgegallery.atp.interfaces.exception;
 
+import java.io.FileNotFoundException;
 import javax.validation.ConstraintViolationException;
 import org.apache.servicecomb.swagger.invocation.Response;
 import org.apache.servicecomb.swagger.invocation.SwaggerInvocation;
@@ -36,6 +37,9 @@ public class ExceptionConverter implements ExceptionToProducerResponseConverter<
         }
         if (e instanceof ConstraintViolationException) {
             return Response.status(javax.ws.rs.core.Response.Status.BAD_REQUEST);
+        }
+        if (e instanceof FileNotFoundException) {
+            return Response.status(javax.ws.rs.core.Response.Status.NOT_FOUND);
         }
         return Response.status(javax.ws.rs.core.Response.Status.BAD_REQUEST);
     }
