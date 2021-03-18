@@ -38,9 +38,14 @@ public class FileServiceImpl implements FileService {
     FileRepository fileRepository;
 
     @Override
-    public ResponseEntity<InputStreamResource> getFileContent(String fileId, String type) {
+    public ResponseEntity<InputStreamResource> getFileContent(String fileId, String type) throws FileNotFoundException {
         type = StringUtils.isEmpty(type) ? Constant.FILE_TYPE_SCENARIO : type;
         ATPFile fileInfo = fileRepository.getFileContent(fileId, type);
+        if (null == fileInfo) {
+            LOGGER.error("fileId does not exists: {}", fileId);
+            throw new FileNotFoundException("fileId does not exists");
+        }
+
         File file = new File(fileInfo.getFilePath());
         try {
             InputStream fileContent = new FileInputStream(file);

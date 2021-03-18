@@ -15,6 +15,7 @@
 package org.edgegallery.atp.service;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -231,8 +232,12 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public ResponseEntity<TaskRequest> getTaskById(String taskId) {
+    public ResponseEntity<TaskRequest> getTaskById(String taskId) throws FileNotFoundException {
         TaskRequest response = taskRepository.findByTaskIdAndUserId(taskId, null);
+        if (null == response) {
+            LOGGER.error("taskId does not exists: {}", taskId);
+            throw new FileNotFoundException("taskId does not exists");
+        }
         LOGGER.info("get task by id successfully.");
         return ResponseEntity.ok(response);
     }

@@ -14,6 +14,7 @@
 
 package org.edgegallery.atp.interfaces;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
 import javax.validation.constraints.Pattern;
@@ -126,7 +127,8 @@ public class TaskController {
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
     public ResponseEntity<TaskRequest> getTaskById(
-            @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId) {
+            @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId)
+            throws FileNotFoundException {
         return taskService.getTaskById(taskId);
     }
 

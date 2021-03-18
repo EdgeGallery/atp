@@ -14,6 +14,7 @@
 
 package org.edgegallery.atp.interfaces;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -175,7 +176,8 @@ public class TestCaseController {
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<TestCase> queryTestCase(
-            @ApiParam(value = "test case id") @PathVariable("id") @Pattern(regexp = REG_ID) String id) {
+            @ApiParam(value = "test case id") @PathVariable("id") @Pattern(regexp = REG_ID) String id)
+            throws FileNotFoundException {
         return ResponseEntity.ok(testCaseService.getTestCase(id));
     }
 

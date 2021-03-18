@@ -13,6 +13,7 @@
  */
 package org.edgegallery.atp.service;
 
+import java.io.FileNotFoundException;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
@@ -104,8 +105,12 @@ public class TestSuiteServiceImpl implements TestSuiteService {
     }
 
     @Override
-    public TestSuite getTestSuite(String id) {
+    public TestSuite getTestSuite(String id) throws FileNotFoundException {
         TestSuite testSuite = testSuiteRepository.getTestSuiteById(id);
+        if (null == testSuite) {
+            LOGGER.error("test suite id does not exists: {}", id);
+            throw new FileNotFoundException("test suite id does not exists.");
+        }
         LOGGER.info("get test suite successfully.");
         return testSuite;
     }
