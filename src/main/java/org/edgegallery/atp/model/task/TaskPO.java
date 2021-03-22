@@ -69,6 +69,30 @@ public class TaskPO {
     @Column(name = "packagePath")
     private String packagePath;
 
+    public Date getCreateTime() {
+        return createTime != null ? (Date) createTime.clone() : null;
+    }
+
+    public void setCreateTime(Date createTime) {
+        if (createTime != null) {
+            this.createTime = (Date) createTime.clone();
+        } else {
+            this.createTime = null;
+        }
+    }
+
+    public Date getEndTime() {
+        return endTime != null ? (Date) endTime.clone() : null;
+    }
+
+    public void setEndTime(Date endTime) {
+        if (endTime != null) {
+            this.endTime = (Date) endTime.clone();
+        } else {
+            this.endTime = null;
+        }
+    }
+
     public static TaskPO of(TaskRequest startTest) {
         TaskPO taskPo = new TaskPO();
         taskPo.setAppName(startTest.getAppName());
@@ -79,29 +103,29 @@ public class TaskPO {
         taskPo.setStatus(startTest.getStatus());
         taskPo.setUserId(startTest.getUser().getUserId());
         taskPo.setUserName(startTest.getUser().getUserName());
-        List<TaskTestScenarioPo> taskTestScenarioPoList = new ArrayList<TaskTestScenarioPo>(); 
-        if(CollectionUtils.isNotEmpty(startTest.getTestScenarios())) {
-            startTest.getTestScenarios().forEach(taskTestScenario->{
+        List<TaskTestScenarioPo> taskTestScenarioPoList = new ArrayList<TaskTestScenarioPo>();
+        if (CollectionUtils.isNotEmpty(startTest.getTestScenarios())) {
+            startTest.getTestScenarios().forEach(taskTestScenario -> {
                 TaskTestScenarioPo scenarioPo = taskTestScenario.of();
                 taskTestScenarioPoList.add(scenarioPo);
                 List<TaskTestSuitePo> testSuites = new ArrayList<TaskTestSuitePo>();
                 List<TaskTestSuite> taskTestSuite = taskTestScenario.getTestSuites();
-                if(CollectionUtils.isNotEmpty(taskTestSuite)) {
-                    taskTestSuite.forEach(testSuite->{
+                if (CollectionUtils.isNotEmpty(taskTestSuite)) {
+                    taskTestSuite.forEach(testSuite -> {
                         TaskTestSuitePo suitePo = testSuite.of();
                         testSuites.add(suitePo);
                         List<TaskTestCasePo> testCasePo = new ArrayList<TaskTestCasePo>();
                         List<TaskTestCase> testCases = testSuite.getTestCases();
-                        if(CollectionUtils.isNotEmpty(testCases)) {
-                            testCases.forEach(testCase->{
+                        if (CollectionUtils.isNotEmpty(testCases)) {
+                            testCases.forEach(testCase -> {
                                 testCasePo.add(testCase.of());
                             });
-                            suitePo.setTestCases(testCasePo); 
+                            suitePo.setTestCases(testCasePo);
                         }
                     });
-                    scenarioPo.setTestSuites(testSuites); 
+                    scenarioPo.setTestSuites(testSuites);
                 }
-            }); 
+            });
         }
         taskPo.setTestCaseDetail(JSONUtil.marshal(taskTestScenarioPoList));
         taskPo.setPackagePath(startTest.getPackagePath());
@@ -109,5 +133,5 @@ public class TaskPO {
 
         return taskPo;
     }
-    
+
 }

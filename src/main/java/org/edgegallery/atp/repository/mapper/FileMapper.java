@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package org.edgegallery.atp.repository.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -22,18 +23,18 @@ import org.springframework.stereotype.Component;
 @Mapper
 public interface FileMapper {
     /**
-     * get ATPFile info according to fileId
+     * get ATPFile info according to fileId.
      * 
      * @param fileId file id
      * @param type file type
      * @return ATP file info
      */
-    public ATPFile getFileContent(@Param("fileId") String fileId, @Param("type") String type);
+    ATPFile getFileContent(@Param("fileId") String fileId, @Param("type") String type);
 
     /**
-     * insert file info
+     * insert file info.
      * 
      * @param file file info
      */
-    public void insertFile(ATPFile file);
+    void insertFile(ATPFile file);
 }

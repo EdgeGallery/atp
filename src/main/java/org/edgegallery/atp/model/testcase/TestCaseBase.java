@@ -1,17 +1,15 @@
 /*
- *    Copyright 2020 Huawei Technologies Co., Ltd.
+ * Copyright 2020 Huawei Technologies Co., Ltd.
  *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  */
 
 package org.edgegallery.atp.model.testcase;
@@ -25,17 +23,17 @@ import lombok.Setter;
 public class TestCaseBase implements Entity {
 
     /**
-     * test case id
+     * test case id.
      */
     private String id;
 
     /**
-     * chinese test case name
+     * chinese test case name.
      */
     private String nameCh;
-    
+
     /**
-     * english test case name
+     * english test case name.
      */
     private String nameEn;
 
@@ -45,17 +43,17 @@ public class TestCaseBase implements Entity {
     private String type;
 
     /**
-     * package path of test case class
+     * package path of test case class.
      */
     private String className;
 
     /**
-     * chinese description of test case
+     * chinese description of test case.
      */
     private String descriptionCh;
-  
+
     /**
-     * english description of test case
+     * english description of test case.
      */
     private String descriptionEn;
 
@@ -63,41 +61,41 @@ public class TestCaseBase implements Entity {
      * content of test case souce code. The reserved field.
      */
     private String hashCode;
-    
+
     /**
-     * file storage path
+     * file storage path.
      */
     private String filePath;
-    
+
     /**
-     * test case language
+     * test case language.
      */
     private String codeLanguage;
-    
+
     /**
-     * expect test result in chinese
+     * expect test result in chinese.
      */
     private String expectResultCh;
-    
+
     /**
-     * expect test result in english
+     * expect test result in english.
      */
     private String expectResultEn;
-   
+
     /**
-     * test step in chinese
+     * test step in chinese.
      */
     private String testStepCh;
-    
+
     /**
-     * test step in english
+     * test step in english.
      */
     private String testStepEn;
 
     public TestCaseBase() {
 
     }
-    
+
     public TestCaseBase(Builder builder) {
         this.id = builder.id;
         this.nameCh = builder.nameCh;
@@ -114,7 +112,7 @@ public class TestCaseBase implements Entity {
         this.testStepEn = builder.testStepEn;
         this.type = builder.type;
     }
-    
+
     public TestCase toTestCase() {
         TestCase testCase = new TestCase();
         testCase.setClassName(this.className);
@@ -133,7 +131,7 @@ public class TestCaseBase implements Entity {
         testCase.setType(type);
         return testCase;
     }
-    
+
     public TestCasePo toTestCasePo() {
         TestCasePo testCasePo = new TestCasePo();
         testCasePo.setClassName(this.className);
@@ -152,16 +150,16 @@ public class TestCaseBase implements Entity {
         testCasePo.setType(type);
         return testCasePo;
     }
-    
+
     public static Builder builder() {
         return new Builder();
     }
 
     public static final class Builder {
         private String id;
-        
+
         private String nameCh;
-        
+
         private String nameEn;
 
         private String type;
@@ -169,21 +167,21 @@ public class TestCaseBase implements Entity {
         private String className;
 
         private String descriptionCh;
-      
+
         private String descriptionEn;
 
         private String hashCode;
-        
+
         private String filePath;
-        
+
         private String codeLanguage;
-        
+
         private String expectResultCh;
-        
+
         private String expectResultEn;
-       
+
         private String testStepCh;
-        
+
         private String testStepEn;
 
         private Builder() {
@@ -214,52 +212,52 @@ public class TestCaseBase implements Entity {
             this.descriptionCh = descriptionCh;
             return this;
         }
-        
+
         public Builder setHashCode(String hashCode) {
             this.hashCode = hashCode;
             return this;
         }
-        
+
         public Builder setType(String type) {
             this.type = type;
             return this;
         }
-        
+
         public Builder setClassName(String className) {
             this.className = className;
             return this;
         }
-        
+
         public Builder setFilePath(String filePath) {
             this.filePath = filePath;
             return this;
         }
-        
+
         public Builder setCodeLanguage(String codeLanguage) {
             this.codeLanguage = codeLanguage;
             return this;
         }
-        
+
         public Builder setExpectResultCh(String expectResultCh) {
             this.expectResultCh = expectResultCh;
             return this;
         }
-        
+
         public Builder setExpectResultEn(String expectResultEn) {
             this.expectResultEn = expectResultEn;
             return this;
         }
-        
+
         public Builder setTestStepCh(String testStepCh) {
             this.testStepCh = testStepCh;
             return this;
         }
-        
+
         public Builder setTestStepEn(String testStepEn) {
             this.testStepEn = testStepEn;
             return this;
         }
-        
+
         public TestCaseBase build() {
             return new TestCaseBase(this);
 

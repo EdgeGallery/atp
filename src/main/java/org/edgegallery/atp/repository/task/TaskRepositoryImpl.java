@@ -14,6 +14,7 @@
 
 package org.edgegallery.atp.repository.task;
 
+import com.alibaba.fastjson.JSONObject;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -41,7 +42,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import com.alibaba.fastjson.JSONObject;
 
 @Repository
 public class TaskRepositoryImpl implements TaskRepository {
@@ -232,12 +232,12 @@ public class TaskRepositoryImpl implements TaskRepository {
         }
 
         TaskRequest result = TaskRequest.builder().setAppName(taskRequsetPo.getAppName())
-                .setAppVersion(taskRequsetPo.getAppVersion())
-                .setCreateTime(taskRequsetPo.getCreateTime()).setEndTime(taskRequsetPo.getEndTime())
-                .setPackagePath(taskRequsetPo.getPackagePath()).setProviderId(taskRequsetPo.getProviderId())
-                .setId(taskRequsetPo.getId()).setStatus(taskRequsetPo.getStatus())
-                .setTestCaseDetail(testScenarios)
+                .setAppVersion(taskRequsetPo.getAppVersion()).setPackagePath(taskRequsetPo.getPackagePath())
+                .setProviderId(taskRequsetPo.getProviderId()).setId(taskRequsetPo.getId())
+                .setStatus(taskRequsetPo.getStatus()).setTestCaseDetail(testScenarios)
                 .setUser(new User(taskRequsetPo.getUserId(), taskRequsetPo.getUserName())).build();
+        result.setCreateTime(taskRequsetPo.getCreateTime());
+        result.setEndTime(taskRequsetPo.getEndTime());
         // some test scenario or test suite or test case is changed, need to update
         if (isChanged) {
             update(result);
@@ -250,7 +250,7 @@ public class TaskRepositoryImpl implements TaskRepository {
             status = Constant.RUNNING;
         } else {
             if (!Constant.RUNNING.equals(status)) {
-                status = (Constant.FAILED.equals(testCasePo.getResult()) ? Constant.FAILED : status);
+                status = Constant.FAILED.equals(testCasePo.getResult()) ? Constant.FAILED : status;
             }
         }
         return status;

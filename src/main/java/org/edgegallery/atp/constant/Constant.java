@@ -11,10 +11,11 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package org.edgegallery.atp.constant;
 
-import java.io.File;
 import org.edgegallery.atp.utils.FileChecker;
+import java.io.File;
 
 public interface Constant {
 

@@ -27,5 +27,5 @@ public interface TestCaseManager {
      * @param task test task
      * @param filePath scar file path
      */
-    public void executeTestCase(TaskRequest task, String filePath);
+    void executeTestCase(TaskRequest task, String filePath);
 }

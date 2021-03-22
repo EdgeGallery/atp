@@ -11,8 +11,14 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package org.edgegallery.atp.interfaces;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import java.io.FileNotFoundException;
 import javax.validation.constraints.Pattern;
 import javax.ws.rs.QueryParam;
@@ -28,11 +34,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 
 @Controller
 @RestSchema(schemaId = "file")
@@ -45,6 +46,14 @@ public class FileController {
     @Autowired
     FileService fileService;
 
+    /**
+     * get all files
+     * 
+     * @param id id
+     * @param type type
+     * @return binary stream
+     * @throws FileNotFoundException
+     */
     @GetMapping(value = "/file/{id}", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "get one file.", response = InputStreamResource.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),

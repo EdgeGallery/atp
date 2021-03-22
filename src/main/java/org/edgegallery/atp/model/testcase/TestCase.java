@@ -28,17 +28,18 @@ import lombok.Setter;
 @JsonIgnoreProperties(value = {"filePath", "className"})
 public class TestCase extends TestCaseBase {
     /**
-     * test suite id list the test case belong to
+     * test suite id list the test case belong to.
      */
     private List<String> testSuiteIdList;
 
     public TestCasePo of() {
-        TestCasePo testCasePo = TestCasePo.builder().setClassName(this.getClassName())
-                .setCodeLanguage(this.getCodeLanguage()).setdescriptionCh(this.getDescriptionCh())
-                .setDescriptionEn(this.getDescriptionEn()).setExpectResultCh(this.getExpectResultCh())
-                .setExpectResultEn(this.getExpectResultEn()).setFilePath(this.getFilePath()).setHashCode(this.getHashCode())
-                .setId(this.getId()).setNameCh(this.getNameCh()).setNameEn(this.getNameEn()).setTestStepCh(this.getTestStepCh())
-                .setTestStepEn(this.getTestStepEn()).setType(this.getType()).build().toTestCasePo();
+        TestCasePo testCasePo =
+                TestCasePo.builder().setClassName(this.getClassName()).setCodeLanguage(this.getCodeLanguage())
+                        .setdescriptionCh(this.getDescriptionCh()).setDescriptionEn(this.getDescriptionEn())
+                        .setExpectResultCh(this.getExpectResultCh()).setExpectResultEn(this.getExpectResultEn())
+                        .setFilePath(this.getFilePath()).setHashCode(this.getHashCode()).setId(this.getId())
+                        .setNameCh(this.getNameCh()).setNameEn(this.getNameEn()).setTestStepCh(this.getTestStepCh())
+                        .setTestStepEn(this.getTestStepEn()).setType(this.getType()).build().toTestCasePo();
         testCasePo.setTestSuiteIdList(this.getTestSuiteIdList().stream().collect(Collectors.joining(",")));
         return testCasePo;
     }

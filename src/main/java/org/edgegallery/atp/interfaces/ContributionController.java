@@ -14,6 +14,11 @@
 
 package org.edgegallery.atp.interfaces;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import java.util.List;
 import javax.ws.rs.core.MediaType;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
@@ -31,11 +36,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 
 @Controller
 @RestSchema(schemaId = "contribution")
@@ -47,6 +47,17 @@ public class ContributionController {
     @Autowired
     ContributionService contributionService;
 
+    /**
+     * create test case contribution.
+     * 
+     * @param name name
+     * @param objective objective
+     * @param step step
+     * @param expectResult expectResult
+     * @param type type
+     * @param file file
+     * @return contribution info
+     */
     @PostMapping(value = "/contribution", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "create test contribution.", response = String.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
@@ -64,6 +75,11 @@ public class ContributionController {
         return ResponseEntity.ok(contributionService.createContribution(contribution, file));
     }
 
+    /**
+     * query all contribution.
+     * 
+     * @return contribution list
+     */
     @GetMapping(value = "/contribution", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "get all contributions.", response = Contribution.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),

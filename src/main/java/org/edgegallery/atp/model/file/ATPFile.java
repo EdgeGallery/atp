@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package org.edgegallery.atp.model.file;
 
 import java.util.Date;
@@ -21,29 +22,45 @@ import lombok.Setter;
 @Setter
 public class ATPFile {
     /**
-     * file id
+     * file id.
      */
     private String fileId;
     
     /**
-     * file type:scenario
+     * file type:scenario.
      */
     private String type;
     
     /**
-     * file create time
+     * file create time.
      */
     private Date createTime;
     
     /**
-     * file path
+     * file path.
      */
     private String filePath;
+    
+    public Date getCreateTime() {
+        return createTime != null?(Date) createTime.clone():null;
+    }
+
+    public void setCreateTime(Date createTime) {
+        if (createTime != null) {
+            this.createTime = (Date) createTime.clone();
+        } else {
+            this.createTime = null;
+        }
+    }
     
     public ATPFile(String fileId,String type,Date createTime,String filePath) {
         this.filePath = filePath;
         this.type = type;
-        this.createTime = createTime;
         this.fileId = fileId;
+        if (createTime != null) {
+            this.createTime = (Date) createTime.clone();
+        } else {
+            this.createTime = null;
+        }
     }
 }

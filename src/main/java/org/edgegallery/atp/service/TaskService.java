@@ -14,15 +14,15 @@
 
 package org.edgegallery.atp.service;
 
-import java.io.FileNotFoundException;
-import java.util.List;
-import java.util.Map;
 import org.edgegallery.atp.model.CommonActionRes;
 import org.edgegallery.atp.model.task.AnalysisResult;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.task.TestCaseStatusReq;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
+import java.io.FileNotFoundException;
+import java.util.List;
+import java.util.Map;
 
 public interface TaskService {
 
@@ -32,7 +32,7 @@ public interface TaskService {
      * @param taskId taskId
      * @return task info
      */
-    public TaskRequest runTask(String taskId, List<String> scenarioIdList);
+    TaskRequest runTask(String taskId, List<String> scenarioIdList);
 
     /**
      * get task info by taskId
@@ -41,7 +41,7 @@ public interface TaskService {
      * @param taskid taskId
      * @return task information
      */
-    public ResponseEntity<TaskRequest> getTaskById(String taskId) throws FileNotFoundException;
+    ResponseEntity<TaskRequest> getTaskById(String taskId) throws FileNotFoundException;
 
     /**
      * get all task info
@@ -49,7 +49,7 @@ public interface TaskService {
      * @param user userInfo
      * @return taskInformation list
      */
-    public ResponseEntity<List<TaskRequest>> getAllTasks(String userId, String appName, String status,
+    ResponseEntity<List<TaskRequest>> getAllTasks(String userId, String appName, String status,
             String providerId, String appVersion);
 
     /**
@@ -58,7 +58,7 @@ public interface TaskService {
      * @param taskId taskId
      * @return dependency application info.
      */
-    public CommonActionRes preCheck(String taskId);
+    CommonActionRes preCheck(String taskId);
 
     /**
      * create test task
@@ -66,7 +66,7 @@ public interface TaskService {
      * @param packages csar file
      * @return taskInfo
      */
-    public TaskRequest createTask(MultipartFile packages);
+    TaskRequest createTask(MultipartFile packages);
 
 
     /**
@@ -75,14 +75,14 @@ public interface TaskService {
      * @param taskIds
      * @return delete failed ids
      */
-    public ResponseEntity<Map<String, List<String>>> batchDelete(List<String> taskIds);
+    ResponseEntity<Map<String, List<String>>> batchDelete(List<String> taskIds);
 
     /**
      * task number analysis
      * 
      * @return analysis result
      */
-    public ResponseEntity<AnalysisResult> taskAnalysis();
+    ResponseEntity<AnalysisResult> taskAnalysis();
 
     /**
      * modify test case status
@@ -91,5 +91,5 @@ public interface TaskService {
      * @param taskId taskid
      * @return true or throw exception
      */
-    public ResponseEntity<Boolean> modifyTestCaseStatus(List<TestCaseStatusReq> testCaseStatus, String taskId);
+    ResponseEntity<Boolean> modifyTestCaseStatus(List<TestCaseStatusReq> testCaseStatus, String taskId);
 }

@@ -14,11 +14,11 @@
 
 package org.edgegallery.atp.repository.mapper;
 
-import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.edgegallery.atp.model.testcase.TestCasePo;
 import org.springframework.stereotype.Component;
+import java.util.List;
 
 @Component
 @Mapper
@@ -36,7 +36,7 @@ public interface TestCaseMapper {
     TestCasePo findByNameAndType(@Param("name") String name, @Param("type") String type);
 
     /**
-     * get test case by test case name
+     * get test case by test case name.
      * 
      * @param nameCh chinese name
      * @param nameEn english name
@@ -53,7 +53,7 @@ public interface TestCaseMapper {
             @Param("nameEn") String nameEn, @Param("testSuiteId") String testSuiteId);
 
     /**
-     * find test case by test case className
+     * find test case by test case className.
      * 
      * @param className test case className
      * @return testCase info
@@ -69,19 +69,19 @@ public interface TestCaseMapper {
     List<TestCasePo> findTestCasesByType(@Param("type") String type);
 
     /**
-     * insert into test case table
+     * insert into test case table.
      * 
      * @param testCase test case info.
      */
     void insert(TestCasePo testCase);
 
     /**
-     * find one test case by id
+     * find one test case by id.
      * 
      * @param id id
      * @return test case info
      */
-    public TestCasePo findById(String id);
+    TestCasePo findById(String id);
 
     /**
      * update test case
@@ -89,7 +89,7 @@ public interface TestCaseMapper {
      * @param testCase test case info
      * @return test case info
      */
-    public void update(TestCasePo testCase);
+    void update(TestCasePo testCase);
 
     /**
      * delete test case by test case id
@@ -97,7 +97,7 @@ public interface TestCaseMapper {
      * @param id test case id
      * @return operation complete
      */
-    public int delete(String id);
+    int delete(String id);
 
     /**
      * get specific test case by test case id.
@@ -105,5 +105,5 @@ public interface TestCaseMapper {
      * @param id test case id
      * @return test case info
      */
-    public TestCasePo getTestCaseById(String id);
+    TestCasePo getTestCaseById(String id);
 }

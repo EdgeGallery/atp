@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package org.edgegallery.atp.repository.testscenario;
 
 import java.util.List;
@@ -18,14 +19,14 @@ import org.edgegallery.atp.model.testscenario.TestScenario;
 
 public interface TestScenarioRepository {
     /**
-     * create test scenario
+     * create test scenario.
      * 
      * @param testScenario testScenario
      */
     void createTestScenario(TestScenario testScenario);
 
     /**
-     * get test scenario by name
+     * get test scenario by name.
      * 
      * @param name
      * @return
@@ -33,7 +34,7 @@ public interface TestScenarioRepository {
     TestScenario getTestScenarioByName(String nameCh, String nameEn);
 
     /**
-     * get test scenario by id
+     * get test scenario by id.
      * 
      * @param id
      * @return
@@ -41,7 +42,7 @@ public interface TestScenarioRepository {
     TestScenario getTestScenarioById(String id);
 
     /**
-     * update test scenario
+     * update test scenario.
      * 
      * @param testScenario testScenario
      * @return testScenario
@@ -49,14 +50,14 @@ public interface TestScenarioRepository {
     void updateTestScenario(TestScenario testScenario);
 
     /**
-     * delete test scenario by id
+     * delete test scenario by id.
      * 
      * @param id test scenario id
      */
     void deleteTestScenario(String id);
     
     /**
-     * get all test scenarios
+     * get all test scenarios.
      * 
      * @param locale locale
      * @param name test scenario name
@@ -65,7 +66,7 @@ public interface TestScenarioRepository {
     List<TestScenario> getAllTestScenarios(String locale, String name);
 
     /**
-     * batch query test scenario by ids
+     * batch query test scenario by ids.
      * 
      * @param ids test scenario ids
      * @return test scenario list

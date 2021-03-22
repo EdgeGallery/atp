@@ -14,18 +14,8 @@
 
 package org.edgegallery.atp.service;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import org.apache.commons.collections4.CollectionUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
@@ -53,8 +43,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 
 @Service("TaskService")
 public class TaskServiceImpl implements TaskService {
@@ -355,7 +355,7 @@ public class TaskServiceImpl implements TaskService {
                                 status = Constant.RUNNING;
                             } else {
                                 if (!Constant.RUNNING.equals(status)) {
-                                    status = (Constant.FAILED.equals(testCase.getResult()) ? Constant.FAILED : status);
+                                    status = Constant.FAILED.equals(testCase.getResult()) ? Constant.FAILED : status;
                                 }
                             }
                         }

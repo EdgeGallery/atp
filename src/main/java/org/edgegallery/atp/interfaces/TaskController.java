@@ -62,7 +62,7 @@ public class TaskController {
     private TaskService taskService;
 
     /**
-     * create test task
+     * create test task.
      * 
      * @param file csar package
      * @return test task info
@@ -79,7 +79,7 @@ public class TaskController {
     }
 
     /**
-     * run test task
+     * run test task.
      *
      * @param taskId taskId
      * @return test task info
@@ -133,7 +133,7 @@ public class TaskController {
     }
 
     /**
-     * batch delete test tasks
+     * batch delete test tasks.
      * 
      * @param taskIds the test task id which will be deleted
      * @return fail task id list
@@ -149,7 +149,7 @@ public class TaskController {
     }
 
     /**
-     * test task analysis
+     * test task analysis.
      * 
      * @return analysis result
      */
@@ -162,6 +162,13 @@ public class TaskController {
         return taskService.taskAnalysis();
     }
 
+    /**
+     * update test case status.
+     * 
+     * @param taskId taskId
+     * @param testCaseStatus testCaseStatus info.
+     * @return true
+     */
     @PutMapping(value = "/tasks/{taskId}/testcase", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "update test case status", response = Boolean.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
