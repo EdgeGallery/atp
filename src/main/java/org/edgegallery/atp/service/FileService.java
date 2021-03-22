@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package org.edgegallery.atp.service;
 
 import java.io.FileNotFoundException;
@@ -18,5 +19,5 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 
 public interface FileService {
-    public ResponseEntity<InputStreamResource> getFileContent(String fileId, String type) throws FileNotFoundException;
+    ResponseEntity<InputStreamResource> getFileContent(String fileId, String type) throws FileNotFoundException;
 }

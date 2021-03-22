@@ -58,6 +58,16 @@ public class TestScenarioController {
     @Autowired
     TestScenarioService testScenarioService;
 
+    /**
+     * create test scenario.
+     * 
+     * @param nameCh nameCh
+     * @param nameEn nameEn
+     * @param descriptionZn descriptionZn
+     * @param descriptionEn descriptionEn
+     * @param icon icon
+     * @return test scenario
+     */
     @PostMapping(value = "/testscenarios", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "create test scenario.", response = String.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
@@ -81,6 +91,17 @@ public class TestScenarioController {
         return ResponseEntity.ok(testScenarioService.createTestScenario(testScenario, icon));
     }
 
+    /**
+     * update test scerario.
+     * 
+     * @param id id
+     * @param nameCh nameCh
+     * @param nameEn nameEn
+     * @param descriptionZn descriptionZn
+     * @param descriptionEn descriptionEn
+     * @param icon icon
+     * @return test scenario
+     */
     @PutMapping(value = "/testscenarios/{id}", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "modify test scenario.", response = TestScenario.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
@@ -104,6 +125,12 @@ public class TestScenarioController {
         return ResponseEntity.ok(testScenarioService.updateTestScenario(testScenario, icon));
     }
 
+    /**
+     * delete test scenario.
+     * 
+     * @param id id
+     * @return true
+     */
     @DeleteMapping(value = "/testscenarios/{id}", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "delete test scenario.", response = Boolean.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
@@ -114,6 +141,13 @@ public class TestScenarioController {
         return ResponseEntity.ok(testScenarioService.deleteTestScenario(id));
     }
 
+    /**
+     * query test scenario.
+     * 
+     * @param id id
+     * @return test scenario
+     * @throws FileNotFoundException
+     */
     @GetMapping(value = "/testscenarios/{id}", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "get one test scenario.", response = TestScenario.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
@@ -125,6 +159,13 @@ public class TestScenarioController {
         return ResponseEntity.ok(testScenarioService.getTestScenario(id));
     }
 
+    /**
+     * query all test scenario.
+     * 
+     * @param locale locale
+     * @param name name
+     * @return test scenario list
+     */
     @GetMapping(value = "/testscenarios", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "get all test scenarios.", response = TestScenario.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
@@ -136,6 +177,12 @@ public class TestScenarioController {
         return ResponseEntity.ok(testScenarioService.queryAllTestScenario(locale, name));
     }
 
+    /**
+     * get test cases by scenarioIds.
+     * 
+     * @param ids ids
+     * @return test scenario lists.
+     */
     @PostMapping(value = "/testscenarios/testcases", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "get all test cases belonged to special test scenario id list.", response = String.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),

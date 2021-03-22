@@ -1,6 +1,3 @@
-package org.edgegallery.atp.model.contribution;
-
-import java.util.Date;
 /*
  * Copyright 2020 Huawei Technologies Co., Ltd.
  *
@@ -14,6 +11,10 @@ import java.util.Date;
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
+package org.edgegallery.atp.model.contribution;
+
+import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,45 +22,57 @@ import lombok.Setter;
 @Setter
 public class Contribution {
     /**
-     * id
+     * id.
      */
     private String id;
 
     /**
-     * test case name
+     * test case name.
      */
     private String name;
 
     /**
-     * test objective
+     * test objective.
      */
     private String objective;
 
     /**
-     * test step
+     * test step.
      */
     private String step;
 
     /**
-     * test expect result
+     * test expect result.
      */
     private String expectResult;
 
     /**
-     * type: text or script
+     * type: text or script.
      */
     private String type;
 
     /**
-     * file create time
+     * file create time.
      */
     private Date createTime;
 
+    public Date getCreateTime() {
+        return createTime != null?(Date) createTime.clone():null;
+    }
+
+    public void setCreateTime(Date createTime) {
+        if (createTime != null) {
+            this.createTime = (Date) createTime.clone();
+        } else {
+            this.createTime = null;
+        }
+    }
+
     /**
-     * file path
+     * file path.
      */
     private String filePath;
-    
+
     public Contribution() {
 
     }
@@ -118,12 +131,12 @@ public class Contribution {
             this.expectResult = expectResult;
             return this;
         }
-        
+
         public Builder setType(String type) {
             this.type = type;
             return this;
         }
-        
+
 
         public Contribution build() {
             return new Contribution(this);

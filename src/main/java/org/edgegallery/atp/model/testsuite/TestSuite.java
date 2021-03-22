@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package org.edgegallery.atp.model.testsuite;
 
 import java.util.List;
@@ -22,32 +23,32 @@ import lombok.Setter;
 public class TestSuite {
 
     /**
-     * test suite id
+     * test suite id.
      */
     private String id;
 
     /**
-     * test suite chinese name
+     * test suite chinese name.
      */
     private String nameCh;
 
     /**
-     * test suite english name
+     * test suite english name.
      */
     private String nameEn;
 
     /**
-     * test suite chinese description
+     * test suite chinese description.
      */
     private String descriptionCh;
 
     /**
-     * test suite english description
+     * test suite english description.
      */
     private String descriptionEn;
 
     /**
-     * the test scenario id list that the test suite belong to
+     * the test scenario id list that the test suite belong to.
      */
     private List<String> scenarioIdList;
 
@@ -62,7 +63,7 @@ public class TestSuite {
         this.descriptionCh = builder.descriptionCh;
         this.descriptionEn = builder.descriptionEn;
     }
-    
+
     public static Builder builder() {
         return new Builder();
     }
@@ -106,7 +107,7 @@ public class TestSuite {
             this.descriptionCh = descriptionCh;
             return this;
         }
-        
+
         public TestSuite build() {
             return new TestSuite(this);
 

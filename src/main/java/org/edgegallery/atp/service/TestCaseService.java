@@ -14,12 +14,12 @@
 
 package org.edgegallery.atp.service;
 
-import java.io.FileNotFoundException;
-import java.util.List;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
+import java.io.FileNotFoundException;
+import java.util.List;
 
 public interface TestCaseService {
 
@@ -32,7 +32,7 @@ public interface TestCaseService {
      * @param testSuiteIds test suite id list the test case belong to
      * @return test case info list
      */
-    public ResponseEntity<List<TestCase>> getAllTestCases(String type, String locale, String name,
+    ResponseEntity<List<TestCase>> getAllTestCases(String type, String locale, String name,
             List<String> testSuiteIds);
 
     /**
@@ -42,7 +42,7 @@ public interface TestCaseService {
      * @param testCase test case info
      * @return test case info
      */
-    public TestCase createTestCase(MultipartFile file, TestCase testCase);
+    TestCase createTestCase(MultipartFile file, TestCase testCase);
 
     /**
      * update test case
@@ -51,7 +51,7 @@ public interface TestCaseService {
      * @param testCase test case info
      * @return test case info
      */
-    public TestCase updateTestCase(MultipartFile file, TestCase testCase);
+    TestCase updateTestCase(MultipartFile file, TestCase testCase);
 
     /**
      * delete test case
@@ -59,7 +59,7 @@ public interface TestCaseService {
      * @param id id
      * @return if delete successa
      */
-    public Boolean deleteTestCase(String id);
+    Boolean deleteTestCase(String id);
 
     /**
      * get one test case
@@ -67,7 +67,7 @@ public interface TestCaseService {
      * @param id id
      * @return test case info
      */
-    public TestCase getTestCase(String id) throws FileNotFoundException;
+    TestCase getTestCase(String id) throws FileNotFoundException;
 
     /**
      * download test case.
@@ -75,5 +75,5 @@ public interface TestCaseService {
      * @param id test case id
      * @return test case binary stream.
      */
-    public ResponseEntity<InputStreamResource> downloadTestCase(String id);
+    ResponseEntity<InputStreamResource> downloadTestCase(String id);
 }

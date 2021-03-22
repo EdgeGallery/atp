@@ -14,15 +14,6 @@
 
 package org.edgegallery.atp.service;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.LinkedList;
-import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.model.testcase.TestCase;
@@ -40,6 +31,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.LinkedList;
+import java.util.List;
 
 @Service("TestCaseService")
 public class TestCaseServiceImpl implements TestCaseService {
@@ -194,7 +194,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         String className = Constant.EMPTY;
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line = "";
-            while (((line = reader.readLine()) != null)) {
+            while ((line = reader.readLine()) != null) {
                 if (line.startsWith("public class")) {
                     String[] arr = line.split("\\s+");
                     className = arr[2];

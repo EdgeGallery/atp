@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 public interface TaskMapper {
 
     /**
-     * get task info by taskId and userId
+     * get task info by taskId and userId.
      * 
      * @param taskId taskId
      * @return taskInfo
@@ -34,7 +34,7 @@ public interface TaskMapper {
     TaskPO findByTaskIdAndUserId(@Param("taskId") String taskId, @Param("userId") String userId);
 
     /**
-     * get task list by userId
+     * get task list by userId.
      * 
      * @param userId
      * @return
@@ -44,14 +44,14 @@ public interface TaskMapper {
             @Param("appVersion") String appVersion);
 
     /**
-     * create task info
+     * create task info.
      * 
      * @param taskPO
      */
     void insert(TaskPO taskPO);
 
     /**
-     * query all running tasks
+     * query all running tasks.
      * 
      * @return running task info list
      */
@@ -65,19 +65,19 @@ public interface TaskMapper {
     void update(TaskPO taskPO);
 
     /**
-     * get current db time
+     * get current db time.
      * 
      * @return current time
      */
     Date getCurrentDate();
 
     /**
-     * delete task created 30 days before
+     * delete task created 30 days before.
      */
     void delHisTask();
 
     /**
-     * batch get task
+     * batch get task.
      * 
      * @param userId userId
      * @param taskIdList taskIdList
@@ -86,7 +86,7 @@ public interface TaskMapper {
     List<TaskPO> batchFindTaskByUserId(@Param("userId") String userId, @Param("taskIdList") List<String> taskIdList);
 
     /**
-     * delete task by id
+     * delete task by id.
      * 
      * @param id id
      */

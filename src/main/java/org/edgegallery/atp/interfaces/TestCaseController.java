@@ -61,7 +61,7 @@ public class TestCaseController {
     private static final String REG_ID = "[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}";
 
     /**
-     * get all tasks according userId
+     * get all tasks according userId.
      * 
      * @param userId userId
      * @return task list
@@ -79,6 +79,23 @@ public class TestCaseController {
         return testCaseService.getAllTestCases(type, locale, name, testSuiteIds.getTestSuiteIdList());
     }
 
+    /**
+     * create test cases.
+     * 
+     * @param file file
+     * @param nameCh nameCh
+     * @param nameEn nameEn
+     * @param type type
+     * @param descriptionCh descriptionCh
+     * @param descriptionEn descriptionEn
+     * @param codeLanguage codeLanguage
+     * @param expectResultCh expectResultCh
+     * @param expectResultEn expectResultEn
+     * @param testStepCh testStepCh
+     * @param testStepEn testStepEn
+     * @param testSuiteIds testSuiteIds
+     * @return test case
+     */
     @PostMapping(value = "/testcases", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "create test case.", response = TestCase.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
@@ -121,6 +138,21 @@ public class TestCaseController {
         return ResponseEntity.ok(testCaseService.createTestCase(file, testCase));
     }
 
+    /**
+     * update Test Case
+     * 
+     * @param id id
+     * @param file file
+     * @param descriptionCh descriptionCh
+     * @param descriptionEn descriptionEn
+     * @param codeLanguage codeLanguage
+     * @param expectResultCh expectResultCh
+     * @param expectResultEn expectResultEn
+     * @param testStepCh testStepCh
+     * @param testStepEn testStepEn
+     * @param testSuiteIds testSuiteIds
+     * @return test case
+     */
     @PutMapping(value = "/testcases", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "modify test case.", response = TestCase.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
@@ -160,6 +192,12 @@ public class TestCaseController {
         return ResponseEntity.ok(testCaseService.updateTestCase(file, testCase));
     }
 
+    /**
+     * delete test case.
+     * 
+     * @param id id
+     * @return true
+     */
     @DeleteMapping(value = "/testcases/{id}", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "delete test case.", response = Boolean.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
@@ -170,6 +208,13 @@ public class TestCaseController {
         return ResponseEntity.ok(testCaseService.deleteTestCase(id));
     }
 
+    /**
+     * query test case.
+     * 
+     * @param id id
+     * @return test case
+     * @throws FileNotFoundException
+     */
     @GetMapping(value = "/testcases/{id}", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "get one test case.", response = TestCase.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
@@ -181,6 +226,12 @@ public class TestCaseController {
         return ResponseEntity.ok(testCaseService.getTestCase(id));
     }
 
+    /**
+     * download test case.
+     * 
+     * @param id id
+     * @return stream
+     */
     @GetMapping(value = "/testcases/{id}/action/download", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "download test case", response = InputStreamResource.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),

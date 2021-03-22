@@ -18,14 +18,14 @@ import org.edgegallery.atp.model.testsuite.TestSuite;
 
 public interface TestSuiteRepository {
     /**
-     * create test suite
+     * create test suite.
      * 
      * @param testSuite testSuite
      */
     void createTestSuite(TestSuite testSuite);
 
     /**
-     * get test suite by name
+     * get test suite by name.
      * 
      * @param name
      * @return
@@ -33,7 +33,7 @@ public interface TestSuiteRepository {
     TestSuite getTestSuiteByName(String nameCh, String nameEn);
 
     /**
-     * get test suite by id
+     * get test suite by id.
      * 
      * @param id
      * @return
@@ -41,7 +41,7 @@ public interface TestSuiteRepository {
     TestSuite getTestSuiteById(String id);
 
     /**
-     * update test suite
+     * update test suite.
      * 
      * @param testSuite testSuite
      * @return testSuite info
@@ -49,14 +49,14 @@ public interface TestSuiteRepository {
     void updateTestSuite(TestSuite testSuite);
 
     /**
-     * delete test suite by id
+     * delete test suite by id.
      * 
      * @param id test suite id
      */
     void deleteTestSuite(String id);
     
     /**
-     * get all test suites
+     * get all test suites.
      * 
      * @param locale locale
      * @param name test suite name
@@ -66,7 +66,7 @@ public interface TestSuiteRepository {
     List<TestSuite> getAllTestSuites(String locale, String name, String scenarioId);
 
     /**
-     * batch query test suites
+     * batch query test suites.
      * 
      * @param ids test suite ids
      * @return test suite list

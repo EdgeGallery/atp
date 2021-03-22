@@ -57,6 +57,16 @@ public class TestSuiteController {
     @Autowired
     TestSuiteService testSuiteService;
 
+    /**
+     * create test suite.
+     * 
+     * @param nameCh nameCh
+     * @param nameEn nameEn
+     * @param descriptionCh descriptionCh
+     * @param descriptionEn descriptionEn
+     * @param scenarioIdList scenarioIdList
+     * @return test suite
+     */
     @PostMapping(value = "/testsuites", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "create test suite.", response = String.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
@@ -82,6 +92,17 @@ public class TestSuiteController {
         return ResponseEntity.ok(testSuiteService.createTestSuite(testSuite));
     }
 
+    /**
+     * update test suite.
+     * 
+     * @param id id
+     * @param nameCh nameCh
+     * @param nameEn nameEn
+     * @param descriptionCh descriptionCh
+     * @param descriptionEn descriptionEn
+     * @param scenarioIdList scenarioIdList
+     * @return test suite info
+     */
     @PutMapping(value = "/testsuites/{id}", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "modify test suite.", response = TestSuite.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
@@ -107,6 +128,12 @@ public class TestSuiteController {
         return ResponseEntity.ok(testSuiteService.updateTestSuite(testSuite));
     }
 
+    /**
+     * delete test suite.
+     * 
+     * @param id id
+     * @return true
+     */
     @DeleteMapping(value = "/testsuites/{id}", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "delete test suite.", response = Boolean.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
@@ -117,6 +144,13 @@ public class TestSuiteController {
         return ResponseEntity.ok(testSuiteService.deleteTestSuite(id));
     }
 
+    /**
+     * query test suite.
+     * 
+     * @param id id
+     * @return test suite
+     * @throws FileNotFoundException
+     */
     @GetMapping(value = "/testsuites/{id}", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "get one test suite.", response = TestSuite.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
@@ -128,6 +162,14 @@ public class TestSuiteController {
         return ResponseEntity.ok(testSuiteService.getTestSuite(id));
     }
 
+    /**
+     * query all test suite.
+     * 
+     * @param locale locale
+     * @param name name
+     * @param scenarioIdList scenarioIdList
+     * @return test suite info
+     */
     @GetMapping(value = "/testsuites", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "get all test suites.", response = TestSuite.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),

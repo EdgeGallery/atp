@@ -22,7 +22,7 @@ import org.edgegallery.atp.model.task.TaskRequest;
 public interface TaskRepository {
 
     /**
-     * find task by taskId and userId
+     * find task by taskId and userId.
      * 
      * @param taskId taskId
      * @param userId userId
@@ -31,7 +31,7 @@ public interface TaskRepository {
     TaskRequest findByTaskIdAndUserId(String taskId, String userId);
 
     /**
-     * find task list by userId
+     * find task list by userId.
      * 
      * @param userId userId
      * @return
@@ -40,7 +40,7 @@ public interface TaskRepository {
             String appVersion);
 
     /**
-     * create task info
+     * create task info.
      * 
      * @param task task
      */
@@ -49,26 +49,26 @@ public interface TaskRepository {
     List<TaskRequest> queryAllRunningTasks();
 
     /**
-     * update task info
+     * update task info.
      * 
      * @param task task
      */
     void update(TaskRequest task);
 
     /**
-     * get DB current time
+     * get DB current time.
      * 
      * @return
      */
     Date getCurrentDate();
 
     /**
-     * delete task created 7 days before
+     * delete task created 7 days before.
      */
     void delHisTask();
 
     /**
-     * batch delete tasks
+     * batch delete tasks.
      * 
      * @param ids task id list
      * @return delete failed id list

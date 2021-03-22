@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package org.edgegallery.atp.service;
 
 import java.util.List;
@@ -25,12 +26,12 @@ public interface ContributionService {
      * @param file script file
      * @return contribution file
      */
-    public Contribution createContribution(Contribution contribution, MultipartFile file);
+    Contribution createContribution(Contribution contribution, MultipartFile file);
 
     /**
      * get all contributions
      * 
      * @return
      */
-    public List<Contribution> getAllContribution();
+    List<Contribution> getAllContribution();
 }

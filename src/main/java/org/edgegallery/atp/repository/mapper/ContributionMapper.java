@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package org.edgegallery.atp.repository.mapper;
 
 import java.util.List;
@@ -22,15 +23,16 @@ import org.springframework.stereotype.Component;
 @Mapper
 public interface ContributionMapper {
     /**
-     * insert contribution to db
+     * insert contribution to db.
      * 
      * @param contribution
      */
-    public void insert(Contribution contribution);
+    void insert(Contribution contribution);
 
     /**
+     * get all contrbutions.
      * 
      * @return
      */
-    public List<Contribution> getAllContributions();
+    List<Contribution> getAllContributions();
 }

@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package org.edgegallery.atp.model.testscenario;
 
 import lombok.Getter;
@@ -21,32 +22,32 @@ import lombok.Setter;
 public class TestScenario {
 
     /**
-     * test scenario id
+     * test scenario id.
      */
     private String id;
 
     /**
-     * test scenario chinese name
+     * test scenario chinese name.
      */
     private String nameCh;
 
     /**
-     * test scenario english name
+     * test scenario english name.
      */
     private String nameEn;
 
     /**
-     * test scenario chinese description
+     * test scenario chinese description.
      */
     private String descriptionCh;
 
     /**
-     * test scenario english description
+     * test scenario english description.
      */
     private String descriptionEn;
 
     /**
-     * test scenario label,unum value:EdgeGallery,China Mobile,China Unicom,China Telecom
+     * test scenario label,unum value:EdgeGallery,China Mobile,China Unicom,China Telecom.
      */
     private String label;
 
@@ -77,7 +78,7 @@ public class TestScenario {
         private String descriptionCh;
 
         private String descriptionEn;
-        
+
         private String label;
 
         private Builder() {
@@ -108,7 +109,7 @@ public class TestScenario {
             this.descriptionEn = descriptionEn;
             return this;
         }
-        
+
         public Builder setLabel(String label) {
             this.label = label;
             return this;

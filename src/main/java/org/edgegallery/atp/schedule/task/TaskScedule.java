@@ -64,22 +64,23 @@ class TaskSchedule {
             File fileDir = new File(basePath.concat(Constant.SLASH).concat(Constant.TEST_CASE_DIR));
             if (fileDir.exists()) {
                 File[] fileArray = fileDir.listFiles();
-                for (File file : fileArray) {
-                    TestCase testCase = testCaseRepository.findByName(null,
-                            file.getName().substring(0, file.getName().indexOf(Constant.DOT)));
-                    if (null != testCase) {
-                        String filePath = Constant.BASIC_TEST_CASE_PATH + testCase.getNameEn() + Constant.UNDER_LINE
-                                + testCase.getId();
-                        FileChecker.createFile(filePath);
-                        File result = new File(filePath);
-                        FileCopyUtils.copy(file, result);
+                if (null != fileArray) {
+                    for (File file : fileArray) {
+                        TestCase testCase = testCaseRepository.findByName(null,
+                                file.getName().substring(0, file.getName().indexOf(Constant.DOT)));
+                        if (null != testCase) {
+                            String filePath = Constant.BASIC_TEST_CASE_PATH + testCase.getNameEn() + Constant.UNDER_LINE
+                                    + testCase.getId();
+                            FileChecker.createFile(filePath);
+                            File result = new File(filePath);
+                            FileCopyUtils.copy(file, result);
 
-                        testCase.setFilePath(filePath);
-                        testCaseRepository.update(testCase);
-                    } else {
-                        LOGGER.error("init test case failed, find by name from db is null.");
+                            testCase.setFilePath(filePath);
+                            testCaseRepository.update(testCase);
+                        } else {
+                            LOGGER.error("init test case failed, find by name from db is null.");
+                        }
                     }
-
                 }
             }
 
@@ -87,22 +88,24 @@ class TaskSchedule {
             File iconDir = new File(basePath.concat(Constant.SLASH).concat(Constant.ICON));
             if (iconDir.exists()) {
                 File[] iconArray = iconDir.listFiles();
-                for (File icon : iconArray) {
-                    String iconPath = Constant.BASIC_ICON_PATH + icon.getName();
-                    FileChecker.createFile(iconPath);
-                    File result = new File(iconPath);
-                    FileCopyUtils.copy(icon, result);
+                if (null != iconArray) {
+                    for (File icon : iconArray) {
+                        String iconPath = Constant.BASIC_ICON_PATH + icon.getName();
+                        FileChecker.createFile(iconPath);
+                        File result = new File(iconPath);
+                        FileCopyUtils.copy(icon, result);
 
-                    // insert to db
-                    String name = icon.getName();
-                    String scenarioId =
-                            name.substring(name.indexOf(Constant.UNDER_LINE) + 1, name.indexOf(Constant.DOT));
+                        // insert to db
+                        String name = icon.getName();
+                        String scenarioId =
+                                name.substring(name.indexOf(Constant.UNDER_LINE) + 1, name.indexOf(Constant.DOT));
 
-                    ATPFile fileFromDb = fileRepository.getFileContent(scenarioId, Constant.FILE_TYPE_SCENARIO);
-                    if (null == fileFromDb) {
-                        ATPFile atpFile = new ATPFile(scenarioId, Constant.FILE_TYPE_SCENARIO,
-                                taskRepository.getCurrentDate(), iconPath);
-                        fileRepository.insertFile(atpFile);
+                        ATPFile fileFromDb = fileRepository.getFileContent(scenarioId, Constant.FILE_TYPE_SCENARIO);
+                        if (null == fileFromDb) {
+                            ATPFile atpFile = new ATPFile(scenarioId, Constant.FILE_TYPE_SCENARIO,
+                                    taskRepository.getCurrentDate(), iconPath);
+                            fileRepository.insertFile(atpFile);
+                        }
                     }
                 }
             }

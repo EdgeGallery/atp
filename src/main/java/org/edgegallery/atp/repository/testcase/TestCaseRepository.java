@@ -14,13 +14,13 @@
 
 package org.edgegallery.atp.repository.testcase;
 
-import java.util.List;
 import org.edgegallery.atp.model.testcase.TestCase;
+import java.util.List;
 
 public interface TestCaseRepository {
 
     /**
-     * find all test case
+     * find all test case.
      * 
      * @param type manual or automatic
      * @param locale ch or en
@@ -31,7 +31,7 @@ public interface TestCaseRepository {
     List<TestCase> findAllTestCases(String type, String locale, String name, String testSuiteId);
 
     /**
-     * find test case by test case name and test case type
+     * find test case by test case name and test case type.
      * 
      * @param name test case name
      * @param type test case type
@@ -40,7 +40,7 @@ public interface TestCaseRepository {
     TestCase findByNameAndType(String name, String type);
 
     /**
-     * find test case by test case className
+     * find test case by test case className.
      * 
      * @param className test case className
      * @return testCase info
@@ -48,7 +48,7 @@ public interface TestCaseRepository {
     TestCase findByClassName(String className);
 
     /**
-     * insert into test case table
+     * insert into test case table.
      * 
      * @param testCase test case info.
      */
@@ -57,18 +57,18 @@ public interface TestCaseRepository {
     /**
      * update test case
      * 
-     * @param testCase test case info
+     * @param testCase test case info.
      * @return test case info
      */
-    public void update(TestCase testCase);
+    void update(TestCase testCase);
 
     /**
-     * delete test case by test case id
+     * delete test case by test case id.
      * 
      * @param id test case id
      * @return operation complete
      */
-    public int delete(String id);
+    int delete(String id);
 
     /**
      * get specific test case by test case id.
@@ -76,15 +76,15 @@ public interface TestCaseRepository {
      * @param id test case id
      * @return test case info
      */
-    public TestCase getTestCaseById(String id);
+    TestCase getTestCaseById(String id);
     
     /**
-     * get test case by test case name
+     * get test case by test case name.
      * 
      * @param nameCh chinese name
      * @param nameEn english name
      * @return test case info.
      */
-    public TestCase findByName(String nameCh, String nameEn);
+    TestCase findByName(String nameCh, String nameEn);
 
 }

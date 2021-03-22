@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package org.edgegallery.atp.repository.file;
 
 import org.edgegallery.atp.model.file.ATPFile;
@@ -23,12 +24,12 @@ public interface FileRepository {
      * @param type file type
      * @return ATP file info
      */
-    public ATPFile getFileContent(String fileId, String type);
+    ATPFile getFileContent(String fileId, String type);
 
     /**
      * insert file info
      * 
      * @param file file info
      */
-    public void insertFile(ATPFile file);
+    void insertFile(ATPFile file);
 }
