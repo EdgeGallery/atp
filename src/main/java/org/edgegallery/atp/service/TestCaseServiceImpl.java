@@ -14,6 +14,15 @@
 
 package org.edgegallery.atp.service;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.LinkedList;
+import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.model.testcase.TestCase;
@@ -31,15 +40,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.LinkedList;
-import java.util.List;
 
 @Service("TestCaseService")
 public class TestCaseServiceImpl implements TestCaseService {
@@ -152,7 +152,9 @@ public class TestCaseServiceImpl implements TestCaseService {
             if (null != file && StringUtils.isNotBlank(file.getOriginalFilename())
                     && StringUtils.isNotBlank(file.getName()) && 0 != (int) file.getSize()) {
                 String filePath = dbData.getFilePath();
-                new File(filePath).delete();
+                if (!new File(filePath).delete()) {
+                    LOGGER.error("delete file failed.");
+                }
                 File result = new File(filePath);
                 file.transferTo(result);
                 if (Constant.JAVA.equals(testCase.getCodeLanguage())) {
@@ -174,7 +176,9 @@ public class TestCaseServiceImpl implements TestCaseService {
         if (null != testCase) {
             String filePath = testCase.getFilePath();
             testCaseRepository.delete(id);
-            new File(filePath).delete();
+            if (!new File(filePath).delete()) {
+                LOGGER.error("delete file failed.");
+            }
         }
         return true;
     }
@@ -233,7 +237,7 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     /**
-     * check test suite ids is right
+     * check test suite ids is right.
      * 
      * @param testSuite test suite info
      */

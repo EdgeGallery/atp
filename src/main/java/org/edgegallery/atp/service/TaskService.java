@@ -14,40 +14,45 @@
 
 package org.edgegallery.atp.service;
 
+import java.io.FileNotFoundException;
+import java.util.List;
+import java.util.Map;
 import org.edgegallery.atp.model.CommonActionRes;
 import org.edgegallery.atp.model.task.AnalysisResult;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.task.TestCaseStatusReq;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
-import java.io.FileNotFoundException;
-import java.util.List;
-import java.util.Map;
 
 public interface TaskService {
 
     /**
-     * run a test task
+     * run a test task.
      * 
      * @param taskId taskId
+     * @param scenarioIdList scenarioIdList
      * @return task info
      */
     TaskRequest runTask(String taskId, List<String> scenarioIdList);
 
     /**
-     * get task info by taskId
+     * get task info by taskId.
      * 
-     * @param user userInfo
-     * @param taskid taskId
-     * @return task information
+     * @param taskId taskId
+     * @return TaskRequest
+     * @throws FileNotFoundException FileNotFoundException
      */
     ResponseEntity<TaskRequest> getTaskById(String taskId) throws FileNotFoundException;
 
     /**
-     * get all task info
+     * get all task info.
      * 
-     * @param user userInfo
-     * @return taskInformation list
+     * @param userId userId
+     * @param appName appName
+     * @param status status
+     * @param providerId providerId
+     * @param appVersion appVersion
+     * @return TaskRequest list
      */
     ResponseEntity<List<TaskRequest>> getAllTasks(String userId, String appName, String status,
             String providerId, String appVersion);
@@ -61,7 +66,7 @@ public interface TaskService {
     CommonActionRes preCheck(String taskId);
 
     /**
-     * create test task
+     * create test task.
      * 
      * @param packages csar file
      * @return taskInfo
@@ -70,22 +75,22 @@ public interface TaskService {
 
 
     /**
-     * batch delete tasks by task ids
+     * batch delete tasks by task ids.
      * 
-     * @param taskIds
+     * @param taskIds taskIds
      * @return delete failed ids
      */
     ResponseEntity<Map<String, List<String>>> batchDelete(List<String> taskIds);
 
     /**
-     * task number analysis
+     * task number analysis.
      * 
      * @return analysis result
      */
     ResponseEntity<AnalysisResult> taskAnalysis();
 
     /**
-     * modify test case status
+     * modify test case status.
      * 
      * @param testCaseStatus test case info
      * @param taskId taskid

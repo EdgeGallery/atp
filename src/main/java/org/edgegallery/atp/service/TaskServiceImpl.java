@@ -16,6 +16,18 @@ package org.edgegallery.atp.service;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 import org.apache.commons.collections4.CollectionUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
@@ -43,18 +55,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
 
 @Service("TaskService")
 public class TaskServiceImpl implements TaskService {
@@ -107,7 +107,6 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public CommonActionRes preCheck(String taskId) {
-        CommonActionRes result = new CommonActionRes();
         TaskRequest task =
                 taskRepository.findByTaskIdAndUserId(taskId, AccessTokenFilter.context.get().get(Constant.USER_ID));
 
@@ -133,6 +132,7 @@ public class TaskServiceImpl implements TaskService {
                 getDependencyInfo.put(appName.getAsString(), appVersion.getAsString());
             }
         });
+        CommonActionRes result = new CommonActionRes();
         result.setDependency(getDependencyInfo);
 
         LOGGER.info("pre-check successfully.");
@@ -251,9 +251,6 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public ResponseEntity<AnalysisResult> taskAnalysis() {
-        List<TaskRequest> response = taskRepository.findTaskByUserId(null, null, null, null, null);
-        AnalysisResult analysisResult = new AnalysisResult();
-
         Date curTime = taskRepository.getCurrentDate();
         Calendar calendar = Calendar.getInstance();
         int date = curTime.getDate();
@@ -276,6 +273,8 @@ public class TaskServiceImpl implements TaskService {
         int last4Days = last3Days + fourMonthDays;
         int last5Days = last4Days + fiveMonthDays;
 
+        List<TaskRequest> response = taskRepository.findTaskByUserId(null, null, null, null, null);
+        AnalysisResult analysisResult = new AnalysisResult();
         response.forEach(task -> {
             if (task.getCreateTime().getYear() == curTime.getYear()
                     && task.getCreateTime().getMonth() == curTime.getMonth()) {
@@ -307,18 +306,18 @@ public class TaskServiceImpl implements TaskService {
         analysisResult.setTotal();
         return ResponseEntity.ok(analysisResult);
     }
-    
+
     @Override
     public ResponseEntity<Boolean> modifyTestCaseStatus(List<TestCaseStatusReq> testCaseStatusList, String taskId) {
         TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, null);
         List<TaskTestScenario> testScenarioList = task.getTestScenarios();
-        
+
         testCaseStatusList.forEach(testCaseStatus -> {
-            testScenarioList.forEach(testScenario->{
-                if(testScenario.getId().equals(testCaseStatus.getTestScenarioId())) {
+            testScenarioList.forEach(testScenario -> {
+                if (testScenario.getId().equals(testCaseStatus.getTestScenarioId())) {
                     List<TaskTestSuite> testSuiteList = testScenario.getTestSuites();
-                    testSuiteList.forEach(testSuite->{
-                        if(testSuite.getId().equals(testCaseStatus.getTestSuiteId())) {
+                    testSuiteList.forEach(testSuite -> {
+                        if (testSuite.getId().equals(testCaseStatus.getTestSuiteId())) {
                             List<TaskTestCase> testCaseList = testSuite.getTestCases();
                             testCaseList.forEach(testCase -> {
                                 if (testCase.getId().equals(testCaseStatus.getTestCaseId())) {
@@ -338,7 +337,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     /**
-     * confirm task total status
+     * confirm task total status.
      * 
      * @param task task info
      */

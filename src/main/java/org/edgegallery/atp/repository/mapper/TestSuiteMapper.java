@@ -26,25 +26,26 @@ public interface TestSuiteMapper {
     /**
      * create test suite.
      * 
-     * @param TestSuitePo TestSuitePo
+     * @param testSuitePo testSuitePo
      */
     void createTestSuite(TestSuitePo testSuitePo);
 
     /**
      * get test suite by name.
      * 
-     * @param name
-     * @return
+     * @param nameCh nameCh
+     * @param nameEn nameEn
+     * @return TestSuitePo
      */
     TestSuitePo getTestSuiteByName(@Param("nameCh") String nameCh, @Param("nameEn") String nameEn);
 
     /**
      * get all test suites, name is fuzzy query.
      * 
-     * @param nameCh
-     * @param nameEn
+     * @param nameCh nameCh
+     * @param nameEn nameEn
      * @param scenarioId scenario id test suite belongs to
-     * @return
+     * @return TestSuitePo list
      */
     List<TestSuitePo> getAllTestSuite(@Param("nameCh") String nameCh, @Param("nameEn") String nameEn,
             @Param("scenarioId") String scenarioId);
@@ -52,8 +53,7 @@ public interface TestSuiteMapper {
     /**
      * update test suite.
      * 
-     * @param TestSuitePo TestSuitePo
-     * @return TestSuitePo
+     * @param testSuitePo testSuitePo
      */
     void updateTestSuite(TestSuitePo testSuitePo);
     

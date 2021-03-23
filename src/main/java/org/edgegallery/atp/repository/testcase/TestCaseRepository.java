@@ -14,8 +14,8 @@
 
 package org.edgegallery.atp.repository.testcase;
 
-import org.edgegallery.atp.model.testcase.TestCase;
 import java.util.List;
+import org.edgegallery.atp.model.testcase.TestCase;
 
 public interface TestCaseRepository {
 
@@ -25,7 +25,7 @@ public interface TestCaseRepository {
      * @param type manual or automatic
      * @param locale ch or en
      * @param name test case name
-     * @param testSuiteIds test suite id list the test case belong to
+     * @param testSuiteId test suite id the test case belong to
      * @return test case list
      */
     List<TestCase> findAllTestCases(String type, String locale, String name, String testSuiteId);
@@ -55,10 +55,9 @@ public interface TestCaseRepository {
     void insert(TestCase testCase);
 
     /**
-     * update test case
+     * update test case.
      * 
      * @param testCase test case info.
-     * @return test case info
      */
     void update(TestCase testCase);
 

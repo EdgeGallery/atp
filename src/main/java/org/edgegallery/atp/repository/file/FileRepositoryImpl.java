@@ -14,7 +14,7 @@
 
 package org.edgegallery.atp.repository.file;
 
-import org.edgegallery.atp.model.file.ATPFile;
+import org.edgegallery.atp.model.file.AtpFile;
 import org.edgegallery.atp.repository.mapper.FileMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +30,7 @@ public class FileRepositoryImpl implements FileRepository {
     FileMapper fileMapper;
 
     @Override
-    public ATPFile getFileContent(String fileId, String type) {
+    public AtpFile getFileContent(String fileId, String type) {
         try {
             return fileMapper.getFileContent(fileId, type);
         } catch (Exception e) {
@@ -40,7 +40,7 @@ public class FileRepositoryImpl implements FileRepository {
     }
 
     @Override
-    public void insertFile(ATPFile file) {
+    public void insertFile(AtpFile file) {
         try {
             fileMapper.insertFile(file);
         } catch (Exception e) {

@@ -23,5 +23,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class TestScenarioIds {
-   private List<String> scenarioIdList;
+    private List<String> scenarioIdList;
 }

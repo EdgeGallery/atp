@@ -54,6 +54,11 @@ public class TaskTestScenario {
         this.id = taskPo.getId();
     }
 
+    /**
+     * TaskTestScenario model to TaskTestScenarioPo model.
+     * 
+     * @return TaskTestScenarioPo
+     */
     public TaskTestScenarioPo of() {
         TaskTestScenarioPo taskPo = new TaskTestScenarioPo();
         taskPo.setId(this.getId());

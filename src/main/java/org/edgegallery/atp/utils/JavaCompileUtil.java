@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * java dynamic compile util
+ * java dynamic compile util.
  *
  */
 public class JavaCompileUtil {
@@ -44,6 +44,14 @@ public class JavaCompileUtil {
 
     }
 
+    /**
+     * execute java.
+     * 
+     * @param testCase testCase
+     * @param csarFilePath csarFilePath
+     * @param taskTestCase taskTestCase
+     * @param context context
+     */
     public static void executeJava(TestCase testCase, String csarFilePath, TaskTestCase taskTestCase,
             Map<String, String> context) {
         try {
@@ -78,6 +86,13 @@ public class JavaCompileUtil {
         return result.toString();
     }
 
+    /**
+     * compile code.
+     * 
+     * @param javaName javaName
+     * @param javaSrc javaSrc
+     * @return map
+     */
     public static Map<String, byte[]> compile(String javaName, String javaSrc) {
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         StandardJavaFileManager javaFileMgr = compiler
@@ -100,7 +115,7 @@ public class JavaCompileUtil {
     }
 
     /**
-     * defineClass method to load class
+     * defineClass method to load class.
      */
     private static class MemoryLoader extends URLClassLoader {
         Map<String, byte[]> sourceCode = new HashMap<String, byte[]>();

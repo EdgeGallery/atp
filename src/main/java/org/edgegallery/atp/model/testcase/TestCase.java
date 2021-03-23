@@ -14,14 +14,14 @@
 
 package org.edgegallery.atp.model.testcase;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
 import java.util.stream.Collectors;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Test Case Request Model
+ * Test Case Request Model.
  */
 @Getter
 @Setter
@@ -32,6 +32,11 @@ public class TestCase extends TestCaseBase {
      */
     private List<String> testSuiteIdList;
 
+    /**
+     * model transfer.
+     * 
+     * @return testCasePo
+     */
     public TestCasePo of() {
         TestCasePo testCasePo =
                 TestCasePo.builder().setClassName(this.getClassName()).setCodeLanguage(this.getCodeLanguage())

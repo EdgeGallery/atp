@@ -20,7 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface ContributionService {
     /**
-     * create contribution to db
+     * create contribution to db.
      * 
      * @param contribution contribution info
      * @param file script file
@@ -29,9 +29,9 @@ public interface ContributionService {
     Contribution createContribution(Contribution contribution, MultipartFile file);
 
     /**
-     * get all contributions
+     * get all contributions.
      * 
-     * @return
+     * @return Contribution list
      */
     List<Contribution> getAllContribution();
 }

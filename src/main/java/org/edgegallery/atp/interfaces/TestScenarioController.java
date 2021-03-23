@@ -14,6 +14,11 @@
 
 package org.edgegallery.atp.interfaces;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import java.io.FileNotFoundException;
 import java.util.List;
 import javax.validation.constraints.Pattern;
@@ -41,11 +46,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 
 @Controller
 @RestSchema(schemaId = "testScenario")
@@ -146,7 +146,7 @@ public class TestScenarioController {
      * 
      * @param id id
      * @return test scenario
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException FileNotFoundException
      */
     @GetMapping(value = "/testscenarios/{id}", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "get one test scenario.", response = TestScenario.class)

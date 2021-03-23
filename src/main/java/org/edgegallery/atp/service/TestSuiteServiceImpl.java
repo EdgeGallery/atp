@@ -141,7 +141,7 @@ public class TestSuiteServiceImpl implements TestSuiteService {
     }
 
     /**
-     * check test scenario ids is right
+     * check test scenario ids is right.
      * 
      * @param testSuite test suite info
      */

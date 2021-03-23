@@ -28,16 +28,17 @@ public interface TestScenarioRepository {
     /**
      * get test scenario by name.
      * 
-     * @param name
-     * @return
+     * @param nameCh nameCh
+     * @param nameEn nameEn
+     * @return TestScenario
      */
     TestScenario getTestScenarioByName(String nameCh, String nameEn);
 
     /**
      * get test scenario by id.
      * 
-     * @param id
-     * @return
+     * @param id id
+     * @return TestScenario
      */
     TestScenario getTestScenarioById(String id);
 
@@ -45,7 +46,6 @@ public interface TestScenarioRepository {
      * update test scenario.
      * 
      * @param testScenario testScenario
-     * @return testScenario
      */
     void updateTestScenario(TestScenario testScenario);
 

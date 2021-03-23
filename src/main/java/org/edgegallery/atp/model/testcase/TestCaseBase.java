@@ -14,9 +14,9 @@
 
 package org.edgegallery.atp.model.testcase;
 
-import org.edgegallery.atp.model.Entity;
 import lombok.Getter;
 import lombok.Setter;
+import org.edgegallery.atp.model.Entity;
 
 @Setter
 @Getter
@@ -96,6 +96,11 @@ public class TestCaseBase implements Entity {
 
     }
 
+    /**
+     * construct function.
+     * 
+     * @param builder builder
+     */
     public TestCaseBase(Builder builder) {
         this.id = builder.id;
         this.nameCh = builder.nameCh;
@@ -113,6 +118,11 @@ public class TestCaseBase implements Entity {
         this.type = builder.type;
     }
 
+    /**
+     * model change to test case.
+     * 
+     * @return test case info
+     */
     public TestCase toTestCase() {
         TestCase testCase = new TestCase();
         testCase.setClassName(this.className);
@@ -132,6 +142,11 @@ public class TestCaseBase implements Entity {
         return testCase;
     }
 
+    /**
+     * model change to test case po.
+     * 
+     * @return test case po
+     */
     public TestCasePo toTestCasePo() {
         TestCasePo testCasePo = new TestCasePo();
         testCasePo.setClassName(this.className);

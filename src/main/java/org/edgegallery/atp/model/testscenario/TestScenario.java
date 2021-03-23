@@ -55,6 +55,11 @@ public class TestScenario {
 
     }
 
+    /**
+     * construct function.
+     * 
+     * @param builder builder
+     */
     public TestScenario(Builder builder) {
         this.id = builder.id;
         this.nameEn = builder.nameEn;

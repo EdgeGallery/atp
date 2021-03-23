@@ -14,6 +14,8 @@
 
 package org.edgegallery.atp.utils;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -39,22 +41,16 @@ import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
 import org.edgegallery.atp.model.task.testscenarios.TaskTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 public class CommonUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(CommonUtil.class);
@@ -66,7 +62,7 @@ public class CommonUtil {
     }
 
     /**
-     * get time according to special format
+     * get time according to special format.
      * 
      * @return time
      */
@@ -76,7 +72,7 @@ public class CommonUtil {
     }
 
     /**
-     * generate uuid randomly
+     * generate uuid randomly.
      * 
      * @return uuid
      */
@@ -99,10 +95,9 @@ public class CommonUtil {
     /**
      * get dependency app info from appstore.
      * 
-     * @param result key is appName,value is appVersion
      * @param appId appId
      * @param packageId packageId
-     * @return
+     * @return JsonObject
      */
     public static JsonObject getAppInfoFromAppStore(String appId, String packageId) {
         HttpHeaders headers = new HttpHeaders();
@@ -165,6 +160,7 @@ public class CommonUtil {
 
 
     /**
+     * dependency check.
      * 
      * @param filePath csar file path
      * @param dependencyStack stack contains all dependency app.
@@ -201,7 +197,7 @@ public class CommonUtil {
     }
 
     /**
-     * delete app instance from appo
+     * delete app instance from appo.
      * 
      * @param appInstanceId appInstanceId
      * @param context context info
@@ -287,47 +283,11 @@ public class CommonUtil {
         return packageInfo;
     }
 
-    /**
-     * upload file to apm service.
-     * 
-     * @param filePath file path
-     * @param context context info
-     * @param ipPort protocol://ip:port
-     * @param hostIp host ip
-     * @return response from atp
-     */
-    public static ResponseEntity<String> uploadFileToAPM(String filePath, Map<String, String> context, String hostIp,
-            Map<String, String> packageInfo) {
-        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        body.add("file", new FileSystemResource(filePath));
-        body.add("hostList", hostIp);
-        body.add("appPackageName", packageInfo.get(Constant.APP_NAME));
-        body.add("appPackageVersion", packageInfo.get(Constant.APP_VERSION));
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-        headers.set(Constant.ACCESS_TOKEN, context.get(Constant.ACCESS_TOKEN));
-
-        LOGGER.info("hostIp: " + hostIp);
-        LOGGER.info("appPackageName: " + packageInfo.get(Constant.APP_NAME));
-
-        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
-
-        String url = Constant.PROTOCOL_APM
-                .concat(String.format(Constant.APM_UPLOAD_PACKAGE, context.get(Constant.TENANT_ID)));
-        try {
-            return restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
-        } catch (RestClientException e) {
-            LOGGER.error("Failed to upload file to apm, exception {}", e.getMessage());
-        }
-        return null;
-    }
 
     /**
-     * uuid validate
+     * uuid validate.
      * 
      * @param param parameter
-     * @return is legal uuid pattern
      */
     public static void isUuidPattern(String param) {
         Pattern pattern = Pattern.compile("[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}");
@@ -348,10 +308,10 @@ public class CommonUtil {
     }
 
     /**
-     * set test case result according to response
+     * set test case result according to response.
      * 
      * @param response execute response result
-     * @param result test case result
+     * @param taskTestCase taskTestCase
      */
     public static void setResult(Object response, TaskTestCase taskTestCase) {
         if (null == response) {
@@ -376,5 +336,18 @@ public class CommonUtil {
     public static boolean fileSuffixValidate(String pattern, String fileName) {
         String suffix = fileName.substring(fileName.lastIndexOf(Constant.DOT) + 1, fileName.length());
         return StringUtils.isNotBlank(suffix) && suffix.equals(pattern);
+    }
+
+    /**
+     * param is not empty.
+     * 
+     * @param param param
+     * @param msg error msg
+     */
+    public static void paramIsEmpty(Object param, String msg) {
+        if (null == param) {
+            LOGGER.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
     }
 }

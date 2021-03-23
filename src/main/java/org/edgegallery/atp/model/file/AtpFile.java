@@ -20,31 +20,41 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ATPFile {
+public class AtpFile {
     /**
      * file id.
      */
     private String fileId;
-    
+
     /**
      * file type:scenario.
      */
     private String type;
-    
+
     /**
      * file create time.
      */
     private Date createTime;
-    
+
     /**
      * file path.
      */
     private String filePath;
-    
+
+    /**
+     * get create time.
+     * 
+     * @return date
+     */
     public Date getCreateTime() {
-        return createTime != null?(Date) createTime.clone():null;
+        return createTime != null ? (Date) createTime.clone() : null;
     }
 
+    /**
+     * set create time.
+     * 
+     * @param createTime createTime
+     */
     public void setCreateTime(Date createTime) {
         if (createTime != null) {
             this.createTime = (Date) createTime.clone();
@@ -52,8 +62,16 @@ public class ATPFile {
             this.createTime = null;
         }
     }
-    
-    public ATPFile(String fileId,String type,Date createTime,String filePath) {
+
+    /**
+     * construct function.
+     * 
+     * @param fileId fileId
+     * @param type type
+     * @param createTime createTime
+     * @param filePath filePath
+     */
+    public AtpFile(String fileId, String type, Date createTime, String filePath) {
         this.filePath = filePath;
         this.type = type;
         this.fileId = fileId;

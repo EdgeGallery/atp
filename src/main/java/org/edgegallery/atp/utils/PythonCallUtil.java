@@ -33,6 +33,14 @@ public class PythonCallUtil {
 
     }
 
+    /**
+     * execute python.
+     * 
+     * @param testCase testCase
+     * @param csarFilePath csarFilePath
+     * @param taskTestCase taskTestCase
+     * @param context context
+     */
     public static void callPython(TestCase testCase, String csarFilePath, TaskTestCase taskTestCase,
             Map<String, String> context) {
         LOGGER.info("start call Python");
@@ -48,8 +56,7 @@ public class PythonCallUtil {
             PyFunction pyFunction = interpreter.get("execute", PyFunction.class);
             PyObject pyobj = pyFunction.__call__(new PyString(csarFilePath), new PyString(context.toString()));
             CommonUtil.setResult(pyobj, taskTestCase);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("python error. {}", e);
             taskTestCase.setResult(Constant.FAILED);
             taskTestCase.setReason("call python failed.");

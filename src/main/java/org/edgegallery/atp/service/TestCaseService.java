@@ -14,17 +14,17 @@
 
 package org.edgegallery.atp.service;
 
+import java.io.FileNotFoundException;
+import java.util.List;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
-import java.io.FileNotFoundException;
-import java.util.List;
 
 public interface TestCaseService {
 
     /**
-     * query all test cases
+     * query all test cases.
      * 
      * @param type manual or automatic
      * @param locale ch or zh
@@ -36,7 +36,7 @@ public interface TestCaseService {
             List<String> testSuiteIds);
 
     /**
-     * create test cases
+     * create test cases.
      * 
      * @param file test case file
      * @param testCase test case info
@@ -45,7 +45,7 @@ public interface TestCaseService {
     TestCase createTestCase(MultipartFile file, TestCase testCase);
 
     /**
-     * update test case
+     * update test case.
      * 
      * @param file test case file
      * @param testCase test case info
@@ -54,7 +54,7 @@ public interface TestCaseService {
     TestCase updateTestCase(MultipartFile file, TestCase testCase);
 
     /**
-     * delete test case
+     * delete test case.
      * 
      * @param id id
      * @return if delete successa
@@ -62,7 +62,7 @@ public interface TestCaseService {
     Boolean deleteTestCase(String id);
 
     /**
-     * get one test case
+     * get one test case.
      * 
      * @param id id
      * @return test case info

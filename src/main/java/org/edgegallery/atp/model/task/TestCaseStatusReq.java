@@ -15,9 +15,9 @@
 package org.edgegallery.atp.model.task;
 
 import javax.validation.constraints.Size;
-import org.edgegallery.atp.constant.Constant;
 import lombok.Getter;
 import lombok.Setter;
+import org.edgegallery.atp.constant.Constant;
 
 @Getter
 @Setter

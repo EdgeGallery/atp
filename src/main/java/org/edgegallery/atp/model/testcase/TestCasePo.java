@@ -15,18 +15,23 @@
 package org.edgegallery.atp.model.testcase;
 
 import java.util.Arrays;
-import org.edgegallery.atp.constant.Constant;
 import lombok.Getter;
 import lombok.Setter;
+import org.edgegallery.atp.constant.Constant;
 
 /**
- * Test Case DB Model
+ * Test Case DB Model.
  */
 @Getter
 @Setter
 public class TestCasePo extends TestCaseBase {
     private String testSuiteIdList;
 
+    /**
+     * model transfer.
+     * 
+     * @return test case
+     */
     public TestCase toDomain() {
         TestCase testCase = TestCase.builder().setClassName(this.getClassName()).setCodeLanguage(this.getCodeLanguage())
                 .setdescriptionCh(this.getDescriptionCh()).setDescriptionEn(this.getDescriptionEn())

@@ -47,12 +47,12 @@ public class FileController {
     FileService fileService;
 
     /**
-     * get all files
+     * get all files.
      * 
      * @param id id
      * @param type type
      * @return binary stream
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException FileNotFoundException
      */
     @GetMapping(value = "/file/{id}", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "get one file.", response = InputStreamResource.class)

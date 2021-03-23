@@ -19,7 +19,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import javax.annotation.PostConstruct;
 import org.edgegallery.atp.constant.Constant;
-import org.edgegallery.atp.model.file.ATPFile;
+import org.edgegallery.atp.model.file.AtpFile;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.repository.file.FileRepository;
 import org.edgegallery.atp.repository.task.TaskRepository;
@@ -30,12 +30,12 @@ import org.edgegallery.atp.utils.PropertiesUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 
-@Component
-class TaskSchedule {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TaskSchedule.class);
+@Service
+public class TaskSceduleService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TaskSceduleService.class);
 
     @Autowired
     TaskRepository taskRepository;
@@ -100,9 +100,9 @@ class TaskSchedule {
                         String scenarioId =
                                 name.substring(name.indexOf(Constant.UNDER_LINE) + 1, name.indexOf(Constant.DOT));
 
-                        ATPFile fileFromDb = fileRepository.getFileContent(scenarioId, Constant.FILE_TYPE_SCENARIO);
+                        AtpFile fileFromDb = fileRepository.getFileContent(scenarioId, Constant.FILE_TYPE_SCENARIO);
                         if (null == fileFromDb) {
-                            ATPFile atpFile = new ATPFile(scenarioId, Constant.FILE_TYPE_SCENARIO,
+                            AtpFile atpFile = new AtpFile(scenarioId, Constant.FILE_TYPE_SCENARIO,
                                     taskRepository.getCurrentDate(), iconPath);
                             fileRepository.insertFile(atpFile);
                         }

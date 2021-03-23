@@ -20,7 +20,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
-import org.edgegallery.atp.model.file.ATPFile;
+import org.edgegallery.atp.model.file.AtpFile;
 import org.edgegallery.atp.repository.file.FileRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +41,7 @@ public class FileServiceImpl implements FileService {
     @Override
     public ResponseEntity<InputStreamResource> getFileContent(String fileId, String type) throws FileNotFoundException {
         type = StringUtils.isEmpty(type) ? Constant.FILE_TYPE_SCENARIO : type;
-        ATPFile fileInfo = fileRepository.getFileContent(fileId, type);
+        AtpFile fileInfo = fileRepository.getFileContent(fileId, type);
         if (null == fileInfo) {
             LOGGER.error("fileId does not exists: {}", fileId);
             throw new FileNotFoundException("fileId does not exists");

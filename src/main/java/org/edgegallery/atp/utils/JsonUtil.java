@@ -14,19 +14,19 @@
 
 package org.edgegallery.atp.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class JSONUtil {
+public class JsonUtil {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JSONUtil.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JsonUtil.class);
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    private JSONUtil() {
+    private JsonUtil() {
 
     }
 
@@ -35,7 +35,7 @@ public class JSONUtil {
      * 
      * @param obj obj
      * @return String type variable
-     * @throws IOException
+     * @throws IOException IOException
      */
     public static String marshal(Object obj) {
         try {
@@ -49,11 +49,10 @@ public class JSONUtil {
     /**
      * transfer String type to special model type.
      * 
-     * @param <T>
-     * @param src souce String
-     * @param type target type
-     * @return target type model
-     * @throws IOException
+     * @param <T> class
+     * @param src src
+     * @param type type
+     * @return class
      */
     public static <T> T unMarshal(String src, Class<T> type) {
         String msg = "unmarshal obj failed: ";

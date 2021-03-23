@@ -37,6 +37,14 @@ public class JarCallUtil {
 
     private static final String TEST_CASE_CLASS = "TestCase.class";
 
+    /**
+     * execute Jar.
+     * 
+     * @param testCase testCase
+     * @param csarFilePath csarFilePath
+     * @param taskTestCase taskTestCase
+     * @param context context
+     */
     public static void executeJar(TestCase testCase, String csarFilePath, TaskTestCase taskTestCase,
             Map<String, String> context) {
         try (JarFile jarFile = new JarFile(new File(testCase.getFilePath()));

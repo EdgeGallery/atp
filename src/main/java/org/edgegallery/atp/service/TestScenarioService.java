@@ -22,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface TestScenarioService {
     /**
-     * create test scenario
+     * create test scenario.
      * 
      * @param testScenario test scenario info
      * @return test scenario info
@@ -30,7 +30,7 @@ public interface TestScenarioService {
     TestScenario createTestScenario(TestScenario testScenario, MultipartFile icon);
 
     /**
-     * update test scenario
+     * update test scenario.
      * 
      * @param testScenario test scenario info
      * @return test scenario
@@ -38,7 +38,7 @@ public interface TestScenarioService {
     TestScenario updateTestScenario(TestScenario testScenario, MultipartFile icon);
 
     /**
-     * delete test scenario by id
+     * delete test scenario by id.
      * 
      * @param id test scenario id
      * @return true
@@ -46,7 +46,7 @@ public interface TestScenarioService {
     Boolean deleteTestScenario(String id);
 
     /**
-     * get test scenario by id
+     * get test scenario by id.
      * 
      * @param id test scenario id
      * @return test scenario info
@@ -54,7 +54,7 @@ public interface TestScenarioService {
     TestScenario getTestScenario(String id) throws FileNotFoundException;
 
     /**
-     * get all test scenarios
+     * get all test scenarios.
      * 
      * @param locale locale language
      * @param name test case name
@@ -63,7 +63,7 @@ public interface TestScenarioService {
     List<TestScenario> queryAllTestScenario(String locale, String name);
 
     /**
-     * get all test cases according to scenario ids
+     * get all test cases according to scenario ids.
      * 
      * @param ids test scenario ids
      * @return test scenario info

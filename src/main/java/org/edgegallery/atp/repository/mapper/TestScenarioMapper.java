@@ -33,17 +33,18 @@ public interface TestScenarioMapper {
     /**
      * get test scenario by name.
      * 
-     * @param name
-     * @return
+     * @param nameCh nameCh
+     * @param nameEn nameEn
+     * @return TestScenario
      */
     TestScenario getTestScenarioByName(@Param("nameCh") String nameCh, @Param("nameEn") String nameEn);
 
     /**
      * get all test scenarios, name is fuzzy query.
      * 
-     * @param nameCh
-     * @param nameEn
-     * @return
+     * @param nameCh nameCh
+     * @param nameEn nameEn
+     * @return TestScenario list
      */
     List<TestScenario> getAllTestScenario(@Param("nameCh") String nameCh, @Param("nameEn") String nameEn);
 
@@ -51,7 +52,6 @@ public interface TestScenarioMapper {
      * update test scenario.
      * 
      * @param testScenario testScenario
-     * @return testScenario
      */
     void updateTestScenario(TestScenario testScenario);
     

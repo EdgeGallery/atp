@@ -14,21 +14,21 @@
 
 package org.edgegallery.atp.model.task;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.edgegallery.atp.model.task.testscenarios.TaskTestCase;
 import org.edgegallery.atp.model.task.testscenarios.TaskTestCasePo;
 import org.edgegallery.atp.model.task.testscenarios.TaskTestScenarioPo;
 import org.edgegallery.atp.model.task.testscenarios.TaskTestSuite;
 import org.edgegallery.atp.model.task.testscenarios.TaskTestSuitePo;
-import org.edgegallery.atp.utils.JSONUtil;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Getter;
-import lombok.Setter;
+import org.edgegallery.atp.utils.JsonUtil;
 
 @Getter
 @Setter
@@ -69,10 +69,20 @@ public class TaskPO {
     @Column(name = "packagePath")
     private String packagePath;
 
+    /**
+     * get create time.
+     * 
+     * @return date
+     */
     public Date getCreateTime() {
         return createTime != null ? (Date) createTime.clone() : null;
     }
 
+    /**
+     * set create time.
+     * 
+     * @param createTime createTime
+     */
     public void setCreateTime(Date createTime) {
         if (createTime != null) {
             this.createTime = (Date) createTime.clone();
@@ -81,10 +91,20 @@ public class TaskPO {
         }
     }
 
+    /**
+     * get end time.
+     * 
+     * @return date
+     */
     public Date getEndTime() {
         return endTime != null ? (Date) endTime.clone() : null;
     }
 
+    /**
+     * set end time.
+     * 
+     * @param endTime endTime
+     */
     public void setEndTime(Date endTime) {
         if (endTime != null) {
             this.endTime = (Date) endTime.clone();
@@ -93,6 +113,12 @@ public class TaskPO {
         }
     }
 
+    /**
+     * model transfer.
+     * 
+     * @param startTest startTest
+     * @return TaskPO
+     */
     public static TaskPO of(TaskRequest startTest) {
         TaskPO taskPo = new TaskPO();
         taskPo.setAppName(startTest.getAppName());
@@ -127,7 +153,7 @@ public class TaskPO {
                 }
             });
         }
-        taskPo.setTestCaseDetail(JSONUtil.marshal(taskTestScenarioPoList));
+        taskPo.setTestCaseDetail(JsonUtil.marshal(taskTestScenarioPoList));
         taskPo.setPackagePath(startTest.getPackagePath());
         taskPo.setProviderId(startTest.getProviderId());
 

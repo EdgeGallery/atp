@@ -20,7 +20,7 @@ import org.edgegallery.atp.model.testsuite.TestSuite;
 
 public interface TestSuiteService {
     /**
-     * create test suite
+     * create test suite.
      * 
      * @param testSuite test suite info
      * @return test suite info
@@ -28,7 +28,7 @@ public interface TestSuiteService {
     TestSuite createTestSuite(TestSuite testSuite);
 
     /**
-     * update test suite
+     * update test suite.
      * 
      * @param testSuite test suite info
      * @return test suite info
@@ -36,7 +36,7 @@ public interface TestSuiteService {
     TestSuite updateTestSuite(TestSuite testSuite);
 
     /**
-     * delete test suite by id
+     * delete test suite by id.
      * 
      * @param id test suite id
      * @return true
@@ -44,7 +44,7 @@ public interface TestSuiteService {
     Boolean deleteTestSuite(String id);
 
     /**
-     * get test suite by id
+     * get test suite by id.
      * 
      * @param id test suite id
      * @return test suite info
@@ -52,7 +52,7 @@ public interface TestSuiteService {
     TestSuite getTestSuite(String id) throws FileNotFoundException;
 
     /**
-     * get all test suites
+     * get all test suites.
      * 
      * @param locale locale language
      * @param name test case name
