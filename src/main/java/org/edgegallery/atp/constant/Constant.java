@@ -107,7 +107,7 @@ public interface Constant {
 
     int BUFFER = 512;
 
-    int TOO_BIG = 10 * 1024 * 1024 * 1024; // max size of unzipped data, 10GB
+    long TOO_BIG = 0x280000000l; // max size of unzipped data, 10GB
 
     int TOO_MANY = 1024; // max number of files
 
