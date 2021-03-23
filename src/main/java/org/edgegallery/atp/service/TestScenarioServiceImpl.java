@@ -22,7 +22,7 @@ import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
-import org.edgegallery.atp.model.file.ATPFile;
+import org.edgegallery.atp.model.file.AtpFile;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.model.testscenario.TestScenario;
 import org.edgegallery.atp.model.testscenario.testcase.AllTestScenarios;
@@ -79,12 +79,22 @@ public class TestScenarioServiceImpl implements TestScenarioService {
                         : testScenario.getDescriptionCh());
 
         checkNameExists(testScenario);
+        if (null == icon) {
+            String msg = "iconName is empty.";
+            LOGGER.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
         String iconName = icon.getOriginalFilename();
+        if (null == iconName) {
+            String msg = "iconName is empty.";
+            LOGGER.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
         String suffix = iconName.substring(icon.getOriginalFilename().indexOf(Constant.DOT) + 1);
         String filePath = Constant.BASIC_ICON_PATH.concat(Constant.FILE_TYPE_SCENARIO).concat(Constant.UNDER_LINE)
                 .concat(testScenario.getId()).concat(Constant.DOT).concat(suffix);
         FileChecker.copyFileToDir(icon, filePath);
-        ATPFile atpFile = new ATPFile(testScenario.getId(), Constant.FILE_TYPE_SCENARIO,
+        AtpFile atpFile = new AtpFile(testScenario.getId(), Constant.FILE_TYPE_SCENARIO,
                 taskRepository.getCurrentDate(), filePath);
         fileRepository.insertFile(atpFile);
         testScenarioRepository.createTestScenario(testScenario);
@@ -112,9 +122,11 @@ public class TestScenarioServiceImpl implements TestScenarioService {
         if (null != icon && StringUtils.isNotBlank(icon.getOriginalFilename()) && StringUtils.isNotBlank(icon.getName())
                 && 0 != (int) icon.getSize()) {
             try {
-                ATPFile file = fileRepository.getFileContent(testScenario.getId(), Constant.FILE_TYPE_SCENARIO);
+                AtpFile file = fileRepository.getFileContent(testScenario.getId(), Constant.FILE_TYPE_SCENARIO);
                 String filePath = file.getFilePath();
-                new File(filePath).delete();
+                if (new File(filePath).delete()) {
+                    LOGGER.error("delete file failed.");
+                }
                 File result = new File(filePath);
                 icon.transferTo(result);
             } catch (IOException e) {
@@ -132,8 +144,10 @@ public class TestScenarioServiceImpl implements TestScenarioService {
             LOGGER.error("scenario id {} is used by some test suites, so can not be delete.", id);
             throw new IllegalArgumentException("this scenario is used by some test suites, so can not be delete.");
         }
-        ATPFile file = fileRepository.getFileContent(id, Constant.FILE_TYPE_SCENARIO);
-        new File(file.getFilePath()).delete();
+        AtpFile file = fileRepository.getFileContent(id, Constant.FILE_TYPE_SCENARIO);
+        if (new File(file.getFilePath()).delete()) {
+            LOGGER.error("delete file failed.");
+        }
         testScenarioRepository.deleteTestScenario(id);
         LOGGER.info("delete test scenario successfully.");
         return true;

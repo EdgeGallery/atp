@@ -85,10 +85,6 @@ public class CommonUtilTest {
         // deleteAppInstance
         CommonUtil.deleteAppInstance("111", context);
 
-        // uploadFile
-        appInfo.put(Constant.APP_VERSION, "1.0");
-        CommonUtil.uploadFileToAPM("testfile/AR.csar", context, "127.0.0.1", appInfo);
-
         // UUID exception
         try {
             CommonUtil.isUuidPattern("111");

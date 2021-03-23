@@ -64,12 +64,22 @@ public class TaskTestCase {
 
     }
 
+    /**
+     * construct function.
+     * 
+     * @param testCasePo testCasePo
+     */
     public TaskTestCase(TaskTestCasePo testCasePo) {
         this.id = testCasePo.getId();
         this.reason = testCasePo.getReason();
         this.result = testCasePo.getResult();
     }
 
+    /**
+     * TaskTestCase model to TaskTestCasePo model.
+     * 
+     * @return TaskTestCasePo
+     */
     public TaskTestCasePo of() {
         TaskTestCasePo testCasePo = new TaskTestCasePo();
         testCasePo.setId(this.getId());

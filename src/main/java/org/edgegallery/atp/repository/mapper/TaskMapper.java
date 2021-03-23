@@ -36,8 +36,8 @@ public interface TaskMapper {
     /**
      * get task list by userId.
      * 
-     * @param userId
-     * @return
+     * @param userId userId
+     * @return TaskPO
      */
     List<TaskPO> findTaskByUserId(@Param("userId") String userId, @Param("appName") String appName,
             @Param("status") String status, @Param("providerId") String providerId,
@@ -46,7 +46,7 @@ public interface TaskMapper {
     /**
      * create task info.
      * 
-     * @param taskPO
+     * @param taskPO taskPO
      */
     void insert(TaskPO taskPO);
 
@@ -60,7 +60,7 @@ public interface TaskMapper {
     /**
      * update task info.
      * 
-     * @param taskPO
+     * @param taskPO taskPO
      */
     void update(TaskPO taskPO);
 

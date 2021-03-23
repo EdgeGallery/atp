@@ -31,7 +31,7 @@ import javax.tools.SimpleJavaFileObject;
 import org.edgegallery.atp.constant.Constant;
 
 /**
- * put class into map
+ * put class into map.
  */
 public final class JavaFileMemoryMgr extends ForwardingJavaFileManager {
 
@@ -69,7 +69,13 @@ public final class JavaFileMemoryMgr extends ForwardingJavaFileManager {
         return classMap;
     }
 
-    public static URI convertURI(String className) {
+    /**
+     * convert URI.
+     * 
+     * @param className className
+     * @return URI
+     */
+    public static URI convertUri(String className) {
         File file = new File(className);
         if (file.exists()) {
             return file.toURI();
@@ -87,6 +93,13 @@ public final class JavaFileMemoryMgr extends ForwardingJavaFileManager {
         }
     }
 
+    /**
+     * get Source From String.
+     * 
+     * @param className className
+     * @param srcCode srcCode
+     * @return JavaFileObject
+     */
     public static JavaFileObject getSourceFromStr(String className, String srcCode) {
         return new SourceCodeBuffer(className, srcCode);
     }
@@ -95,7 +108,7 @@ public final class JavaFileMemoryMgr extends ForwardingJavaFileManager {
         final String sourceCode;
 
         SourceCodeBuffer(String name, String sourceCode) {
-            super(convertURI(name), Kind.SOURCE);
+            super(convertUri(name), Kind.SOURCE);
             this.sourceCode = sourceCode;
         }
 
@@ -109,7 +122,7 @@ public final class JavaFileMemoryMgr extends ForwardingJavaFileManager {
         private String className;
 
         ClassCodeBuffer(String className) {
-            super(convertURI(className), Kind.CLASS);
+            super(convertUri(className), Kind.CLASS);
             this.className = className;
         }
 

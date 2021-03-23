@@ -18,13 +18,13 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.edgegallery.atp.repository.mapper.FileMapper">
     <select id="getFileContent"
-            resultType="org.edgegallery.atp.model.file.ATPFile"
+            resultType="org.edgegallery.atp.model.file.AtpFile"
             parameterType="String">
         select * from file_table where fileId = #{fileId} and type = #{type}
     </select>
     
     <insert id="insertFile"
-		parameterType="org.edgegallery.atp.model.file.ATPFile">
+		parameterType="org.edgegallery.atp.model.file.AtpFile">
 		insert into
 		file_table
 		(fileId, type, createTime, filePath)

@@ -14,6 +14,11 @@
 
 package org.edgegallery.atp.interfaces;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import java.io.FileNotFoundException;
 import java.util.List;
 import javax.validation.constraints.Pattern;
@@ -42,11 +47,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 
 @Controller
 @RestSchema(schemaId = "testCase")
@@ -63,8 +63,11 @@ public class TestCaseController {
     /**
      * get all tasks according userId.
      * 
-     * @param userId userId
-     * @return task list
+     * @param type type
+     * @param locale locale
+     * @param name name
+     * @param testSuiteIds testSuiteIds
+     * @return test case list
      */
     @GetMapping(value = "/testcases", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "get all test cases.", response = TestCase.class)
@@ -139,7 +142,7 @@ public class TestCaseController {
     }
 
     /**
-     * update Test Case
+     * update Test Case.
      * 
      * @param id id
      * @param file file
@@ -213,7 +216,7 @@ public class TestCaseController {
      * 
      * @param id id
      * @return test case
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException FileNotFoundException
      */
     @GetMapping(value = "/testcases/{id}", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "get one test case.", response = TestCase.class)

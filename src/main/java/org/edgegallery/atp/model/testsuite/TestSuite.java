@@ -56,6 +56,11 @@ public class TestSuite {
 
     }
 
+    /**
+     * construct function.
+     * 
+     * @param builder builder
+     */
     public TestSuite(Builder builder) {
         this.id = builder.id;
         this.nameCh = builder.nameCh;

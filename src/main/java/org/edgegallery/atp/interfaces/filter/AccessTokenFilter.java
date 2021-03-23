@@ -45,16 +45,12 @@ public class AccessTokenFilter extends OncePerRequestFilter {
 
     public static final ThreadLocal<Map<String, String>> context = new ThreadLocal<>();
 
-    private static final String[] NoNeedTokenUrls = {
-        "GET /health",
-        "GET /edgegallery/atp/v1/tasks/[^/]+"
-    };
+    private static final String[] NoNeedTokenUrls = {"GET /health", "GET /edgegallery/atp/v1/tasks/[^/]+"};
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         if (!isNoNeedToken(request)) {
-            Map<String, String> contextMap = new HashMap<>();
             String accessTokenStr = request.getHeader(Constant.ACCESS_TOKEN);
             if (StringUtils.isEmpty(accessTokenStr)) {
                 response.sendError(HttpStatus.UNAUTHORIZED.value(), "Access token is empty");
@@ -91,6 +87,7 @@ public class AccessTokenFilter extends OncePerRequestFilter {
                 response.sendError(HttpStatus.UNAUTHORIZED.value(), ExceptionConstant.INVALID_ACCESS_TOKEN);
                 return;
             }
+            Map<String, String> contextMap = new HashMap<>();
             contextMap.put(Constant.ACCESS_TOKEN, accessTokenStr);
             contextMap.put(Constant.USER_ID, userIdFromToken);
             contextMap.put(Constant.USER_NAME, userNameFromToken);

@@ -25,7 +25,7 @@ public interface ContributionMapper {
     /**
      * insert contribution to db.
      * 
-     * @param contribution
+     * @param contribution contribution
      */
     void insert(Contribution contribution);
 

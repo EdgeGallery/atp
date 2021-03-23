@@ -16,7 +16,7 @@ package org.edgegallery.atp.repository.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.edgegallery.atp.model.file.ATPFile;
+import org.edgegallery.atp.model.file.AtpFile;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -29,12 +29,12 @@ public interface FileMapper {
      * @param type file type
      * @return ATP file info
      */
-    ATPFile getFileContent(@Param("fileId") String fileId, @Param("type") String type);
+    AtpFile getFileContent(@Param("fileId") String fileId, @Param("type") String type);
 
     /**
      * insert file info.
      * 
      * @param file file info
      */
-    void insertFile(ATPFile file);
+    void insertFile(AtpFile file);
 }

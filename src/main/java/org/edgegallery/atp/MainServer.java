@@ -47,7 +47,7 @@ public class MainServer {
             public void checkClientTrusted(X509Certificate[] certs, String authType) {}
 
             public void checkServerTrusted(X509Certificate[] certs, String authType) {}
-        }};
+        } };
         SSLContext sc = SSLContext.getInstance("TLSv1.2");
         sc.init(null, trustAllCerts, new java.security.SecureRandom());
         HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());

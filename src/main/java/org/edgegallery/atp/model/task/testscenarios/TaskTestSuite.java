@@ -49,6 +49,11 @@ public class TaskTestSuite {
         this.id = testSuite.getId();
     }
 
+    /**
+     * TaskTestSuite model to TaskTestSuitePo model.
+     * 
+     * @return TaskTestSuitePo
+     */
     public TaskTestSuitePo of() {
         TaskTestSuitePo testSuitePo = new TaskTestSuitePo();
         testSuitePo.setId(this.getId());

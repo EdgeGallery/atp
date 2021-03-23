@@ -93,8 +93,7 @@ public class TestScenarioRepositoryImpl implements TestScenarioRepository {
     }
 
     @Override
-    public List<TestScenario> batchQueryTestScenario(List<String> ids)
-    {
+    public List<TestScenario> batchQueryTestScenario(List<String> ids) {
         try {
             return testScenarioMapper.batchQueryTestScenario(ids);
         } catch (Exception e) {

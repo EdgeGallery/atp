@@ -56,10 +56,20 @@ public class Contribution {
      */
     private Date createTime;
 
+    /**
+     * get create time.
+     * 
+     * @return date
+     */
     public Date getCreateTime() {
-        return createTime != null?(Date) createTime.clone():null;
+        return createTime != null ? (Date) createTime.clone() : null;
     }
 
+    /**
+     * set create time.
+     * 
+     * @param createTime createTime
+     */
     public void setCreateTime(Date createTime) {
         if (createTime != null) {
             this.createTime = (Date) createTime.clone();
@@ -77,6 +87,11 @@ public class Contribution {
 
     }
 
+    /**
+     * construct function.
+     * 
+     * @param builder builder
+     */
     public Contribution(Builder builder) {
         this.id = builder.id;
         this.name = builder.name;

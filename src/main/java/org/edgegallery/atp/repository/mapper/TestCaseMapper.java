@@ -14,11 +14,11 @@
 
 package org.edgegallery.atp.repository.mapper;
 
+import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.edgegallery.atp.model.testcase.TestCasePo;
 import org.springframework.stereotype.Component;
-import java.util.List;
 
 @Component
 @Mapper
@@ -84,15 +84,14 @@ public interface TestCaseMapper {
     TestCasePo findById(String id);
 
     /**
-     * update test case
+     * update test case.
      * 
      * @param testCase test case info
-     * @return test case info
      */
     void update(TestCasePo testCase);
 
     /**
-     * delete test case by test case id
+     * delete test case by test case id.
      * 
      * @param id test case id
      * @return operation complete

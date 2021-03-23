@@ -20,16 +20,16 @@ import org.edgegallery.atp.model.contribution.Contribution;
 public interface ContributionRepository {
 
     /**
-     * insert contribution
+     * insert contribution.
      * 
-     * @param contribution
+     * @param contribution contribution
      */
     void insert(Contribution contribution);
 
     /**
-     * get all contributions
+     * get all contributions.
      * 
-     * @return
+     * @return contribution list
      */
     List<Contribution> getAllContributions();
 }

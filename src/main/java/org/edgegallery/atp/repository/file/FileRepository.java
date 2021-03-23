@@ -14,22 +14,22 @@
 
 package org.edgegallery.atp.repository.file;
 
-import org.edgegallery.atp.model.file.ATPFile;
+import org.edgegallery.atp.model.file.AtpFile;
 
 public interface FileRepository {
     /**
-     * get ATPFile info according to fileId
+     * get ATPFile info according to fileId.
      * 
      * @param fileId file id
      * @param type file type
      * @return ATP file info
      */
-    ATPFile getFileContent(String fileId, String type);
+    AtpFile getFileContent(String fileId, String type);
 
     /**
-     * insert file info
+     * insert file info.
      * 
      * @param file file info
      */
-    void insertFile(ATPFile file);
+    void insertFile(AtpFile file);
 }

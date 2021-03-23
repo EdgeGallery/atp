@@ -107,7 +107,7 @@ public interface Constant {
 
     int BUFFER = 512;
 
-    long TOO_BIG = 0x280000000l; // max size of unzipped data, 10GB
+    long TOO_BIG = 0x280000000L; // max size of unzipped data, 10GB
 
     int TOO_MANY = 1024; // max number of files
 
@@ -116,7 +116,6 @@ public interface Constant {
     String COMPLIANCE_TEST = "complianceTest";
 
     String SANDBOX_TEST = "sandboxTest";
-
 
     String INVENTORY_GET_MECHOSTS_URL = "/inventory/v1/tenants/%s/mechosts";
 

@@ -22,7 +22,7 @@ import org.edgegallery.atp.model.task.TaskRequest;
  */
 public interface TestCaseManager {
     /**
-     * execute test case asynchronously
+     * execute test case asynchronously.
      * 
      * @param task test task
      * @param filePath scar file path

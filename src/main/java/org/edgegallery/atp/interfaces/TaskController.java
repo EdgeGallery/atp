@@ -14,6 +14,11 @@
 
 package org.edgegallery.atp.interfaces;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
@@ -44,11 +49,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 
 @Controller
 @RestSchema(schemaId = "testTask")
@@ -90,9 +90,9 @@ public class TaskController {
             @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
     @PreAuthorize("hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<TaskRequest> runTest(
-            @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId, @ApiParam(
-                    value = "id of test scenarios selected") @RequestParam("scenarioIdList") @Size(
-                            max = Constant.LENGTH_255) List<String> scenarioIdList) {
+            @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId,
+            @ApiParam(value = "id of test scenarios selected") @RequestParam("scenarioIdList") @Size(
+                    max = Constant.LENGTH_255) List<String> scenarioIdList) {
         CommonUtil.validateContext();
         return ResponseEntity.ok(taskService.runTask(taskId, scenarioIdList));
     }
@@ -176,7 +176,8 @@ public class TaskController {
     @PreAuthorize("hasRole('ATP_ADMIN')")
     public ResponseEntity<Boolean> updateTestCaseStatus(
             @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId, @ApiParam(
-                    value = "modify test case status request body") @RequestBody List<TestCaseStatusReq> testCaseStatus) {
+                    value = "modify test case status request body") 
+            @RequestBody List<TestCaseStatusReq> testCaseStatus) {
         return taskService.modifyTestCaseStatus(testCaseStatus, taskId);
     }
 }

@@ -17,11 +17,11 @@ package org.edgegallery.atp.model.task;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.Date;
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 import org.edgegallery.atp.model.Entity;
 import org.edgegallery.atp.model.task.testscenarios.TaskTestScenario;
 import org.edgegallery.atp.model.user.User;
-import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 @Setter
@@ -49,11 +49,33 @@ public class TaskRequest implements Entity {
     private String providerId;
 
     private String packagePath;
-    
+
+    public Date getCreateTime() {
+        return createTime != null ? (Date) createTime.clone() : null;
+    }
+
+    /**
+     * set create time.
+     * 
+     * @param createTime createTime
+     */
+    public void setCreateTime(Date createTime) {
+        if (createTime != null) {
+            this.createTime = (Date) createTime.clone();
+        } else {
+            this.createTime = null;
+        }
+    }
+
     public Date getEndTime() {
         return endTime != null ? (Date) endTime.clone() : null;
     }
 
+    /**
+     * set end time.
+     * 
+     * @param endTime endTime
+     */
     public void setEndTime(Date endTime) {
         if (endTime != null) {
             this.endTime = (Date) endTime.clone();
@@ -64,6 +86,11 @@ public class TaskRequest implements Entity {
 
     public TaskRequest() {}
 
+    /**
+     * construct function.
+     * 
+     * @param builder builder
+     */
     public TaskRequest(Builder builder) {
         this.id = builder.id;
         this.appName = builder.appName;

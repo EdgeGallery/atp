@@ -148,7 +148,7 @@ public class FileChecker {
     }
 
     /**
-     * copy file to target path
+     * copy file to target path.
      * 
      * @param file source file
      * @param path target path
@@ -165,9 +165,9 @@ public class FileChecker {
     }
 
     /**
-     * get directory of different system
+     * get directory of different system.
      * 
-     * @return
+     * @return path
      */
     public static String getDir() {
         if (System.getProperty("os.name").toLowerCase().contains("windows")) {
@@ -178,9 +178,9 @@ public class FileChecker {
     }
 
     /**
-     * dependency application check
+     * dependency application check.
      * 
-     * @param filePath
+     * @param filePath filePath
      * @return dependency application info list, contains appName,appId and appPackageId.
      */
     public static List<Map<String, String>> dependencyCheck(String filePath) {
@@ -211,7 +211,8 @@ public class FileChecker {
             String line = positionDependencyService(br);
             if (StringUtils.isEmpty(line)) {
                 LOGGER.warn(
-                        "can not find the dependency path, the dependency path must be in node_templates.app_configuration.properties.appServiceRequired");
+                        "can not find the dependency path, the dependency path must "
+                                + "be in node_templates.app_configuration.properties.appServiceRequired");
                 return;
             }
             // -serName
@@ -252,11 +253,11 @@ public class FileChecker {
     }
 
     /**
-     * position to dependency service field
+     * position to dependency service field.
      * 
      * @param br bufferReader
      * @return line
-     * @throws IOException
+     * @throws IOException IOException
      */
     private static String positionDependencyService(BufferedReader br) throws IOException {
         String line = "";
@@ -292,7 +293,7 @@ public class FileChecker {
         ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));
         ZipEntry entry;
         int entries = 0;
-        int total = 0;
+        long total = 0;
         byte[] data = new byte[Constant.BUFFER];
         try {
             while ((entry = zis.getNextEntry()) != null) {
@@ -351,7 +352,12 @@ public class FileChecker {
         return matcher.matches();
     }
 
-
+    /**
+     * create file.
+     * 
+     * @param filePath filePath
+     * @throws IOException IOException
+     */
     public static void createFile(String filePath) throws IOException {
         File tempFile = new File(filePath);
         boolean result = false;
@@ -368,6 +374,7 @@ public class FileChecker {
     private static long getMaxFileSize() {
         // 5G
         return 5 * 1024 * 1024 * 1024;
+
     }
 
     private static List<String> getFileExtensions() {

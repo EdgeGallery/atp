@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package org.edgegallery.atp.repository.testsuite;
 
 import java.util.List;
@@ -27,16 +28,17 @@ public interface TestSuiteRepository {
     /**
      * get test suite by name.
      * 
-     * @param name
-     * @return
+     * @param nameCh nameCh
+     * @param nameEn nameEn
+     * @return TestSuite
      */
     TestSuite getTestSuiteByName(String nameCh, String nameEn);
 
     /**
      * get test suite by id.
      * 
-     * @param id
-     * @return
+     * @param id id
+     * @return TestSuite
      */
     TestSuite getTestSuiteById(String id);
 
@@ -44,7 +46,6 @@ public interface TestSuiteRepository {
      * update test suite.
      * 
      * @param testSuite testSuite
-     * @return testSuite info
      */
     void updateTestSuite(TestSuite testSuite);
 
@@ -54,7 +55,7 @@ public interface TestSuiteRepository {
      * @param id test suite id
      */
     void deleteTestSuite(String id);
-    
+
     /**
      * get all test suites.
      * 

@@ -14,9 +14,9 @@
 
 package org.edgegallery.atp.model.testcase;
 
-import org.edgegallery.atp.constant.Constant;
 import lombok.Getter;
 import lombok.Setter;
+import org.edgegallery.atp.constant.Constant;
 
 @Setter
 @Getter
@@ -36,18 +36,34 @@ public class TestCaseResult {
      */
     String verificationModel;
 
+    /**
+     * construct function.
+     */
     public TestCaseResult() {
         this.result = Constant.WAITING;
         this.reason = Constant.EMPTY;
         this.verificationModel = Constant.EMPTY;
     }
 
+    /**
+     * construct function.
+     * 
+     * @param result result
+     * @param reason reason
+     * @param verificationModel verificationModel
+     */
     public TestCaseResult(String result, String reason, String verificationModel) {
         this.result = result;
         this.reason = reason;
         this.verificationModel = verificationModel;
     }
 
+    /**
+     * construct function.
+     * 
+     * @param result result
+     * @param reason reason
+     */
     public TestCaseResult(String result, String reason) {
         this.result = result;
         this.reason = reason;

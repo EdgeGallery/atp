@@ -256,13 +256,12 @@
                     <testFailureIgnore>${maven.test.failure.ignore}</testFailureIgnore>
                 </configuration>
             </plugin>
-             <!--
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
                 <version>3.0.4</version>
                 <configuration>
-                    <failOnError>true</failOnError>
+                    <failOnError>false</failOnError>
                 </configuration>
                 <executions>
                     <execution>
@@ -272,7 +271,6 @@
                     </execution>
                 </executions>
             </plugin>
-             -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
@@ -291,7 +289,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
@@ -311,7 +308,6 @@
                     </execution>
                 </executions>
             </plugin>
-            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
