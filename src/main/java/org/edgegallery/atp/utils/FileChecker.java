@@ -14,6 +14,7 @@
 
 package org.edgegallery.atp.utils;
 
+import com.google.common.io.Files;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -42,7 +43,6 @@ import org.edgegallery.atp.constant.Constant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
-import com.google.common.io.Files;
 
 public class FileChecker {
 
@@ -366,8 +366,8 @@ public class FileChecker {
     }
 
     private static long getMaxFileSize() {
-        // 50MB
-        return 50 * 1024 * 1024;
+        // 5G
+        return 5 * 1024 * 1024 * 1024;
     }
 
     private static List<String> getFileExtensions() {
