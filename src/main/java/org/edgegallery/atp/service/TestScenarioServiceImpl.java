@@ -104,7 +104,6 @@ public class TestScenarioServiceImpl implements TestScenarioService {
 
     @Override
     public TestScenario updateTestScenario(TestScenario testScenario, MultipartFile icon) {
-        LOGGER.info("update test scenario in.");
         TestScenario dbData = testScenarioRepository.getTestScenarioById(testScenario.getId());
         if (!dbData.getNameCh().equalsIgnoreCase(testScenario.getNameCh())
                 && null != testScenarioRepository.getTestScenarioByName(testScenario.getNameCh(), null)) {
