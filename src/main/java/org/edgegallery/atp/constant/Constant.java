@@ -14,8 +14,8 @@
 
 package org.edgegallery.atp.constant;
 
-import org.edgegallery.atp.utils.FileChecker;
 import java.io.File;
+import org.edgegallery.atp.utils.FileChecker;
 
 public interface Constant {
 
@@ -107,7 +107,7 @@ public interface Constant {
 
     int BUFFER = 512;
 
-    int TOO_BIG = 0x6400000; // max size of unzipped data, 100MB
+    int TOO_BIG = 10 * 1024 * 1024 * 1024; // max size of unzipped data, 10GB
 
     int TOO_MANY = 1024; // max number of files
 
