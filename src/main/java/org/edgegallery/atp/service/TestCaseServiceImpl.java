@@ -196,8 +196,8 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     private String getClassPath(File file) {
         String className = Constant.EMPTY;
-        try (BufferedReader reader = new BufferedReader
-                (new InputStreamReader(new FileInputStream(file.getCanonicalPath()), "UTF-8"))) {
+        try (BufferedReader reader =
+                new BufferedReader(new InputStreamReader(new FileInputStream(file.getCanonicalPath()), "UTF-8"))) {
             String line = "";
             while ((line = reader.readLine()) != null) {
                 if (line.startsWith("public class")) {
