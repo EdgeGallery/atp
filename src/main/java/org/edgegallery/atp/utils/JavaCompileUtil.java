@@ -15,8 +15,9 @@
 package org.edgegallery.atp.utils;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
@@ -56,9 +57,8 @@ public class JavaCompileUtil {
             Map<String, String> context) {
         try {
             String className = testCase.getClassName();
-            Map<String, byte[]> bytes =
-                    compile(className.concat(Constant.DOT).concat(Constant.JAVA),
-                            getFileContent(testCase.getFilePath()));
+            Map<String, byte[]> bytes = compile(className.concat(Constant.DOT).concat(Constant.JAVA),
+                    getFileContent(testCase.getFilePath()));
             // put class into storage
             try (JavaCompileUtil.MemoryLoader clsLoader = new JavaCompileUtil.MemoryLoader(bytes);) {
                 Class<?> clazz = clsLoader.loadClass(className);
@@ -77,7 +77,7 @@ public class JavaCompileUtil {
 
     private static String getFileContent(String path) throws IOException {
         StringBuffer result = new StringBuffer();
-        try (BufferedReader buffer = new BufferedReader(new FileReader(path))) {
+        try (BufferedReader buffer = new BufferedReader(new InputStreamReader(new FileInputStream(path), "UTF-8"))) {
             String line = null;
             while ((line = buffer.readLine()) != null) {
                 result.append(line.trim()).append("\r");
@@ -95,15 +95,12 @@ public class JavaCompileUtil {
      */
     public static Map<String, byte[]> compile(String javaName, String javaSrc) {
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        StandardJavaFileManager javaFileMgr = compiler
-                .getStandardFileManager(null, null, null);
+        StandardJavaFileManager javaFileMgr = compiler.getStandardFileManager(null, null, null);
 
-        try (JavaFileMemoryMgr memoryMgr = new JavaFileMemoryMgr(
-                javaFileMgr)) {
-            JavaFileObject javaFileObject = memoryMgr.getSourceFromStr(javaName,
-                    javaSrc);
-            JavaCompiler.CompilationTask compileTask = compiler.getTask(null, memoryMgr,
-                    null, null, null, Arrays.asList(javaFileObject));
+        try (JavaFileMemoryMgr memoryMgr = new JavaFileMemoryMgr(javaFileMgr)) {
+            JavaFileObject javaFileObject = memoryMgr.getSourceFromStr(javaName, javaSrc);
+            JavaCompiler.CompilationTask compileTask =
+                    compiler.getTask(null, memoryMgr, null, null, null, Arrays.asList(javaFileObject));
             if (compileTask.call()) {
                 return memoryMgr.getClassBytes();
             }
@@ -126,8 +123,7 @@ public class JavaCompileUtil {
         }
 
         @Override
-        protected Class<?> findClass(String name)
-                throws ClassNotFoundException {
+        protected Class<?> findClass(String name) throws ClassNotFoundException {
             byte[] bytes = sourceCode.get(name);
             if (bytes == null) {
                 return super.findClass(name);

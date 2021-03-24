@@ -90,7 +90,7 @@ public class TestScenarioServiceImpl implements TestScenarioService {
             LOGGER.error(msg);
             throw new IllegalArgumentException(msg);
         }
-        String suffix = iconName.substring(icon.getOriginalFilename().indexOf(Constant.DOT) + 1);
+        String suffix = iconName.substring(iconName.indexOf(Constant.DOT) + 1);
         String filePath = Constant.BASIC_ICON_PATH.concat(Constant.FILE_TYPE_SCENARIO).concat(Constant.UNDER_LINE)
                 .concat(testScenario.getId()).concat(Constant.DOT).concat(suffix);
         FileChecker.copyFileToDir(icon, filePath);
