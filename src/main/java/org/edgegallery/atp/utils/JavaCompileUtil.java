@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -77,7 +78,8 @@ public class JavaCompileUtil {
 
     private static String getFileContent(String path) throws IOException {
         StringBuffer result = new StringBuffer();
-        try (BufferedReader buffer = new BufferedReader(new InputStreamReader(new FileInputStream(path), "UTF-8"))) {
+        try (BufferedReader buffer =
+                new BufferedReader(new InputStreamReader(new FileInputStream(path), StandardCharsets.UTF_8))) {
             String line = null;
             while ((line = buffer.readLine()) != null) {
                 result.append(line.trim()).append("\r");

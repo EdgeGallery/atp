@@ -173,14 +173,6 @@ public interface Constant {
 
     String EDGE_GALLERY = "EdgeGallery";
 
-    String MOBILE = "Mobile";
-
-    String UNICOM = "Unicom";
-
-    String TELECOM = "Telecom";
-
-    String DEFINE = "Define";
-
     String TEST_CASE_DIR = "testCases";
 
     String LOCALE_CH = "ch";
