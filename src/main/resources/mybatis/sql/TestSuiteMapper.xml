@@ -46,6 +46,7 @@
             and scenarioIdList ~* #{scenarioId}
           </if>
         </where>
+        ORDER BY nameEn ASC
     </select>
     
     <insert id="createTestSuite"
