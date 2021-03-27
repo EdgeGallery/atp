@@ -33,7 +33,7 @@ public class VirtualMemoryDescriptionValidation {
                 String[] nameArray = entry.getName().split("/");
                 if (nameArray.length == 3 && "APPD".equalsIgnoreCase(nameArray[0])
                         && "Definition".equalsIgnoreCase(nameArray[1]) && nameArray[2].endsWith(".yaml")) {
-                    return hasVirtualMemDescription(zipFile, entry) ? "success" : VIRTUAL_MEMORY_NOT_EXISTS;
+                    return hasVirtualMemDescription(zipFile, entry) ? SUCCESS : VIRTUAL_MEMORY_NOT_EXISTS;
                 }
             }
         } catch (IOException e) {

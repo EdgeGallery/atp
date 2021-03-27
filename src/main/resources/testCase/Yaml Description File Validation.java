@@ -30,7 +30,7 @@ public class YamlDescriptionFileValidation {
                 String[] nameArray = entry.getName().split("/");
                 if (nameArray.length == 3 && "APPD".equalsIgnoreCase(nameArray[0])
                         && "Definition".equalsIgnoreCase(nameArray[1]) && nameArray[2].endsWith(".yaml")) {
-                    return "success";
+                    return SUCCESS;
                 }
             }
         } catch (IOException e) {
