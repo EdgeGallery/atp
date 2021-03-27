@@ -1,4 +1,3 @@
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -20,9 +19,16 @@ public class SourcePathTestCaseInner {
 
     private static Set<String> pathSet = new HashSet<String>();
 
+    private static final String VM = "vm";
+
+    private static final String SUCCESS = "success";
+
     public String execute(String filePath, Map<String, String> context) {
         try {
-            Thread.sleep(1000);
+            Thread.sleep(200);
+            if (VM.equalsIgnoreCase(getAppType(filePath))) {
+                return SUCCESS;
+            }
         } catch (InterruptedException e1) {
         }
         Set<String> sourcePathSet = new HashSet<String>();
@@ -46,7 +52,7 @@ public class SourcePathTestCaseInner {
         } catch (IOException e) {
             return INNER_EXCEPTION;
         }
-        return pathSet.containsAll(sourcePathSet) ? "success" : SOURCE_PATH_FILE_NOT_EXISTS;
+        return pathSet.containsAll(sourcePathSet) ? SUCCESS : SOURCE_PATH_FILE_NOT_EXISTS;
     }
 
     private boolean fileSuffixValidate(String pattern, String fileName) {
@@ -80,5 +86,34 @@ public class SourcePathTestCaseInner {
             path = path.substring(0, path.length() - 1);
         }
         return path;
+    }
+
+    /**
+     * get app_type
+     * 
+     * @param filePath filePath
+     * @return appType
+     */
+    private String getAppType(String filePath) {
+        try (ZipFile zipFile = new ZipFile(filePath)) {
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = entries.nextElement();
+                if (entry.getName().split("/").length == 1 && entry.getName().endsWith(".mf")) {
+                    try (BufferedReader br = new BufferedReader(
+                            new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
+                        String line = "";
+                        while ((line = br.readLine()) != null) {
+                            // prefix: path
+                            if (line.trim().startsWith("app_class")) {
+                                return line.split(":")[1].trim();
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+        }
+        return null;
     }
 }
