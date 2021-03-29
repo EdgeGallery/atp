@@ -19,7 +19,7 @@ public class VirtualMemoryDescriptionValidation {
 
     public String execute(String filePath, Map<String, String> context) {
         try {
-            Thread.sleep(100);
+            Thread.sleep(1000);
             if (VM.equalsIgnoreCase(getAppType(filePath))) {
                 return SUCCESS;
             }

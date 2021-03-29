@@ -17,7 +17,7 @@ public class CPUNumberDescriptionValidation {
 
     public String execute(String filePath, Map<String, String> context) {
         try {
-            Thread.sleep(200);
+            Thread.sleep(1000);
             if (VM.equalsIgnoreCase(getAppType(filePath))) {
                 return SUCCESS;
             }
