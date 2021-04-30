@@ -14,7 +14,10 @@
 
 package org.edgegallery.atp.repository.contribution;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.edgegallery.atp.model.contribution.Contribution;
 import org.edgegallery.atp.repository.mapper.ContributionMapper;
 import org.slf4j.Logger;
@@ -47,6 +50,33 @@ public class ContributionRepositoryImpl implements ContributionRepository {
         } catch (Exception e) {
             LOGGER.error("query all contributions failed. {}", e);
             throw new IllegalArgumentException("query all contributions failed.");
+        }
+    }
+
+    @Override
+    public Map<String, List<String>> batchDelete(List<String> ids) {
+        Map<String, List<String>> result = new HashMap<String, List<String>>();
+        List<String> failIds = new ArrayList<String>();
+        for (String id : ids) {
+            try {
+                contributionMapper.deleteContributionsById(id);
+            } catch (Exception e) {
+                LOGGER.error("delete contribution by id {} failed. {}", id, e);
+                failIds.add(id);
+            }
+        }
+
+        result.put("failed", failIds);
+        return result;
+    }
+
+    @Override
+    public Contribution getContributionById(String id) {
+        try {
+            return contributionMapper.getContributionById(id);
+        } catch (Exception e) {
+            LOGGER.error("query contribution by id failed. {}", e);
+            throw new IllegalArgumentException("query contribution by id failed.");
         }
     }
 }

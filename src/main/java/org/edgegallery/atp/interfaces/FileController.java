@@ -24,6 +24,7 @@ import javax.validation.constraints.Pattern;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
+import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -41,7 +42,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Api(tags = {"APT File Controller"})
 @Validated
 public class FileController {
-    private static final String REG_ID = "[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}";
 
     @Autowired
     FileService fileService;
@@ -54,13 +54,13 @@ public class FileController {
      * @return binary stream
      * @throws FileNotFoundException FileNotFoundException
      */
-    @GetMapping(value = "/file/{id}", produces = MediaType.APPLICATION_JSON)
+    @GetMapping(value = "/files/{id}", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "get one file.", response = InputStreamResource.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<InputStreamResource> getAllFile(
-            @ApiParam(value = "file id") @PathVariable("id") @Pattern(regexp = REG_ID) String id,
+            @ApiParam(value = "file id") @PathVariable("id") @Pattern(regexp = Constant.REG_ID) String id,
             @ApiParam(value = "file type") @QueryParam("type") String type) throws FileNotFoundException {
         return fileService.getFileContent(id, type);
     }

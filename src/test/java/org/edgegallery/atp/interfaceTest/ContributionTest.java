@@ -64,14 +64,14 @@ public class ContributionTest {
         InputStream csarInputStream = new FileInputStream(file);
         MultipartFile csarMultiFile = new MockMultipartFile(file.getName(), file.getName(),
                 ContentType.APPLICATION_OCTET_STREAM.toString(), csarInputStream);
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/contribution")
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/contributions")
                 .file("file", csarMultiFile.getBytes()).with(csrf()).param("name", "test").param("objective", "test")
                 .param("step", "automatic").param("expectResult", "test").param("type", "script")).andReturn();
         int result = mvcResult.getResponse().getStatus();
         assertEquals(200, result);
 
         // get all contributions
-        MvcResult mvcResultQueryAll = mvc.perform(MockMvcRequestBuilders.get("/edgegallery/atp/v1/contribution")
+        MvcResult mvcResultQueryAll = mvc.perform(MockMvcRequestBuilders.get("/edgegallery/atp/v1/contributions")
                 .contentType(MediaType.APPLICATION_JSON_VALUE).with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
         int resultQueryAll = mvcResultQueryAll.getResponse().getStatus();

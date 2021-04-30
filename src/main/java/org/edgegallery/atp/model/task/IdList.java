@@ -22,6 +22,6 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class TaskIdList {
-    List<String> taskIds;
+public class IdList {
+    List<String> ids;
 }

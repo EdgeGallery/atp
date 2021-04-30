@@ -15,7 +15,10 @@
 package org.edgegallery.atp.service;
 
 import java.util.List;
+import java.util.Map;
 import org.edgegallery.atp.model.contribution.Contribution;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface ContributionService {
@@ -34,4 +37,20 @@ public interface ContributionService {
      * @return Contribution list
      */
     List<Contribution> getAllContribution();
+
+    /**
+     * batch delete contributions by id list.
+     * 
+     * @param ids contribution id list
+     * @return failed id list
+     */
+    Map<String, List<String>> batchDelete(List<String> ids);
+
+    /**
+     * download script contributions.
+     * 
+     * @param id contribution id
+     * @return file stream
+     */
+    ResponseEntity<InputStreamResource> downloadContributions(String id);
 }

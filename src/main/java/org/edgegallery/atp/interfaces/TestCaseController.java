@@ -58,8 +58,6 @@ public class TestCaseController {
     @Autowired
     private TestCaseService testCaseService;
 
-    private static final String REG_ID = "[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}";
-
     /**
      * get all tasks according userId.
      * 
@@ -207,7 +205,7 @@ public class TestCaseController {
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_ADMIN')")
     public ResponseEntity<Boolean> deleteTestCase(
-            @ApiParam(value = "test case id") @PathVariable("id") @Pattern(regexp = REG_ID) String id) {
+            @ApiParam(value = "test case id") @PathVariable("id") @Pattern(regexp = Constant.REG_ID) String id) {
         return ResponseEntity.ok(testCaseService.deleteTestCase(id));
     }
 
@@ -224,7 +222,7 @@ public class TestCaseController {
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<TestCase> queryTestCase(
-            @ApiParam(value = "test case id") @PathVariable("id") @Pattern(regexp = REG_ID) String id)
+            @ApiParam(value = "test case id") @PathVariable("id") @Pattern(regexp = Constant.REG_ID) String id)
             throws FileNotFoundException {
         return ResponseEntity.ok(testCaseService.getTestCase(id));
     }
@@ -241,7 +239,7 @@ public class TestCaseController {
             @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
     @PreAuthorize("hasRole('ATP_ADMIN')")
     public ResponseEntity<InputStreamResource> downloadTestCase(
-            @ApiParam(value = "test case id") @PathVariable("id") @Pattern(regexp = REG_ID) String id) {
+            @ApiParam(value = "test case id") @PathVariable("id") @Pattern(regexp = Constant.REG_ID) String id) {
         return testCaseService.downloadTestCase(id);
     }
 }

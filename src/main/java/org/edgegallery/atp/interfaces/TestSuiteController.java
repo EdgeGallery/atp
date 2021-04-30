@@ -52,7 +52,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Api(tags = {"APT Test Suite Controller"})
 @Validated
 public class TestSuiteController {
-    private static final String REG_ID = "[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}";
 
     @Autowired
     TestSuiteService testSuiteService;
@@ -106,7 +105,7 @@ public class TestSuiteController {
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_ADMIN')")
     public ResponseEntity<TestSuite> updateTestSuite(
-            @ApiParam(value = "test suite id") @PathVariable("id") @Pattern(regexp = REG_ID) String id,
+            @ApiParam(value = "test suite id") @PathVariable("id") @Pattern(regexp = Constant.REG_ID) String id,
             @ApiParam(value = "test suite chinese name",
                     required = false) @Size(max = Constant.LENGTH_64) @RequestParam("nameCh") String nameCh,
             @ApiParam(value = "test suite english name",
@@ -135,7 +134,7 @@ public class TestSuiteController {
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_ADMIN')")
     public ResponseEntity<Boolean> deleteTestSuite(
-            @ApiParam(value = "test suite id") @PathVariable("id") @Pattern(regexp = REG_ID) String id) {
+            @ApiParam(value = "test suite id") @PathVariable("id") @Pattern(regexp = Constant.REG_ID) String id) {
         return ResponseEntity.ok(testSuiteService.deleteTestSuite(id));
     }
 
@@ -152,7 +151,7 @@ public class TestSuiteController {
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<TestSuite> queryTestSuite(
-            @ApiParam(value = "test suite id") @PathVariable("id") @Pattern(regexp = REG_ID) String id)
+            @ApiParam(value = "test suite id") @PathVariable("id") @Pattern(regexp = Constant.REG_ID) String id)
             throws FileNotFoundException {
         return ResponseEntity.ok(testSuiteService.getTestSuite(id));
     }
