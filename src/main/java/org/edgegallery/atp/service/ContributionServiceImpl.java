@@ -54,6 +54,11 @@ public class ContributionServiceImpl implements ContributionService {
         contribution.setCreateTime(taskRepository.getCurrentDate());
         if (Constant.CONTRIBUTION_TYPE_SCRIPT.equals(contribution.getType()) && null != file
                 && 0 != (int) file.getSize()) {
+            if (!file.getOriginalFilename().endsWith(Constant.ZIP)) {
+                String msg = "file pattern is wrong, must zip pattern.";
+                LOGGER.error(msg);
+                throw new IllegalArgumentException(msg);
+            }
             // save script file
             String filePath = Constant.BASIC_CONTRIBUTION_PATH.concat(contribution.getId());
             try {
