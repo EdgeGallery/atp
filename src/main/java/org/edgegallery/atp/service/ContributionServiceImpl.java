@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.model.contribution.Contribution;
 import org.edgegallery.atp.repository.contribution.ContributionRepository;
@@ -54,6 +55,12 @@ public class ContributionServiceImpl implements ContributionService {
         contribution.setCreateTime(taskRepository.getCurrentDate());
         if (Constant.CONTRIBUTION_TYPE_SCRIPT.equals(contribution.getType()) && null != file
                 && 0 != (int) file.getSize()) {
+            if (StringUtils.isNotBlank(file.getOriginalFilename())
+                    && !file.getOriginalFilename().endsWith(Constant.ZIP)) {
+                String msg = "file pattern is wrong, must zip pattern.";
+                LOGGER.error(msg);
+                throw new IllegalArgumentException(msg);
+            }
             // save script file
             String filePath = Constant.BASIC_CONTRIBUTION_PATH.concat(contribution.getId());
             try {

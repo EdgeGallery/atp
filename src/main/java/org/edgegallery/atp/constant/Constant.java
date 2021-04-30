@@ -85,7 +85,7 @@ public interface Constant {
 
     String ATP_CREATED_FAILED = "create failed";
 
-    String WORK_TEMP_DIR = FileChecker.getDir() + File.separator + "temp";
+    String WORK_TEMP_DIR = FileChecker.getDir() + File.separator + "/file/temp";
 
     String REG = "[^\\s\\\\/:*?\"<>|](\\x20|[^\\s\\\\/:*?\"<>|])*[^\\s\\\\/:*?\"<>|.]$";
 
@@ -202,4 +202,6 @@ public interface Constant {
     int LENGTH_255 = 255;
 
     String REG_ID = "[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}";
+
+    String ZIP = ".zip";
 }
