@@ -29,7 +29,7 @@ import javax.ws.rs.core.MediaType;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.model.task.AnalysisResult;
-import org.edgegallery.atp.model.task.TaskIdList;
+import org.edgegallery.atp.model.task.IdList;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.task.TestCaseStatusReq;
 import org.edgegallery.atp.service.TaskService;
@@ -56,7 +56,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Api(tags = {"APT Test Controller"})
 @Validated
 public class TaskController {
-    private static final String REG_ID = "[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}";
 
     @Autowired
     private TaskService taskService;
@@ -90,7 +89,7 @@ public class TaskController {
             @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
     @PreAuthorize("hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<TaskRequest> runTest(
-            @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId,
+            @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = Constant.REG_ID) String taskId,
             @ApiParam(value = "id of test scenarios selected") @RequestParam("scenarioIdList") @Size(
                     max = Constant.LENGTH_255) List<String> scenarioIdList) {
         CommonUtil.validateContext();
@@ -127,7 +126,7 @@ public class TaskController {
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
     public ResponseEntity<TaskRequest> getTaskById(
-            @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId)
+            @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = Constant.REG_ID) String taskId)
             throws FileNotFoundException {
         return taskService.getTaskById(taskId);
     }
@@ -144,8 +143,8 @@ public class TaskController {
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_ADMIN')")
     public ResponseEntity<Map<String, List<String>>> batchDelete(
-            @ApiParam(value = "test task id list") @RequestBody TaskIdList taskIds) {
-        return taskService.batchDelete(taskIds.getTaskIds());
+            @ApiParam(value = "test task id list") @RequestBody IdList taskIds) {
+        return taskService.batchDelete(taskIds.getIds());
     }
 
     /**
@@ -175,7 +174,8 @@ public class TaskController {
             @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
     @PreAuthorize("hasRole('ATP_ADMIN')")
     public ResponseEntity<Boolean> updateTestCaseStatus(
-            @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = REG_ID) String taskId, @ApiParam(
+            @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = Constant.REG_ID) String taskId,
+            @ApiParam(
                     value = "modify test case status request body") 
             @RequestBody List<TestCaseStatusReq> testCaseStatus) {
         return taskService.modifyTestCaseStatus(testCaseStatus, taskId);

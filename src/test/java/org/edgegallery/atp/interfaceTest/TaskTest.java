@@ -31,7 +31,7 @@ import org.apache.ibatis.io.Resources;
 import org.edgegallery.atp.ATPApplicationTest;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
-import org.edgegallery.atp.model.task.TaskIdList;
+import org.edgegallery.atp.model.task.IdList;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.task.TestCaseStatusReq;
 import org.edgegallery.atp.utils.CommonUtil;
@@ -148,10 +148,10 @@ public class TaskTest {
                 .accept(MediaType.APPLICATION_JSON_UTF8)).andExpect(MockMvcResultMatchers.status().isOk());
 
         // batch delete
-        TaskIdList list = new TaskIdList();
+        IdList list = new IdList();
         List<String> taskIds = new ArrayList<String>();
         taskIds.add(id);
-        list.setTaskIds(taskIds);
+        list.setIds(taskIds);
         MvcResult mvcResultDelete = mvc.perform(
                 MockMvcRequestBuilders.post("/edgegallery/atp/v1/tasks/batch_delete").content(gson.toJson(list))
                         .with(csrf()).contentType(MediaType.APPLICATION_JSON_UTF8)

@@ -20,18 +20,25 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.util.List;
+import java.util.Map;
+import javax.validation.constraints.Pattern;
 import javax.ws.rs.core.MediaType;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
+import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.model.contribution.Contribution;
+import org.edgegallery.atp.model.task.IdList;
 import org.edgegallery.atp.service.ContributionService;
 import org.edgegallery.atp.utils.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -58,7 +65,7 @@ public class ContributionController {
      * @param file file
      * @return contribution info
      */
-    @PostMapping(value = "/contribution", produces = MediaType.APPLICATION_JSON)
+    @PostMapping(value = "/contributions", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "create test contribution.", response = String.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
@@ -80,13 +87,39 @@ public class ContributionController {
      * 
      * @return contribution list
      */
-    @GetMapping(value = "/contribution", produces = MediaType.APPLICATION_JSON)
+    @GetMapping(value = "/contributions", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "get all contributions.", response = Contribution.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_ADMIN')")
     public ResponseEntity<List<Contribution>> queryAllContribution() {
         return ResponseEntity.ok(contributionService.getAllContribution());
+    }
+
+    /**
+     * batch delete contributions by contribution ids.
+     * 
+     * @param ids contributions ids
+     * @return failed id list
+     */
+    @PostMapping(value = "/contributions/batch_delete", produces = MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "batch delete contributions", response = String.class)
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
+            @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
+    @PreAuthorize("hasRole('ATP_ADMIN')")
+    public ResponseEntity<Map<String, List<String>>> batchDelete(
+            @ApiParam(value = "contribution id list") @RequestBody IdList ids) {
+        return ResponseEntity.ok(contributionService.batchDelete(ids.getIds()));
+    }
+
+    @GetMapping(value = "/contributions/{id}/action/download", produces = MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "download contribution scripts", response = InputStreamResource.class)
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
+            @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
+    @PreAuthorize("hasRole('ATP_ADMIN')")
+    public ResponseEntity<InputStreamResource> downloadContributionScripts(
+            @ApiParam(value = "contribution id") @PathVariable("id") @Pattern(regexp = Constant.REG_ID) String id) {
+        return contributionService.downloadContributions(id);
     }
 }
 

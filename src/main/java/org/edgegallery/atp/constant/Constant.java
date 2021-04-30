@@ -200,4 +200,6 @@ public interface Constant {
     int LENGTH_64 = 64;
 
     int LENGTH_255 = 255;
+
+    String REG_ID = "[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}";
 }

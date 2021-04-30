@@ -53,7 +53,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Api(tags = {"APT Test Scenario Controller"})
 @Validated
 public class TestScenarioController {
-    private static final String REG_ID = "[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}";
 
     @Autowired
     TestScenarioService testScenarioService;
@@ -108,7 +107,7 @@ public class TestScenarioController {
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_ADMIN')")
     public ResponseEntity<TestScenario> updateTestScenario(
-            @ApiParam(value = "test scenario id") @PathVariable("id") @Pattern(regexp = REG_ID) String id,
+            @ApiParam(value = "test scenario id") @PathVariable("id") @Pattern(regexp = Constant.REG_ID) String id,
             @ApiParam(value = "test scenario chinese name",
                     required = false) @Size(max = Constant.LENGTH_64) @RequestParam("nameCh") String nameCh,
             @ApiParam(value = "test scenario english name",
@@ -137,7 +136,7 @@ public class TestScenarioController {
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_ADMIN')")
     public ResponseEntity<Boolean> deleteTestScenario(
-            @ApiParam(value = "test scenario id") @PathVariable("id") @Pattern(regexp = REG_ID) String id) {
+            @ApiParam(value = "test scenario id") @PathVariable("id") @Pattern(regexp = Constant.REG_ID) String id) {
         return ResponseEntity.ok(testScenarioService.deleteTestScenario(id));
     }
 
@@ -154,7 +153,7 @@ public class TestScenarioController {
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<TestScenario> queryTestScenario(
-            @ApiParam(value = "test scenario id") @PathVariable("id") @Pattern(regexp = REG_ID) String id)
+            @ApiParam(value = "test scenario id") @PathVariable("id") @Pattern(regexp = Constant.REG_ID) String id)
             throws FileNotFoundException {
         return ResponseEntity.ok(testScenarioService.getTestScenario(id));
     }

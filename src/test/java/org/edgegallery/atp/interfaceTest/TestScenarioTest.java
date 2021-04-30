@@ -81,7 +81,7 @@ public class TestScenarioTest {
 
         // get icon file
         MvcResult mvcResultIconFile = mvc.perform(MockMvcRequestBuilders
-                .get("/edgegallery/atp/v1/file/" + id + "?type =scenario").with(csrf())).andReturn();
+                .get("/edgegallery/atp/v1/files/" + id + "?type =scenario").with(csrf())).andReturn();
         int resultIconFile = mvcResultIconFile.getResponse().getStatus();
         assertEquals(200, resultIconFile);
 

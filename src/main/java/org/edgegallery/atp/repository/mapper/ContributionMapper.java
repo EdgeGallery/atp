@@ -30,9 +30,24 @@ public interface ContributionMapper {
     void insert(Contribution contribution);
 
     /**
-     * get all contrbutions.
+     * get all contributions.
      * 
      * @return
      */
     List<Contribution> getAllContributions();
+
+    /**
+     * delete contributions by id.
+     * 
+     * @param id contribution id
+     */
+    void deleteContributionsById(String id);
+
+    /**
+     * get contribution by contribution id.
+     * 
+     * @param id contribution id
+     * @return contribution info
+     */
+    Contribution getContributionById(String id);
 }

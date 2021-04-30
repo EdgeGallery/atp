@@ -15,6 +15,7 @@
 package org.edgegallery.atp.repository.contribution;
 
 import java.util.List;
+import java.util.Map;
 import org.edgegallery.atp.model.contribution.Contribution;
 
 public interface ContributionRepository {
@@ -32,4 +33,20 @@ public interface ContributionRepository {
      * @return contribution list
      */
     List<Contribution> getAllContributions();
+
+    /**
+     * batch delete contributions by contribution ids.
+     * 
+     * @param ids contribution ids
+     * @return failed id list
+     */
+    Map<String, List<String>> batchDelete(List<String> ids);
+
+    /**
+     * get contribution by contribution id.
+     * 
+     * @param id contribution id
+     * @return contribution info
+     */
+    Contribution getContributionById(String id);
 }

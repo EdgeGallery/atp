@@ -32,4 +32,16 @@
             parameterType="String">
         select * from contribution_table
     </select>
+    
+    <delete id="deleteContributionsById">
+		delete from
+		contribution_table
+		where id = #{id}
+	</delete>
+	
+	<select id="getContributionById"
+            resultType="org.edgegallery.atp.model.contribution.Contribution"
+            parameterType="String">
+        select * from contribution_table where id = #{id}
+    </select> 
 </mapper>

@@ -15,8 +15,12 @@
 package org.edgegallery.atp.service;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.model.contribution.Contribution;
 import org.edgegallery.atp.repository.contribution.ContributionRepository;
@@ -26,6 +30,10 @@ import org.edgegallery.atp.utils.FileChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -70,5 +78,35 @@ public class ContributionServiceImpl implements ContributionService {
         List<Contribution> contributionList = contributionRepository.getAllContributions();
         LOGGER.info("query all contributions successfully.");
         return contributionList;
+    }
+
+    @Override
+    public Map<String, List<String>> batchDelete(List<String> ids) {
+        Map<String, List<String>> failedIdList = contributionRepository.batchDelete(ids);
+        LOGGER.info("batch delete contributions by ids successfully.");
+        return failedIdList;
+    }
+
+
+    @Override
+    public ResponseEntity<InputStreamResource> downloadContributions(String id) {
+        Contribution contribution = contributionRepository.getContributionById(id);
+        if (null == contribution) {
+            String msg = "contribution not exists.";
+            LOGGER.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+        File file = new File(contribution.getFilePath());
+        try {
+            InputStream fileContent = new FileInputStream(file);
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Type", "application/octet-stream");
+            LOGGER.info("download contribution successfully.");
+            return new ResponseEntity<>(new InputStreamResource(fileContent), headers, HttpStatus.OK);
+        } catch (FileNotFoundException e) {
+            String msg = "file not exists.";
+            LOGGER.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
     }
 }
