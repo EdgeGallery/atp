@@ -60,8 +60,8 @@ public class TestSuitePo {
      */
     public TestSuite toDomain() {
         TestSuite testSuite =
-                TestSuite.builder().setdescriptionCh(this.descriptionCh).setDescriptionEn(this.descriptionEn)
-                        .setId(this.id).setnameCh(this.nameCh).setNameEn(this.nameEn).build();
+                TestSuite.builder().setDescriptionCh(this.descriptionCh).setDescriptionEn(this.descriptionEn)
+                        .setId(this.id).setNameCh(this.nameCh).setNameEn(this.nameEn).build();
         testSuite.setScenarioIdList(Arrays.asList(scenarioIdList.split(Constant.COMMA)));
         return testSuite;
     }

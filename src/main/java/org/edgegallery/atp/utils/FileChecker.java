@@ -153,7 +153,7 @@ public class FileChecker {
      * @param file source file
      * @param path target path
      */
-    public static void copyFileToDir(MultipartFile file, String path) {
+    public static void copyMultiFileToDir(MultipartFile file, String path) {
         try {
             createFile(path);
             File targetFile = new File(path);
@@ -288,7 +288,7 @@ public class FileChecker {
      * @param fileName file name.
      * @throws java.io.IOException throw IOException
      */
-    private static void unzip(String fileName) throws IOException {
+    public static void unzip(String fileName) throws IOException {
         FileInputStream fis = FileUtils.openInputStream(new File(fileName));
         ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));
         ZipEntry entry;

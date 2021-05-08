@@ -187,6 +187,8 @@ public interface Constant {
     
     String BASIC_CONTRIBUTION_PATH = FileChecker.getDir() + "/file/contribution/";
 
+    String TEMP_FILE_PATH = FileChecker.getDir() + "/temp/";
+
     String ICON = "icon";
 
     String TASK_TYPE_MANUAL = "manual";
@@ -204,4 +206,22 @@ public interface Constant {
     String REG_ID = "[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}";
 
     String ZIP = ".zip";
+
+    String ID = "id";
+
+    String NAME_EN = "nameEn";
+
+    String TYPE = "type";
+
+    String ERROR_CODE = "errCode";
+
+    String PARAMS = "params";
+
+    String TEST_SCENARIO = "testScenario";
+
+    String TEST_SUITE = "testSuite";
+
+    String TEST_CASE = "testCase";
+
+    int DEFAULT_ERR_CODE = 0;
 }

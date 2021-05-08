@@ -83,7 +83,7 @@ public class TestSuiteController {
             @ApiParam(value = "test scenario it belongs to", required = true) @Size(
                     max = Constant.LENGTH_255) @RequestParam("scenarioIdList") List<String> scenarioIdList) {
         TestSuite testSuite = TestSuite.builder().setId(CommonUtil.generateId()).setDescriptionEn(descriptionEn)
-                .setdescriptionCh(descriptionCh).setNameEn(nameEn).setnameCh(nameCh).build();
+                .setDescriptionCh(descriptionCh).setNameEn(nameEn).setNameCh(nameCh).build();
         testSuite.setScenarioIdList(scenarioIdList);
         return ResponseEntity.ok(testSuiteService.createTestSuite(testSuite));
     }
@@ -117,7 +117,7 @@ public class TestSuiteController {
             @ApiParam(value = "test scenario id list belongs to test suite", required = false) @Size(
                     max = Constant.LENGTH_255) @RequestParam("scenarioIdList") List<String> scenarioIdList) {
         TestSuite testSuite = TestSuite.builder().setId(id).setDescriptionEn(descriptionEn)
-                .setdescriptionCh(descriptionCh).setNameEn(nameEn).setnameCh(nameCh).build();
+                .setDescriptionCh(descriptionCh).setNameEn(nameEn).setNameCh(nameCh).build();
         testSuite.setScenarioIdList(CollectionUtils.isEmpty(scenarioIdList) ? null : scenarioIdList);
         return ResponseEntity.ok(testSuiteService.updateTestSuite(testSuite));
     }

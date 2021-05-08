@@ -98,7 +98,7 @@ public class TestSuite {
             return this;
         }
 
-        public Builder setnameCh(String nameCh) {
+        public Builder setNameCh(String nameCh) {
             this.nameCh = nameCh;
             return this;
         }
@@ -108,7 +108,7 @@ public class TestSuite {
             return this;
         }
 
-        public Builder setdescriptionCh(String descriptionCh) {
+        public Builder setDescriptionCh(String descriptionCh) {
             this.descriptionCh = descriptionCh;
             return this;
         }

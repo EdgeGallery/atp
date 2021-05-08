@@ -40,7 +40,7 @@ public class TestCase extends TestCaseBase {
     public TestCasePo of() {
         TestCasePo testCasePo =
                 TestCasePo.builder().setClassName(this.getClassName()).setCodeLanguage(this.getCodeLanguage())
-                        .setdescriptionCh(this.getDescriptionCh()).setDescriptionEn(this.getDescriptionEn())
+                        .setDescriptionCh(this.getDescriptionCh()).setDescriptionEn(this.getDescriptionEn())
                         .setExpectResultCh(this.getExpectResultCh()).setExpectResultEn(this.getExpectResultEn())
                         .setFilePath(this.getFilePath()).setHashCode(this.getHashCode()).setId(this.getId())
                         .setNameCh(this.getNameCh()).setNameEn(this.getNameEn()).setTestStepCh(this.getTestStepCh())

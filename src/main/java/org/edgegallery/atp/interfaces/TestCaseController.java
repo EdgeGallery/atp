@@ -132,7 +132,7 @@ public class TestCaseController {
                     required = true) @Size(
                             max = Constant.LENGTH_255) @RequestParam("testSuiteIdList") List<String> testSuiteIds) {
         TestCase testCase = TestCase.builder().setId(CommonUtil.generateId()).setCodeLanguage(codeLanguage)
-                .setdescriptionCh(descriptionCh).setDescriptionEn(descriptionEn).setExpectResultCh(expectResultCh)
+                .setDescriptionCh(descriptionCh).setDescriptionEn(descriptionEn).setExpectResultCh(expectResultCh)
                 .setExpectResultEn(expectResultEn).setNameCh(nameCh).setNameEn(nameEn).setTestStepCh(testStepCh)
                 .setTestStepEn(testStepEn).setType(type).build().toTestCase();
         testCase.setTestSuiteIdList(testSuiteIds);
@@ -186,7 +186,7 @@ public class TestCaseController {
                     required = false) @Size(
                             max = Constant.LENGTH_255) @RequestParam("testSuiteIdList") List<String> testSuiteIds) {
         TestCase testCase = TestCase.builder().setId(id).setCodeLanguage(codeLanguage)
-                .setdescriptionCh(descriptionCh).setDescriptionEn(descriptionEn).setExpectResultCh(expectResultCh)
+                .setDescriptionCh(descriptionCh).setDescriptionEn(descriptionEn).setExpectResultCh(expectResultCh)
                 .setExpectResultEn(expectResultEn).setTestStepCh(testStepCh).setTestStepEn(testStepEn).build()
                 .toTestCase();
         testCase.setTestSuiteIdList(testSuiteIds);

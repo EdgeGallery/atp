@@ -14,10 +14,12 @@
 
 package org.edgegallery.atp.utils;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -87,9 +89,30 @@ public class CommonUtil {
      * @param file csar file
      */
     public static boolean deleteTempFile(String fileId, MultipartFile file) {
-        return new File(new StringBuilder().append(Constant.WORK_TEMP_DIR)
-                .append(File.separator).append(fileId).append(Constant.UNDER_LINE).append(file.getOriginalFilename())
-                .toString()).delete();
+        return new File(new StringBuilder().append(Constant.WORK_TEMP_DIR).append(File.separator).append(fileId)
+                .append(Constant.UNDER_LINE).append(file.getOriginalFilename()).toString()).delete();
+    }
+
+    /**
+     * delete file according to filepath.
+     * 
+     * @param filePath file path
+     */
+    public static void deleteFile(String filePath) {
+        if (!new File(filePath).delete()) {
+            LOGGER.error("delete file failed.");
+        }
+    }
+
+    /**
+     * delete file.
+     * 
+     * @param file file
+     */
+    public static void deleteFile(File file) {
+        if (!file.delete()) {
+            LOGGER.error("delete file failed.");
+        }
     }
 
     /**
@@ -239,8 +262,7 @@ public class CommonUtil {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
-                if (entry.getName().split(Constant.SLASH).length == 1
-                        && fileSuffixValidate("mf", entry.getName())) {
+                if (entry.getName().split(Constant.SLASH).length == 1 && fileSuffixValidate("mf", entry.getName())) {
                     try (BufferedReader br = new BufferedReader(
                             new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
                         String line = "";
@@ -258,10 +280,9 @@ public class CommonUtil {
                         }
                     }
                 }
-                
-                if (entry.getName().split(Constant.SLASH).length == 2
-                        && "SwImageDesc.json"
-                                .equals(entry.getName().substring(entry.getName().lastIndexOf(Constant.SLASH) + 1))) {
+
+                if (entry.getName().split(Constant.SLASH).length == 2 && "SwImageDesc.json"
+                        .equals(entry.getName().substring(entry.getName().lastIndexOf(Constant.SLASH) + 1))) {
                     try (BufferedReader br = new BufferedReader(
                             new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
                         String line = "";
@@ -325,7 +346,7 @@ public class CommonUtil {
             taskTestCase.setReason(response.toString());
         }
     }
-    
+
     /**
      * validate fileName is .pattern
      * 
@@ -349,5 +370,52 @@ public class CommonUtil {
             LOGGER.error(msg);
             throw new IllegalArgumentException(msg);
         }
+    }
+
+    /**
+     * get java class name.
+     * 
+     * @param file java file
+     * @return class name
+     */
+    public static String getClassPath(File file) {
+        String className = Constant.EMPTY;
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(new FileInputStream(file.getCanonicalPath()), StandardCharsets.UTF_8))) {
+            String line = "";
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith("public class")) {
+                    String[] arr = line.split("\\s+");
+                    className = arr[2];
+                    LOGGER.info("className: {}", className);
+                    break;
+                }
+            }
+
+            return className;
+        } catch (IOException e) {
+            LOGGER.error("get class path failed.");
+            throw new IllegalArgumentException("get class path failed.");
+        }
+    }
+
+    /**
+     * set fail response body.
+     * 
+     * @param id id
+     * @param nameEn nameEn
+     * @param type testScenario or testCase or testSuite
+     * @param errCode errCode
+     * @param params params
+     * @return fail response body
+     */
+    public static JSONObject setFailureRes(String id, String nameEn, String type, int errCode, String params) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(Constant.ID, id);
+        jsonObject.put(Constant.NAME_EN, nameEn);
+        jsonObject.put(Constant.TYPE, type);
+        jsonObject.put(Constant.ERROR_CODE, errCode);
+        jsonObject.put(Constant.PARAMS, params);
+        return jsonObject;
     }
 }

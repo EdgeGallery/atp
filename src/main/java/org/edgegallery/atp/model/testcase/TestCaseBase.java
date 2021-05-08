@@ -223,7 +223,7 @@ public class TestCaseBase implements Entity {
             return this;
         }
 
-        public Builder setdescriptionCh(String descriptionCh) {
+        public Builder setDescriptionCh(String descriptionCh) {
             this.descriptionCh = descriptionCh;
             return this;
         }
