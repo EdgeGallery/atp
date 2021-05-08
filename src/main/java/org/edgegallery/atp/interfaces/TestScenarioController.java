@@ -27,6 +27,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
 import org.edgegallery.atp.constant.Constant;
+import org.edgegallery.atp.model.BatchOpsRes;
 import org.edgegallery.atp.model.testscenario.TestScenario;
 import org.edgegallery.atp.model.testscenario.testcase.AllTestScenarios;
 import org.edgegallery.atp.service.TestScenarioService;
@@ -190,6 +191,16 @@ public class TestScenarioController {
     public ResponseEntity<List<AllTestScenarios>> getTestCasesByScenarioIds(@ApiParam(value = "test scenario id list",
             required = true) @RequestParam("scenarioIds") List<String> ids) {
         return ResponseEntity.ok(testScenarioService.getTestCasesByScenarioIds(ids));
+    }
+
+    @PostMapping(value = "/testmodels/action/import", produces = MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "import test model.", response = String.class)
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
+            @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
+    @PreAuthorize("hasRole('ATP_ADMIN')")
+    public ResponseEntity<BatchOpsRes> importTestModels(
+            @ApiParam(value = "test model file", required = true) @RequestPart("file") MultipartFile file) {
+        return ResponseEntity.ok(testScenarioService.importTestModels(file));
     }
 }
 

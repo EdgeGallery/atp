@@ -114,4 +114,18 @@ public class TestScenarioTest {
         int resultDelete = mvcResultDelete.getResponse().getStatus();
         assertEquals(200, resultDelete);
     }
+
+    @WithMockUser(roles = "ATP_ADMIN")
+    @Test
+    public void testModelImportTest() throws Exception {
+        File file = Resources.getResourceAsFile("testfile/batch_import.zip");
+        InputStream zipInputStream = new FileInputStream(file);
+        MultipartFile zipMultiFile = new MockMultipartFile("batch_import.zip", "batch_import.zip",
+                ContentType.APPLICATION_OCTET_STREAM.toString(), zipInputStream);
+        MvcResult mvcResult =
+                mvc.perform(MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/testmodels/action/import")
+                        .file("file", zipMultiFile.getBytes()).with(csrf())).andReturn();
+        int result = mvcResult.getResponse().getStatus();
+        assertEquals(200, result);
+    }
 }

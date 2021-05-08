@@ -16,6 +16,7 @@ package org.edgegallery.atp.service;
 
 import java.io.FileNotFoundException;
 import java.util.List;
+import org.edgegallery.atp.model.BatchOpsRes;
 import org.edgegallery.atp.model.testscenario.TestScenario;
 import org.edgegallery.atp.model.testscenario.testcase.AllTestScenarios;
 import org.springframework.web.multipart.MultipartFile;
@@ -69,4 +70,12 @@ public interface TestScenarioService {
      * @return test scenario info
      */
     List<AllTestScenarios> getTestCasesByScenarioIds(List<String> ids);
+
+    /**
+     * import test models to db.
+     * 
+     * @param file file zip package
+     * @return batch option response body
+     */
+    BatchOpsRes importTestModels(MultipartFile file);
 }

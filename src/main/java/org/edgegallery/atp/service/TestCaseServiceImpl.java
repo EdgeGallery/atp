@@ -14,14 +14,11 @@
 
 package org.edgegallery.atp.service;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
@@ -30,6 +27,7 @@ import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.model.testsuite.TestSuite;
 import org.edgegallery.atp.repository.testcase.TestCaseRepository;
 import org.edgegallery.atp.repository.testsuite.TestSuiteRepository;
+import org.edgegallery.atp.utils.CommonUtil;
 import org.edgegallery.atp.utils.FileChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -130,7 +128,7 @@ public class TestCaseServiceImpl implements TestCaseService {
             testCase.setFilePath(filePath);
 
             if (Constant.JAVA.equals(testCase.getCodeLanguage())) {
-                testCase.setClassName(getClassPath(result));
+                testCase.setClassName(CommonUtil.getClassPath(result));
             }
             testCaseRepository.insert(testCase);
         } catch (IOException e) {
@@ -153,13 +151,11 @@ public class TestCaseServiceImpl implements TestCaseService {
             if (null != file && StringUtils.isNotBlank(file.getOriginalFilename())
                     && StringUtils.isNotBlank(file.getName()) && 0 != (int) file.getSize()) {
                 String filePath = dbData.getFilePath();
-                if (!new File(filePath).delete()) {
-                    LOGGER.error("delete file failed.");
-                }
+                CommonUtil.deleteFile(filePath);
                 File result = new File(filePath);
                 file.transferTo(result);
                 if (Constant.JAVA.equals(testCase.getCodeLanguage())) {
-                    testCase.setClassName(getClassPath(result));
+                    testCase.setClassName(CommonUtil.getClassPath(result));
                 }
             }
 
@@ -177,9 +173,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         if (null != testCase) {
             String filePath = testCase.getFilePath();
             testCaseRepository.delete(id);
-            if (!new File(filePath).delete()) {
-                LOGGER.error("delete file failed.");
-            }
+            CommonUtil.deleteFile(filePath);
         }
         return true;
     }
@@ -195,27 +189,6 @@ public class TestCaseServiceImpl implements TestCaseService {
         return response;
     }
 
-    private String getClassPath(File file) {
-        String className = Constant.EMPTY;
-        try (BufferedReader reader =
-                new BufferedReader(
-                        new InputStreamReader(new FileInputStream(file.getCanonicalPath()), StandardCharsets.UTF_8))) {
-            String line = "";
-            while ((line = reader.readLine()) != null) {
-                if (line.startsWith("public class")) {
-                    String[] arr = line.split("\\s+");
-                    className = arr[2];
-                    LOGGER.info("className: {}", className);
-                    break;
-                }
-            }
-
-            return className;
-        } catch (IOException e) {
-            LOGGER.error("get class path failed.");
-            throw new IllegalArgumentException("get class path failed.");
-        }
-    }
 
     @Override
     public ResponseEntity<InputStreamResource> downloadTestCase(String id) {
