@@ -15,10 +15,12 @@
 package org.edgegallery.atp.model.testcase;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.util.CollectionUtils;
 
 /**
  * Test Case Request Model.
@@ -45,6 +47,7 @@ public class TestCase extends TestCaseBase {
                         .setFilePath(this.getFilePath()).setHashCode(this.getHashCode()).setId(this.getId())
                         .setNameCh(this.getNameCh()).setNameEn(this.getNameEn()).setTestStepCh(this.getTestStepCh())
                         .setTestStepEn(this.getTestStepEn()).setType(this.getType()).build().toTestCasePo();
+        testSuiteIdList = CollectionUtils.isEmpty(testSuiteIdList)?new ArrayList<String>():this.testSuiteIdList;
         testCasePo.setTestSuiteIdList(this.getTestSuiteIdList().stream().collect(Collectors.joining(",")));
         return testCasePo;
     }

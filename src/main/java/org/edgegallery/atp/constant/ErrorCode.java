@@ -16,12 +16,44 @@ package org.edgegallery.atp.constant;
 
 public interface ErrorCode {
     /**
+     * DB error.
+     */
+    int DB_ERROR = 40100;
+
+    String DB_ERROR_MSG = "DB error";
+
+    /**
      * test scenario name in test suite not exists.
      */
     int TEST_SUITE_SCENARIO_NAME_NOT_EXISTS = 40110;
+
+    String TEST_SUITE_SCENARIO_NAME_NOT_EXISTS_MSG = "test scenario name in test suite not exists.";
 
     /**
      * test suite name in test case not exists.
      */
     int TEST_CASE_TEST_SUITE_NAME_NOT_EXISTS = 40111;
+
+    String TEST_CASE_TEST_SUITE_NAME_NOT_EXISTS_MSG = "test suite name in test case not exists.";
+
+    /**
+     * name already exists.
+     */
+    int NAME_EXISTS = 40112;
+
+    String NAME_EXISTS_MSG = "name already exists";
+
+    /**
+     * file operation error.
+     */
+    int FILE_OPERATION_FAILED = 40113;
+
+    String FILE_OPERATION_FAILED_MSG = "file operation error";
+
+    /**
+     * there does not exists test case script in test case file dir
+     */
+    int TEST_CASE_NOT_EXISTS_IN_DIR = 40114;
+
+    String TEST_CASE_NOT_EXISTS_IN_DIR_MSG = "there does not exists test case script in test case file dir";
 }

@@ -406,16 +406,30 @@ public class CommonUtil {
      * @param nameEn nameEn
      * @param type testScenario or testCase or testSuite
      * @param errCode errCode
+     * @param errMsg errMsg
      * @param params params
      * @return fail response body
      */
-    public static JSONObject setFailureRes(String id, String nameEn, String type, int errCode, String params) {
+    public static JSONObject setFailureRes(String id, String nameEn, String type, int errCode, String errMsg,
+            String params) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put(Constant.ID, id);
         jsonObject.put(Constant.NAME_EN, nameEn);
         jsonObject.put(Constant.TYPE, type);
         jsonObject.put(Constant.ERROR_CODE, errCode);
+        jsonObject.put(Constant.ERROR_MSG, errMsg);
         jsonObject.put(Constant.PARAMS, params);
         return jsonObject;
+    }
+
+    /**
+     * set param value, if param equal null, return defaultValue.
+     * 
+     * @param param param
+     * @param defaultValue defaultValue
+     * @return param
+     */
+    public static String setParamOrDefault(String param, String defaultValue) {
+        return null == param ? defaultValue : param;
     }
 }

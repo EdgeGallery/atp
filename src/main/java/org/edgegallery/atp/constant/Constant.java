@@ -215,6 +215,8 @@ public interface Constant {
 
     String ERROR_CODE = "errCode";
 
+    String ERROR_MSG = "errMsg";
+
     String PARAMS = "params";
 
     String TEST_SCENARIO = "testScenario";
@@ -222,6 +224,4 @@ public interface Constant {
     String TEST_SUITE = "testSuite";
 
     String TEST_CASE = "testCase";
-
-    int DEFAULT_ERR_CODE = 0;
 }

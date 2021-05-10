@@ -87,7 +87,7 @@ public class TestScenarioController {
             @ApiParam(value = "test scenario icon", required = true) @RequestPart("icon") MultipartFile icon) {
         TestScenario testScenario =
                 TestScenario.builder().setId(CommonUtil.generateId()).setDescriptionEn(descriptionEn)
-                        .setdescriptionCh(descriptionZn).setNameEn(nameEn).setnameCh(nameCh).build();
+                        .setDescriptionCh(descriptionZn).setNameEn(nameEn).setNameCh(nameCh).build();
         return ResponseEntity.ok(testScenarioService.createTestScenario(testScenario, icon));
     }
 
@@ -121,7 +121,7 @@ public class TestScenarioController {
                             max = Constant.LENGTH_255) @RequestParam("descriptionEn") String descriptionEn,
             @ApiParam(value = "test scenario icon", required = false) @RequestPart("icon") MultipartFile icon) {
         TestScenario testScenario = TestScenario.builder().setId(id).setDescriptionEn(descriptionEn)
-                .setdescriptionCh(descriptionZn).setNameEn(nameEn).setnameCh(nameCh).build();
+                .setDescriptionCh(descriptionZn).setNameEn(nameEn).setNameCh(nameCh).build();
         return ResponseEntity.ok(testScenarioService.updateTestScenario(testScenario, icon));
     }
 

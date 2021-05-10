@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.collections4.CollectionUtils;
 import org.edgegallery.atp.constant.Constant;
 
 @Getter
@@ -50,7 +51,9 @@ public class TestSuitePo {
         this.nameEn = testSuite.getNameEn();
         this.descriptionCh = testSuite.getDescriptionCh();
         this.descriptionEn = testSuite.getDescriptionEn();
-        scenarioIdList = testSuite.getScenarioIdList().stream().collect(Collectors.joining(Constant.COMMA));
+        if (CollectionUtils.isNotEmpty(testSuite.getScenarioIdList())) {
+            scenarioIdList = testSuite.getScenarioIdList().stream().collect(Collectors.joining(Constant.COMMA));
+        }
     }
 
     /**
