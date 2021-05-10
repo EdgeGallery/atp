@@ -33,6 +33,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.edgegallery.atp.constant.Constant;
+import org.edgegallery.atp.constant.ErrorCode;
 import org.edgegallery.atp.model.BatchOpsRes;
 import org.edgegallery.atp.model.file.AtpFile;
 import org.edgegallery.atp.model.testcase.TestCase;
@@ -246,7 +247,7 @@ public class TestScenarioServiceImpl implements TestScenarioService {
                 if (entryName.endsWith(".xlsx") || entryName.endsWith(".xls")) {
                     InputStream inputStream = zipFile.getInputStream(entry);
                     Workbook workbook = importMgr.getWorkbook(inputStream);
-                    testScenarioList = importMgr.analysizeTestScenarioSheet(workbook);
+                    testScenarioList = importMgr.analysizeTestScenarioSheet(workbook, failures, failureIds);
                     // insert db first, because in analysizeTestSuiteSheet needs to query test scenario
                     saveScenario2DB(testScenarioList, failures, failureIds);
                     testSuiteList = importMgr.analysizeTestSuiteSheet(workbook, failures, failureIds);
@@ -326,33 +327,45 @@ public class TestScenarioServiceImpl implements TestScenarioService {
                 // fail test cases do not need to update
                 if (!failureIds.contains(testCase.getId())) {
                     File orgFile = testCaseFile.get(testCase.getNameEn());
-                    String testCaseFilePath = Constant.BASIC_TEST_CASE_PATH.concat(testCase.getNameEn())
-                            .concat(Constant.UNDER_LINE).concat(testCase.getId());
-                    File targetFile = new File(testCaseFilePath);
-                    try {
-                        FileUtils.copyFile(orgFile, targetFile);
-                        testCase.setFilePath(testCaseFilePath);
-                        if (Constant.JAVA.equals(testCase.getCodeLanguage())) {
-                            testCase.setClassName(CommonUtil.getClassPath(targetFile));
-                        }
+                    if (null != orgFile) {
+                        // do not has test case in test case scenario
+                        String testCaseFilePath = Constant.BASIC_TEST_CASE_PATH.concat(testCase.getNameEn())
+                                .concat(Constant.UNDER_LINE).concat(testCase.getId());
+                        File targetFile = new File(testCaseFilePath);
+                        try {
+                            FileUtils.copyFile(orgFile, targetFile);
+                            testCase.setFilePath(testCaseFilePath);
+                            if (Constant.JAVA.equals(testCase.getCodeLanguage())) {
+                                testCase.setClassName(CommonUtil.getClassPath(targetFile));
+                            }
 
-                        testCaseRepository.update(testCase);
-                    } catch (IOException e) {
-                        LOGGER.error("copy input stream to file failed. {}", e);
+                            testCaseRepository.update(testCase);
+                        } catch (IOException e) {
+                            LOGGER.error("copy input stream to file failed. {}", e);
+                            failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(),
+                                    Constant.TEST_CASE, ErrorCode.FILE_OPERATION_FAILED,
+                                    ErrorCode.FILE_OPERATION_FAILED_MSG, null));
+                            failureIds.add(testCase.getId());
+                            // roll back insert
+                            testCaseRepository.delete(testCase.getId());
+                        } catch (IllegalArgumentException e) {
+                            LOGGER.error("update repository failed. ");
+                            failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(),
+                                    Constant.TEST_CASE, ErrorCode.DB_ERROR, ErrorCode.DB_ERROR_MSG, null));
+                            failureIds.add(testCase.getId());
+                            // roll back insert
+                            testCaseRepository.delete(testCase.getId());
+                        } finally {
+                            CommonUtil.deleteFile(orgFile);
+                        }
+                    } else {
+                        // there is not test case script in test case file dir
+                        LOGGER.error("there is not test case {} script in test case file dir", testCase.getNameEn());
                         failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(),
-                                Constant.TEST_CASE, Constant.DEFAULT_ERR_CODE, null));
+                                Constant.TEST_CASE, ErrorCode.TEST_CASE_NOT_EXISTS_IN_DIR,
+                                ErrorCode.TEST_CASE_NOT_EXISTS_IN_DIR_MSG, null));
                         failureIds.add(testCase.getId());
-                        // roll back insert
                         testCaseRepository.delete(testCase.getId());
-                    } catch (IllegalArgumentException e) {
-                        LOGGER.error("update repository failed. ");
-                        failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getId(), Constant.TEST_CASE,
-                                Constant.DEFAULT_ERR_CODE, null));
-                        failureIds.add(testCase.getId());
-                        // roll back insert
-                        testCaseRepository.delete(testCase.getId());
-                    } finally {
-                        CommonUtil.deleteFile(orgFile);
                     }
                 }
             }
@@ -384,14 +397,15 @@ public class TestScenarioServiceImpl implements TestScenarioService {
                     } catch (IOException e) {
                         LOGGER.error("copy input stream to file failed. {}", e);
                         failures.add(CommonUtil.setFailureRes(testScenario.getId(), testScenario.getNameEn(),
-                                Constant.TEST_SCENARIO, Constant.DEFAULT_ERR_CODE, null));
+                                Constant.TEST_SCENARIO, ErrorCode.FILE_OPERATION_FAILED,
+                                ErrorCode.FILE_OPERATION_FAILED_MSG, null));
                         failureIds.add(testScenario.getId());
                         // roll back insert
                         testScenarioRepository.deleteTestScenario(testScenario.getId());
                     } catch (IllegalArgumentException e) {
                         LOGGER.error("update repository failed. ");
                         failures.add(CommonUtil.setFailureRes(testScenario.getId(), testScenario.getId(),
-                                Constant.TEST_SCENARIO, Constant.DEFAULT_ERR_CODE, null));
+                                Constant.TEST_SCENARIO, ErrorCode.DB_ERROR, ErrorCode.DB_ERROR_MSG, null));
                         failureIds.add(testScenario.getId());
                         // roll back insert
                         testScenarioRepository.deleteTestScenario(testScenario.getId());
@@ -413,13 +427,16 @@ public class TestScenarioServiceImpl implements TestScenarioService {
     private void saveScenario2DB(List<TestScenario> testScenarioList, List<JSONObject> failures,
             Set<String> failureIds) {
         testScenarioList.forEach(testScenario -> {
-            try {
-                testScenarioRepository.createTestScenario(testScenario);
-            } catch (IllegalArgumentException e) {
-                LOGGER.error("create test scenario {} failed.", testScenario.getNameEn());
-                failures.add(CommonUtil.setFailureRes(testScenario.getId(), testScenario.getNameEn(),
-                        Constant.TEST_SCENARIO, Constant.DEFAULT_ERR_CODE, null));
-                failureIds.add(testScenario.getId());
+            if (!failureIds.contains(testScenario.getId())) {
+                try {
+                    testScenarioRepository.createTestScenario(testScenario);
+                } catch (IllegalArgumentException e) {
+                    LOGGER.error("create test scenario {} failed.", testScenario.getNameEn());
+                    failures.add(CommonUtil.setFailureRes(testScenario.getId(), testScenario.getNameEn(),
+                            Constant.TEST_SCENARIO, ErrorCode.DB_ERROR, ErrorCode.DB_ERROR_MSG,
+                            Constant.TEST_SCENARIO));
+                    failureIds.add(testScenario.getId());
+                }
             }
         });
     }
@@ -433,13 +450,15 @@ public class TestScenarioServiceImpl implements TestScenarioService {
      */
     private void saveTestSuite2DB(List<TestSuite> testSuiteList, List<JSONObject> failures, Set<String> failureIds) {
         testSuiteList.forEach(testSuite -> {
-            try {
-                testSuiteRepository.createTestSuite(testSuite);
-            } catch (IllegalArgumentException e) {
-                LOGGER.error("create test suite {} failed.", testSuite.getNameEn());
-                failures.add(CommonUtil.setFailureRes(testSuite.getId(), testSuite.getNameEn(), Constant.TEST_SUITE,
-                        Constant.DEFAULT_ERR_CODE, null));
-                failureIds.add(testSuite.getId());
+            if (!failureIds.contains(testSuite.getId())) {
+                try {
+                    testSuiteRepository.createTestSuite(testSuite);
+                } catch (IllegalArgumentException e) {
+                    LOGGER.error("create test suite {} failed.", testSuite.getNameEn());
+                    failures.add(CommonUtil.setFailureRes(testSuite.getId(), testSuite.getNameEn(), Constant.TEST_SUITE,
+                            ErrorCode.DB_ERROR, ErrorCode.DB_ERROR_MSG, Constant.TEST_SUITE));
+                    failureIds.add(testSuite.getId());
+                }
             }
         });
     }
@@ -453,13 +472,15 @@ public class TestScenarioServiceImpl implements TestScenarioService {
      */
     private void saveTestCase2DB(List<TestCase> testCaseList, List<JSONObject> failures, Set<String> failureIds) {
         testCaseList.forEach(testCase -> {
-            try {
-                testCaseRepository.insert(testCase);
-            } catch (IllegalArgumentException e) {
-                LOGGER.error("create test case {} failed.", testCase.getNameEn());
-                failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(), Constant.TEST_CASE,
-                        Constant.DEFAULT_ERR_CODE, null));
-                failureIds.add(testCase.getId());
+            if (!failureIds.contains(testCase.getId())) {
+                try {
+                    testCaseRepository.insert(testCase);
+                } catch (IllegalArgumentException e) {
+                    LOGGER.error("create test case {} failed.", testCase.getNameEn());
+                    failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(), Constant.TEST_CASE,
+                            ErrorCode.DB_ERROR, ErrorCode.DB_ERROR_MSG, Constant.TEST_CASE));
+                    failureIds.add(testCase.getId());
+                }
             }
         });
     }
@@ -469,7 +490,7 @@ public class TestScenarioServiceImpl implements TestScenarioService {
      * 
      * @param testScenario test scenario model
      */
-    private void checkNameExists(TestScenario testScenario) {
+    public void checkNameExists(TestScenario testScenario) {
         if (null != testScenarioRepository.getTestScenarioByName(testScenario.getNameCh(), null)
                 || null != testScenarioRepository.getTestScenarioByName(null, testScenario.getNameEn())) {
             String msg = "name of test scenario already exist.";
