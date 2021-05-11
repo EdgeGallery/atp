@@ -84,6 +84,11 @@ public class TestModelImportMgr {
                     .setNameEn(CommonUtil.setParamOrDefault(nameEn, nameCh))
                     .setDescriptionCh(CommonUtil.setParamOrDefault(descriptionCh, descriptionEn))
                     .setDescriptionEn(CommonUtil.setParamOrDefault(descriptionEn, descriptionCh)).build();
+
+            if (!checkTestScenarioField(testScenario, failures, failureIds, testScenarioImportList)) {
+                continue;
+            }
+
             try {
                 if (null != testScenarioRepository.getTestScenarioByName(nameCh, null)
                         || null != testScenarioRepository.getTestScenarioByName(null, nameEn)) {
@@ -131,13 +136,14 @@ public class TestModelImportMgr {
                     .setNameEn(CommonUtil.setParamOrDefault(nameEn, nameCh))
                     .setDescriptionCh(CommonUtil.setParamOrDefault(descriptionCh, descriptionEn))
                     .setDescriptionEn(CommonUtil.setParamOrDefault(descriptionEn, descriptionCh)).build();
+            List<String> scenarioIdList = new ArrayList<String>();
+            String scenarioNameList = getCellValue(row, 4);
 
-            if (!testSuiteNameCheck(testSuite, failures, failureIds, testSuiteImportList)) {
+            if (!checkTestSuiteField(testSuite, failures, failureIds, testSuiteImportList, scenarioNameList)
+                    || !testSuiteNameCheck(testSuite, failures, failureIds, testSuiteImportList)) {
                 continue;
             }
 
-            List<String> scenarioIdList = new ArrayList<String>();
-            String scenarioNameList = getCellValue(row, 4);
             if (StringUtils.isNotBlank(scenarioNameList)) {
                 String[] nameArray = scenarioNameList.split(Constant.COMMA);
                 for (String scenarioName : nameArray) {
@@ -201,13 +207,14 @@ public class TestModelImportMgr {
                     .setExpectResultEn(CommonUtil.setParamOrDefault(expectResultEn, expectResultCh))
                     .setTestStepCh(CommonUtil.setParamOrDefault(testStepCh, testSepEn))
                     .setTestStepEn(CommonUtil.setParamOrDefault(testSepEn, testStepCh)).build().toTestCase();
+            List<String> suiteIdList = new ArrayList<String>();
+            String suiteNameList = getCellValue(row, 10);
 
-            if (!testCaseNameCheck(testCase, failures, failureIds, testCaseImportList)) {
+            if (!checkTestCaseField(testCase, failures, failureIds, testCaseImportList, suiteNameList)
+                    || !testCaseNameCheck(testCase, failures, failureIds, testCaseImportList)) {
                 continue;
             }
 
-            List<String> suiteIdList = new ArrayList<String>();
-            String suiteNameList = getCellValue(row, 10);
             if (StringUtils.isNotBlank(suiteNameList)) {
                 String[] nameArray = suiteNameList.split(Constant.COMMA);
                 for (String suiteName : nameArray) {
@@ -245,6 +252,130 @@ public class TestModelImportMgr {
      */
     private String getCellValue(Row row, int index) {
         return null == row.getCell(index) ? null : row.getCell(index).getStringCellValue();
+    }
+
+    /**
+     * check test scenario filed.
+     * 
+     * @param testScenario testScenario
+     * @param failures failures
+     * @param failureIds failureIds
+     * @param testScenarioImportList testScenarioImportList
+     * @return check passed
+     */
+    private boolean checkTestScenarioField(TestScenario testScenario, List<JSONObject> failures, Set<String> failureIds,
+            List<TestScenario> testScenarioImportList) {
+        if (!CommonUtil.isLengthOk(testScenario.getNameCh(), Constant.LENGTH_64)
+                || !CommonUtil.isLengthOk(testScenario.getNameEn(), Constant.LENGTH_64)
+                || !CommonUtil.isLengthOk(testScenario.getDescriptionCh(), Constant.LENGTH_255)
+                || !CommonUtil.isLengthOk(testScenario.getDescriptionEn(), Constant.LENGTH_255)) {
+            failures.add(CommonUtil.setFailureRes(testScenario.getId(), testScenario.getNameEn(),
+                    Constant.TEST_SCENARIO, ErrorCode.LENGTH_CHECK_FAILED, ErrorCode.LENGTH_CHECK_FAILED_MSG, null));
+            failureIds.add(testScenario.getId());
+            testScenarioImportList.add(testScenario);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * check test suite field.
+     * 
+     * @param testSuite testSuite
+     * @param failures failures
+     * @param failureIds failureIds
+     * @param testSuiteImportList testSuiteImportList
+     * @param scenarioNameList scenarioNameList
+     * @return check test suite passed
+     */
+    private boolean checkTestSuiteField(TestSuite testSuite, List<JSONObject> failures, Set<String> failureIds,
+            List<TestSuite> testSuiteImportList, String scenarioNameList) {
+        if (!CommonUtil.isLengthOk(testSuite.getNameCh(), Constant.LENGTH_64)
+                || !CommonUtil.isLengthOk(testSuite.getNameEn(), Constant.LENGTH_64)
+                || !CommonUtil.isLengthOk(testSuite.getDescriptionCh(), Constant.LENGTH_255)
+                || !CommonUtil.isLengthOk(testSuite.getDescriptionEn(), Constant.LENGTH_255)) {
+            failures.add(CommonUtil.setFailureRes(testSuite.getId(), testSuite.getNameEn(), Constant.TEST_SUITE,
+                    ErrorCode.LENGTH_CHECK_FAILED, ErrorCode.LENGTH_CHECK_FAILED_MSG, null));
+            failureIds.add(testSuite.getId());
+            testSuiteImportList.add(testSuite);
+            return false;
+        }
+
+        String[] scenarioNameArray = scenarioNameList.split(Constant.COMMA);
+        for (String scenarioName : scenarioNameArray) {
+            if (!CommonUtil.isLengthOk(scenarioName, Constant.LENGTH_64)) {
+                failures.add(CommonUtil.setFailureRes(testSuite.getId(), testSuite.getNameEn(), Constant.TEST_SUITE,
+                        ErrorCode.LENGTH_CHECK_FAILED, ErrorCode.LENGTH_CHECK_FAILED_MSG, Constant.TEST_SCENARIO));
+                failureIds.add(testSuite.getId());
+                testSuiteImportList.add(testSuite);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * check test case field.
+     * 
+     * @param testCase testCase
+     * @param failures failures
+     * @param failureIds failureIds
+     * @param testCaseImportList testCaseImportList
+     * @param testSuiteNameList testSuiteNameList
+     * @return test case field checking passed
+     */
+    private boolean checkTestCaseField(TestCase testCase, List<JSONObject> failures, Set<String> failureIds,
+            List<TestCase> testCaseImportList, String testSuiteNameList) {
+        if (!CommonUtil.isLengthOk(testCase.getNameCh(), Constant.LENGTH_64)
+                || !CommonUtil.isLengthOk(testCase.getNameEn(), Constant.LENGTH_64)
+                || !CommonUtil.isLengthOk(testCase.getDescriptionCh(), Constant.LENGTH_255)
+                || !CommonUtil.isLengthOk(testCase.getDescriptionEn(), Constant.LENGTH_255)
+                || !CommonUtil.isLengthOk(testCase.getExpectResultCh(), Constant.LENGTH_255)
+                || !CommonUtil.isLengthOk(testCase.getExpectResultEn(), Constant.LENGTH_255)
+                || !CommonUtil.isLengthOk(testCase.getTestStepCh(), Constant.LENGTH_255)
+                || !CommonUtil.isLengthOk(testCase.getTestStepEn(), Constant.LENGTH_255)) {
+            failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(), Constant.TEST_CASE,
+                    ErrorCode.LENGTH_CHECK_FAILED, ErrorCode.LENGTH_CHECK_FAILED_MSG, null));
+            failureIds.add(testCase.getId());
+            testCaseImportList.add(testCase);
+            return false;
+        }
+
+        // test suite its belong to check
+        String[] testSuiteNameArray = testSuiteNameList.split(Constant.COMMA);
+        for (String testSuiteName : testSuiteNameArray) {
+            if (!CommonUtil.isLengthOk(testSuiteName, Constant.LENGTH_64)) {
+                failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(), Constant.TEST_CASE,
+                        ErrorCode.LENGTH_CHECK_FAILED, ErrorCode.LENGTH_CHECK_FAILED_MSG, Constant.TEST_SUITE));
+                failureIds.add(testCase.getId());
+                testCaseImportList.add(testCase);
+                return false;
+            }
+        }
+
+        // test case type check
+        if (!Constant.TASK_TYPE_AUTOMATIC.equalsIgnoreCase(testCase.getType())
+                && !Constant.TASK_TYPE_MANUAL.equalsIgnoreCase(testCase.getType())) {
+            failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(), Constant.TEST_CASE,
+                    ErrorCode.TEST_CASE_TYPE_ERROR, ErrorCode.TEST_CASE_TYPE_ERROR_MSG, null));
+            failureIds.add(testCase.getId());
+            testCaseImportList.add(testCase);
+            return false;
+        }
+
+        // test case language check
+        if (!Constant.JAR.equalsIgnoreCase(testCase.getCodeLanguage())
+                && !Constant.PYTHON.equalsIgnoreCase(testCase.getCodeLanguage())
+                && !Constant.JAVA.equalsIgnoreCase(testCase.getCodeLanguage())) {
+            failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(), Constant.TEST_CASE,
+                    ErrorCode.TEST_CASE_LANGUAGE_ERROR, ErrorCode.TEST_CASE_LANGUAGE_ERROR_MSG, null));
+            failureIds.add(testCase.getId());
+            testCaseImportList.add(testCase);
+            return false;
+        }
+
+        return true;
     }
 
     /**

@@ -51,9 +51,30 @@ public interface ErrorCode {
     String FILE_OPERATION_FAILED_MSG = "file operation error";
 
     /**
-     * there does not exists test case script in test case file dir
+     * there does not exists test case script in test case file dir.
      */
     int TEST_CASE_NOT_EXISTS_IN_DIR = 40114;
 
     String TEST_CASE_NOT_EXISTS_IN_DIR_MSG = "there does not exists test case script in test case file dir";
+
+    /**
+     * length check failed.
+     */
+    int LENGTH_CHECK_FAILED = 40115;
+
+    String LENGTH_CHECK_FAILED_MSG = "length check failed";
+    
+    /**
+     * test case type error, must be: automatic or manual.
+     */
+    int TEST_CASE_TYPE_ERROR = 40116;
+    
+    String TEST_CASE_TYPE_ERROR_MSG = "test case type error, must be: automatic or manual";
+
+    /**
+     * test case language error, must be: java, python or jar.
+     */
+    int TEST_CASE_LANGUAGE_ERROR = 40117;
+
+    String TEST_CASE_LANGUAGE_ERROR_MSG = "test case language error, must be: java, python or jar";
 }
