@@ -432,4 +432,19 @@ public class CommonUtil {
     public static String setParamOrDefault(String param, String defaultValue) {
         return null == param ? defaultValue : param;
     }
+
+    /**
+     * param length not bigger than length.
+     * 
+     * @param param param
+     * @param length standard length
+     * @return param length not bigger than length
+     */
+    public static boolean isLengthOk(String param, int length) {
+        if (param.length() > length) {
+            LOGGER.error("param {} size can not longer than {}", param, length);
+            return false;
+        }
+        return true;
+    }
 }

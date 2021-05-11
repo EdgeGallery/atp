@@ -47,7 +47,7 @@ public class TestCase extends TestCaseBase {
                         .setFilePath(this.getFilePath()).setHashCode(this.getHashCode()).setId(this.getId())
                         .setNameCh(this.getNameCh()).setNameEn(this.getNameEn()).setTestStepCh(this.getTestStepCh())
                         .setTestStepEn(this.getTestStepEn()).setType(this.getType()).build().toTestCasePo();
-        testSuiteIdList = CollectionUtils.isEmpty(testSuiteIdList)?new ArrayList<String>():this.testSuiteIdList;
+        testSuiteIdList = CollectionUtils.isEmpty(testSuiteIdList) ? new ArrayList<String>() : this.testSuiteIdList;
         testCasePo.setTestSuiteIdList(this.getTestSuiteIdList().stream().collect(Collectors.joining(",")));
         return testCasePo;
     }
