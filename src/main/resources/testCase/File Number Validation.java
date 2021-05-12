@@ -19,13 +19,13 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class FileNumberValidation {
-    private static final String FILE_TOO_MANY = "file number must less than 1024";
+    private static final String FILE_TOO_MANY = "file number must less than 1024.";
 
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
 
     public String execute(String filePath, Map<String, String> context) {
         try {
-            Thread.sleep(500);
+            Thread.sleep(800);
         } catch (InterruptedException e) {
         }
         

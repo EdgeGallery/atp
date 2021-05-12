@@ -32,6 +32,11 @@ public class UnzipFileSizeValidation {
     String WORK_TEMP_DIR = getDir() + File.separator + "temp/fileNumber";
 
     public String execute(String filePath, Map<String, String> context) {
+        try {
+            Thread.sleep(800);
+        } catch (InterruptedException e1) {
+        }
+        
         ZipEntry entry;
         long total = 0;
         byte[] data = new byte[BUFFER];

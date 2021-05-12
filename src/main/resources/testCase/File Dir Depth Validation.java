@@ -20,14 +20,13 @@ import java.util.zip.ZipFile;
 
 public class FileDirDepthValidation {
 
-    private static final String FILE_DEPTH_OUT_OF_LIMIT = "file dir depth must less than 10";
+    private static final String FILE_DEPTH_OUT_OF_LIMIT = "file dir depth must less than 10.";
 
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
 
-
     public String execute(String filePath, Map<String, String> context) {
         try {
-            Thread.sleep(500);
+            Thread.sleep(800);
         } catch (InterruptedException e) {
         }
         
