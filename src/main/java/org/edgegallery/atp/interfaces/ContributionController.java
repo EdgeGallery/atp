@@ -22,6 +22,7 @@ import io.swagger.annotations.ApiResponses;
 import java.util.List;
 import java.util.Map;
 import javax.validation.constraints.Pattern;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
 import org.edgegallery.atp.constant.Constant;
@@ -29,6 +30,7 @@ import org.edgegallery.atp.model.contribution.Contribution;
 import org.edgegallery.atp.model.task.IdList;
 import org.edgegallery.atp.service.ContributionService;
 import org.edgegallery.atp.utils.CommonUtil;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
@@ -85,6 +87,7 @@ public class ContributionController {
     /**
      * query all contribution.
      * 
+     * @param name contribution name
      * @return contribution list
      */
     @GetMapping(value = "/contributions", produces = MediaType.APPLICATION_JSON)
@@ -92,8 +95,9 @@ public class ContributionController {
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_ADMIN')")
-    public ResponseEntity<List<Contribution>> queryAllContribution() {
-        return ResponseEntity.ok(contributionService.getAllContribution());
+    public ResponseEntity<List<Contribution>> queryAllContribution(
+            @ApiParam(value = "contribution name") @Length(max = Constant.LENGTH_64) @QueryParam("name") String name) {
+        return ResponseEntity.ok(contributionService.getAllContribution(name));
     }
 
     /**

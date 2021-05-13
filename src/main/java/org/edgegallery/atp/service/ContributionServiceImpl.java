@@ -81,8 +81,8 @@ public class ContributionServiceImpl implements ContributionService {
 
 
     @Override
-    public List<Contribution> getAllContribution() {
-        List<Contribution> contributionList = contributionRepository.getAllContributions();
+    public List<Contribution> getAllContribution(String name) {
+        List<Contribution> contributionList = contributionRepository.getAllContributions(name);
         LOGGER.info("query all contributions successfully.");
         return contributionList;
     }

@@ -31,6 +31,12 @@
             resultType="org.edgegallery.atp.model.contribution.Contribution"
             parameterType="String">
         select * from contribution_table
+       <where>
+          <if test="nameEn != null and nameEn !=''">
+             name ~* #{name}
+          </if>
+        </where>
+        ORDER BY name ASC
     </select>
     
     <delete id="deleteContributionsById">

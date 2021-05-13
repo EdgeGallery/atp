@@ -44,9 +44,9 @@ public class ContributionRepositoryImpl implements ContributionRepository {
     }
 
     @Override
-    public List<Contribution> getAllContributions() {
+    public List<Contribution> getAllContributions(String name) {
         try {
-            return contributionMapper.getAllContributions();
+            return contributionMapper.getAllContributions(name);
         } catch (Exception e) {
             LOGGER.error("query all contributions failed. {}", e);
             throw new IllegalArgumentException("query all contributions failed.");

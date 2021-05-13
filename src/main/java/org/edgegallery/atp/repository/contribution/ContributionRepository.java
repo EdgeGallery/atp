@@ -30,9 +30,10 @@ public interface ContributionRepository {
     /**
      * get all contributions.
      * 
+     * @param name contribution name
      * @return contribution list
      */
-    List<Contribution> getAllContributions();
+    List<Contribution> getAllContributions(String name);
 
     /**
      * batch delete contributions by contribution ids.

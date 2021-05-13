@@ -32,9 +32,10 @@ public interface ContributionMapper {
     /**
      * get all contributions.
      * 
-     * @return
+     * @param name contribution name
+     * @return contribution list
      */
-    List<Contribution> getAllContributions();
+    List<Contribution> getAllContributions(String name);
 
     /**
      * delete contributions by id.
