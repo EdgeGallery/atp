@@ -34,9 +34,10 @@ public interface ContributionService {
     /**
      * get all contributions.
      * 
-     * @return Contribution list
+     * @param name contribution name
+     * @returnContribution list
      */
-    List<Contribution> getAllContribution();
+    List<Contribution> getAllContribution(String name);
 
     /**
      * batch delete contributions by id list.
