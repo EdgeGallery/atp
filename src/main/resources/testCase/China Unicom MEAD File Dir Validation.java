@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Huawei Technologies Co., Ltd.
+ * Copyright 2021 Huawei Technologies Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -19,25 +19,22 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 /**
- * Implementation of validating .mf file must be in root directory.
+ * package must contain MEAD file in root dir.
  */
-public class SuffixTestCaseInner {
-
+public class MEADFileDirValidation {
+    private static final String MEAD_NOT_EXISTS = "root path must contain MEAD file dir.";
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
 
-    private static final String FILE_NOT_EXIST = ".mf file may not exist or it do not in the root directory.";
-
-    private static final String MF_FILE_NUMBER_TOO_MUCH = "there can be only one mf file in the root directory.";
-
     public String execute(String filePath, Map<String, String> context) {
-        int num = 0;
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e1) {
+        }
         try (ZipFile zipFile = new ZipFile(filePath)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
-                // root directory and file is end of mf
-                if (entry.getName().split("/").length == 1 && fileSuffixValidate("mf", entry.getName())) {
-                    num++;
+                if (entry.getName().startsWith("MEAD/")) {
                     return "success";
                 }
             }
@@ -45,21 +42,6 @@ public class SuffixTestCaseInner {
             return INNER_EXCEPTION;
         }
 
-        switch (num) {
-            case 0:
-                return FILE_NOT_EXIST;
-            case 1:
-                return "success";
-            default:
-                return MF_FILE_NUMBER_TOO_MUCH;
-        }
-    }
-
-    public static boolean fileSuffixValidate(String pattern, String fileName) {
-        String suffix = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
-        if (null != suffix && "" != suffix && suffix.equals(pattern)) {
-            return true;
-        }
-        return false;
+        return MEAD_NOT_EXISTS;
     }
 }
