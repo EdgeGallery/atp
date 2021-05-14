@@ -32,7 +32,7 @@
             parameterType="String">
         select * from contribution_table
        <where>
-          <if test="nameEn != null and nameEn !=''">
+          <if test="name != null and name !=''">
              name ~* #{name}
           </if>
         </where>

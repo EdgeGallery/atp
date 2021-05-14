@@ -36,7 +36,9 @@ public class TOSCAFileTestCaseInner {
 
     private static final String TOSCA_LOSS_FIELD = "tosca.meta file may lost the following filed:Entry-Definitions.";
 
-    private static final String FILE_NOT_EXIT = "the value of field Entry-Definitions do not exist corresponding file";
+    private static final String FILE_NOT_EXIT = "the value of field Entry-Definitions do not exist corresponding file.";
+
+    private static final String FILE_MUST_BE_YAML = "the value of field Entry-Definitions must be yaml file path.";
 
     private static Set<String> pathSet = new HashSet<String>();
 
@@ -47,10 +49,6 @@ public class TOSCAFileTestCaseInner {
     };
 
     public String execute(String filePath, Map<String, String> context) {
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e1) {
-        }
         Set<String> sourcePathSet = new HashSet<String>();
         boolean isExistTosca = false;
         try (ZipFile zipFile = new ZipFile(filePath)) {
@@ -67,9 +65,17 @@ public class TOSCAFileTestCaseInner {
                         return TOSCA_LOSS_FIELD;
                     }
                     sourcePathSet = getPathSet(zipFile, entry, field);
+
+                    // the value of Entry-Definitions must be yaml file
+                    for (String path : sourcePathSet) {
+                        if (!path.endsWith(".yaml")) {
+                            return FILE_MUST_BE_YAML;
+                        }
+                    }
                 }
             }
         } catch (IOException e) {
+
             return INNER_EXCEPTION;
         }
 
