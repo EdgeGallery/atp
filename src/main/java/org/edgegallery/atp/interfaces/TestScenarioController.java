@@ -191,6 +191,12 @@ public class TestScenarioController {
         return ResponseEntity.ok(testScenarioService.getTestCasesByScenarioIds(ids));
     }
 
+    /**
+     * import test models by zip.
+     * 
+     * @param file test model zip
+     * @return import result
+     */
     @PostMapping(value = "/testmodels/action/import", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "import test model.", response = String.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
