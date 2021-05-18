@@ -16,6 +16,21 @@ package org.edgegallery.atp.constant;
 
 public interface ErrorCode {
     /**
+     * retCode: success.
+     */
+    int RET_CODE_SUCCESS = 0;
+
+    /**
+     * retCode: fail.
+     */
+    int RET_CODE_FAILURE = 1;
+
+    /**
+     * retCode: partial success.
+     */
+    int RET_CODE_PARTIAL_SUCCESS = 5000;
+
+    /**
      * DB error.
      */
     int DB_ERROR = 40100;
@@ -77,4 +92,11 @@ public interface ErrorCode {
     int TEST_CASE_LANGUAGE_ERROR = 40117;
 
     String TEST_CASE_LANGUAGE_ERROR_MSG = "test case language error, must be: java, python or jar";
+
+    /**
+     * number of each sheet can not more than 1000.
+     */
+    int MAX_IMPORT_NUMBER_ERROR = 40118;
+
+    String MAX_IMPORT_NUMBER_ERROR_MSG = "number of each sheet can not more than 1000";
 }

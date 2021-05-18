@@ -27,6 +27,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
 import org.edgegallery.atp.constant.Constant;
+import org.edgegallery.atp.constant.ErrorCode;
 import org.edgegallery.atp.model.BatchOpsRes;
 import org.edgegallery.atp.model.testscenario.TestScenario;
 import org.edgegallery.atp.model.testscenario.testcase.AllTestScenarios;
@@ -34,6 +35,7 @@ import org.edgegallery.atp.service.TestScenarioService;
 import org.edgegallery.atp.utils.CommonUtil;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -78,12 +80,10 @@ public class TestScenarioController {
                     required = true) @Size(max = Constant.LENGTH_64) @RequestParam("nameCh") String nameCh,
             @ApiParam(value = "test scenario english name",
                     required = true) @Size(max = Constant.LENGTH_64) @RequestParam("nameEn") String nameEn,
-            @ApiParam(value = "test scenario chinese description",
-                    required = true) @Size(
-                            max = Constant.LENGTH_255) @RequestParam("descriptionCh") String descriptionZn,
-            @ApiParam(value = "test scenario english description",
-                    required = true) @Size(
-                            max = Constant.LENGTH_255) @RequestParam("descriptionEn") String descriptionEn,
+            @ApiParam(value = "test scenario chinese description", required = true) @Size(
+                    max = Constant.LENGTH_255) @RequestParam("descriptionCh") String descriptionZn,
+            @ApiParam(value = "test scenario english description", required = true) @Size(
+                    max = Constant.LENGTH_255) @RequestParam("descriptionEn") String descriptionEn,
             @ApiParam(value = "test scenario icon", required = true) @RequestPart("icon") MultipartFile icon) {
         TestScenario testScenario =
                 TestScenario.builder().setId(CommonUtil.generateId()).setDescriptionEn(descriptionEn)
@@ -113,12 +113,10 @@ public class TestScenarioController {
                     required = false) @Size(max = Constant.LENGTH_64) @RequestParam("nameCh") String nameCh,
             @ApiParam(value = "test scenario english name",
                     required = false) @Size(max = Constant.LENGTH_64) @RequestParam("nameEn") String nameEn,
-            @ApiParam(value = "test scenario chinese description",
-                    required = false) @Size(
-                            max = Constant.LENGTH_255) @RequestParam("descriptionCh") String descriptionZn,
-            @ApiParam(value = "test scenario english description",
-                    required = false) @Size(
-                            max = Constant.LENGTH_255) @RequestParam("descriptionEn") String descriptionEn,
+            @ApiParam(value = "test scenario chinese description", required = false) @Size(
+                    max = Constant.LENGTH_255) @RequestParam("descriptionCh") String descriptionZn,
+            @ApiParam(value = "test scenario english description", required = false) @Size(
+                    max = Constant.LENGTH_255) @RequestParam("descriptionEn") String descriptionEn,
             @ApiParam(value = "test scenario icon", required = false) @RequestPart("icon") MultipartFile icon) {
         TestScenario testScenario = TestScenario.builder().setId(id).setDescriptionEn(descriptionEn)
                 .setDescriptionCh(descriptionZn).setNameEn(nameEn).setNameCh(nameCh).build();
@@ -188,8 +186,8 @@ public class TestScenarioController {
     @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
             @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
     @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
-    public ResponseEntity<List<AllTestScenarios>> getTestCasesByScenarioIds(@ApiParam(value = "test scenario id list",
-            required = true) @RequestParam("scenarioIds") List<String> ids) {
+    public ResponseEntity<List<AllTestScenarios>> getTestCasesByScenarioIds(
+            @ApiParam(value = "test scenario id list", required = true) @RequestParam("scenarioIds") List<String> ids) {
         return ResponseEntity.ok(testScenarioService.getTestCasesByScenarioIds(ids));
     }
 
@@ -200,7 +198,14 @@ public class TestScenarioController {
     @PreAuthorize("hasRole('ATP_ADMIN')")
     public ResponseEntity<BatchOpsRes> importTestModels(
             @ApiParam(value = "test model file", required = true) @RequestPart("file") MultipartFile file) {
-        return ResponseEntity.ok(testScenarioService.importTestModels(file));
+        BatchOpsRes batchOpsRes = testScenarioService.importTestModels(file);
+        if (ErrorCode.RET_CODE_SUCCESS == batchOpsRes.getRetCode()) {
+            return new ResponseEntity<>(batchOpsRes, HttpStatus.OK);
+        } else if (ErrorCode.RET_CODE_PARTIAL_SUCCESS == batchOpsRes.getRetCode()) {
+            return new ResponseEntity<>(batchOpsRes, HttpStatus.PARTIAL_CONTENT);
+        } else {
+            return new ResponseEntity<>(batchOpsRes, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
 
