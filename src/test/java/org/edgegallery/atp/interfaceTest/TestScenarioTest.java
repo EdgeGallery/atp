@@ -126,6 +126,6 @@ public class TestScenarioTest {
                 mvc.perform(MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/testmodels/action/import")
                         .file("file", zipMultiFile.getBytes()).with(csrf())).andReturn();
         int result = mvcResult.getResponse().getStatus();
-        assertEquals(200, result);
+        assertEquals(206, result);
     }
 }

@@ -247,6 +247,7 @@ public class TestScenarioServiceImpl implements TestScenarioService {
                 if (entryName.endsWith(".xlsx") || entryName.endsWith(".xls")) {
                     InputStream inputStream = zipFile.getInputStream(entry);
                     Workbook workbook = importMgr.getWorkbook(inputStream);
+                    importMgr.dataNumCheck(workbook);
                     testScenarioList = importMgr.analysizeTestScenarioSheet(workbook, failures, failureIds);
                     // insert db first, because in analysizeTestSuiteSheet needs to query test scenario
                     saveScenario2DB(testScenarioList, failures, failureIds);
@@ -304,11 +305,11 @@ public class TestScenarioServiceImpl implements TestScenarioService {
     private int getRetCode(Set<String> failureIds, List<TestScenario> testScenarioList, List<TestSuite> testSuiteList,
             List<TestCase> testCaseList) {
         if (CollectionUtils.isEmpty(failureIds)) {
-            return 0;
+            return ErrorCode.RET_CODE_SUCCESS;
         } else if (failureIds.size() == (testScenarioList.size() + testSuiteList.size() + testCaseList.size())) {
-            return 1;
+            return ErrorCode.RET_CODE_FAILURE;
         } else {
-            return 5000;
+            return ErrorCode.RET_CODE_PARTIAL_SUCCESS;
         }
     }
 

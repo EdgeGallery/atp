@@ -44,6 +44,8 @@ import org.springframework.stereotype.Service;
 public class TestModelImportMgr {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestModelImportMgr.class);
 
+    private static final int MAX_DATA_NUM = 1000;
+
     @Autowired
     TestScenarioRepository testScenarioRepository;
 
@@ -55,6 +57,25 @@ public class TestModelImportMgr {
 
     public Workbook getWorkbook(InputStream is) throws IOException {
         return new XSSFWorkbook(is);
+    }
+
+    /**
+     * sheet data number check.
+     * 
+     * @param wb workbook
+     */
+    public void dataNumCheck(Workbook wb) {
+        Sheet testScenarioSheet = wb.getSheet(Constant.TEST_SCENARIO);
+        Sheet testSuiteSheet = wb.getSheet(Constant.TEST_SUITE);
+        Sheet testCaseSheet = wb.getSheet(Constant.TEST_CASE);
+        
+        if (testScenarioSheet.getPhysicalNumberOfRows() > MAX_DATA_NUM
+                || testSuiteSheet.getPhysicalNumberOfRows() > MAX_DATA_NUM
+                || testCaseSheet.getPhysicalNumberOfRows() > MAX_DATA_NUM) {
+            String msg = "data number of each sheet can not more than 1000.";
+            LOGGER.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
     }
 
     /**
