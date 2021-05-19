@@ -248,6 +248,7 @@ public class TestScenarioServiceImpl implements TestScenarioService {
                     InputStream inputStream = zipFile.getInputStream(entry);
                     Workbook workbook = importMgr.getWorkbook(inputStream);
                     importMgr.dataNumCheck(workbook);
+
                     testScenarioList = importMgr.analysizeTestScenarioSheet(workbook, failures, failureIds);
                     // insert db first, because in analysizeTestSuiteSheet needs to query test scenario
                     saveScenario2DB(testScenarioList, failures, failureIds);
