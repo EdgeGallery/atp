@@ -18,6 +18,10 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+/**
+ * file number must less than 1024.
+ *
+ */
 public class FileNumberValidation {
     private static final String FILE_TOO_MANY = "file number must less than 1024.";
 

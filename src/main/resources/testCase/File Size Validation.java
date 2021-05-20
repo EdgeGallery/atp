@@ -15,6 +15,10 @@
 import java.io.File;
 import java.util.Map;
 
+/**
+ * package file size must less than 5GB.
+ *
+ */
 public class FileSizeValidation {
     private static final long MAX_SIZE = 5 * 1024 * 1024 * 1024;
 

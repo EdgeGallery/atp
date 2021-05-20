@@ -18,6 +18,10 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+/**
+ * root path must contain APPD file dir.
+ * 
+ */
 public class APPDValidation {
     private static final String APPD_NOT_EXISTS = "root path must contain APPD file dir.";
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";

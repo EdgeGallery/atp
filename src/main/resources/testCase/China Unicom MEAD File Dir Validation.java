@@ -20,6 +20,7 @@ import java.util.zip.ZipFile;
 
 /**
  * package must contain MEAD file in root dir.
+ * 
  */
 public class MEADFileDirValidation {
     private static final String MEAD_NOT_EXISTS = "root path must contain MEAD file dir.";

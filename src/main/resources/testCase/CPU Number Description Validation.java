@@ -21,6 +21,10 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+/**
+ * yaml file must has cpu description filed: num_virtual_cpu.
+ * 
+ */
 public class CPUNumberDescriptionValidation {
     private static final String CPU_DESCRIPTION_NOT_EXISTS = "There is no cpu description filed: num_virtual_cpu";
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
@@ -54,6 +58,13 @@ public class CPUNumberDescriptionValidation {
         return INNER_EXCEPTION;
     }
 
+    /**
+     * check if has cpu description field.
+     * 
+     * @param zipFile zipFile
+     * @param entry entry
+     * @return has cpu description field.
+     */
     private boolean hasCPUDescription(ZipFile zipFile, ZipEntry entry) {
         try (BufferedReader br =
                 new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
@@ -74,7 +85,7 @@ public class CPUNumberDescriptionValidation {
     }
 
     /**
-     * get app_type
+     * get app_type.
      * 
      * @param filePath filePath
      * @return appType

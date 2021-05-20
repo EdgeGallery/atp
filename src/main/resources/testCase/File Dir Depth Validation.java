@@ -18,6 +18,10 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+/**
+ * file dir depth must less than 10.
+ *
+ */
 public class FileDirDepthValidation {
 
     private static final String FILE_DEPTH_OUT_OF_LIMIT = "file dir depth must less than 10.";

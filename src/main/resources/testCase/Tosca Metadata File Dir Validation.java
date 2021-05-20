@@ -18,6 +18,10 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+/**
+ * root path contains TOSCA-Metadata file dir validation
+ *
+ */
 public class ToscaMetadataValidation {
     private static final String TOSCA_METADATA_NOT_EXISTS = "root path must contain TOSCA-Metadata file dir.";
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";

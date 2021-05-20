@@ -21,9 +21,15 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+/**
+ * yaml file virtual memory description filed: virtual_mem_size validation.
+ *
+ */
 public class VirtualMemoryDescriptionValidation {
     private static final String VIRTUAL_MEMORY_NOT_EXISTS = "There is no virtual memory description filed: virtual_mem_size";
+    
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
+    
     private static final String VIRTUAL_MEM_SIZE = "virtual_mem_size";
 
     private static final String VM = "vm";
@@ -56,6 +62,13 @@ public class VirtualMemoryDescriptionValidation {
         return INNER_EXCEPTION;
     }
 
+    /**
+     * if has virtual memory description field.
+     * 
+     * @param zipFile zipFile
+     * @param entry entry
+     * @return has virtual memory description field
+     */
     private static boolean hasVirtualMemDescription(ZipFile zipFile, ZipEntry entry) {
         try (BufferedReader br =
                 new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
@@ -76,10 +89,10 @@ public class VirtualMemoryDescriptionValidation {
     }
 
     /**
-     * get app_type
+     * get app_type.
      * 
      * @param filePath filePath
-     * @return appType
+     * @return appType appType
      */
     private String getAppType(String filePath) {
         try (ZipFile zipFile = new ZipFile(filePath)) {

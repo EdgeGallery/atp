@@ -19,9 +19,13 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Map;
+import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+/**
+ * unzip file must no more than 10G.
+ */
 public class UnzipFileSizeValidation {
     private static final int BUFFER = 512;
 
@@ -29,23 +33,19 @@ public class UnzipFileSizeValidation {
 
     private static final String UNZIP_PACKAGE_ERROR = "unzip csar with exception";
 
-    String WORK_TEMP_DIR = getDir() + File.separator + "temp/fileNumber";
+    String WORK_TEMP_DIR = getDir() + File.separator + "temp/fileNumber/";
 
     public String execute(String filePath, Map<String, String> context) {
-        try {
-            Thread.sleep(800);
-        } catch (InterruptedException e1) {
-        }
-        
         ZipEntry entry;
         long total = 0;
         byte[] data = new byte[BUFFER];
+        String tempDir = WORK_TEMP_DIR.concat(UUID.randomUUID().toString());
 
         try (FileInputStream fis = new FileInputStream(filePath);
                 ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis))) {
             while ((entry = zis.getNextEntry()) != null) {
                 int count;
-                String name = sanitzeFileName(entry.getName(), WORK_TEMP_DIR);
+                String name = sanitizeFileName(entry.getName(), tempDir);
                 File f = new File(name);
                 if (isDir(entry, f)) {
                     continue;
@@ -67,12 +67,34 @@ public class UnzipFileSizeValidation {
         } catch (IOException e) {
             return UNZIP_PACKAGE_ERROR;
         } finally {
-            new File(WORK_TEMP_DIR).delete();
+            deleteFileDir(new File(tempDir));
         }
 
         return "success";
     }
 
+    /**
+     * delete file die.
+     * 
+     * @param file file
+     */
+    private void deleteFileDir(File file) {
+        File[] files = file.listFiles();
+        for (File eachFile : files) {
+            if (eachFile.isDirectory()) {
+                deleteFileDir(eachFile);
+            } else {
+                eachFile.delete();
+            }
+        }
+        file.delete();
+    }
+    
+    /**
+     * get root dir.
+     * 
+     * @return root dir
+     */
     private String getDir() {
         if (System.getProperty("os.name").toLowerCase().contains("windows")) {
             return "C:\\atp";
@@ -81,13 +103,27 @@ public class UnzipFileSizeValidation {
         }
     }
 
-    private String sanitzeFileName(String entryName, String intendedDir) throws IOException {
+    /**
+     * get right file name.
+     * 
+     * @param entryName entryName
+     * @param intendedDir intendedDir
+     * @return file path
+     * @throws IOException IOException
+     */
+    private String sanitizeFileName(String entryName, String intendedDir) throws IOException {
         File f = new File(intendedDir, entryName);
         String canonicalPath = f.getCanonicalPath();
         createFile(canonicalPath);
         return canonicalPath;
     }
 
+    /**
+     * create file.
+     * 
+     * @param filePath filePath
+     * @throws IOException IOException
+     */
     private void createFile(String filePath) throws IOException {
         File tempFile = new File(filePath);
         boolean result = false;
@@ -100,6 +136,13 @@ public class UnzipFileSizeValidation {
         }
     }
 
+    /**
+     * judge file is dir.
+     * 
+     * @param entry entry
+     * @param f file
+     * @return is dir
+     */
     private boolean isDir(ZipEntry entry, File f) {
         if (entry.isDirectory()) {
             boolean isSuccess = f.mkdirs();

@@ -21,6 +21,10 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+/**
+ * Each Source file must has hash description.
+ *
+ */
 public class ManifestFileHashListValidation {
     private static final String HASH_FIELD_NOT_EXISTS = "Some Source file does not have Hash filed.";
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
@@ -46,6 +50,13 @@ public class ManifestFileHashListValidation {
         return INNER_EXCEPTION;
     }
 
+    /**
+     * if has hash description.
+     * 
+     * @param zipFile zipFile
+     * @param entry entry
+     * @return has hash description
+     */
     private boolean hasHash(ZipFile zipFile, ZipEntry entry) {
         try (BufferedReader br =
                 new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
@@ -76,6 +87,13 @@ public class ManifestFileHashListValidation {
         return true;
     }
 
+    /**
+     * if file suffix is in pattern.
+     * 
+     * @param pattern pattern
+     * @param fileName fileName
+     * @return file suffix is in pattern
+     */
     private boolean fileSuffixValidate(String pattern, String fileName) {
         String suffix = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
         if ((null != suffix) && suffix.equals(pattern)) {
