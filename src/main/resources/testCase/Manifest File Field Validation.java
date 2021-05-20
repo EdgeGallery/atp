@@ -23,6 +23,10 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+/**
+ * mf file requirement field validation.
+ *
+ */
 public class MFContentTestCaseInner {
 
     private static final String MF_LOSS_FIELD =
@@ -66,6 +70,13 @@ public class MFContentTestCaseInner {
         return FILE_NOT_EXIST;
     }
 
+    /**
+     * file suffix is in pattern.
+     * 
+     * @param pattern pattern
+     * @param fileName fileName
+     * @return file suffix is in pattern.
+     */
     private boolean fileSuffixValidate(String pattern, String fileName) {
         String suffix = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
         if ((null != suffix) && suffix.equals(pattern)) {
@@ -74,6 +85,14 @@ public class MFContentTestCaseInner {
         return false;
     }
 
+    /**
+     * if contain all field.
+     * 
+     * @param zipFile zipFile
+     * @param entry entry
+     * @param prefixSet required fields set
+     * @return contain all field
+     */
     private boolean isExistAll(ZipFile zipFile, ZipEntry entry, Set<String> prefixSet) {
         Set<String> sourcePathSet = new HashSet<String>();
         try (BufferedReader br =

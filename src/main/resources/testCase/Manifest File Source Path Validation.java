@@ -23,6 +23,10 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+/**
+ * mf file Source field path validation.
+ *
+ */
 public class SourcePathTestCaseInner {
 
     private static final String SLASH = "/";
@@ -64,6 +68,13 @@ public class SourcePathTestCaseInner {
         return pathSet.containsAll(sourcePathSet) ? SUCCESS : SOURCE_PATH_FILE_NOT_EXISTS;
     }
 
+    /**
+     * if file suffix is in pattern.
+     * 
+     * @param pattern pattern
+     * @param fileName fileName
+     * @return file suffix is in pattern
+     */
     private boolean fileSuffixValidate(String pattern, String fileName) {
         String suffix = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
         if ((null != suffix) && suffix.equals(pattern)) {
@@ -72,6 +83,14 @@ public class SourcePathTestCaseInner {
         return false;
     }
 
+    /**
+     * get Source file path and put in set.
+     * 
+     * @param zipFile zipFile
+     * @param entry entry
+     * @param prefixSet prefixSet
+     * @return file path set
+     */
     private Set<String> getPathSet(ZipFile zipFile, ZipEntry entry, Set<String> prefixSet) {
         Set<String> pathSet = new HashSet<String>();
         try (BufferedReader br =
@@ -90,6 +109,12 @@ public class SourcePathTestCaseInner {
         return pathSet;
     }
 
+    /**
+     * remove last slash.
+     * 
+     * @param path path
+     * @return path after removing last slash
+     */
     private String removeLastSlash(String path) {
         if (path.endsWith("/")) {
             path = path.substring(0, path.length() - 1);
@@ -98,7 +123,7 @@ public class SourcePathTestCaseInner {
     }
 
     /**
-     * get app_type
+     * get app_type.
      * 
      * @param filePath filePath
      * @return appType

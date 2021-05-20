@@ -289,31 +289,32 @@ public class FileChecker {
      * @throws java.io.IOException throw IOException
      */
     public static void unzip(String fileName) throws IOException {
-        FileInputStream fis = FileUtils.openInputStream(new File(fileName));
-        ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));
         ZipEntry entry;
         int entries = 0;
         long total = 0;
         byte[] data = new byte[Constant.BUFFER];
-        try {
+        String tempDir = Constant.WORK_TEMP_DIR + File.separator + CommonUtil.generateId();
+
+        try (FileInputStream fis = FileUtils.openInputStream(new File(fileName));
+                ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));) {
             while ((entry = zis.getNextEntry()) != null) {
                 int count;
                 // Write the files to the disk, but ensure that the entryName is valid,
                 // and that the file is not insanely big
-                String name = sanitzeFileName(entry.getName(), Constant.WORK_TEMP_DIR);
+                String name = sanitizeFileName(entry.getName(), tempDir);
                 File f = new File(name);
                 if (isDir(entry, f)) {
                     continue;
                 }
-                FileOutputStream fos = FileUtils.openOutputStream(f);
-                try (BufferedOutputStream dest = new BufferedOutputStream(fos, Constant.BUFFER)) {
+
+                try (FileOutputStream fos = FileUtils.openOutputStream(f);
+                        BufferedOutputStream dest = new BufferedOutputStream(fos, Constant.BUFFER)) {
                     while (total <= Constant.TOO_BIG && (count = zis.read(data, 0, Constant.BUFFER)) != -1) {
                         dest.write(data, 0, count);
                         total += count;
                     }
                     dest.flush();
                 }
-                zis.closeEntry();
                 entries++;
                 if (entries > Constant.TOO_MANY) {
                     throw new IllegalStateException("Too many files to unzip.");
@@ -323,13 +324,14 @@ public class FileChecker {
                 }
             }
         } catch (IOException e) {
-            FileUtils.cleanDirectory(new File(Constant.WORK_TEMP_DIR));
             LOGGER.error("unzip csar with exception. {}", e.getMessage());
             throw new IllegalArgumentException("unzip csar with exception.");
         } finally {
-            zis.close();
+            FileUtils.cleanDirectory(new File(tempDir));
+            new File(tempDir).delete();
         }
     }
+
 
     private static boolean isAllowedFileName(String originalFilename) {
         return isValid(originalFilename)
@@ -400,8 +402,7 @@ public class FileChecker {
         return false;
     }
 
-    private static String sanitzeFileName(String entryName, String intendedDir) throws IOException {
-
+    private static String sanitizeFileName(String entryName, String intendedDir) throws IOException {
         File f = new File(intendedDir, entryName);
         String canonicalPath = f.getCanonicalPath();
         File intendDir = new File(intendedDir);

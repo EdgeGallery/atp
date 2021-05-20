@@ -55,6 +55,13 @@ public class SuffixTestCaseInner {
         }
     }
 
+    /**
+     * if file suffix is in pattern.
+     * 
+     * @param pattern pattern
+     * @param fileName fileName
+     * @return file suffix is in pattern
+     */
     public static boolean fileSuffixValidate(String pattern, String fileName) {
         String suffix = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
         if (null != suffix && "" != suffix && suffix.equals(pattern)) {

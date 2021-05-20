@@ -21,6 +21,10 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+/**
+ * yaml file existence and path validation.
+ *
+ */
 public class YamlDescriptionFileValidation {
     private static final String YAML_FILE_NOT_EXISTS = "there is no yaml file in APPD/Definition/ dir.";
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
@@ -50,10 +54,10 @@ public class YamlDescriptionFileValidation {
     }
 
     /**
-     * get app_type
+     * get app_type.
      * 
      * @param filePath filePath
-     * @return appType
+     * @return appType appType
      */
     private String getAppType(String filePath) {
         try (ZipFile zipFile = new ZipFile(filePath)) {

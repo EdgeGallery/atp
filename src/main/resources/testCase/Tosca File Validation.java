@@ -84,6 +84,14 @@ public class TOSCAFileTestCaseInner {
                 : pathSet.containsAll(sourcePathSet) ? "success" : FILE_NOT_EXIT;
     }
 
+    /**
+     * if contain all fields in prefixSet.
+     * 
+     * @param zipFile zipFile
+     * @param entry entry
+     * @param prefixSet prefixSet
+     * @return contain all fields in prefixSet
+     */
     private boolean isExistAll(ZipFile zipFile, ZipEntry entry, Set<String> prefixSet) {
         Set<String> sourcePathSet = new HashSet<String>();
         try (BufferedReader br =
@@ -102,6 +110,12 @@ public class TOSCAFileTestCaseInner {
         return sourcePathSet.containsAll(prefixSet);
     }
 
+    /**
+     * remove last slash.
+     * 
+     * @param path path
+     * @return path after removing last slash
+     */
     private String removeLastSlash(String path) {
         if (path.endsWith("/")) {
             path = path.substring(0, path.length() - 1);
@@ -109,6 +123,14 @@ public class TOSCAFileTestCaseInner {
         return path;
     }
 
+    /**
+     * get Source file path and put in set.
+     * 
+     * @param zipFile zipFile
+     * @param entry entry
+     * @param prefixSet prefixSet
+     * @return file path set
+     */
     private Set<String> getPathSet(ZipFile zipFile, ZipEntry entry, Set<String> prefixSet) {
         Set<String> pathSet = new HashSet<String>();
         try (BufferedReader br =

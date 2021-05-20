@@ -18,6 +18,10 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+/**
+ * root path must contain Artifacts file dir.
+ * 
+ */
 public class ArtifactsValidation {
     private static final String ARTIFACTS_NOT_EXISTS = "root path must contain Artifacts file dir.";
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
