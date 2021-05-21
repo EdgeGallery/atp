@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import org.edgegallery.atp.utils.PropertiesUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
@@ -84,11 +85,7 @@ public class InstantiateAppTestCaseInner {
 
     public String execute(String filePath, Map<String, String> context) {
         Map<String, String> packageInfo = getPackageInfo(filePath);
-        // if package is vm, return success
-        if (VM.equalsIgnoreCase(packageInfo.get(APP_CLASS))) {
-            LOGGER.info("package is vm, return success.");
-            return SUCCESS;
-        }
+        context.put(APP_CLASS, packageInfo.get(APP_CLASS));
 
         String hostIp = getMecHost(context, packageInfo);
         if (isEmpty(hostIp)) {
@@ -128,6 +125,14 @@ public class InstantiateAppTestCaseInner {
 
     }
 
+    /**
+     * get package from apm.
+     * 
+     * @param context context
+     * @param packageId packageId
+     * @param hostIp hostIp
+     * @return
+     */
     private boolean getApmPackage(Map<String, String> context, String packageId, String hostIp) {
         HttpHeaders headers = new HttpHeaders();
         headers.set(ACCESS_TOKEN, context.get(ACCESS_TOKEN));
@@ -231,7 +236,6 @@ public class InstantiateAppTestCaseInner {
         return mecHostIpList.size() == 0 ? null : mecHostIpList.get(0);
     }
 
-
     private boolean isEmpty(String str) {
         return null == str || "".equals(str);
     }
@@ -287,7 +291,14 @@ public class InstantiateAppTestCaseInner {
         return null;
     }
 
-
+    /**
+     * get application instance from appo.
+     * 
+     * @param context context
+     * @param appInstanceId appInstanceId
+     * @param status status
+     * @return
+     */
     private boolean getApplicationInstance(Map<String, String> context, String appInstanceId, String status) {
         HttpHeaders headers = new HttpHeaders();
         headers.set(ACCESS_TOKEN, context.get(ACCESS_TOKEN));
@@ -342,18 +353,29 @@ public class InstantiateAppTestCaseInner {
     }
 
     /**
-     * instantiate application by appo
+     * instantiate application by appo.
      * 
      * @param context context info.
      * @param appInstanceId appInstanceId
      * @return instantiate app successful
      */
     private boolean instantiateAppFromAppo(Map<String, String> context, String appInstanceId) {
+        Map<String, Object> body = new HashMap<String, Object>();
+        if (VM.equalsIgnoreCase(context.get(APP_CLASS))) {
+            // if package is vm, need parameters body
+            LOGGER.info("package is vm.");
+            Map<String, Object> parameters = new HashMap<String, Object>();
+            setBody(parameters);
+            body.put("parameters", parameters);
+        }
+
         HttpHeaders headers = new HttpHeaders();
         headers.set(ACCESS_TOKEN, context.get(ACCESS_TOKEN));
-        HttpEntity<String> request = new HttpEntity<>(headers);
+        headers.set(CONTENT_TYPE, APPLICATION_JSON);
 
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
         String url = PROTOCAL_APPO.concat(String.format(APPO_INSTANTIATE_APP, context.get(TENANT_ID), appInstanceId));
+
         LOGGER.info("instantiateAppFromAppo URL : {}", url);
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
@@ -369,6 +391,39 @@ public class InstantiateAppTestCaseInner {
             return false;
         }
         return true;
+    }
+
+    /**
+     * set request parameters.
+     * 
+     * @param body body
+     */
+    private void setBody(Map<String, Object> body) {
+        body.put("DC_ID", PropertiesUtil.getProperties("DC_ID"));
+        body.put("ak", PropertiesUtil.getProperties("ak"));
+        body.put("sk", PropertiesUtil.getProperties("sk"));
+        body.put("mep_certificate", PropertiesUtil.getProperties("mep_certificate"));
+        body.put("app_mp1_ip", PropertiesUtil.getProperties("app_mp1_ip"));
+        body.put("app_mp1_mask", PropertiesUtil.getProperties("app_mp1_mask"));
+        body.put("app_mp1_gw", PropertiesUtil.getProperties("app_mp1_gw"));
+        body.put("app_n6_ip", PropertiesUtil.getProperties("app_n6_ip"));
+        body.put("app_n6_mask", PropertiesUtil.getProperties("app_n6_mask"));
+        body.put("app_n6_gw", PropertiesUtil.getProperties("app_n6_gw"));
+        body.put("app_internet_ip", PropertiesUtil.getProperties("app_internet_ip"));
+        body.put("app_internet_mask", PropertiesUtil.getProperties("app_internet_mask"));
+        body.put("app_internet_gw", PropertiesUtil.getProperties("app_internet_gw"));
+        body.put("mep_ip", PropertiesUtil.getProperties("mep_ip"));
+        body.put("mep_port", PropertiesUtil.getProperties("mep_port"));
+        body.put("network_name_1", PropertiesUtil.getProperties("network_name_1"));
+        body.put("network1_physnet", PropertiesUtil.getProperties("network1_physnet"));
+        body.put("network1_vlanid", PropertiesUtil.getProperties("network1_vlanid"));
+        body.put("network_name_2", PropertiesUtil.getProperties("network_name_2"));
+        body.put("network2_physnet", PropertiesUtil.getProperties("network2_physnet"));
+        body.put("network2_vlanid", PropertiesUtil.getProperties("network2_vlanid"));
+        body.put("network_name_3", PropertiesUtil.getProperties("network_name_3"));
+        body.put("network3_physnet", PropertiesUtil.getProperties("network3_physnet"));
+        body.put("network3_vlanid", PropertiesUtil.getProperties("network3_vlanid"));
+        body.put("ue_ip_segment", PropertiesUtil.getProperties("ue_ip_segment"));
     }
 
     /**
@@ -463,7 +518,7 @@ public class InstantiateAppTestCaseInner {
     }
 
     /**
-     * validate fileName is .pattern
+     * validate fileName is .pattern.
      * 
      * @param pattern filePattern
      * @param fileName fileName
