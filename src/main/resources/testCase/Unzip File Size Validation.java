@@ -114,8 +114,16 @@ public class UnzipFileSizeValidation {
     private String sanitizeFileName(String entryName, String intendedDir) throws IOException {
         File f = new File(intendedDir, entryName);
         String canonicalPath = f.getCanonicalPath();
-        createFile(canonicalPath);
-        return canonicalPath;
+        File intendDir = new File(intendedDir);
+        if (intendDir.isDirectory() && !intendDir.exists()) {
+            createFile(intendedDir);
+        }
+        String canonicalID = intendDir.getCanonicalPath();
+        if (canonicalPath.startsWith(canonicalID)) {
+            return canonicalPath;
+        } else {
+            throw new IllegalStateException("File is outside extraction target directory.");
+        }
     }
 
     /**

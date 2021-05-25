@@ -29,10 +29,14 @@ public class YamlDescriptionFileValidation {
     private static final String YAML_FILE_NOT_EXISTS = "there is no yaml file in APPD/Definition/ dir.";
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
     private static final String SUCCESS = "success";
+    private static final String VM = "vm";
 
     public String execute(String filePath, Map<String, String> context) {
         try {
             Thread.sleep(1000);
+            if (VM.equalsIgnoreCase(getAppType(filePath))) {
+                return SUCCESS;
+            }
         } catch (InterruptedException e1) {
         }
         try (ZipFile zipFile = new ZipFile(filePath)) {

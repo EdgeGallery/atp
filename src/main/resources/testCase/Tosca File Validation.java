@@ -67,11 +67,11 @@ public class TOSCAFileTestCaseInner {
                     sourcePathSet = getPathSet(zipFile, entry, field);
 
                     // the value of Entry-Definitions must be yaml file
-                    for (String path : sourcePathSet) {
-                        if (!path.endsWith(".yaml")) {
-                            return FILE_MUST_BE_YAML;
-                        }
-                    }
+//                    for (String path : sourcePathSet) {
+//                        if (!path.endsWith(".yaml")) {
+//                            return FILE_MUST_BE_YAML;
+//                        }
+//                    }
                 }
             }
         } catch (IOException e) {
