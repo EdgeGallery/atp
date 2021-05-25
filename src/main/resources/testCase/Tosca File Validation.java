@@ -65,13 +65,6 @@ public class TOSCAFileTestCaseInner {
                         return TOSCA_LOSS_FIELD;
                     }
                     sourcePathSet = getPathSet(zipFile, entry, field);
-
-                    // the value of Entry-Definitions must be yaml file
-                    for (String path : sourcePathSet) {
-                        if (!path.endsWith(".yaml")) {
-                            return FILE_MUST_BE_YAML;
-                        }
-                    }
                 }
             }
         } catch (IOException e) {
