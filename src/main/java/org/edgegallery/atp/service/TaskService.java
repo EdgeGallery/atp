@@ -18,9 +18,11 @@ import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
 import org.edgegallery.atp.model.CommonActionRes;
+import org.edgegallery.atp.model.ResponseObject;
 import org.edgegallery.atp.model.task.AnalysisResult;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.task.TestCaseStatusReq;
+import org.edgegallery.atp.utils.exception.FileNotExistsException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -97,4 +99,21 @@ public interface TaskService {
      * @return true or throw exception
      */
     ResponseEntity<Boolean> modifyTestCaseStatus(List<TestCaseStatusReq> testCaseStatus, String taskId);
+    
+    /**
+     * create task v2 method.
+     * 
+     * @param file file
+     * @return ResponseObject
+     */
+    ResponseEntity<ResponseObject<TaskRequest>> createTaskV2(MultipartFile file);
+
+    /**
+     * get task by id.
+     * 
+     * @param taskId taskId
+     * @return ResponseObject
+     * @throws FileNotExistsException FileNotExistsException
+     */
+    ResponseEntity<ResponseObject<TaskRequest>> getTaskByIdV2(String taskId) throws FileNotExistsException;
 }

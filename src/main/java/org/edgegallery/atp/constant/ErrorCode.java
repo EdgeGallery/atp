@@ -99,4 +99,39 @@ public interface ErrorCode {
     int MAX_IMPORT_NUMBER_ERROR = 40118;
 
     String MAX_IMPORT_NUMBER_ERROR_MSG = "number of each sheet can not more than 1000";
+
+    /**
+     * param is null.
+     */
+    int PARAM_IS_NULL = 40119;
+
+    String PARAM_IS_NULL_MSG = "param %s is null.";
+
+    /**
+     * file name contains blank.
+     */
+    int FILE_NAME_CONTAIN_BLANK = 40120;
+
+    String FILE_NAME_CONTAIN_BLANK_MSG = "fileName contain blank";
+
+    /**
+     * file name illegal.
+     */
+    int FILE_NAME_ILLEGAL = 40121;
+
+    String FILE_NAME_ILLEGAL_MSG = "fileName illegal";
+
+    /**
+     * file operation exception.
+     */
+    int FILE_IO_EXCEPTION = 40122;
+
+    String FILE_IO_EXCEPTION_MSG = "file operation error";
+
+    /**
+     * not exists in system.
+     */
+    int NOT_FOUND_EXCEPTION = 40123;
+
+    String NOT_FOUND_EXCEPTION_MSG = "%s do not exists.";
 }
