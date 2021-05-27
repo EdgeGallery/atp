@@ -51,8 +51,9 @@ public class UnzipFileSizeValidation {
                     continue;
                 }
 
-                FileOutputStream fos = new FileOutputStream(name);
-                try (BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER)) {
+                createFile(name);
+                try (FileOutputStream fos = new FileOutputStream(name);
+                        BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER)) {
                     while (total <= 0x280000000L && (count = zis.read(data, 0, BUFFER)) != -1) {
                         dest.write(data, 0, count);
                         total += count;
@@ -80,14 +81,16 @@ public class UnzipFileSizeValidation {
      */
     private void deleteFileDir(File file) {
         File[] files = file.listFiles();
-        for (File eachFile : files) {
-            if (eachFile.isDirectory()) {
-                deleteFileDir(eachFile);
-            } else {
-                eachFile.delete();
+        if (null != files) {
+            for (File eachFile : files) {
+                if (eachFile.isDirectory()) {
+                    deleteFileDir(eachFile);
+                } else {
+                    eachFile.delete();
+                }
             }
+            file.delete();
         }
-        file.delete();
     }
     
     /**

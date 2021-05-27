@@ -45,6 +45,14 @@ public class MFHashValueValidation {
     private static final String SOURCE = "Source";
 
     public String execute(String filePath, Map<String, String> context) {
+        try {
+            Thread.sleep(1000);
+            if ("container".equalsIgnoreCase(getAppType(filePath))) {
+                return "success";
+            }
+        } catch (InterruptedException e1) {
+        }
+
         Map<String,String> file2Hash = new HashMap<String,String>();
         try (ZipFile zipFile = new ZipFile(filePath)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
@@ -134,5 +142,34 @@ public class MFHashValueValidation {
         } catch (IOException e) {
             LOGGER.error("get file hash failed.{}", e);
         }
+    }
+
+    /**
+     * get app_type.
+     * 
+     * @param filePath filePath
+     * @return appType
+     */
+    private String getAppType(String filePath) {
+        try (ZipFile zipFile = new ZipFile(filePath)) {
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = entries.nextElement();
+                if (entry.getName().split("/").length == 1 && entry.getName().endsWith(".mf")) {
+                    try (BufferedReader br = new BufferedReader(
+                            new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
+                        String line = "";
+                        while ((line = br.readLine()) != null) {
+                            // prefix: path
+                            if (line.trim().startsWith("app_class")) {
+                                return line.split(":")[1].trim();
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+        }
+        return null;
     }
 }
