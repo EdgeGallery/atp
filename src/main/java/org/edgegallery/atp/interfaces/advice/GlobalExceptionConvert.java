@@ -18,6 +18,8 @@ import java.io.FileNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.Response;
+import org.edgegallery.atp.utils.exception.FileNotExistsException;
+import org.edgegallery.atp.utils.exception.IllegalRequestException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -64,6 +66,19 @@ public class GlobalExceptionConvert {
     @ResponseBody
     public RestReturn illegalArgumentException(HttpServletRequest request, IllegalArgumentException e) {
         return badRequestResponse(request, e);
+    }
+
+    /**
+     * Handle IllegalArgumentException.
+     *
+     */
+    @ExceptionHandler(value = IllegalRequestException.class)
+    @ResponseBody
+    public RestReturn illegalRequestException(HttpServletRequest request, IllegalRequestException e) {
+        return RestReturn.builder().code(Response.Status.BAD_REQUEST.getStatusCode())
+                .error(Response.Status.BAD_REQUEST.getReasonPhrase()).message(e.getMessage())
+                .path(request.getRequestURI()).retCode(e.getRetCode()).params(e.getParams())
+                .build();
     }
 
     /**
@@ -150,5 +165,20 @@ public class GlobalExceptionConvert {
                 .error(Response.Status.NOT_FOUND.getReasonPhrase()).message(e.getMessage())
                 .path(request.getRequestURI()).build();
 
+    }
+
+    /**
+     * file not found exception.
+     * 
+     * @param request request
+     * @param e exception
+     * @return RestReturn
+     */
+    @ExceptionHandler(value = FileNotExistsException.class)
+    @ResponseBody
+    public RestReturn fileNotExistsException(HttpServletRequest request, FileNotExistsException e) {
+        return RestReturn.builder().code(Response.Status.NOT_FOUND.getStatusCode())
+                .error(Response.Status.NOT_FOUND.getReasonPhrase()).message(e.getMessage())
+                .path(request.getRequestURI()).retCode(e.getRetCode()).params(e.getParams()).build();
     }
 }

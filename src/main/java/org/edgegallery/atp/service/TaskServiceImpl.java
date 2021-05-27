@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,8 +31,10 @@ import java.util.Map;
 import java.util.Stack;
 import org.apache.commons.collections4.CollectionUtils;
 import org.edgegallery.atp.constant.Constant;
+import org.edgegallery.atp.constant.ErrorCode;
 import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
 import org.edgegallery.atp.model.CommonActionRes;
+import org.edgegallery.atp.model.ResponseObject;
 import org.edgegallery.atp.model.task.AnalysisResult;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.task.TestCaseStatusReq;
@@ -49,6 +52,8 @@ import org.edgegallery.atp.repository.testsuite.TestSuiteRepository;
 import org.edgegallery.atp.schedule.testcase.TestCaseManagerImpl;
 import org.edgegallery.atp.utils.CommonUtil;
 import org.edgegallery.atp.utils.FileChecker;
+import org.edgegallery.atp.utils.exception.FileNotExistsException;
+import org.edgegallery.atp.utils.exception.IllegalRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -334,6 +339,54 @@ public class TaskServiceImpl implements TaskService {
         confirmTaskStatus(task);
         taskRepository.update(task);
         return ResponseEntity.ok(true);
+    }
+
+
+    @Override
+    public ResponseEntity<ResponseObject<TaskRequest>> createTaskV2(MultipartFile file) {
+        String taskId = CommonUtil.generateId();
+        File tempFile = FileChecker.check(file, taskId);
+
+        TaskRequest task = new TaskRequest();
+        task.setId(taskId);
+
+        try {
+            String filePath = tempFile.getCanonicalPath();
+            // init task
+            Map<String, String> context = AccessTokenFilter.context.get();
+            task.setCreateTime(taskRepository.getCurrentDate());
+            task.setStatus(Constant.ATP_CREATED);
+            task.setUser(new User(context.get(Constant.USER_ID), context.get(Constant.USER_NAME)));
+            task.setPackagePath(filePath);
+            Map<String, String> packageInfo = CommonUtil.getPackageInfo(filePath);
+            task.setAppName(packageInfo.get(Constant.APP_NAME));
+            task.setAppVersion(packageInfo.get(Constant.APP_VERSION));
+            task.setProviderId(packageInfo.get(Constant.PROVIDER_ID));
+
+            taskRepository.insert(task);
+
+            ResponseObject<TaskRequest> result =
+                    new ResponseObject<TaskRequest>(task, ErrorCode.RET_CODE_SUCCESS, null,
+                            "create task successfully.");
+            return ResponseEntity.ok(result);
+        } catch (IOException e) {
+            LOGGER.error("create task {} failed, file name is: {}", taskId, tempFile.getName());
+            throw new IllegalRequestException(ErrorCode.FILE_IO_EXCEPTION_MSG, ErrorCode.FILE_IO_EXCEPTION, null);
+        }
+    }
+
+    @Override
+    public ResponseEntity<ResponseObject<TaskRequest>> getTaskByIdV2(String taskId) throws FileNotExistsException {
+        TaskRequest response = taskRepository.findByTaskIdAndUserId(taskId, null);
+        if (null == response) {
+            LOGGER.error("taskId does not exists: {}", taskId);
+            throw new FileNotExistsException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, Constant.TASK_ID),
+                    ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList(Constant.TASK_ID)));
+        }
+
+        ResponseObject<TaskRequest> result = new ResponseObject<TaskRequest>(response, ErrorCode.RET_CODE_SUCCESS, null,
+                "get task by id successfully.");
+        return ResponseEntity.ok(result);
     }
 
     /**

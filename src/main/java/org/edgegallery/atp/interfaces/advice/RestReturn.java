@@ -18,6 +18,7 @@ package org.edgegallery.atp.interfaces.advice;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import lombok.Builder;
 import lombok.Data;
@@ -41,6 +42,12 @@ public class RestReturn {
 
     // request path
     private String path;
+    
+    // error code
+    private int retCode;
+
+    // error message params
+    private List<String> params;
 
     public Date getTimestamp() {
         return new Date(timestamp.getTime());

@@ -40,6 +40,8 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.edgegallery.atp.constant.Constant;
+import org.edgegallery.atp.constant.ErrorCode;
+import org.edgegallery.atp.utils.exception.IllegalRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
@@ -99,36 +101,40 @@ public class FileChecker {
      * @param file object.
      */
     public static File check(MultipartFile file, String taskId) {
-        String originalFilename = file.getOriginalFilename();
-
-        // file name should not contains blank.
-        if (originalFilename != null && originalFilename.split("\\s").length > 1) {
-            LOGGER.error("fileName contain blank");
-            throw new IllegalArgumentException(originalFilename + " :fileName contain blank");
-        }
-
-        if (originalFilename != null && !isAllowedFileName(originalFilename)) {
-            LOGGER.error("fileName is Illegal");
-            throw new IllegalArgumentException(originalFilename + " :fileName is Illegal");
-        }
-
-        if (file.getSize() > getMaxFileSize()) {
-            LOGGER.error("fileSize is too big");
-            throw new IllegalArgumentException(originalFilename + " :fileSize is too big");
-        }
-
-        File result = null;
         String originalFileName = file.getOriginalFilename();
 
         if (originalFileName == null) {
             LOGGER.error("Package File name is null.");
-            throw new IllegalArgumentException("Package File name is null.");
+            String param = "package file name";
+            List<String> params = new ArrayList<String>();
+            params.add(param);
+            throw new IllegalRequestException(String.format(ErrorCode.PARAM_IS_NULL_MSG, param),
+                    ErrorCode.PARAM_IS_NULL, params);
         }
+
+        // file name should not contains blank.
+        if (originalFileName != null && originalFileName.split("\\s").length > 1) {
+            LOGGER.error("fileName contain blank");
+            throw new IllegalRequestException(ErrorCode.FILE_NAME_CONTAIN_BLANK_MSG, ErrorCode.FILE_NAME_CONTAIN_BLANK,
+                    null);
+        }
+
+        if (originalFileName != null && !isAllowedFileName(originalFileName)) {
+            LOGGER.error("fileName is Illegal");
+            throw new IllegalRequestException(ErrorCode.FILE_NAME_ILLEGAL_MSG, ErrorCode.FILE_NAME_ILLEGAL, null);
+        }
+
+        if (file.getSize() > getMaxFileSize()) {
+            LOGGER.error("fileSize is too big");
+            throw new IllegalArgumentException(originalFileName + " :fileSize is too big");
+        }
+
+        File result = null;
 
         // temp/taskId_fileName
         String tempFileAddress = new StringBuilder().append(Constant.WORK_TEMP_DIR).append(File.separator)
                 .append(taskId).append(Constant.UNDER_LINE).append(file.getOriginalFilename()).toString();
-        try  {
+        try {
             createFile(tempFileAddress);
             try (FileOutputStream fos = new FileOutputStream(tempFileAddress)) {
                 byte[] bytes = file.getBytes();
@@ -213,9 +219,8 @@ public class FileChecker {
                 new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
             String line = positionDependencyService(br);
             if (StringUtils.isEmpty(line)) {
-                LOGGER.warn(
-                        "can not find the dependency path, the dependency path must "
-                                + "be in node_templates.app_configuration.properties.appServiceRequired");
+                LOGGER.warn("can not find the dependency path, the dependency path must "
+                        + "be in node_templates.app_configuration.properties.appServiceRequired");
                 return;
             }
             // -serName
