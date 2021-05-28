@@ -26,6 +26,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -55,82 +56,20 @@ public class FileChecker {
     }
 
     /**
-     * check if file path is valid.
-     * 
-     * @param filePath file path.
-     * @return
-     */
-    public static String check(String filePath) {
-        filePath = Normalizer.normalize(filePath, Normalizer.Form.NFKC);
-
-        if (StringUtils.isEmpty(filePath)) {
-            LOGGER.error("filepath is empty.");
-            throw new IllegalArgumentException(filePath + " :filepath is empty");
-        }
-
-        // file name should not contains blank.
-        if (filePath != null && filePath.split("\\s").length > 1) {
-            LOGGER.error("filepath contain blank.");
-            throw new IllegalArgumentException(filePath + " :filepath contain blank");
-        }
-
-        String name = filePath.toLowerCase();
-        if (!(name.endsWith(Constant.MANIFEST) || name.endsWith(Constant.MARK_DOWN)
-                || name.endsWith(Constant.PACKAGE_XML_FORMAT) || name.endsWith(Constant.PACKAGE_YAML_FORMAT)
-                || name.endsWith(Constant.PACKAGE_CSH_FORMAT) || name.endsWith(Constant.PACKAGE_META_FORMAT)
-                || name.endsWith(Constant.PACKAGE_TXT_FORMAT))) {
-            LOGGER.error("file suffix is wrong.");
-            throw new IllegalArgumentException();
-        }
-
-        String[] dirs = filePath.split(":");
-        for (String dir : dirs) {
-            Matcher matcher = Pattern.compile(Constant.REG).matcher(dir);
-            if (!matcher.matches()) {
-                LOGGER.error("file dir contains illegal character.");
-                throw new IllegalArgumentException();
-            }
-        }
-        return filePath.replace(":", File.separator);
-
-    }
-
-    /**
      * check file if is invalid.
      * 
      * @param file object.
      */
     public static File check(MultipartFile file, String taskId) {
-        String originalFileName = file.getOriginalFilename();
-
-        if (originalFileName == null) {
-            LOGGER.error("Package File name is null.");
-            String param = "package file name";
-            List<String> params = new ArrayList<String>();
-            params.add(param);
-            throw new IllegalRequestException(String.format(ErrorCode.PARAM_IS_NULL_MSG, param),
-                    ErrorCode.PARAM_IS_NULL, params);
-        }
-
-        // file name should not contains blank.
-        if (originalFileName != null && originalFileName.split("\\s").length > 1) {
-            LOGGER.error("fileName contain blank");
-            throw new IllegalRequestException(ErrorCode.FILE_NAME_CONTAIN_BLANK_MSG, ErrorCode.FILE_NAME_CONTAIN_BLANK,
-                    null);
-        }
-
-        if (originalFileName != null && !isAllowedFileName(originalFileName)) {
-            LOGGER.error("fileName is Illegal");
-            throw new IllegalRequestException(ErrorCode.FILE_NAME_ILLEGAL_MSG, ErrorCode.FILE_NAME_ILLEGAL, null);
-        }
+        fileNameCheck(file.getOriginalFilename());
 
         if (file.getSize() > getMaxFileSize()) {
             LOGGER.error("fileSize is too big");
-            throw new IllegalArgumentException(originalFileName + " :fileSize is too big");
+            throw new IllegalRequestException(String.format(ErrorCode.SIZE_OUT_OF_LIMIT_MSG, "file", "5G"),
+                    ErrorCode.SIZE_OUT_OF_LIMIT, new ArrayList<String>(Arrays.asList("file", "5G")));
         }
 
         File result = null;
-
         // temp/taskId_fileName
         String tempFileAddress = new StringBuilder().append(Constant.WORK_TEMP_DIR).append(File.separator)
                 .append(taskId).append(Constant.UNDER_LINE).append(file.getOriginalFilename()).toString();
@@ -147,12 +86,9 @@ public class FileChecker {
                 LOGGER.warn("check delete file {} failed.", file.getOriginalFilename());
             }
             LOGGER.error("create temp file with IOException. {}", e.getMessage());
-            throw new IllegalArgumentException("create temp file with IOException");
-        } catch (IllegalStateException e) {
-            CommonUtil.deleteTempFile(taskId, file);
-            LOGGER.error("Illegal state exception, {}", e.getMessage());
-            throw new IllegalArgumentException(e.getMessage());
+            throw new IllegalRequestException(ErrorCode.FILE_IO_EXCEPTION_MSG, ErrorCode.FILE_IO_EXCEPTION, null);
         }
+
         return result;
     }
 
@@ -325,15 +261,21 @@ public class FileChecker {
                 }
                 entries++;
                 if (entries > Constant.TOO_MANY) {
-                    throw new IllegalStateException("Too many files to unzip.");
+                    LOGGER.error("Too many files to unzip.");
+                    throw new IllegalRequestException(
+                            String.format(ErrorCode.NUMBER_OUT_OF_LIMIT_MSG, "unzip files", "1024"),
+                            ErrorCode.NUMBER_OUT_OF_LIMIT, new ArrayList<String>(Arrays.asList("unzip files", "1024")));
                 }
                 if (total > Constant.TOO_BIG) {
-                    throw new IllegalStateException("File being unzipped is too big.");
+                    LOGGER.error("File being unzipped is too big.");
+                    throw new IllegalRequestException(
+                            String.format(ErrorCode.SIZE_OUT_OF_LIMIT_MSG, "unzip file", "10G"),
+                            ErrorCode.SIZE_OUT_OF_LIMIT, new ArrayList<String>(Arrays.asList("unzip file", "10G")));
                 }
             }
         } catch (IOException e) {
             LOGGER.error("unzip csar with exception. {}", e.getMessage());
-            throw new IllegalArgumentException("unzip csar with exception.");
+            throw new IllegalRequestException(ErrorCode.FILE_IO_EXCEPTION_MSG, ErrorCode.FILE_IO_EXCEPTION, null);
         } finally {
             FileUtils.cleanDirectory(new File(tempDir));
             new File(tempDir).delete();
@@ -377,7 +319,7 @@ public class FileChecker {
         }
         if (!tempFile.exists() && !tempFile.isDirectory() && !tempFile.createNewFile() && !result) {
             LOGGER.error("create temp file failed.");
-            throw new IllegalArgumentException("create temp file failed");
+            throw new IllegalRequestException(ErrorCode.FILE_IO_EXCEPTION_MSG, ErrorCode.FILE_IO_EXCEPTION, null);
         }
     }
 
@@ -422,6 +364,31 @@ public class FileChecker {
             return canonicalPath;
         } else {
             throw new IllegalStateException("File is outside extraction target directory.");
+        }
+    }
+
+    /**
+     * file name check.
+     * 
+     * @param originalFileName originalFileName
+     */
+    private static void fileNameCheck(String originalFileName) {
+        if (originalFileName == null) {
+            LOGGER.error("Package File name is null.");
+            throw new IllegalRequestException(String.format(ErrorCode.PARAM_IS_NULL_MSG, "package file name"),
+                    ErrorCode.PARAM_IS_NULL, new ArrayList<String>(Arrays.asList("package file name")));
+        }
+
+        // file name should not contains blank.
+        if (originalFileName != null && originalFileName.split("\\s").length > 1) {
+            LOGGER.error("fileName contain blank");
+            throw new IllegalRequestException(ErrorCode.FILE_NAME_CONTAIN_BLANK_MSG, ErrorCode.FILE_NAME_CONTAIN_BLANK,
+                    null);
+        }
+
+        if (originalFileName != null && !isAllowedFileName(originalFileName)) {
+            LOGGER.error("fileName is Illegal");
+            throw new IllegalRequestException(ErrorCode.FILE_NAME_ILLEGAL_MSG, ErrorCode.FILE_NAME_ILLEGAL, null);
         }
     }
 

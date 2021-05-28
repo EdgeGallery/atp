@@ -20,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -353,7 +354,9 @@ public class TestScenarioServiceImpl implements TestScenarioService {
                         } catch (IllegalArgumentException e) {
                             LOGGER.error("update repository failed. ");
                             failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(),
-                                    Constant.TEST_CASE, ErrorCode.DB_ERROR, ErrorCode.DB_ERROR_MSG, null));
+                                    Constant.TEST_CASE, ErrorCode.DB_ERROR,
+                                    String.format(ErrorCode.DB_ERROR_MSG, "create test case failed"),
+                                    new ArrayList<String>(Arrays.asList("create test case failed"))));
                             failureIds.add(testCase.getId());
                             // roll back insert
                             testCaseRepository.delete(testCase.getId());
@@ -407,7 +410,9 @@ public class TestScenarioServiceImpl implements TestScenarioService {
                     } catch (IllegalArgumentException e) {
                         LOGGER.error("update repository failed. ");
                         failures.add(CommonUtil.setFailureRes(testScenario.getId(), testScenario.getId(),
-                                Constant.TEST_SCENARIO, ErrorCode.DB_ERROR, ErrorCode.DB_ERROR_MSG, null));
+                                Constant.TEST_SCENARIO, ErrorCode.DB_ERROR,
+                                String.format(ErrorCode.DB_ERROR_MSG, "update repository failed"),
+                                new ArrayList<String>(Arrays.asList("update repository failed"))));
                         failureIds.add(testScenario.getId());
                         // roll back insert
                         testScenarioRepository.deleteTestScenario(testScenario.getId());
@@ -435,8 +440,9 @@ public class TestScenarioServiceImpl implements TestScenarioService {
                 } catch (IllegalArgumentException e) {
                     LOGGER.error("create test scenario {} failed.", testScenario.getNameEn());
                     failures.add(CommonUtil.setFailureRes(testScenario.getId(), testScenario.getNameEn(),
-                            Constant.TEST_SCENARIO, ErrorCode.DB_ERROR, ErrorCode.DB_ERROR_MSG,
-                            Constant.TEST_SCENARIO));
+                            Constant.TEST_SCENARIO, ErrorCode.DB_ERROR,
+                            String.format(ErrorCode.DB_ERROR_MSG, "create test scenario failed"),
+                            new ArrayList<String>(Arrays.asList("create test case failed"))));
                     failureIds.add(testScenario.getId());
                 }
             }
@@ -458,7 +464,8 @@ public class TestScenarioServiceImpl implements TestScenarioService {
                 } catch (IllegalArgumentException e) {
                     LOGGER.error("create test suite {} failed.", testSuite.getNameEn());
                     failures.add(CommonUtil.setFailureRes(testSuite.getId(), testSuite.getNameEn(), Constant.TEST_SUITE,
-                            ErrorCode.DB_ERROR, ErrorCode.DB_ERROR_MSG, Constant.TEST_SUITE));
+                            ErrorCode.DB_ERROR, String.format(ErrorCode.DB_ERROR_MSG, "create test suite failed"),
+                            new ArrayList<String>(Arrays.asList("create test suite failed"))));
                     failureIds.add(testSuite.getId());
                 }
             }
@@ -480,7 +487,8 @@ public class TestScenarioServiceImpl implements TestScenarioService {
                 } catch (IllegalArgumentException e) {
                     LOGGER.error("create test case {} failed.", testCase.getNameEn());
                     failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(), Constant.TEST_CASE,
-                            ErrorCode.DB_ERROR, ErrorCode.DB_ERROR_MSG, Constant.TEST_CASE));
+                            ErrorCode.DB_ERROR, String.format(ErrorCode.DB_ERROR_MSG, "create test case failed"),
+                            new ArrayList<String>(Arrays.asList("create test case failed"))));
                     failureIds.add(testCase.getId());
                 }
             }

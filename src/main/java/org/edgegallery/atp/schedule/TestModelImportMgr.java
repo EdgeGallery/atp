@@ -18,6 +18,7 @@ import com.alibaba.fastjson.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -68,7 +69,7 @@ public class TestModelImportMgr {
         Sheet testScenarioSheet = wb.getSheet(Constant.TEST_SCENARIO);
         Sheet testSuiteSheet = wb.getSheet(Constant.TEST_SUITE);
         Sheet testCaseSheet = wb.getSheet(Constant.TEST_CASE);
-        
+
         if (testScenarioSheet.getPhysicalNumberOfRows() > MAX_DATA_NUM
                 || testSuiteSheet.getPhysicalNumberOfRows() > MAX_DATA_NUM
                 || testCaseSheet.getPhysicalNumberOfRows() > MAX_DATA_NUM) {
@@ -96,13 +97,12 @@ public class TestModelImportMgr {
 
         while (iter.hasNext()) {
             Row row = iter.next();
-            String nameCh = getCellValue(row, 0);
-            String nameEn = getCellValue(row, 1);
+            String nameCh = CommonUtil.setParamOrDefault(getCellValue(row, 0), getCellValue(row, 1));
+            String nameEn = CommonUtil.setParamOrDefault(getCellValue(row, 1), getCellValue(row, 0));
             String descriptionCh = getCellValue(row, 2);
             String descriptionEn = getCellValue(row, 3);
             TestScenario testScenario = TestScenario.builder().setId(CommonUtil.generateId())
-                    .setNameCh(CommonUtil.setParamOrDefault(nameCh, nameEn))
-                    .setNameEn(CommonUtil.setParamOrDefault(nameEn, nameCh))
+                    .setNameCh(nameCh).setNameEn(nameEn)
                     .setDescriptionCh(CommonUtil.setParamOrDefault(descriptionCh, descriptionEn))
                     .setDescriptionEn(CommonUtil.setParamOrDefault(descriptionEn, descriptionCh)).build();
 
@@ -115,13 +115,16 @@ public class TestModelImportMgr {
                         || null != testScenarioRepository.getTestScenarioByName(null, nameEn)) {
                     LOGGER.error("name of test scenario {} or {} already exist.", nameCh, nameEn);
                     failures.add(CommonUtil.setFailureRes(testScenario.getId(), nameEn, Constant.TEST_SCENARIO,
-                            ErrorCode.NAME_EXISTS, ErrorCode.NAME_EXISTS_MSG, Constant.TEST_SCENARIO.concat(nameEn)));
+                            ErrorCode.NAME_EXISTS,
+                            String.format(ErrorCode.NAME_EXISTS_MSG, nameEn),
+                            new ArrayList<String>(Arrays.asList(nameEn))));
                     failureIds.add(testScenario.getId());
                 }
             } catch (IllegalArgumentException e) {
                 // db operate failed
                 failures.add(CommonUtil.setFailureRes(testScenario.getId(), nameEn, Constant.TEST_SCENARIO,
-                        ErrorCode.DB_ERROR, ErrorCode.DB_ERROR_MSG, Constant.TEST_SCENARIO));
+                        ErrorCode.DB_ERROR, String.format(ErrorCode.DB_ERROR_MSG, "get testScenario by name failed"),
+                        new ArrayList<String>(Arrays.asList("get testScenario by name failed"))));
                 failureIds.add(testScenario.getId());
             }
 
@@ -148,13 +151,13 @@ public class TestModelImportMgr {
 
         while (iter.hasNext()) {
             Row row = iter.next();
-            String nameCh = getCellValue(row, 0);
-            String nameEn = getCellValue(row, 1);
+            String nameCh = CommonUtil.setParamOrDefault(getCellValue(row, 0), getCellValue(row, 1));
+            String nameEn = CommonUtil.setParamOrDefault(getCellValue(row, 1), getCellValue(row, 0));
+
             String descriptionCh = getCellValue(row, 2);
             String descriptionEn = getCellValue(row, 3);
             TestSuite testSuite = TestSuite.builder().setId(CommonUtil.generateId())
-                    .setNameCh(CommonUtil.setParamOrDefault(nameCh, nameEn))
-                    .setNameEn(CommonUtil.setParamOrDefault(nameEn, nameCh))
+                    .setNameCh(nameCh).setNameEn(nameEn)
                     .setDescriptionCh(CommonUtil.setParamOrDefault(descriptionCh, descriptionEn))
                     .setDescriptionEn(CommonUtil.setParamOrDefault(descriptionEn, descriptionCh)).build();
             List<String> scenarioIdList = new ArrayList<String>();
@@ -182,7 +185,9 @@ public class TestModelImportMgr {
                     } catch (IllegalArgumentException e) {
                         // db error
                         failures.add(CommonUtil.setFailureRes(testSuite.getId(), nameEn, Constant.TEST_SUITE,
-                                ErrorCode.DB_ERROR, ErrorCode.DB_ERROR_MSG, Constant.TEST_SUITE));
+                                ErrorCode.DB_ERROR,
+                                String.format(ErrorCode.DB_ERROR_MSG, "get testScenario by name failed"),
+                                new ArrayList<String>(Arrays.asList("get testScenario by name failed"))));
                         failureIds.add(testSuite.getId());
                     }
                 }
@@ -210,8 +215,8 @@ public class TestModelImportMgr {
 
         while (iter.hasNext()) {
             Row row = iter.next();
-            String nameCh = getCellValue(row, 0);
-            String nameEn = getCellValue(row, 1);
+            String nameCh = CommonUtil.setParamOrDefault(getCellValue(row, 0), getCellValue(row, 1));
+            String nameEn = CommonUtil.setParamOrDefault(getCellValue(row, 1), getCellValue(row, 0));
             String descriptionCh = getCellValue(row, 2);
             String descriptionEn = getCellValue(row, 3);
             String expectResultCh = getCellValue(row, 6);
@@ -219,8 +224,7 @@ public class TestModelImportMgr {
             String testStepCh = getCellValue(row, 8);
             String testSepEn = getCellValue(row, 9);
             TestCase testCase = TestCase.builder().setId(CommonUtil.generateId())
-                    .setNameCh(CommonUtil.setParamOrDefault(nameCh, nameEn))
-                    .setNameEn(CommonUtil.setParamOrDefault(nameEn, nameCh))
+                    .setNameCh(nameCh).setNameEn(nameEn)
                     .setDescriptionCh(CommonUtil.setParamOrDefault(descriptionCh, descriptionEn))
                     .setDescriptionEn(CommonUtil.setParamOrDefault(descriptionEn, descriptionCh))
                     .setType(getCellValue(row, 4)).setCodeLanguage(getCellValue(row, 5))
@@ -252,7 +256,9 @@ public class TestModelImportMgr {
                         }
                     } catch (IllegalArgumentException e) {
                         failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(),
-                                Constant.TEST_CASE, ErrorCode.DB_ERROR, ErrorCode.DB_ERROR_MSG, Constant.TEST_CASE));
+                                Constant.TEST_CASE, ErrorCode.DB_ERROR,
+                                String.format(ErrorCode.DB_ERROR_MSG, "get testSuite by name failed"),
+                                new ArrayList<String>(Arrays.asList("get testSuite by name failed"))));
                         failureIds.add(testCase.getId());
                     }
                 }
@@ -326,7 +332,8 @@ public class TestModelImportMgr {
         for (String scenarioName : scenarioNameArray) {
             if (!CommonUtil.isLengthOk(scenarioName, Constant.LENGTH_64)) {
                 failures.add(CommonUtil.setFailureRes(testSuite.getId(), testSuite.getNameEn(), Constant.TEST_SUITE,
-                        ErrorCode.LENGTH_CHECK_FAILED, ErrorCode.LENGTH_CHECK_FAILED_MSG, Constant.TEST_SCENARIO));
+                        ErrorCode.LENGTH_CHECK_FAILED, ErrorCode.LENGTH_CHECK_FAILED_MSG,
+                        new ArrayList<String>(Arrays.asList(Constant.TEST_SCENARIO))));
                 failureIds.add(testSuite.getId());
                 testSuiteImportList.add(testSuite);
                 return false;
@@ -368,7 +375,8 @@ public class TestModelImportMgr {
         for (String testSuiteName : testSuiteNameArray) {
             if (!CommonUtil.isLengthOk(testSuiteName, Constant.LENGTH_64)) {
                 failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(), Constant.TEST_CASE,
-                        ErrorCode.LENGTH_CHECK_FAILED, ErrorCode.LENGTH_CHECK_FAILED_MSG, Constant.TEST_SUITE));
+                        ErrorCode.LENGTH_CHECK_FAILED, ErrorCode.LENGTH_CHECK_FAILED_MSG,
+                        new ArrayList<String>(Arrays.asList(Constant.TEST_SUITE))));
                 failureIds.add(testCase.getId());
                 testCaseImportList.add(testCase);
                 return false;
@@ -416,15 +424,17 @@ public class TestModelImportMgr {
                 LOGGER.error("name of test suite {} or {} already exist.", testSuite.getNameCh(),
                         testSuite.getNameEn());
                 failures.add(CommonUtil.setFailureRes(testSuite.getId(), testSuite.getNameEn(), Constant.TEST_SUITE,
-                        ErrorCode.NAME_EXISTS, ErrorCode.NAME_EXISTS_MSG,
-                        Constant.TEST_SUITE.concat(testSuite.getNameEn())));
+                        ErrorCode.NAME_EXISTS,
+                        String.format(ErrorCode.NAME_EXISTS_MSG, testSuite.getNameEn()),
+                        new ArrayList<String>(Arrays.asList(testSuite.getNameEn()))));
                 failureIds.add(testSuite.getId());
                 testSuiteImportList.add(testSuite);
                 return false;
             }
         } catch (IllegalArgumentException e) {
             failures.add(CommonUtil.setFailureRes(testSuite.getId(), testSuite.getNameEn(), Constant.TEST_SUITE,
-                    ErrorCode.DB_ERROR, ErrorCode.DB_ERROR_MSG, Constant.TEST_SUITE));
+                    ErrorCode.DB_ERROR, String.format(ErrorCode.DB_ERROR_MSG, "get test suite by name failed"),
+                    new ArrayList<String>(Arrays.asList("get test suite by name failed"))));
             failureIds.add(testSuite.getId());
             testSuiteImportList.add(testSuite);
             return false;
@@ -448,15 +458,17 @@ public class TestModelImportMgr {
                     || null != testCaseRepository.findByName(null, testCase.getNameEn())) {
                 LOGGER.error("name of test case {} or {} already exist.", testCase.getNameCh(), testCase.getNameEn());
                 failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(), Constant.TEST_CASE,
-                        ErrorCode.NAME_EXISTS, ErrorCode.NAME_EXISTS_MSG,
-                        Constant.TEST_CASE.concat(testCase.getNameEn())));
+                        ErrorCode.NAME_EXISTS,
+                        String.format(ErrorCode.NAME_EXISTS_MSG, testCase.getNameEn()),
+                        new ArrayList<String>(Arrays.asList(testCase.getNameEn()))));
                 failureIds.add(testCase.getId());
                 testCaseImportList.add(testCase);
                 return false;
             }
         } catch (IllegalArgumentException e) {
             failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(), Constant.TEST_CASE,
-                    ErrorCode.DB_ERROR, ErrorCode.DB_ERROR_MSG, Constant.TEST_CASE));
+                    ErrorCode.DB_ERROR, String.format(ErrorCode.DB_ERROR_MSG, "test case find by name failed"),
+                    new ArrayList<String>(Arrays.asList("test case find by name failed"))));
             failureIds.add(testCase.getId());
             testCaseImportList.add(testCase);
             return false;

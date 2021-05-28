@@ -411,7 +411,7 @@ public class CommonUtil {
      * @return fail response body
      */
     public static JSONObject setFailureRes(String id, String nameEn, String type, int errCode, String errMsg,
-            String params) {
+            List<String> params) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put(Constant.ID, id);
         jsonObject.put(Constant.NAME_EN, nameEn);
