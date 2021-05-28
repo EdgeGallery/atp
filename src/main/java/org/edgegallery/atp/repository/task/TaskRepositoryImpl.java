@@ -16,12 +16,14 @@ package org.edgegallery.atp.repository.task;
 
 import com.alibaba.fastjson.JSONObject;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.collections4.CollectionUtils;
 import org.edgegallery.atp.constant.Constant;
+import org.edgegallery.atp.constant.ErrorCode;
 import org.edgegallery.atp.model.task.TaskPO;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.task.testscenarios.TaskTestCase;
@@ -38,6 +40,7 @@ import org.edgegallery.atp.repository.mapper.TaskMapper;
 import org.edgegallery.atp.repository.testcase.TestCaseRepository;
 import org.edgegallery.atp.repository.testscenario.TestScenarioRepository;
 import org.edgegallery.atp.repository.testsuite.TestSuiteRepository;
+import org.edgegallery.atp.utils.exception.IllegalRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +69,8 @@ public class TaskRepositoryImpl implements TaskRepository {
             taskMapper.insert(TaskPO.of(task));
         } catch (Exception e) {
             LOGGER.error("insert task failed. {}", e);
-            throw new IllegalArgumentException("insert task failed.");
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "insert task failed"),
+                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("insert task failed")));
         }
     }
 
@@ -103,7 +107,8 @@ public class TaskRepositoryImpl implements TaskRepository {
             return taskMapper.getCurrentDate();
         } catch (Exception e) {
             LOGGER.error("getCurrentDate failed. {}", e);
-            throw new IllegalArgumentException("getCurrentDate failed.");
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "getCurrentDate failed"),
+                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("getCurrentDate failed")));
         }
     }
 
@@ -125,7 +130,8 @@ public class TaskRepositoryImpl implements TaskRepository {
                     : null;
         } catch (Exception e) {
             LOGGER.error("findByTaskIdAndUserId failed. {}", e);
-            throw new IllegalArgumentException("findByTaskIdAndUserId failed.");
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "findByTaskIdAndUserId failed"),
+                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("findByTaskIdAndUserId failed")));
         }
     }
 
