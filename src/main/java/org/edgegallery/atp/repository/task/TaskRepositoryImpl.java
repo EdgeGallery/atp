@@ -86,7 +86,8 @@ public class TaskRepositoryImpl implements TaskRepository {
             return taskRequest;
         } catch (Exception e) {
             LOGGER.error("queryAllRunningTasks failed. {}", e);
-            throw new IllegalArgumentException("queryAllRunningTasks failed.");
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "queryAllRunningTasks failed"),
+                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("queryAllRunningTasks failed")));
         }
 
     }
@@ -97,7 +98,8 @@ public class TaskRepositoryImpl implements TaskRepository {
             taskMapper.update(TaskPO.of(task));
         } catch (Exception e) {
             LOGGER.error("update failed. {}", e);
-            throw new IllegalArgumentException("update failed.");
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "update task failed"),
+                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("update task failed")));
         }
     }
 
@@ -118,7 +120,8 @@ public class TaskRepositoryImpl implements TaskRepository {
             taskMapper.delHisTask();
         } catch (Exception e) {
             LOGGER.error("delHisTask failed. {}", e);
-            throw new IllegalArgumentException("delHisTask failed.");
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "delHisTask failed"),
+                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("delHisTask failed")));
         }
     }
 
@@ -149,7 +152,8 @@ public class TaskRepositoryImpl implements TaskRepository {
             return taskRequest;
         } catch (Exception e) {
             LOGGER.error("findTaskByUserId failed. {}", e);
-            throw new IllegalArgumentException("findTaskByUserId failed.");
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "findTaskByUserId failed"),
+                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("findTaskByUserId failed")));
         }
     }
 

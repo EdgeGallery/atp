@@ -50,6 +50,7 @@ import org.edgegallery.atp.repository.testsuite.TestSuiteRepository;
 import org.edgegallery.atp.schedule.TestModelImportMgr;
 import org.edgegallery.atp.utils.CommonUtil;
 import org.edgegallery.atp.utils.FileChecker;
+import org.edgegallery.atp.utils.exception.IllegalRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -227,7 +228,7 @@ public class TestScenarioServiceImpl implements TestScenarioService {
         } catch (IOException e) {
             LOGGER.error("import test models bomb defense failed. {}", e);
             CommonUtil.deleteFile(filePath);
-            throw new IllegalArgumentException("import test models bomb defense failed.");
+            throw new IllegalRequestException(ErrorCode.BOMB_DEFENSE_FAILED_MSG, ErrorCode.BOMB_DEFENSE_FAILED, null);
         }
 
         List<TestScenario> testScenarioList = new ArrayList<TestScenario>();
@@ -346,12 +347,12 @@ public class TestScenarioServiceImpl implements TestScenarioService {
                         } catch (IOException e) {
                             LOGGER.error("copy input stream to file failed. {}", e);
                             failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(),
-                                    Constant.TEST_CASE, ErrorCode.FILE_OPERATION_FAILED,
-                                    ErrorCode.FILE_OPERATION_FAILED_MSG, null));
+                                    Constant.TEST_CASE, ErrorCode.FILE_IO_EXCEPTION, ErrorCode.FILE_IO_EXCEPTION_MSG,
+                                    null));
                             failureIds.add(testCase.getId());
                             // roll back insert
                             testCaseRepository.delete(testCase.getId());
-                        } catch (IllegalArgumentException e) {
+                        } catch (IllegalRequestException e) {
                             LOGGER.error("update repository failed. ");
                             failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(),
                                     Constant.TEST_CASE, ErrorCode.DB_ERROR,
@@ -402,12 +403,12 @@ public class TestScenarioServiceImpl implements TestScenarioService {
                     } catch (IOException e) {
                         LOGGER.error("copy input stream to file failed. {}", e);
                         failures.add(CommonUtil.setFailureRes(testScenario.getId(), testScenario.getNameEn(),
-                                Constant.TEST_SCENARIO, ErrorCode.FILE_OPERATION_FAILED,
-                                ErrorCode.FILE_OPERATION_FAILED_MSG, null));
+                                Constant.TEST_SCENARIO, ErrorCode.FILE_IO_EXCEPTION, ErrorCode.FILE_IO_EXCEPTION_MSG,
+                                null));
                         failureIds.add(testScenario.getId());
                         // roll back insert
                         testScenarioRepository.deleteTestScenario(testScenario.getId());
-                    } catch (IllegalArgumentException e) {
+                    } catch (IllegalRequestException e) {
                         LOGGER.error("update repository failed. ");
                         failures.add(CommonUtil.setFailureRes(testScenario.getId(), testScenario.getId(),
                                 Constant.TEST_SCENARIO, ErrorCode.DB_ERROR,
@@ -437,7 +438,7 @@ public class TestScenarioServiceImpl implements TestScenarioService {
             if (!failureIds.contains(testScenario.getId())) {
                 try {
                     testScenarioRepository.createTestScenario(testScenario);
-                } catch (IllegalArgumentException e) {
+                } catch (IllegalRequestException e) {
                     LOGGER.error("create test scenario {} failed.", testScenario.getNameEn());
                     failures.add(CommonUtil.setFailureRes(testScenario.getId(), testScenario.getNameEn(),
                             Constant.TEST_SCENARIO, ErrorCode.DB_ERROR,
@@ -461,7 +462,7 @@ public class TestScenarioServiceImpl implements TestScenarioService {
             if (!failureIds.contains(testSuite.getId())) {
                 try {
                     testSuiteRepository.createTestSuite(testSuite);
-                } catch (IllegalArgumentException e) {
+                } catch (IllegalRequestException e) {
                     LOGGER.error("create test suite {} failed.", testSuite.getNameEn());
                     failures.add(CommonUtil.setFailureRes(testSuite.getId(), testSuite.getNameEn(), Constant.TEST_SUITE,
                             ErrorCode.DB_ERROR, String.format(ErrorCode.DB_ERROR_MSG, "create test suite failed"),
@@ -484,7 +485,7 @@ public class TestScenarioServiceImpl implements TestScenarioService {
             if (!failureIds.contains(testCase.getId())) {
                 try {
                     testCaseRepository.insert(testCase);
-                } catch (IllegalArgumentException e) {
+                } catch (IllegalRequestException e) {
                     LOGGER.error("create test case {} failed.", testCase.getNameEn());
                     failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(), Constant.TEST_CASE,
                             ErrorCode.DB_ERROR, String.format(ErrorCode.DB_ERROR_MSG, "create test case failed"),

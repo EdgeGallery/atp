@@ -14,8 +14,6 @@
 
 package org.edgegallery.atp.service;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -25,15 +23,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 import org.apache.commons.collections4.CollectionUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ErrorCode;
 import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
-import org.edgegallery.atp.model.CommonActionRes;
 import org.edgegallery.atp.model.ResponseObject;
 import org.edgegallery.atp.model.task.AnalysisResult;
 import org.edgegallery.atp.model.task.TaskRequest;
@@ -111,40 +106,6 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public CommonActionRes preCheck(String taskId) {
-        TaskRequest task =
-                taskRepository.findByTaskIdAndUserId(taskId, AccessTokenFilter.context.get().get(Constant.USER_ID));
-
-        if (null == task) {
-            throw new IllegalArgumentException("taskId do not exists.");
-        }
-
-        String filePath = task.getPackagePath();
-
-        // key is appId, value is packageId
-        Stack<Map<String, String>> dependencyAppList = new Stack<Map<String, String>>();
-        Map<String, String> context = new HashMap<String, String>();
-        context.put(Constant.ACCESS_TOKEN, AccessTokenFilter.context.get().get(Constant.ACCESS_TOKEN));
-        CommonUtil.dependencyCheckSchdule(filePath, dependencyAppList, context);
-
-        Map<String, String> getDependencyInfo = new HashMap<String, String>();
-        dependencyAppList.forEach(map -> {
-            JsonObject response =
-                    CommonUtil.getAppInfoFromAppStore(map.get(Constant.APP_ID), map.get(Constant.PACKAGE_ID));
-            if (null != response) {
-                JsonElement appName = response.get("name");
-                JsonElement appVersion = response.get("version");
-                getDependencyInfo.put(appName.getAsString(), appVersion.getAsString());
-            }
-        });
-        CommonActionRes result = new CommonActionRes();
-        result.setDependency(getDependencyInfo);
-
-        LOGGER.info("pre-check successfully.");
-        return result;
-    }
-
-    @Override
     public TaskRequest runTask(String taskId, List<String> scenarioIdList) {
         try {
             Map<String, String> context = AccessTokenFilter.context.get();
@@ -187,7 +148,10 @@ public class TaskServiceImpl implements TaskService {
             TestScenario testScenario = testScenarioRepository.getTestScenarioById(scenarioId);
             if (null == testScenario) {
                 LOGGER.error("scenarioId {} not exists", scenarioId);
-                throw new IllegalArgumentException("scenarioId not exists.");
+                throw new IllegalRequestException(
+                        String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, "scenarioId: ".concat(scenarioId)),
+                        ErrorCode.NOT_FOUND_EXCEPTION,
+                        new ArrayList<String>(Arrays.asList("scenarioId: ".concat(scenarioId))));
             }
 
             TaskTestScenario scenario = new TaskTestScenario();
@@ -365,9 +329,8 @@ public class TaskServiceImpl implements TaskService {
 
             taskRepository.insert(task);
 
-            ResponseObject<TaskRequest> result =
-                    new ResponseObject<TaskRequest>(task, ErrorCode.RET_CODE_SUCCESS, null,
-                            "create task successfully.");
+            ResponseObject<TaskRequest> result = new ResponseObject<TaskRequest>(task, ErrorCode.RET_CODE_SUCCESS, null,
+                    "create task successfully.");
             return ResponseEntity.ok(result);
         } catch (IOException e) {
             LOGGER.error("create task {} failed, file name is: {}", taskId, tempFile.getName());
@@ -387,6 +350,47 @@ public class TaskServiceImpl implements TaskService {
         ResponseObject<TaskRequest> result = new ResponseObject<TaskRequest>(response, ErrorCode.RET_CODE_SUCCESS, null,
                 "get task by id successfully.");
         return ResponseEntity.ok(result);
+    }
+
+    @Override
+    public ResponseEntity<ResponseObject<TaskRequest>> runTaskV2(String taskId, List<String> scenarioIdList) {
+        try {
+            Map<String, String> context = AccessTokenFilter.context.get();
+            if (CollectionUtils.isEmpty(scenarioIdList)) {
+                String msg = "scenarioIdList is empty.";
+                LOGGER.error(msg);
+                throw new IllegalRequestException(String.format(ErrorCode.PARAM_IS_NULL_MSG, "scenarioIdList"),
+                        ErrorCode.PARAM_IS_NULL, new ArrayList<String>(Arrays.asList("scenarioIdList")));
+            }
+
+            initTestScenarios(scenarioIdList);
+            TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, context.get(Constant.USER_ID));
+            if (null == task) {
+                LOGGER.error("get task from db is null.taskId: {}, userId: {}, userName: {}", taskId,
+                        context.get(Constant.USER_ID), context.get(Constant.USER_NAME));
+                throw new IllegalRequestException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, "get task from db"),
+                        ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList("get task from db")));
+            }
+
+            if (Constant.RUNNING.equals(task.getStatus())) {
+                LOGGER.error("this task already in running.");
+                throw new IllegalRequestException(ErrorCode.TASK_IS_RUNNING_MSG, ErrorCode.TASK_IS_RUNNING, null);
+            }
+            task.setTestScenarios(initTestScenarios(scenarioIdList));
+            task.setAccessToken(context.get(Constant.ACCESS_TOKEN));
+            task.setStatus(Constant.WAITING);
+
+            taskRepository.update(task);
+            String filePath = task.getPackagePath();
+            testCaseManager.executeTestCase(task, filePath);
+
+            ResponseObject<TaskRequest> result =
+                    new ResponseObject<TaskRequest>(task, ErrorCode.RET_CODE_SUCCESS, null, "run task successfully.");
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            LOGGER.error("run task failed. {}", e);
+            throw new IllegalRequestException(ErrorCode.RUN_TASK_FAILED_MSG, ErrorCode.RUN_TASK_FAILED, null);
+        }
     }
 
     /**

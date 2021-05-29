@@ -17,7 +17,6 @@ package org.edgegallery.atp.service;
 import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
-import org.edgegallery.atp.model.CommonActionRes;
 import org.edgegallery.atp.model.ResponseObject;
 import org.edgegallery.atp.model.task.AnalysisResult;
 import org.edgegallery.atp.model.task.TaskRequest;
@@ -58,14 +57,6 @@ public interface TaskService {
      */
     ResponseEntity<List<TaskRequest>> getAllTasks(String userId, String appName, String status,
             String providerId, String appVersion);
-
-    /**
-     * precheck before run test task.
-     * 
-     * @param taskId taskId
-     * @return dependency application info.
-     */
-    CommonActionRes preCheck(String taskId);
 
     /**
      * create test task.
@@ -109,11 +100,20 @@ public interface TaskService {
     ResponseEntity<ResponseObject<TaskRequest>> createTaskV2(MultipartFile file);
 
     /**
-     * get task by id.
+     * get task by id v2 method.
      * 
      * @param taskId taskId
      * @return ResponseObject
      * @throws FileNotExistsException FileNotExistsException
      */
     ResponseEntity<ResponseObject<TaskRequest>> getTaskByIdV2(String taskId) throws FileNotExistsException;
+    
+    /**
+     * run task v2 method.
+     * 
+     * @param taskId taskId
+     * @param scenarioIdList scenarioIdList
+     * @return ResponseObject
+     */
+    ResponseEntity<ResponseObject<TaskRequest>> runTaskV2(String taskId, List<String> scenarioIdList);
 }

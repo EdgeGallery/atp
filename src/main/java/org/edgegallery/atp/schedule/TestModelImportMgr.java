@@ -36,6 +36,7 @@ import org.edgegallery.atp.repository.testcase.TestCaseRepository;
 import org.edgegallery.atp.repository.testscenario.TestScenarioRepository;
 import org.edgegallery.atp.repository.testsuite.TestSuiteRepository;
 import org.edgegallery.atp.utils.CommonUtil;
+import org.edgegallery.atp.utils.exception.IllegalRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,9 +74,9 @@ public class TestModelImportMgr {
         if (testScenarioSheet.getPhysicalNumberOfRows() > MAX_DATA_NUM
                 || testSuiteSheet.getPhysicalNumberOfRows() > MAX_DATA_NUM
                 || testCaseSheet.getPhysicalNumberOfRows() > MAX_DATA_NUM) {
-            String msg = "data number of each sheet can not more than 1000.";
-            LOGGER.error(msg);
-            throw new IllegalArgumentException(msg);
+            LOGGER.error("data number of each sheet can not more than 1000.");
+            throw new IllegalRequestException(ErrorCode.MAX_IMPORT_NUMBER_ERROR_MSG, ErrorCode.MAX_IMPORT_NUMBER_ERROR,
+                    null);
         }
     }
 
@@ -120,7 +121,7 @@ public class TestModelImportMgr {
                             new ArrayList<String>(Arrays.asList(nameEn))));
                     failureIds.add(testScenario.getId());
                 }
-            } catch (IllegalArgumentException e) {
+            } catch (IllegalRequestException e) {
                 // db operate failed
                 failures.add(CommonUtil.setFailureRes(testScenario.getId(), nameEn, Constant.TEST_SCENARIO,
                         ErrorCode.DB_ERROR, String.format(ErrorCode.DB_ERROR_MSG, "get testScenario by name failed"),
@@ -182,7 +183,7 @@ public class TestModelImportMgr {
                         } else {
                             scenarioIdList.add(testScenario.getId());
                         }
-                    } catch (IllegalArgumentException e) {
+                    } catch (IllegalRequestException e) {
                         // db error
                         failures.add(CommonUtil.setFailureRes(testSuite.getId(), nameEn, Constant.TEST_SUITE,
                                 ErrorCode.DB_ERROR,
@@ -254,7 +255,7 @@ public class TestModelImportMgr {
                         } else {
                             suiteIdList.add(testSuite.getId());
                         }
-                    } catch (IllegalArgumentException e) {
+                    } catch (IllegalRequestException e) {
                         failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(),
                                 Constant.TEST_CASE, ErrorCode.DB_ERROR,
                                 String.format(ErrorCode.DB_ERROR_MSG, "get testSuite by name failed"),
@@ -431,7 +432,7 @@ public class TestModelImportMgr {
                 testSuiteImportList.add(testSuite);
                 return false;
             }
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalRequestException e) {
             failures.add(CommonUtil.setFailureRes(testSuite.getId(), testSuite.getNameEn(), Constant.TEST_SUITE,
                     ErrorCode.DB_ERROR, String.format(ErrorCode.DB_ERROR_MSG, "get test suite by name failed"),
                     new ArrayList<String>(Arrays.asList("get test suite by name failed"))));
@@ -465,7 +466,7 @@ public class TestModelImportMgr {
                 testCaseImportList.add(testCase);
                 return false;
             }
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalRequestException e) {
             failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(), Constant.TEST_CASE,
                     ErrorCode.DB_ERROR, String.format(ErrorCode.DB_ERROR_MSG, "test case find by name failed"),
                     new ArrayList<String>(Arrays.asList("test case find by name failed"))));

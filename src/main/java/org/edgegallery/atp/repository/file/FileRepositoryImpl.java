@@ -14,8 +14,12 @@
 
 package org.edgegallery.atp.repository.file;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import org.edgegallery.atp.constant.ErrorCode;
 import org.edgegallery.atp.model.file.AtpFile;
 import org.edgegallery.atp.repository.mapper.FileMapper;
+import org.edgegallery.atp.utils.exception.IllegalRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +39,8 @@ public class FileRepositoryImpl implements FileRepository {
             return fileMapper.getFileContent(fileId, type);
         } catch (Exception e) {
             LOGGER.error("getFileContent failed. {}", e);
-            throw new IllegalArgumentException("getFileContent failed.");
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "getFileContent failed"),
+                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("getFileContent failed")));
         }
     }
 
@@ -45,7 +50,8 @@ public class FileRepositoryImpl implements FileRepository {
             fileMapper.insertFile(file);
         } catch (Exception e) {
             LOGGER.error("insert file failed. {}", e);
-            throw new IllegalArgumentException("insert file failed.");
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "insert file failed"),
+                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("insert file failed")));
         }
     }
 }
