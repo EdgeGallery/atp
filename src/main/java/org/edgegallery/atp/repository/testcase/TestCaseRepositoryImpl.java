@@ -14,12 +14,16 @@
 
 package org.edgegallery.atp.repository.testcase;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.edgegallery.atp.constant.Constant;
+import org.edgegallery.atp.constant.ErrorCode;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.model.testcase.TestCasePo;
 import org.edgegallery.atp.repository.mapper.TestCaseMapper;
+import org.edgegallery.atp.utils.exception.IllegalRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +47,8 @@ public class TestCaseRepositoryImpl implements TestCaseRepository {
                     : testCasePoList.stream().map(testCasePo -> testCasePo.toDomain()).collect(Collectors.toList());
         } catch (Exception e) {
             LOGGER.error("findAllTestCases failed. {}", e);
-            throw new IllegalArgumentException("findAllTestCases failed.");
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "findAllTestCases failed"),
+                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("findAllTestCases failed")));
         }
     }
 
@@ -54,7 +59,8 @@ public class TestCaseRepositoryImpl implements TestCaseRepository {
                     : testCaseMapper.findByNameAndType(name, type).toDomain();
         } catch (Exception e) {
             LOGGER.error("findByNameAndType failed. {}", e);
-            throw new IllegalArgumentException("findByNameAndType failed.");
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "testCaseFindByNameAndType failed"),
+                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("testCaseFindByNameAndType failed")));
         }
     }
 
@@ -64,7 +70,8 @@ public class TestCaseRepositoryImpl implements TestCaseRepository {
             testCaseMapper.insert(testCase.of());
         } catch (Exception e) {
             LOGGER.error("insert test case failed. {}", e);
-            throw new IllegalArgumentException("insert test case failed.");
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "insert test case failed"),
+                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("insert test case failed")));
         }
     }
 
@@ -74,7 +81,8 @@ public class TestCaseRepositoryImpl implements TestCaseRepository {
             testCaseMapper.update(testCase.of());
         } catch (Exception e) {
             LOGGER.error("update test case failed. {}", e);
-            throw new IllegalArgumentException("update test case failed.");
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "update test case failed"),
+                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("update test case failed")));
         }
     }
 
@@ -84,7 +92,8 @@ public class TestCaseRepositoryImpl implements TestCaseRepository {
             return testCaseMapper.delete(id);
         } catch (Exception e) {
             LOGGER.error("delete test case failed. {}", e);
-            throw new IllegalArgumentException("delete test case failed.");
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "delete test case failed"),
+                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("delete test case failed")));
         }
     }
 
@@ -94,7 +103,8 @@ public class TestCaseRepositoryImpl implements TestCaseRepository {
             return null == testCaseMapper.getTestCaseById(id) ? null : testCaseMapper.getTestCaseById(id).toDomain();
         } catch (Exception e) {
             LOGGER.error("getTestCaseById failed. {}", e);
-            throw new IllegalArgumentException("getTestCaseById failed.");
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "getTestCaseById failed"),
+                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("getTestCaseById failed")));
         }
     }
 
@@ -105,7 +115,8 @@ public class TestCaseRepositoryImpl implements TestCaseRepository {
                     : testCaseMapper.findByName(nameCh, nameEn).toDomain();
         } catch (Exception e) {
             LOGGER.error("findByName failed. {}", e);
-            throw new IllegalArgumentException("findByName failed.");
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "test case findByName failed"),
+                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("test case findByName failed")));
         }
     }
 
@@ -116,7 +127,8 @@ public class TestCaseRepositoryImpl implements TestCaseRepository {
                     : testCaseMapper.findByClassName(className).toDomain();
         } catch (Exception e) {
             LOGGER.error("findByClassName failed. {}", e);
-            throw new IllegalArgumentException("findByClassName failed.");
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "test case findByClassName failed"),
+                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("test case findByClassName failed")));
         }
     }
 }

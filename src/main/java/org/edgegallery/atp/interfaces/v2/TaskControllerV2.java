@@ -19,7 +19,9 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.util.List;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import javax.ws.rs.core.MediaType;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
 import org.edgegallery.atp.constant.Constant;
@@ -37,6 +39,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -65,6 +68,25 @@ public class TaskControllerV2 {
             @ApiParam(value = "application files", required = true) @RequestPart("file") MultipartFile file) {
         CommonUtil.validateContext();
         return taskService.createTaskV2(file);
+    }
+
+    /**
+     * run test task.
+     *
+     * @param taskId taskId
+     * @return test task info
+     */
+    @PostMapping(value = "/tasks/{taskId}/action/run", produces = MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "run test task.", response = String.class)
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
+            @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
+    @PreAuthorize("hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
+    public ResponseEntity<ResponseObject<TaskRequest>> runTest(
+            @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = Constant.REG_ID) String taskId,
+            @ApiParam(value = "id of test scenarios selected") @RequestParam("scenarioIdList") @Size(
+                    max = Constant.LENGTH_255) List<String> scenarioIdList) {
+        CommonUtil.validateContext();
+        return taskService.runTaskV2(taskId, scenarioIdList);
     }
 
     /**

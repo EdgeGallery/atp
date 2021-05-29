@@ -15,11 +15,14 @@
 package org.edgegallery.atp.repository.contribution;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.edgegallery.atp.constant.ErrorCode;
 import org.edgegallery.atp.model.contribution.Contribution;
 import org.edgegallery.atp.repository.mapper.ContributionMapper;
+import org.edgegallery.atp.utils.exception.IllegalRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +42,8 @@ public class ContributionRepositoryImpl implements ContributionRepository {
             contributionMapper.insert(contribution);
         } catch (Exception e) {
             LOGGER.error("insert contribution failed. {}", e);
-            throw new IllegalArgumentException("insert contribution failed.");
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "insert contribution failed"),
+                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("insert contribution failed")));
         }
     }
 
@@ -49,7 +53,8 @@ public class ContributionRepositoryImpl implements ContributionRepository {
             return contributionMapper.getAllContributions(name);
         } catch (Exception e) {
             LOGGER.error("query all contributions failed. {}", e);
-            throw new IllegalArgumentException("query all contributions failed.");
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "query all contributions failed"),
+                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("query all contributions failed")));
         }
     }
 
@@ -76,7 +81,8 @@ public class ContributionRepositoryImpl implements ContributionRepository {
             return contributionMapper.getContributionById(id);
         } catch (Exception e) {
             LOGGER.error("query contribution by id failed. {}", e);
-            throw new IllegalArgumentException("query contribution by id failed.");
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "query contribution by id failed"),
+                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("query contribution by id failed")));
         }
     }
 }

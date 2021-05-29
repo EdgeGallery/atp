@@ -49,49 +49,49 @@ public interface ErrorCode {
      */
     int NAME_EXISTS = 40002;
 
-    String NAME_EXISTS_MSG = "name %s already exists";
+    String NAME_EXISTS_MSG = "name %s already exists.";
 
     /**
-     * file operation error.
+     * DB error.
      */
-    int FILE_OPERATION_FAILED = 40003;
+    int DB_ERROR = 40003;
 
-    String FILE_OPERATION_FAILED_MSG = "file operation error";
+    String DB_ERROR_MSG = "DB error: %s.";
 
     /**
      * there does not exists test case script in test case file dir.
      */
     int TEST_CASE_NOT_EXISTS_IN_DIR = 40004;
 
-    String TEST_CASE_NOT_EXISTS_IN_DIR_MSG = "there does not exists test case script in test case file dir";
+    String TEST_CASE_NOT_EXISTS_IN_DIR_MSG = "there does not exists test case script in test case file dir.";
 
     /**
      * length check failed.
      */
     int LENGTH_CHECK_FAILED = 40005;
 
-    String LENGTH_CHECK_FAILED_MSG = "length check failed";
+    String LENGTH_CHECK_FAILED_MSG = "length check failed.";
     
     /**
      * test case type error, must be: automatic or manual.
      */
     int TEST_CASE_TYPE_ERROR = 40006;
     
-    String TEST_CASE_TYPE_ERROR_MSG = "test case type error, must be: automatic or manual";
+    String TEST_CASE_TYPE_ERROR_MSG = "test case type error, must be: automatic or manual.";
 
     /**
      * test case language error, must be: java, python or jar.
      */
     int TEST_CASE_LANGUAGE_ERROR = 40007;
 
-    String TEST_CASE_LANGUAGE_ERROR_MSG = "test case language error, must be: java, python or jar";
+    String TEST_CASE_LANGUAGE_ERROR_MSG = "test case language error, must be: java, python or jar.";
 
     /**
      * number of each sheet can not more than 1000.
      */
     int MAX_IMPORT_NUMBER_ERROR = 40008;
 
-    String MAX_IMPORT_NUMBER_ERROR_MSG = "number of each sheet can not more than 1000";
+    String MAX_IMPORT_NUMBER_ERROR_MSG = "number of each sheet can not more than 1000.";
 
     /**
      * param is null.
@@ -105,14 +105,14 @@ public interface ErrorCode {
      */
     int FILE_NAME_CONTAIN_BLANK = 40010;
 
-    String FILE_NAME_CONTAIN_BLANK_MSG = "fileName contain blank";
+    String FILE_NAME_CONTAIN_BLANK_MSG = "fileName contain blank.";
 
     /**
      * file name illegal.
      */
     int FILE_NAME_ILLEGAL = 40011;
 
-    String FILE_NAME_ILLEGAL_MSG = "fileName illegal";
+    String FILE_NAME_ILLEGAL_MSG = "fileName illegal.";
 
     /**
      * file operation io exception.
@@ -133,19 +133,33 @@ public interface ErrorCode {
      */
     int SIZE_OUT_OF_LIMIT = 40014;
 
-    String SIZE_OUT_OF_LIMIT_MSG = "% size out of limit %s";
-
-    /**
-     * DB error.
-     */
-    int DB_ERROR = 40015;
-
-    String DB_ERROR_MSG = "DB error: %s";
+    String SIZE_OUT_OF_LIMIT_MSG = "%s size out of limit %s.";
 
     /**
      * param1 number is out of limit param2.
      */
-    int NUMBER_OUT_OF_LIMIT = 40016;
+    int NUMBER_OUT_OF_LIMIT = 40015;
 
-    String NUMBER_OUT_OF_LIMIT_MSG = "% number out of limit %s";
+    String NUMBER_OUT_OF_LIMIT_MSG = "%s number out of limit %s.";
+
+    /**
+     * task is alreay running.
+     */
+    int TASK_IS_RUNNING = 40016;
+
+    String TASK_IS_RUNNING_MSG = "task is alreay running.";
+
+    /**
+     * run task failed.
+     */
+    int RUN_TASK_FAILED = 40017;
+
+    String RUN_TASK_FAILED_MSG = "run task failed.";
+
+    /**
+     * bomb defense failed.
+     */
+    int BOMB_DEFENSE_FAILED = 40018;
+
+    String BOMB_DEFENSE_FAILED_MSG = "bomb defense failed.";
 }

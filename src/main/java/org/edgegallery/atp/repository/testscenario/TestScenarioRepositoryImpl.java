@@ -14,10 +14,14 @@
 
 package org.edgegallery.atp.repository.testscenario;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.edgegallery.atp.constant.Constant;
+import org.edgegallery.atp.constant.ErrorCode;
 import org.edgegallery.atp.model.testscenario.TestScenario;
 import org.edgegallery.atp.repository.mapper.TestScenarioMapper;
+import org.edgegallery.atp.utils.exception.IllegalRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +40,8 @@ public class TestScenarioRepositoryImpl implements TestScenarioRepository {
             testScenarioMapper.createTestScenario(testScenario);
         } catch (Exception e) {
             LOGGER.error("insert test scenario failed. {}", e);
-            throw new IllegalArgumentException("insert test scenario failed.");
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "insert test scenario failed"),
+                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("insert test scenario failed")));
         }
     }
 
@@ -46,7 +51,8 @@ public class TestScenarioRepositoryImpl implements TestScenarioRepository {
             return testScenarioMapper.getTestScenarioByName(nameCh, nameEn);
         } catch (Exception e) {
             LOGGER.error("get test scenario by name {} failed. {}", nameEn, e);
-            throw new IllegalArgumentException("get test scenario by name failed.");
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "get test scenario by name failed"),
+                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("get test scenario by name failed")));
         }
     }
 
@@ -56,7 +62,8 @@ public class TestScenarioRepositoryImpl implements TestScenarioRepository {
             return testScenarioMapper.getTestScenarioById(id);
         } catch (Exception e) {
             LOGGER.error("get test scenario by id {} failed. {}", id, e);
-            throw new IllegalArgumentException("get test scenario by id failed.");
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "get test scenario by id failed"),
+                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("get test scenario by id failed")));
         }
     }
 
@@ -66,7 +73,8 @@ public class TestScenarioRepositoryImpl implements TestScenarioRepository {
             testScenarioMapper.updateTestScenario(testScenario);
         } catch (Exception e) {
             LOGGER.error("update test scenario failed. {}", e);
-            throw new IllegalArgumentException("update test scenario failed.");
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "update test scenario failed"),
+                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("update test scenario failed")));
         }
     }
 
@@ -76,7 +84,8 @@ public class TestScenarioRepositoryImpl implements TestScenarioRepository {
             testScenarioMapper.deleteTestScenario(id);
         } catch (Exception e) {
             LOGGER.error("delete test scenario {} failed. {}", id, e);
-            throw new IllegalArgumentException("delete test scenario failed.");
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "delete test scenario failed"),
+                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("delete test scenario failed")));
         }
     }
 
@@ -88,7 +97,8 @@ public class TestScenarioRepositoryImpl implements TestScenarioRepository {
             return testScenarioMapper.getAllTestScenario(nameCh, nameEn);
         } catch (Exception e) {
             LOGGER.error("get all test scenario failed. {}", e);
-            throw new IllegalArgumentException("get all test scenario failed.");
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "get all test scenarios failed"),
+                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("get all test scenarios failed")));
         }
     }
 
@@ -98,7 +108,9 @@ public class TestScenarioRepositoryImpl implements TestScenarioRepository {
             return testScenarioMapper.batchQueryTestScenario(ids);
         } catch (Exception e) {
             LOGGER.error("batch query test scenario failed. {}", e);
-            throw new IllegalArgumentException("batch query test scenario failed.");
+            throw new IllegalRequestException(
+                    String.format(ErrorCode.DB_ERROR_MSG, "batch query test scenarios failed"), ErrorCode.DB_ERROR,
+                    new ArrayList<String>(Arrays.asList("batch query test scenarios failed")));
         }
     }
 }

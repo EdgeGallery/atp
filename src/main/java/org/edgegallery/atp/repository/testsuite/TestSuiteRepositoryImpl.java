@@ -14,12 +14,16 @@
 
 package org.edgegallery.atp.repository.testsuite;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.edgegallery.atp.constant.Constant;
+import org.edgegallery.atp.constant.ErrorCode;
 import org.edgegallery.atp.model.testsuite.TestSuite;
 import org.edgegallery.atp.model.testsuite.TestSuitePo;
 import org.edgegallery.atp.repository.mapper.TestSuiteMapper;
+import org.edgegallery.atp.utils.exception.IllegalRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +42,8 @@ public class TestSuiteRepositoryImpl implements TestSuiteRepository {
             testSuiteMapper.createTestSuite(new TestSuitePo(testSuite));
         } catch (Exception e) {
             LOGGER.error("insert test suite failed. {}", e);
-            throw new IllegalArgumentException("insert test suite failed.");
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "insert test suite failed"),
+                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("insert test suite failed")));
         }
     }
 
@@ -49,7 +54,8 @@ public class TestSuiteRepositoryImpl implements TestSuiteRepository {
                     : testSuiteMapper.getTestSuiteByName(nameCh, nameEn).toDomain();
         } catch (Exception e) {
             LOGGER.error("get test suite by name {} failed. {}", nameEn, e);
-            throw new IllegalArgumentException("get test suite by name failed.");
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "get test suite by name failed"),
+                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("get test suite by name failed")));
         }
     }
 
@@ -60,7 +66,8 @@ public class TestSuiteRepositoryImpl implements TestSuiteRepository {
                     : testSuiteMapper.getTestSuiteById(id).toDomain();
         } catch (Exception e) {
             LOGGER.error("get test suite by id {} failed. {}", id, e);
-            throw new IllegalArgumentException("get test suite by id failed.");
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "get test suite by id failed"),
+                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("get test suite by id failed")));
         }
     }
 
@@ -70,7 +77,8 @@ public class TestSuiteRepositoryImpl implements TestSuiteRepository {
             testSuiteMapper.updateTestSuite(new TestSuitePo(testsuite));
         } catch (Exception e) {
             LOGGER.error("update test suite failed. {}", e);
-            throw new IllegalArgumentException("update test suite failed.");
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "update test suite failed"),
+                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("update test suite failed")));
         }
     }
 
@@ -80,7 +88,8 @@ public class TestSuiteRepositoryImpl implements TestSuiteRepository {
             testSuiteMapper.deleteTestSuite(id);
         } catch (Exception e) {
             LOGGER.error("delete test suite {} failed. {}", id, e);
-            throw new IllegalArgumentException("delete test suite failed.");
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "delete test suite failed"),
+                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("delete test suite failed")));
         }
     }
 
@@ -95,7 +104,8 @@ public class TestSuiteRepositoryImpl implements TestSuiteRepository {
                     : null;
         } catch (Exception e) {
             LOGGER.error("get all test suite failed. {}", e);
-            throw new IllegalArgumentException("get all test suite failed.");
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "get all test suites failed"),
+                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("get all test suites failed")));
         }
     }
 
@@ -106,7 +116,8 @@ public class TestSuiteRepositoryImpl implements TestSuiteRepository {
             return testSuitePoList.stream().map(testSuitePo -> testSuitePo.toDomain()).collect(Collectors.toList());
         } catch (Exception e) {
             LOGGER.error("batch query test suite failed. {}", e);
-            throw new IllegalArgumentException("batch query test suite failed.");
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "batch query test suites failed"),
+                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("batch query test suites failed")));
         }
     }
 
