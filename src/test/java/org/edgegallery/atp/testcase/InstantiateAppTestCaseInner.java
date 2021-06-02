@@ -400,6 +400,7 @@ public class InstantiateAppTestCaseInner {
      */
     private void setBody(Map<String, Object> body) {
         body.put("DC_ID", PropertiesUtil.getProperties("DC_ID"));
+        body.put("az_dc", PropertiesUtil.getProperties("az_dc"));
         body.put("ak", PropertiesUtil.getProperties("ak"));
         body.put("sk", PropertiesUtil.getProperties("sk"));
         body.put("mep_certificate", PropertiesUtil.getProperties("mep_certificate"));
@@ -414,16 +415,25 @@ public class InstantiateAppTestCaseInner {
         body.put("app_internet_gw", PropertiesUtil.getProperties("app_internet_gw"));
         body.put("mep_ip", PropertiesUtil.getProperties("mep_ip"));
         body.put("mep_port", PropertiesUtil.getProperties("mep_port"));
-        body.put("network_name_1", PropertiesUtil.getProperties("network_name_1"));
-        body.put("network1_physnet", PropertiesUtil.getProperties("network1_physnet"));
-        body.put("network1_vlanid", PropertiesUtil.getProperties("network1_vlanid"));
-        body.put("network_name_2", PropertiesUtil.getProperties("network_name_2"));
-        body.put("network2_physnet", PropertiesUtil.getProperties("network2_physnet"));
-        body.put("network2_vlanid", PropertiesUtil.getProperties("network2_vlanid"));
-        body.put("network_name_3", PropertiesUtil.getProperties("network_name_3"));
-        body.put("network3_physnet", PropertiesUtil.getProperties("network3_physnet"));
-        body.put("network3_vlanid", PropertiesUtil.getProperties("network3_vlanid"));
+        body.put("network_name_mep", PropertiesUtil.getProperties("network_name_mep"));
+        body.put("network_mep_physnet", PropertiesUtil.getProperties("network_mep_physnet"));
+        body.put("network_mep_vlanid", PropertiesUtil.getProperties("network_mep_vlanid"));
+        body.put("network_name_n6", PropertiesUtil.getProperties("network_name_n6"));
+        body.put("network_n6_physnet", PropertiesUtil.getProperties("network_n6_physnet"));
+        body.put("network_n6_vlanid", PropertiesUtil.getProperties("network_n6_vlanid"));
+        body.put("network_name_internet", PropertiesUtil.getProperties("network_name_internet"));
+        body.put("network_internet_physnet", PropertiesUtil.getProperties("network_internet_physnet"));
+        body.put("network_internet_vlanid", PropertiesUtil.getProperties("network_internet_vlanid"));
         body.put("ue_ip_segment", PropertiesUtil.getProperties("ue_ip_segment"));
+        body.put("mec_internet_ip", PropertiesUtil.getProperties("mec_internet_ip"));
+        body.put("TrafficRuleSrcAddr", PropertiesUtil.getProperties("TrafficRuleSrcAddr"));
+        body.put("TrafficRuleDstAddr", PropertiesUtil.getProperties("TrafficRuleDstAddr"));
+        body.put("TrafficRuleSrcPort", PropertiesUtil.getProperties("TrafficRuleSrcPort"));
+        body.put("TrafficRuleDstPort", PropertiesUtil.getProperties("TrafficRuleDstPort"));
+        body.put("TrafficRuleProtocol", PropertiesUtil.getProperties("TrafficRuleProtocol"));
+        body.put("DnsRuleDomainName", PropertiesUtil.getProperties("DnsRuleDomainName"));
+        body.put("DnsRuleIpAddressType", PropertiesUtil.getProperties("DnsRuleIpAddressType"));
+        body.put("DnsRuleIpAddress", PropertiesUtil.getProperties("DnsRuleIpAddress"));
     }
 
     /**

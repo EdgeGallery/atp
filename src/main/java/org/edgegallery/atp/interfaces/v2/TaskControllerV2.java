@@ -46,7 +46,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller
 @RestSchema(schemaId = "testTaskV2")
 @RequestMapping("/edgegallery/atp/v2")
-@Api(tags = {"APT Test Controller V2"})
+@Api(tags = {"ATP Test Controller V2"})
 @Validated
 public class TaskControllerV2 {
 
