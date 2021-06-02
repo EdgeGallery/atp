@@ -17,6 +17,7 @@ package org.edgegallery.atp.interfaceTest;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,6 +32,7 @@ import org.apache.ibatis.io.Resources;
 import org.edgegallery.atp.ATPApplicationTest;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
+import org.edgegallery.atp.model.ResponseObject;
 import org.edgegallery.atp.model.task.IdList;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.task.TestCaseStatusReq;
@@ -159,5 +161,45 @@ public class TaskTest {
                 .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
         int resultDelete = mvcResultDelete.getResponse().getStatus();
         assertEquals(200, resultDelete);
+    }
+
+    @WithMockUser(roles = "ATP_ADMIN")
+    @Test
+    public void TasksTestV2() throws Exception {
+        new MockUp<FileChecker>() {
+            @Mock
+            private boolean isAllowedFileName(String originalFilename) {
+                return true;
+            }
+        };
+
+        File csar = Resources.getResourceAsFile("testfile/AR.csar");
+        InputStream csarInputStream = new FileInputStream(csar);
+        MultipartFile csarMultiFile = new MockMultipartFile("AR.csar", "AR.csar",
+                ContentType.APPLICATION_OCTET_STREAM.toString(), csarInputStream);
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.multipart("/edgegallery/atp/v2/tasks")
+                .file("file", csarMultiFile.getBytes()).with(csrf())).andReturn();
+        int result = mvcResult.getResponse().getStatus();
+        assertEquals(200, result);
+
+        String content = mvcResult.getResponse().getContentAsString();
+        ResponseObject responseObject = JSONObject.parseObject(content, ResponseObject.class);
+        String data = JSONObject.toJSONString(responseObject.getData());
+        TaskRequest task = JSONObject.parseObject(data, TaskRequest.class);
+        String id = task.getId();
+
+        // run task
+        MvcResult mvcResultRunTasks =
+                mvc.perform(MockMvcRequestBuilders.multipart("/edgegallery/atp/v2/tasks/" + id + "/action/run")
+                        .with(csrf()).param("scenarioIdList", "e71718a5-864a-49e5-855a-5805a5e9f97d")).andReturn();
+        int resultRunTasks = mvcResultRunTasks.getResponse().getStatus();
+        assertEquals(200, resultRunTasks);
+
+        // query one taks
+        MvcResult mvcResultQueryOne = mvc.perform(MockMvcRequestBuilders.get("/edgegallery/atp/v1/tasks/" + id)
+                .contentType(MediaType.APPLICATION_JSON_VALUE).with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+        int resultQueryOne = mvcResultQueryOne.getResponse().getStatus();
+        assertEquals(200, resultQueryOne);
     }
 }
