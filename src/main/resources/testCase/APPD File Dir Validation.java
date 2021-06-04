@@ -26,6 +26,13 @@ public class APPDValidation {
     private static final String APPD_NOT_EXISTS = "root path must contain APPD file dir.";
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
 
+    /**
+     * execute test case.
+     * 
+     * @param filePath csar file path
+     * @param context context
+     * @return result
+     */
     public String execute(String filePath, Map<String, String> context) {
         try {
             Thread.sleep(800);

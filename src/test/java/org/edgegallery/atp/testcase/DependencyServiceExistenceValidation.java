@@ -15,6 +15,8 @@
 package org.edgegallery.atp.testcase;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,8 +28,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.zip.InflaterInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,10 +47,8 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 public class DependencyServiceExistenceValidation {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(DependencyServiceExistenceValidation.class);
     private static RestTemplate restTemplate = new RestTemplate();
-
     private static final String SUCCESS = "success";
     private static final String NODE_TEMPLATES = "node_templates";
     private static final String APP_CONFIGURATION = "app_configuration";
@@ -59,22 +61,24 @@ public class DependencyServiceExistenceValidation {
     private static final String APP_ID = "appId";
     private static final String PACKAGE_ID = "packageId";
     private static final String APP_NAME = "app_product_name";
-    private static final String DEFINITIONS = "Definition";
-    private static final String PACKAGE_YAML_FORMAT = ".yaml";
     private static final String APP_STORE_DOWNLOAD_CSAR = "/mec/appstore/v1/apps/%s/packages/%s/action/download";
     private static final String ACCESS_TOKEN = "access_token";
     private static final String PROTOCOL_APPSTORE = "https://appstore-be-svc:8099";
     private static final String DEPENDENCY_CHECK_FAILED =
             "dependency check failed, pls check appId and packageId exists in appstore.";
 
+    /**
+     * execute test case.
+     * 
+     * @param filePath csar file path
+     * @param context context
+     * @return result
+     */
     public String execute(String filePath, Map<String, String> context) {
+        delay();
+        Stack<Map<String, String>> dependencyAppList = new Stack<Map<String, String>>();
         try {
-            Thread.sleep(800);
-        } catch (InterruptedException e1) {
-        }
-
-        try {
-            dependencyCheckSchdule(filePath, new Stack<Map<String, String>>(), context);
+            dependencyCheckSchdule(filePath, dependencyAppList, context);
         }catch(IllegalArgumentException e) {
             return DEPENDENCY_CHECK_FAILED;
         }
@@ -82,6 +86,13 @@ public class DependencyServiceExistenceValidation {
         return SUCCESS;
     }
 
+    /**
+     * dependency check schdule.
+     * 
+     * @param filePath filePath
+     * @param dependencyStack dependencyStack
+     * @param context context
+     */
     public void dependencyCheckSchdule(String filePath, Stack<Map<String, String>> dependencyStack,
             Map<String, String> context) {
         List<Map<String, String>> dependencyList = dependencyCheck(filePath);
@@ -133,11 +144,13 @@ public class DependencyServiceExistenceValidation {
                 ZipEntry entry = entries.nextElement();
                 String[] pathSplit = entry.getName().split(SLASH);
 
-                // APPD/Definition/*.yaml
-                if (pathSplit.length == 3 && DEFINITIONS.equals(pathSplit[1].trim())
-                        && pathSplit[2].trim().endsWith(PACKAGE_YAML_FORMAT)) {
-                    analysisDependency(result, zipFile, entry);
-                    break;
+                // find zip package in APPD file path.
+                if (pathSplit.length == 2 && "APPD".equalsIgnoreCase(pathSplit[0]) && pathSplit[1].endsWith(".zip")) {
+                    String yamlPath = getYamlPath(zipFile, entry);
+                    if (null != yamlPath) {
+                        analysizeAppdZip(zipFile, entry, yamlPath, result);
+                        break;
+                    }
                 }
             }
             LOGGER.info("dependencyCheck end.");
@@ -147,9 +160,16 @@ public class DependencyServiceExistenceValidation {
         return result;
     }
 
-    private void analysisDependency(List<Map<String, String>> result, ZipFile zipFile, ZipEntry entry) {
+    /**
+     * get dependency service appid and packageid.
+     * 
+     * @param result result
+     * @param zipFile zipFile
+     * @param entry entry
+     */
+    private void analysisDependency(List<Map<String, String>> result, InputStream inputStream) {
         try (BufferedReader br =
-                new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
+                new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
             String line = positionDependencyService(br);
             if (StringUtils.isEmpty(line)) {
                 LOGGER.warn("can not find the dependency path, the dependency path must "
@@ -269,5 +289,92 @@ public class DependencyServiceExistenceValidation {
      */
     private boolean isEnd(String str) {
         return str.split(COLON).length <= 1;
+    }
+
+    /**
+     * delay some time.
+     */
+    private void delay() {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e1) {
+        }
+    }
+
+    /**
+     * get main yaml file path.
+     * 
+     * @param zipFile zipFile
+     * @param entry entry
+     * @return main yaml file path
+     */
+    private String getYamlPath(ZipFile zipFile, ZipEntry entry) {
+        ZipEntry appdEntry;
+        try (ZipInputStream appdZis = new ZipInputStream(zipFile.getInputStream(entry))) {
+            while ((appdEntry = appdZis.getNextEntry()) != null) {
+                // find .meta file and get main yaml file path
+                if (appdEntry.getName().endsWith(".meta")) {
+                    byte[] data = getByte(appdZis);
+                    InputStream inputStream = new ByteArrayInputStream(data);
+                    try (BufferedReader br =
+                            new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+                        String line = "";
+                        while ((line = br.readLine()) != null) {
+                            // prefix: path
+                            String[] splitByColon = line.split(":");
+                            if (splitByColon.length > 1
+                                    && "Entry-Definitions".equalsIgnoreCase(splitByColon[0].trim())) {
+                                return splitByColon[1].trim();
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+        }
+        return null;
+    }
+
+    /**
+     * analysize zip file and get main yaml file content.
+     * 
+     * @param zipFile zipFile
+     * @param entry entry
+     * @param yamlPath yamlPath
+     * @param result dependency result
+     * @return result
+     */
+    private void analysizeAppdZip(ZipFile zipFile, ZipEntry entry, String yamlPath, List<Map<String, String>> result) {
+        ZipEntry appdEntry;
+        try (ZipInputStream appdZis = new ZipInputStream(zipFile.getInputStream(entry))) {
+            while ((appdEntry = appdZis.getNextEntry()) != null) {
+                if (yamlPath.equalsIgnoreCase(appdEntry.getName())) {
+                    // this is main yaml file.
+                    byte[] data = getByte(appdZis);
+                    InputStream inputStream = new ByteArrayInputStream(data);
+                    analysisDependency(result, inputStream);
+                }
+            }
+        } catch (IOException e) {
+        }
+    }
+
+    /**
+     * get bytes from inputStream.
+     * 
+     * @param zis inputStream
+     * @return file bytes
+     */
+    public byte[] getByte(InflaterInputStream zis) {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            byte[] buffer = new byte[1024];
+            int count = 0;
+            while ((count = zis.read(buffer, 0, 1024)) != -1) {
+                outputStream.write(buffer, 0, count);
+            }
+            return outputStream.toByteArray();
+        } catch (IOException e) {
+            return null;
+        }
     }
 }

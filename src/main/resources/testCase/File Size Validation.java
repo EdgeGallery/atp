@@ -21,9 +21,15 @@ import java.util.Map;
  */
 public class FileSizeValidation {
     private static final long MAX_SIZE = 5 * 1024 * 1024 * 1024;
-
     private static final String FILE_TOO_BIG = "package file size must less than 5GB.";
 
+    /**
+     * execute test case.
+     * 
+     * @param filePath csar file path
+     * @param context context
+     * @return result
+     */
     public String execute(String filePath, Map<String, String> context) {
         try {
             Thread.sleep(800);

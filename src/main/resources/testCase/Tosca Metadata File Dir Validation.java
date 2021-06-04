@@ -26,6 +26,13 @@ public class ToscaMetadataValidation {
     private static final String TOSCA_METADATA_NOT_EXISTS = "root path must contain TOSCA-Metadata file dir.";
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
 
+    /**
+     * execute test case.
+     * 
+     * @param filePath csar file path
+     * @param context context
+     * @return result
+     */
     public String execute(String filePath, Map<String, String> context) {
         try {
             Thread.sleep(1000);

@@ -28,12 +28,9 @@ import java.util.zip.ZipFile;
  *
  */
 public class MFContentTestCaseInner {
-
     private static final String MF_LOSS_FIELD =
             ".mf file may lost the following fileds:app_product_name,app_provider_id,app_package_version,app_class,app_release_date_time or app_package_description.";
-
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
-
     private static final String FILE_NOT_EXIST = ".mf file may not exist or it do not in the root directory.";
 
     private static Set<String> field = new HashSet<String>() {
@@ -47,6 +44,13 @@ public class MFContentTestCaseInner {
         }
     };
 
+    /**
+     * execute test case.
+     * 
+     * @param filePath csar file path
+     * @param context context
+     * @return result
+     */
     public String execute(String filePath, Map<String, String> context) {
         try {
             Thread.sleep(1000);

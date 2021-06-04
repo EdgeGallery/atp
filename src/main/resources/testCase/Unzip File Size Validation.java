@@ -28,13 +28,17 @@ import java.util.zip.ZipInputStream;
  */
 public class UnzipFileSizeValidation {
     private static final int BUFFER = 512;
-
     private static final String FILE_TOO_BIG = "unzip file size must less than 10G";
-
     private static final String UNZIP_PACKAGE_ERROR = "unzip csar with exception";
-
     String WORK_TEMP_DIR = getDir() + File.separator + "temp/fileNumber/";
 
+    /**
+     * execute test case.
+     * 
+     * @param filePath csar file path
+     * @param context context
+     * @return result
+     */
     public String execute(String filePath, Map<String, String> context) {
         ZipEntry entry;
         long total = 0;

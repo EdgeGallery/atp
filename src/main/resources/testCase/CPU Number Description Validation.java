@@ -26,11 +26,16 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
+/**
+ * cpu description filed: num_virtual_cpu in main yaml file validation
+ * 
+ */
 public class CPUNumberDescriptionValidation {
     private static final String CPU_DESCRIPTION_NOT_EXISTS = "There is no cpu description filed: num_virtual_cpu";
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
     private static final String NUM_VIRTUAL_CPU = "num_virtual_cpu";
     private static final String SUCCESS = "success";
+    private static final String ENTRY_DEFINITIONS_NOT_EXISTS = "there is no Entry-Definitions field in .meta file.";
 
     /**
      * execute test case.
@@ -51,6 +56,8 @@ public class CPUNumberDescriptionValidation {
                     String yamlPath = getYamlPath(zipFile, entry);
                     if (null != yamlPath) {
                         return analysizeAppdZip(zipFile, entry, yamlPath) ? SUCCESS : CPU_DESCRIPTION_NOT_EXISTS;
+                    } else {
+                        return ENTRY_DEFINITIONS_NOT_EXISTS;
                     }
                 }
             }
