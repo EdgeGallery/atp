@@ -27,19 +27,12 @@ import java.util.zip.ZipFile;
  * Implementation of validating TOSCA.meta file.
  */
 public class TOSCAFileTestCaseInner {
-
     private static final String TOSCA_META = "TOSCA.meta";
-
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
-
     private static final String TOSCA_FILE_NOT_EXISTS = "tosca.meta not exists.";
-
     private static final String TOSCA_LOSS_FIELD = "tosca.meta file may lost the following filed:Entry-Definitions.";
-
     private static final String FILE_NOT_EXIT = "the value of field Entry-Definitions do not exist corresponding file.";
-
     private static final String FILE_MUST_BE_YAML = "the value of field Entry-Definitions must be yaml file path.";
-
     private static Set<String> pathSet = new HashSet<String>();
 
     private static Set<String> field = new HashSet<String>() {
@@ -48,6 +41,13 @@ public class TOSCAFileTestCaseInner {
         }
     };
 
+    /**
+     * execute test case.
+     * 
+     * @param filePath csar file path
+     * @param context context
+     * @return result
+     */
     public String execute(String filePath, Map<String, String> context) {
         Set<String> sourcePathSet = new HashSet<String>();
         boolean isExistTosca = false;

@@ -22,13 +22,17 @@ import java.util.zip.ZipFile;
  * Implementation of validating .mf file must be in root directory.
  */
 public class SuffixTestCaseInner {
-
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
-
     private static final String FILE_NOT_EXIST = ".mf file may not exist or it do not in the root directory.";
-
     private static final String MF_FILE_NUMBER_TOO_MUCH = "there can be only one mf file in the root directory.";
 
+    /**
+     * execute test case.
+     * 
+     * @param filePath csar file path
+     * @param context context
+     * @return result
+     */
     public String execute(String filePath, Map<String, String> context) {
         int num = 0;
         try (ZipFile zipFile = new ZipFile(filePath)) {

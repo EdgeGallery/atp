@@ -31,11 +31,16 @@ public class CUMFFieldValidation {
 
     private static final String MF_FILE_LOSS_FIELD =
             ".mf file may lost the following fileds:app_name,app_provider,app_package_version,app_release_data_time,app_type or app_package_description.";
-
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
-
     private static final String FILE_NOT_EXIST = ".mf file may not exist or it do not in the root directory.";
 
+    /**
+     * execute test case.
+     * 
+     * @param filePath csar file path
+     * @param context context
+     * @return result
+     */
     private static Set<String> field = new HashSet<String>() {
         {
             add("app_name");

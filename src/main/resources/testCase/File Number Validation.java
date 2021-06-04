@@ -24,9 +24,15 @@ import java.util.zip.ZipFile;
  */
 public class FileNumberValidation {
     private static final String FILE_TOO_MANY = "file number must less than 1024.";
-
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
 
+    /**
+     * execute test case.
+     * 
+     * @param filePath csar file path
+     * @param context context
+     * @return result
+     */
     public String execute(String filePath, Map<String, String> context) {
         try {
             Thread.sleep(800);

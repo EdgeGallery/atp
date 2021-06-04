@@ -28,17 +28,19 @@ import java.util.zip.ZipFile;
  *
  */
 public class SourcePathTestCaseInner {
-
     private static final String SLASH = "/";
-
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
-
     private static final String SOURCE_PATH_FILE_NOT_EXISTS = "some source path file in .mf may not exist.";
-
     private static Set<String> pathSet = new HashSet<String>();
-
     private static final String SUCCESS = "success";
 
+    /**
+     * execute test case.
+     * 
+     * @param filePath csar file path
+     * @param context context
+     * @return result
+     */
     public String execute(String filePath, Map<String, String> context) {
         try {
             Thread.sleep(1000);

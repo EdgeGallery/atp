@@ -26,6 +26,13 @@ public class SwaggerFileDirValidation {
     private static final String SWAGGER_NOT_EXISTS = "root path must contain Swagger file dir.";
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
 
+    /**
+     * execute test case.
+     * 
+     * @param filePath csar file path
+     * @param context context
+     * @return result
+     */
     public String execute(String filePath, Map<String, String> context) {
         try {
             Thread.sleep(1000);
