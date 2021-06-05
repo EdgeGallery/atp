@@ -16,7 +16,6 @@ package org.edgegallery.atp.interfaceTest;
 
 import static org.junit.Assert.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import com.google.gson.Gson;
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,7 +24,6 @@ import org.apache.http.entity.ContentType;
 import org.apache.ibatis.io.Resources;
 import org.edgegallery.atp.ATPApplicationTest;
 import org.edgegallery.atp.model.testscenario.TestScenario;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +37,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.multipart.MultipartFile;
 
 @RunWith(SpringRunner.class)
@@ -50,15 +46,7 @@ public class TestScenarioTest {
     @Autowired
     private MockMvc mvc;
 
-    @Autowired
-    private WebApplicationContext webApplicationContext;
-
     private Gson gson = new Gson();
-
-    @Before
-    public void setUp() throws Exception {
-        this.mvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).apply(springSecurity()).build();
-    }
 
     @WithMockUser(roles = "ATP_ADMIN")
     @Test

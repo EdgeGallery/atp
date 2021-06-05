@@ -16,7 +16,6 @@ package org.edgegallery.atp.interfaceTest;
 
 import static org.junit.Assert.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import java.io.File;
@@ -52,8 +51,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.multipart.MultipartFile;
 import mockit.Mock;
 import mockit.MockUp;
@@ -66,9 +63,6 @@ public class TaskTest {
     @Autowired
     private MockMvc mvc;
 
-    @Autowired
-    private WebApplicationContext webApplicationContext;
-
     private Gson gson = new Gson();
 
     @Before
@@ -78,7 +72,6 @@ public class TaskTest {
         contextMap.put(Constant.USER_ID, "4eed814b-5d29-4e4c-ba73-51fc6db4ed86");
         contextMap.put(Constant.USER_NAME, "atp");
         AccessTokenFilter.context.set(contextMap);
-        this.mvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).apply(springSecurity()).build();
     }
 
     @WithMockUser(roles = "ATP_ADMIN")

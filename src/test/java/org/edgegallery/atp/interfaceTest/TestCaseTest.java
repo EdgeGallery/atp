@@ -16,7 +16,6 @@ package org.edgegallery.atp.interfaceTest;
 
 import static org.junit.Assert.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import com.google.gson.Gson;
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,7 +35,6 @@ import org.edgegallery.atp.utils.FileChecker;
 import org.edgegallery.atp.utils.JarCallUtil;
 import org.edgegallery.atp.utils.JavaCompileUtil;
 import org.edgegallery.atp.utils.PythonCallUtil;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.python.util.PythonInterpreter;
@@ -51,9 +49,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.multipart.MultipartFile;
 import mockit.Mock;
 import mockit.MockUp;
@@ -66,17 +62,9 @@ public class TestCaseTest {
     @Autowired
     private MockMvc mvc;
 
-    @Autowired
-    private WebApplicationContext webApplicationContext;
-
     private Gson gson = new Gson();
 
     private static final String BASIC_PATH = FileChecker.getDir() + File.separator + "testCase" + File.separator;
-
-    @Before
-    public void setUp() throws Exception {
-        this.mvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).apply(springSecurity()).build();
-    }
 
     @WithMockUser(roles = "ATP_TENANT")
     @Test
