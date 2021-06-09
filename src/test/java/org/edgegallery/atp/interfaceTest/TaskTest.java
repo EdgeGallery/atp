@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 import org.apache.http.entity.ContentType;
 import org.apache.ibatis.io.Resources;
 import org.edgegallery.atp.ATPApplicationTest;
@@ -35,7 +34,6 @@ import org.edgegallery.atp.model.ResponseObject;
 import org.edgegallery.atp.model.task.IdList;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.task.TestCaseStatusReq;
-import org.edgegallery.atp.utils.CommonUtil;
 import org.edgegallery.atp.utils.FileChecker;
 import org.junit.Before;
 import org.junit.Test;
@@ -82,11 +80,6 @@ public class TaskTest {
             private boolean isAllowedFileName(String originalFilename) {
                 return true;
             }
-        };
-        new MockUp<CommonUtil>() {
-            @Mock
-            public void dependencyCheckSchdule(String filePath, Stack<Map<String, String>> dependencyStack,
-                    Map<String, String> context) {}
         };
         File csar = Resources.getResourceAsFile("testfile/AR.csar");
         InputStream csarInputStream = new FileInputStream(csar);
