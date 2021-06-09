@@ -63,7 +63,6 @@ public class DependencyServiceExistenceValidation {
     private static final String APP_NAME = "app_product_name";
     private static final String APP_STORE_DOWNLOAD_CSAR = "/mec/appstore/v1/apps/%s/packages/%s/action/download";
     private static final String ACCESS_TOKEN = "access_token";
-    private static final String PROTOCOL_APPSTORE = "https://appstore-be-svc:8099";
     private static final String DEPENDENCY_CHECK_FAILED =
             "dependency check failed, pls check appId and packageId exists in appstore.";
 
@@ -263,7 +262,8 @@ public class DependencyServiceExistenceValidation {
         LOGGER.info("downloadAppFromAppStore url: {}", url);
         try {
             ResponseEntity<Resource> response =
-                    restTemplate.exchange(PROTOCOL_APPSTORE.concat(url), HttpMethod.GET, request, Resource.class);
+                    restTemplate.exchange(context.get("appstoreServerAddress").concat(url), HttpMethod.GET, request,
+                            Resource.class);
             Resource responseBody = response.getBody();
 
             if (!HttpStatus.OK.equals(response.getStatusCode()) || responseBody == null) {

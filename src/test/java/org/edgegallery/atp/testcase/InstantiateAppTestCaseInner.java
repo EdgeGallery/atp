@@ -65,9 +65,6 @@ public class InstantiateAppTestCaseInner {
     private static final String SUCCESS = "success";
     private static final String APM_UPLOAD_PACKAGE = "/apm/v1/tenants/%s/packages/upload";
     private static final String APM_GET_PACKAGE = "/apm/v1/tenants/%s/packages/%s";
-    private static final String PROTOCOL_APM = "https://mecm-apm:8092";
-    private static final String PROTOCAL_APPO = "https://mecm-appo:8091";
-    private static final String PROTOCOL_INVENTORY = "https://mecm-inventory:8093";
     private static final String INVENTORY_GET_MECHOSTS_URL = "/inventory/v1/mechosts";
     private static final String TENANT_ID = "tenantId";
     private static final String CONTENT_TYPE = "Content-Type";
@@ -137,7 +134,8 @@ public class InstantiateAppTestCaseInner {
         HttpHeaders headers = new HttpHeaders();
         headers.set(ACCESS_TOKEN, context.get(ACCESS_TOKEN));
         HttpEntity<String> request = new HttpEntity<>(headers);
-        String url = PROTOCOL_APM.concat(String.format(APM_GET_PACKAGE, context.get(TENANT_ID), packageId));
+        String url = context.get("apmServerAddress")
+                .concat(String.format(APM_GET_PACKAGE, context.get(TENANT_ID), packageId));
         LOGGER.warn("getApmPackage URL: " + url);
 
         long startTime = System.currentTimeMillis();
@@ -204,7 +202,7 @@ public class InstantiateAppTestCaseInner {
         headers.set(ACCESS_TOKEN, context.get(ACCESS_TOKEN));
         HttpEntity<String> request = new HttpEntity<>(headers);
 
-        String url = PROTOCOL_INVENTORY.concat(INVENTORY_GET_MECHOSTS_URL);
+        String url = context.get("inventoryServerAddress").concat(INVENTORY_GET_MECHOSTS_URL);
         LOGGER.warn("get mechostb url: " + url);
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, request, String.class);
@@ -263,7 +261,8 @@ public class InstantiateAppTestCaseInner {
         headers.set(CONTENT_TYPE, APPLICATION_JSON);
 
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
-        String url = PROTOCAL_APPO.concat(String.format(APPO_CREATE_APPINSTANCE, context.get(TENANT_ID)));
+        String url =
+                context.get("appoServerAddress").concat(String.format(APPO_CREATE_APPINSTANCE, context.get(TENANT_ID)));
 
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
@@ -304,7 +303,8 @@ public class InstantiateAppTestCaseInner {
         headers.set(ACCESS_TOKEN, context.get(ACCESS_TOKEN));
         HttpEntity<String> request = new HttpEntity<>(headers);
 
-        String url = PROTOCAL_APPO.concat(String.format(APPO_GET_INSTANCE, context.get(TENANT_ID), appInstanceId));
+        String url = context.get("appoServerAddress")
+                .concat(String.format(APPO_GET_INSTANCE, context.get(TENANT_ID), appInstanceId));
 
         LOGGER.warn("getApplicationInstance URL: " + url);
 
@@ -374,7 +374,8 @@ public class InstantiateAppTestCaseInner {
         headers.set(CONTENT_TYPE, APPLICATION_JSON);
 
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
-        String url = PROTOCAL_APPO.concat(String.format(APPO_INSTANTIATE_APP, context.get(TENANT_ID), appInstanceId));
+        String url = context.get("appoServerAddress")
+                .concat(String.format(APPO_INSTANTIATE_APP, context.get(TENANT_ID), appInstanceId));
 
         LOGGER.info("instantiateAppFromAppo URL : {}", url);
         try {
@@ -518,7 +519,7 @@ public class InstantiateAppTestCaseInner {
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
-        String url = PROTOCOL_APM.concat(String.format(APM_UPLOAD_PACKAGE, context.get(TENANT_ID)));
+        String url = context.get("apmServerAddress").concat(String.format(APM_UPLOAD_PACKAGE, context.get(TENANT_ID)));
         try {
             return restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
         } catch (RestClientException e) {

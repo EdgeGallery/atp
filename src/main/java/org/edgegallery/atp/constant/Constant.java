@@ -139,14 +139,6 @@ public interface Constant {
 
     String SERNAME = "serName";
 
-    String PROTOCOL_APM = "https://mecm-apm:8092";
-
-    String PROTOCAL_APPO = "https://mecm-appo:8091";
-
-    String PROTOCOL_INVENTORY = "https://mecm-inventory:8093";
-
-    String PROTOCOL_APPSTORE = "https://appstore-be-svc:8099";
-
     String CONTENT_TYPE = "Content-Type";
 
     String APPLICATION_JSON = "application/json";
@@ -224,4 +216,12 @@ public interface Constant {
     String TEST_SUITE = "testSuite";
 
     String TEST_CASE = "testCase";
+
+    String APM_SERVER_ADDRESS = "apmServerAddress";
+
+    String APPO_SERVER_ADDRESS = "appoServerAddress";
+
+    String INVENTORY_SERVER_ADDRESS = "inventoryServerAddress";
+
+    String APPSTORE_SERSVER_ADDRESS = "appstoreServerAddress";
 }

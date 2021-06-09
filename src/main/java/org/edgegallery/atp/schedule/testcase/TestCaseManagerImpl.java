@@ -32,6 +32,7 @@ import org.edgegallery.atp.utils.JarCallUtil;
 import org.edgegallery.atp.utils.JavaCompileUtil;
 import org.edgegallery.atp.utils.PythonCallUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -44,6 +45,18 @@ public class TestCaseManagerImpl implements TestCaseManager {
 
     @Autowired
     TaskRepositoryImpl taskRepository;
+
+    @Value("${serveraddress.apm:}")
+    private String apmServerAddress;
+
+    @Value("${serveraddress.appo:}")
+    private String appoServerAddress;
+
+    @Value("${serveraddress.inventory:}")
+    private String inventoryServerAddress;
+
+    @Value("${serveraddress.appstore:}")
+    private String appstoreServerAddress;
 
     @Override
     public void executeTestCase(TaskRequest task, String filePath) {
@@ -76,6 +89,10 @@ public class TestCaseManagerImpl implements TestCaseManager {
             Map<String, String> context = new HashMap<String, String>();
             context.put(Constant.ACCESS_TOKEN, task.getAccessToken());
             context.put(Constant.TENANT_ID, task.getUser().getUserId());
+            context.put(Constant.APM_SERVER_ADDRESS, apmServerAddress);
+            context.put(Constant.APPO_SERVER_ADDRESS, appoServerAddress);
+            context.put(Constant.INVENTORY_SERVER_ADDRESS, inventoryServerAddress);
+            context.put(Constant.APPSTORE_SERSVER_ADDRESS, appstoreServerAddress);
 
             task.getTestScenarios().forEach(testScenario -> {
                 execute(testScenario, context);

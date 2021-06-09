@@ -47,8 +47,6 @@ public class UninstantiateAppTestCaseInner {
 
     private static final String APPO_DELETE_APPLICATION_INSTANCE = "/appo/v1/tenants/%s/app_instances/%s";
 
-    private static final String PROTOCAL_APPO = "https://mecm-appo:8091";
-
     private static final String ACCESS_TOKEN = "access_token";
 
     private static final String TENANT_ID = "tenantId";
@@ -80,7 +78,7 @@ public class UninstantiateAppTestCaseInner {
         headers.set(ACCESS_TOKEN, context.get(ACCESS_TOKEN));
         HttpEntity<String> request = new HttpEntity<>(headers);
 
-        String url = PROTOCAL_APPO
+        String url = context.get("appoServerAddress")
                 .concat(String.format(APPO_DELETE_APPLICATION_INSTANCE, context.get(TENANT_ID), appInstanceId));
         LOGGER.warn("deleteAppInstance URL: {}", url);
         try {
