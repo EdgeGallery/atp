@@ -360,23 +360,25 @@ public class InstantiateAppTestCaseInner {
      * @return instantiate app successful
      */
     private boolean instantiateAppFromAppo(Map<String, String> context, String appInstanceId) {
-        Map<String, Object> body = new HashMap<String, Object>();
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(ACCESS_TOKEN, context.get(ACCESS_TOKEN));
+        headers.set(CONTENT_TYPE, APPLICATION_JSON);
+
+        HttpEntity<Map<String, Object>> request;
         if (VM.equalsIgnoreCase(context.get(APP_CLASS))) {
+            Map<String, Object> body = new HashMap<String, Object>();
             // if package is vm, need parameters body
             LOGGER.info("package is vm.");
             Map<String, Object> parameters = new HashMap<String, Object>();
             setBody(parameters);
             body.put("parameters", parameters);
+            request = new HttpEntity<>(body, headers);
+        } else {
+            request = new HttpEntity<>(headers);
         }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set(ACCESS_TOKEN, context.get(ACCESS_TOKEN));
-        headers.set(CONTENT_TYPE, APPLICATION_JSON);
-
-        HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
         String url = context.get("appoServerAddress")
                 .concat(String.format(APPO_INSTANTIATE_APP, context.get(TENANT_ID), appInstanceId));
-
         LOGGER.info("instantiateAppFromAppo URL : {}", url);
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);

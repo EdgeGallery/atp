@@ -22,6 +22,7 @@ import java.util.Enumeration;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -63,6 +64,10 @@ public class UninstantiateAppTestCaseInner {
             return SUCCESS;
         }
         String appInstanceId = context.get(APP_INSTANCE_ID);
+        if (StringUtils.isEmpty(appInstanceId)) {
+            LOGGER.info("appInstanceId is null, return success.");
+            return SUCCESS;
+        }
         return deleteAppInstance(appInstanceId, context) ? SUCCESS : UNINSTANTIATE_APP_FAILED;
     }
 
