@@ -16,7 +16,7 @@ package org.edgegallery.atp.util;
 
 import java.io.IOException;
 import org.edgegallery.atp.ATPApplicationTest;
-import org.edgegallery.atp.model.testcase.TestCaseResult;
+import org.edgegallery.atp.model.user.User;
 import org.edgegallery.atp.utils.JsonUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,10 +28,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class JSONUtilTest {
     @Test
     public void marshalUnmarshalTest() throws IOException {
-        TestCaseResult result = new TestCaseResult("sucess", "ok");
+        User result = new User("userid", "username");
         JsonUtil.marshal(result);
 
-        String testCase = "{\"result\":\"success\",\"reason\":\"ok\"}";
-        JsonUtil.unMarshal(testCase, TestCaseResult.class);
+        String testCase = "{\"userId\":\"userId\",\"userName\":\"userName\"}";
+        JsonUtil.unMarshal(testCase, User.class);
     }
 }

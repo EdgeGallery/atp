@@ -46,18 +46,18 @@
             and scenarioIdList ~* #{scenarioId}
           </if>
         </where>
-        ORDER BY nameEn DESC
+        ORDER BY createTime
     </select>
     
     <insert id="createTestSuite"
 		parameterType="org.edgegallery.atp.model.testsuite.TestSuitePo">
 		insert into
 		test_suite_table
-		(id, nameCh, nameEn, descriptionCh, descriptionEn,scenarioIdList)
+		(id, nameCh, nameEn, descriptionCh, descriptionEn,scenarioIdList,createTime)
 		VALUES
 		(#{id}, #{nameCh}, #{nameEn},
 		#{descriptionCh},
-		#{descriptionEn},#{scenarioIdList})
+		#{descriptionEn},#{scenarioIdList},#{createTime})
 	</insert>
   
    <update id="updateTestSuite" parameterType="org.edgegallery.atp.model.testsuite.TestSuitePo">

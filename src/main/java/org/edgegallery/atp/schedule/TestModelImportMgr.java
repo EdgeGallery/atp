@@ -32,6 +32,7 @@ import org.edgegallery.atp.constant.ErrorCode;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.model.testscenario.TestScenario;
 import org.edgegallery.atp.model.testsuite.TestSuite;
+import org.edgegallery.atp.repository.task.TaskRepository;
 import org.edgegallery.atp.repository.testcase.TestCaseRepository;
 import org.edgegallery.atp.repository.testscenario.TestScenarioRepository;
 import org.edgegallery.atp.repository.testsuite.TestSuiteRepository;
@@ -56,6 +57,9 @@ public class TestModelImportMgr {
 
     @Autowired
     TestCaseRepository testCaseRepository;
+
+    @Autowired
+    TaskRepository taskRepository;
 
     public Workbook getWorkbook(InputStream is) throws IOException {
         return new XSSFWorkbook(is);
@@ -105,7 +109,8 @@ public class TestModelImportMgr {
             TestScenario testScenario = TestScenario.builder().setId(CommonUtil.generateId())
                     .setNameCh(nameCh).setNameEn(nameEn)
                     .setDescriptionCh(CommonUtil.setParamOrDefault(descriptionCh, descriptionEn))
-                    .setDescriptionEn(CommonUtil.setParamOrDefault(descriptionEn, descriptionCh)).build();
+                    .setDescriptionEn(CommonUtil.setParamOrDefault(descriptionEn, descriptionCh))
+                    .setCreateTime(taskRepository.getCurrentDate()).build();
 
             if (!checkTestScenarioField(testScenario, failures, failureIds, testScenarioImportList)) {
                 continue;
@@ -160,7 +165,8 @@ public class TestModelImportMgr {
             TestSuite testSuite = TestSuite.builder().setId(CommonUtil.generateId())
                     .setNameCh(nameCh).setNameEn(nameEn)
                     .setDescriptionCh(CommonUtil.setParamOrDefault(descriptionCh, descriptionEn))
-                    .setDescriptionEn(CommonUtil.setParamOrDefault(descriptionEn, descriptionCh)).build();
+                    .setDescriptionEn(CommonUtil.setParamOrDefault(descriptionEn, descriptionCh))
+                    .setCreateTime(taskRepository.getCurrentDate()).build();
             List<String> scenarioIdList = new ArrayList<String>();
             String scenarioNameList = getCellValue(row, 4);
 
@@ -232,7 +238,8 @@ public class TestModelImportMgr {
                     .setExpectResultCh(CommonUtil.setParamOrDefault(expectResultCh, expectResultEn))
                     .setExpectResultEn(CommonUtil.setParamOrDefault(expectResultEn, expectResultCh))
                     .setTestStepCh(CommonUtil.setParamOrDefault(testStepCh, testSepEn))
-                    .setTestStepEn(CommonUtil.setParamOrDefault(testSepEn, testStepCh)).build().toTestCase();
+                    .setTestStepEn(CommonUtil.setParamOrDefault(testSepEn, testStepCh))
+                    .setCreateTime(taskRepository.getCurrentDate()).build().toTestCase();
             List<String> suiteIdList = new ArrayList<String>();
             String suiteNameList = getCellValue(row, 10);
 

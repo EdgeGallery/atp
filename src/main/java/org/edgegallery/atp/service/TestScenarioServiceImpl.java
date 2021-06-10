@@ -101,6 +101,7 @@ public class TestScenarioServiceImpl implements TestScenarioService {
         testScenario.setDescriptionEn(
                 StringUtils.isNotBlank(testScenario.getDescriptionEn()) ? testScenario.getDescriptionEn()
                         : testScenario.getDescriptionCh());
+        testScenario.setCreateTime(taskRepository.getCurrentDate());
 
         checkNameExists(testScenario);
         if (null == icon) {

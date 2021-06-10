@@ -15,6 +15,7 @@
 package org.edgegallery.atp.model.testsuite;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
@@ -36,6 +37,8 @@ public class TestSuitePo {
 
     private String scenarioIdList;
 
+    private Date createTime;
+
     public TestSuitePo() {
 
     }
@@ -51,6 +54,7 @@ public class TestSuitePo {
         this.nameEn = testSuite.getNameEn();
         this.descriptionCh = testSuite.getDescriptionCh();
         this.descriptionEn = testSuite.getDescriptionEn();
+        this.createTime = testSuite.getCreateTime();
         if (CollectionUtils.isNotEmpty(testSuite.getScenarioIdList())) {
             scenarioIdList = testSuite.getScenarioIdList().stream().collect(Collectors.joining(Constant.COMMA));
         }
@@ -62,9 +66,9 @@ public class TestSuitePo {
      * @return test suite
      */
     public TestSuite toDomain() {
-        TestSuite testSuite =
-                TestSuite.builder().setDescriptionCh(this.descriptionCh).setDescriptionEn(this.descriptionEn)
-                        .setId(this.id).setNameCh(this.nameCh).setNameEn(this.nameEn).build();
+        TestSuite testSuite = TestSuite.builder().setDescriptionCh(this.descriptionCh)
+                .setDescriptionEn(this.descriptionEn).setId(this.id).setCreateTime(this.createTime)
+                .setNameCh(this.nameCh).setNameEn(this.nameEn).build();
         testSuite.setScenarioIdList(Arrays.asList(scenarioIdList.split(Constant.COMMA)));
         return testSuite;
     }
