@@ -61,7 +61,7 @@
             and testSuiteIdList ~* #{testSuiteId}
           </if>                   
         </where>
-        ORDER BY testSuiteIdList ASC
+        ORDER BY testSuiteIdList ASC, nameEn ASC
     </select>
     
     <insert id="insert"
