@@ -30,7 +30,6 @@ import org.edgegallery.atp.ATPApplicationTest;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.model.task.testscenarios.TaskTestCase;
 import org.edgegallery.atp.model.testcase.TestCase;
-import org.edgegallery.atp.model.testcase.TestCaseResult;
 import org.edgegallery.atp.utils.FileChecker;
 import org.edgegallery.atp.utils.JarCallUtil;
 import org.edgegallery.atp.utils.JavaCompileUtil;
@@ -121,7 +120,6 @@ public class TestCaseTest {
         String id = testCase.getId();
 
         // java compile
-        TestCaseResult resultTestCase = new TestCaseResult();
         testCase.setClassName("Test");
 
         String filePath = BASIC_PATH + testCase.getNameEn() + Constant.UNDER_LINE + testCase.getId();

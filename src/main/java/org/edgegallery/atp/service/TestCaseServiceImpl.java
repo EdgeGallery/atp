@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.model.testsuite.TestSuite;
+import org.edgegallery.atp.repository.task.TaskRepository;
 import org.edgegallery.atp.repository.testcase.TestCaseRepository;
 import org.edgegallery.atp.repository.testsuite.TestSuiteRepository;
 import org.edgegallery.atp.utils.CommonUtil;
@@ -50,6 +51,9 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     @Autowired
     TestSuiteRepository testSuiteRepository;
+
+    @Autowired
+    TaskRepository taskRepository;
 
     @Override
     public ResponseEntity<List<TestCase>> getAllTestCases(String type, String locale, String name,
@@ -106,6 +110,7 @@ public class TestCaseServiceImpl implements TestCaseService {
                 StringUtils.isNotBlank(testCase.getTestStepCh()) ? testCase.getTestStepCh() : testCase.getTestStepEn());
         testCase.setTestStepEn(
                 StringUtils.isNotBlank(testCase.getTestStepEn()) ? testCase.getTestStepEn() : testCase.getTestStepCh());
+        testCase.setCreateTime(taskRepository.getCurrentDate());
 
         // check one test case type must same in one test suite
         testCase.getTestSuiteIdList().forEach(testSuiteId -> {

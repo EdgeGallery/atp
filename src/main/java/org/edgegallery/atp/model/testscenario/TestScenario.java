@@ -14,6 +14,7 @@
 
 package org.edgegallery.atp.model.testscenario;
 
+import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -51,6 +52,11 @@ public class TestScenario {
      */
     private String label;
 
+    /**
+     * create time.
+     */
+    private Date createTime;
+
     public TestScenario() {
 
     }
@@ -67,6 +73,7 @@ public class TestScenario {
         this.descriptionEn = builder.descriptionEn;
         this.descriptionCh = builder.descriptionCh;
         this.label = builder.label;
+        this.createTime = builder.createTime;
     }
 
     public static Builder builder() {
@@ -85,6 +92,8 @@ public class TestScenario {
         private String descriptionEn;
 
         private String label;
+
+        private Date createTime;
 
         private Builder() {
 
@@ -117,6 +126,11 @@ public class TestScenario {
 
         public Builder setLabel(String label) {
             this.label = label;
+            return this;
+        }
+
+        public Builder setCreateTime(Date createTime) {
+            this.createTime = createTime;
             return this;
         }
 

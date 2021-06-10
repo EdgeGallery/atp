@@ -43,19 +43,19 @@
              nameCh ~* #{nameCh}
           </if>
         </where>
-        ORDER BY nameEn DESC
+        ORDER BY createTime
     </select>
     
     <insert id="createTestScenario"
 		parameterType="org.edgegallery.atp.model.testscenario.TestScenario">
 		insert into
 		test_scenario_table
-		(id, nameCh, nameEn, descriptionCh, descriptionEn,label)
+		(id, nameCh, nameEn, descriptionCh, descriptionEn,label,createTime)
 		VALUES
 		(#{id}, #{nameCh}, #{nameEn},
 		#{descriptionCh},
 		#{descriptionEn},
-		#{label})
+		#{label},#{createTime})
 	</insert>
   
    <update id="updateTestScenario" parameterType="org.edgegallery.atp.model.testscenario.TestScenario">

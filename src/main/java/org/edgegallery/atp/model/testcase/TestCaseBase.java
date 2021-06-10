@@ -14,6 +14,7 @@
 
 package org.edgegallery.atp.model.testcase;
 
+import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
 import org.edgegallery.atp.model.Entity;
@@ -92,6 +93,11 @@ public class TestCaseBase implements Entity {
      */
     private String testStepEn;
 
+    /**
+     * create time.
+     */
+    private Date createTime;
+
     public TestCaseBase() {
 
     }
@@ -116,6 +122,7 @@ public class TestCaseBase implements Entity {
         this.testStepCh = builder.testStepCh;
         this.testStepEn = builder.testStepEn;
         this.type = builder.type;
+        this.createTime = builder.createTime;
     }
 
     /**
@@ -126,19 +133,20 @@ public class TestCaseBase implements Entity {
     public TestCase toTestCase() {
         TestCase testCase = new TestCase();
         testCase.setClassName(this.className);
-        testCase.setCodeLanguage(codeLanguage);
-        testCase.setDescriptionCh(descriptionCh);
-        testCase.setDescriptionEn(descriptionEn);
-        testCase.setExpectResultCh(expectResultCh);
-        testCase.setExpectResultEn(expectResultEn);
-        testCase.setFilePath(filePath);
-        testCase.setHashCode(hashCode);
-        testCase.setId(id);
-        testCase.setNameCh(nameCh);
-        testCase.setNameEn(nameEn);
-        testCase.setTestStepCh(testStepCh);
-        testCase.setTestStepEn(testStepEn);
-        testCase.setType(type);
+        testCase.setCodeLanguage(this.codeLanguage);
+        testCase.setDescriptionCh(this.descriptionCh);
+        testCase.setDescriptionEn(this.descriptionEn);
+        testCase.setExpectResultCh(this.expectResultCh);
+        testCase.setExpectResultEn(this.expectResultEn);
+        testCase.setFilePath(this.filePath);
+        testCase.setHashCode(this.hashCode);
+        testCase.setId(this.id);
+        testCase.setNameCh(this.nameCh);
+        testCase.setNameEn(this.nameEn);
+        testCase.setTestStepCh(this.testStepCh);
+        testCase.setTestStepEn(this.testStepEn);
+        testCase.setType(this.type);
+        testCase.setCreateTime(this.createTime);
         return testCase;
     }
 
@@ -150,19 +158,20 @@ public class TestCaseBase implements Entity {
     public TestCasePo toTestCasePo() {
         TestCasePo testCasePo = new TestCasePo();
         testCasePo.setClassName(this.className);
-        testCasePo.setCodeLanguage(codeLanguage);
-        testCasePo.setDescriptionCh(descriptionCh);
-        testCasePo.setDescriptionEn(descriptionEn);
-        testCasePo.setExpectResultCh(expectResultCh);
-        testCasePo.setExpectResultEn(expectResultEn);
-        testCasePo.setFilePath(filePath);
-        testCasePo.setHashCode(hashCode);
-        testCasePo.setId(id);
-        testCasePo.setNameCh(nameCh);
-        testCasePo.setNameEn(nameEn);
-        testCasePo.setTestStepCh(testStepCh);
-        testCasePo.setTestStepEn(testStepEn);
-        testCasePo.setType(type);
+        testCasePo.setCodeLanguage(this.codeLanguage);
+        testCasePo.setDescriptionCh(this.descriptionCh);
+        testCasePo.setDescriptionEn(this.descriptionEn);
+        testCasePo.setExpectResultCh(this.expectResultCh);
+        testCasePo.setExpectResultEn(this.expectResultEn);
+        testCasePo.setFilePath(this.filePath);
+        testCasePo.setHashCode(this.hashCode);
+        testCasePo.setId(this.id);
+        testCasePo.setNameCh(this.nameCh);
+        testCasePo.setNameEn(this.nameEn);
+        testCasePo.setTestStepCh(this.testStepCh);
+        testCasePo.setTestStepEn(this.testStepEn);
+        testCasePo.setType(this.type);
+        testCasePo.setCreateTime(this.createTime);
         return testCasePo;
     }
 
@@ -198,6 +207,8 @@ public class TestCaseBase implements Entity {
         private String testStepCh;
 
         private String testStepEn;
+
+        private Date createTime;
 
         private Builder() {
 
@@ -270,6 +281,11 @@ public class TestCaseBase implements Entity {
 
         public Builder setTestStepEn(String testStepEn) {
             this.testStepEn = testStepEn;
+            return this;
+        }
+
+        public Builder setCreateTime(Date createTime) {
+            this.createTime = createTime;
             return this;
         }
 

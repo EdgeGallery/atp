@@ -68,9 +68,11 @@
 		parameterType="org.edgegallery.atp.model.testcase.TestCasePo">
 		insert into
 		test_case_table
-		(id, nameCh,nameEn, hashCode, type, className, descriptionCh,descriptionEn, filePath,codeLanguage,expectResultCh,expectResultEn, testStepCh,testStepEn,testSuiteIdList)
+		(id, nameCh,nameEn, hashCode, type, className, descriptionCh,descriptionEn, filePath,codeLanguage,
+		expectResultCh,expectResultEn, testStepCh,testStepEn,testSuiteIdList,createTime)
 		VALUES
-		(#{id}, #{nameCh}, #{nameEn}, #{hashCode},#{type},#{className}, #{descriptionCh},#{descriptionEn}, #{filePath},#{codeLanguage},#{expectResultCh},#{expectResultEn},#{testStepCh},#{testStepEn}, #{testSuiteIdList})
+		(#{id}, #{nameCh}, #{nameEn}, #{hashCode},#{type},#{className}, #{descriptionCh},#{descriptionEn}, #{filePath},#{codeLanguage},
+		#{expectResultCh},#{expectResultEn},#{testStepCh},#{testStepEn}, #{testSuiteIdList},#{createTime})
 	</insert>
     
     <update id="update" parameterType="org.edgegallery.atp.model.testcase.TestCasePo">

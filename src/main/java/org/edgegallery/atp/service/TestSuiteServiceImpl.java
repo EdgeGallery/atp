@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.model.testscenario.TestScenario;
 import org.edgegallery.atp.model.testsuite.TestSuite;
+import org.edgegallery.atp.repository.task.TaskRepository;
 import org.edgegallery.atp.repository.testcase.TestCaseRepository;
 import org.edgegallery.atp.repository.testscenario.TestScenarioRepository;
 import org.edgegallery.atp.repository.testsuite.TestSuiteRepository;
@@ -43,6 +44,9 @@ public class TestSuiteServiceImpl implements TestSuiteService {
     @Autowired
     TestCaseRepository testCaseRepository;
 
+    @Autowired
+    TaskRepository taskRepository;
+
     @Override
     public TestSuite createTestSuite(TestSuite testSuite) {
         // nameCh or nameEn must exist one
@@ -59,6 +63,7 @@ public class TestSuiteServiceImpl implements TestSuiteService {
                 : testSuite.getDescriptionEn());
         testSuite.setDescriptionEn(StringUtils.isNotBlank(testSuite.getDescriptionEn()) ? testSuite.getDescriptionEn()
                 : testSuite.getDescriptionCh());
+        testSuite.setCreateTime(taskRepository.getCurrentDate());
 
         if (null != testSuiteRepository.getTestSuiteByName(testSuite.getNameCh(), null)
                 || null != testSuiteRepository.getTestSuiteByName(null, testSuite.getNameEn())) {

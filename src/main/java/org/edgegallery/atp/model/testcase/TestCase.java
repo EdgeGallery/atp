@@ -40,13 +40,13 @@ public class TestCase extends TestCaseBase {
      * @return testCasePo
      */
     public TestCasePo of() {
-        TestCasePo testCasePo =
-                TestCasePo.builder().setClassName(this.getClassName()).setCodeLanguage(this.getCodeLanguage())
-                        .setDescriptionCh(this.getDescriptionCh()).setDescriptionEn(this.getDescriptionEn())
-                        .setExpectResultCh(this.getExpectResultCh()).setExpectResultEn(this.getExpectResultEn())
-                        .setFilePath(this.getFilePath()).setHashCode(this.getHashCode()).setId(this.getId())
-                        .setNameCh(this.getNameCh()).setNameEn(this.getNameEn()).setTestStepCh(this.getTestStepCh())
-                        .setTestStepEn(this.getTestStepEn()).setType(this.getType()).build().toTestCasePo();
+        TestCasePo testCasePo = TestCasePo.builder().setClassName(this.getClassName())
+                .setCodeLanguage(this.getCodeLanguage()).setDescriptionCh(this.getDescriptionCh())
+                .setDescriptionEn(this.getDescriptionEn()).setExpectResultCh(this.getExpectResultCh())
+                .setExpectResultEn(this.getExpectResultEn()).setFilePath(this.getFilePath())
+                .setHashCode(this.getHashCode()).setId(this.getId()).setNameCh(this.getNameCh())
+                .setNameEn(this.getNameEn()).setTestStepCh(this.getTestStepCh()).setTestStepEn(this.getTestStepEn())
+                .setType(this.getType()).setCreateTime(this.getCreateTime()).build().toTestCasePo();
         testSuiteIdList = CollectionUtils.isEmpty(testSuiteIdList) ? new ArrayList<String>() : this.testSuiteIdList;
         testCasePo.setTestSuiteIdList(this.getTestSuiteIdList().stream().collect(Collectors.joining(",")));
         return testCasePo;
