@@ -47,6 +47,8 @@ import org.springframework.stereotype.Service;
 public class TestModelImportMgr {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestModelImportMgr.class);
 
+    private static final String GET_TEST_SCENARIO_BY_NAME_FAILED = "get testScenario by name failed";
+
     private static final int MAX_DATA_NUM = 1000;
 
     @Autowired
@@ -129,8 +131,8 @@ public class TestModelImportMgr {
             } catch (IllegalRequestException e) {
                 // db operate failed
                 failures.add(CommonUtil.setFailureRes(testScenario.getId(), nameEn, Constant.TEST_SCENARIO,
-                        ErrorCode.DB_ERROR, String.format(ErrorCode.DB_ERROR_MSG, "get testScenario by name failed"),
-                        new ArrayList<String>(Arrays.asList("get testScenario by name failed"))));
+                        ErrorCode.DB_ERROR, String.format(ErrorCode.DB_ERROR_MSG, GET_TEST_SCENARIO_BY_NAME_FAILED),
+                        new ArrayList<String>(Arrays.asList(GET_TEST_SCENARIO_BY_NAME_FAILED))));
                 failureIds.add(testScenario.getId());
             }
 
@@ -193,8 +195,8 @@ public class TestModelImportMgr {
                         // db error
                         failures.add(CommonUtil.setFailureRes(testSuite.getId(), nameEn, Constant.TEST_SUITE,
                                 ErrorCode.DB_ERROR,
-                                String.format(ErrorCode.DB_ERROR_MSG, "get testScenario by name failed"),
-                                new ArrayList<String>(Arrays.asList("get testScenario by name failed"))));
+                                String.format(ErrorCode.DB_ERROR_MSG, GET_TEST_SCENARIO_BY_NAME_FAILED),
+                                new ArrayList<String>(Arrays.asList(GET_TEST_SCENARIO_BY_NAME_FAILED))));
                         failureIds.add(testSuite.getId());
                     }
                 }
