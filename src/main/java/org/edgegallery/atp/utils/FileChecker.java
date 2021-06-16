@@ -278,7 +278,6 @@ public class FileChecker {
             throw new IllegalRequestException(ErrorCode.FILE_IO_EXCEPTION_MSG, ErrorCode.FILE_IO_EXCEPTION, null);
         } finally {
             FileUtils.cleanDirectory(new File(tempDir));
-            new File(tempDir).delete();
         }
     }
 
@@ -380,13 +379,13 @@ public class FileChecker {
         }
 
         // file name should not contains blank.
-        if (originalFileName != null && originalFileName.split("\\s").length > 1) {
+        if (originalFileName.split("\\s").length > 1) {
             LOGGER.error("fileName contain blank");
             throw new IllegalRequestException(ErrorCode.FILE_NAME_CONTAIN_BLANK_MSG, ErrorCode.FILE_NAME_CONTAIN_BLANK,
                     null);
         }
 
-        if (originalFileName != null && !isAllowedFileName(originalFileName)) {
+        if (!isAllowedFileName(originalFileName)) {
             LOGGER.error("fileName is Illegal");
             throw new IllegalRequestException(ErrorCode.FILE_NAME_ILLEGAL_MSG, ErrorCode.FILE_NAME_ILLEGAL, null);
         }

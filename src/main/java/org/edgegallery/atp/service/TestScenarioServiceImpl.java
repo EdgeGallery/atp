@@ -61,6 +61,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class TestScenarioServiceImpl implements TestScenarioService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestScenarioServiceImpl.class);
 
+    private static final String CREATE_TEST_CASE_FAILED = "create test case failed";
+
     private static final String TEST_CASE = "testCase";
 
     private static final String TEST_SCENARIO_ICON = "testScenarioIcon";
@@ -328,52 +330,49 @@ public class TestScenarioServiceImpl implements TestScenarioService {
     private void updateTestCaseFile(List<TestCase> testCaseList, Map<String, File> testCaseFile,
             List<JSONObject> failures, Set<String> failureIds) {
         testCaseList.forEach(testCase -> {
-            if (StringUtils.isNotEmpty(testCase.getNameEn())) {
+            if (StringUtils.isNotEmpty(testCase.getNameEn()) && !failureIds.contains(testCase.getId())) {
                 // fail test cases do not need to update
-                if (!failureIds.contains(testCase.getId())) {
-                    File orgFile = testCaseFile.get(testCase.getNameEn());
-                    if (null != orgFile) {
-                        // do not has test case in test case scenario
-                        String testCaseFilePath = Constant.BASIC_TEST_CASE_PATH.concat(testCase.getNameEn())
-                                .concat(Constant.UNDER_LINE).concat(testCase.getId());
-                        File targetFile = new File(testCaseFilePath);
-                        try {
-                            FileUtils.copyFile(orgFile, targetFile);
-                            testCase.setFilePath(testCaseFilePath);
-                            if (Constant.JAVA.equals(testCase.getCodeLanguage())) {
-                                testCase.setClassName(CommonUtil.getClassPath(targetFile));
-                            }
-
-                            testCaseRepository.update(testCase);
-                        } catch (IOException e) {
-                            LOGGER.error("copy input stream to file failed. {}", e);
-                            failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(),
-                                    Constant.TEST_CASE, ErrorCode.FILE_IO_EXCEPTION, ErrorCode.FILE_IO_EXCEPTION_MSG,
-                                    null));
-                            failureIds.add(testCase.getId());
-                            // roll back insert
-                            testCaseRepository.delete(testCase.getId());
-                        } catch (IllegalRequestException e) {
-                            LOGGER.error("update repository failed. ");
-                            failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(),
-                                    Constant.TEST_CASE, ErrorCode.DB_ERROR,
-                                    String.format(ErrorCode.DB_ERROR_MSG, "create test case failed"),
-                                    new ArrayList<String>(Arrays.asList("create test case failed"))));
-                            failureIds.add(testCase.getId());
-                            // roll back insert
-                            testCaseRepository.delete(testCase.getId());
-                        } finally {
-                            CommonUtil.deleteFile(orgFile);
+                File orgFile = testCaseFile.get(testCase.getNameEn());
+                if (null != orgFile) {
+                    // do not has test case in test case scenario
+                    String testCaseFilePath = Constant.BASIC_TEST_CASE_PATH.concat(testCase.getNameEn())
+                            .concat(Constant.UNDER_LINE).concat(testCase.getId());
+                    File targetFile = new File(testCaseFilePath);
+                    try {
+                        FileUtils.copyFile(orgFile, targetFile);
+                        testCase.setFilePath(testCaseFilePath);
+                        if (Constant.JAVA.equals(testCase.getCodeLanguage())) {
+                            testCase.setClassName(CommonUtil.getClassPath(targetFile));
                         }
-                    } else {
-                        // there is not test case script in test case file dir
-                        LOGGER.error("there is not test case {} script in test case file dir", testCase.getNameEn());
-                        failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(),
-                                Constant.TEST_CASE, ErrorCode.TEST_CASE_NOT_EXISTS_IN_DIR,
-                                ErrorCode.TEST_CASE_NOT_EXISTS_IN_DIR_MSG, null));
+
+                        testCaseRepository.update(testCase);
+                    } catch (IOException e) {
+                        LOGGER.error("copy input stream to file failed. {}", e);
+                        failures.add(
+                                CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(), Constant.TEST_CASE,
+                                        ErrorCode.FILE_IO_EXCEPTION, ErrorCode.FILE_IO_EXCEPTION_MSG, null));
                         failureIds.add(testCase.getId());
+                        // roll back insert
                         testCaseRepository.delete(testCase.getId());
+                    } catch (IllegalRequestException e) {
+                        LOGGER.error("update repository failed. ");
+                        failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(),
+                                Constant.TEST_CASE, ErrorCode.DB_ERROR,
+                                String.format(ErrorCode.DB_ERROR_MSG, CREATE_TEST_CASE_FAILED),
+                                new ArrayList<String>(Arrays.asList(CREATE_TEST_CASE_FAILED))));
+                        failureIds.add(testCase.getId());
+                        // roll back insert
+                        testCaseRepository.delete(testCase.getId());
+                    } finally {
+                        CommonUtil.deleteFile(orgFile);
                     }
+                } else {
+                    // there is not test case script in test case file dir
+                    LOGGER.error("there is not test case {} script in test case file dir", testCase.getNameEn());
+                    failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(), Constant.TEST_CASE,
+                            ErrorCode.TEST_CASE_NOT_EXISTS_IN_DIR, ErrorCode.TEST_CASE_NOT_EXISTS_IN_DIR_MSG, null));
+                    failureIds.add(testCase.getId());
+                    testCaseRepository.delete(testCase.getId());
                 }
             }
         });
@@ -390,37 +389,34 @@ public class TestScenarioServiceImpl implements TestScenarioService {
     private void updateScenarioAndIconFile(List<TestScenario> testScenarioList, Map<String, File> scenarioIconFile,
             List<JSONObject> failures, Set<String> failureIds) {
         testScenarioList.forEach(testScenario -> {
-            if (StringUtils.isNotEmpty(testScenario.getNameEn())) {
-                if (!failureIds.contains(testScenario.getId())) {
-                    File orgFile = scenarioIconFile.get(testScenario.getNameEn());
-                    String iconFilePath =
-                            Constant.BASIC_ICON_PATH.concat(Constant.FILE_TYPE_SCENARIO).concat(Constant.UNDER_LINE)
-                                    .concat(testScenario.getId()).concat(Constant.DOT).concat("png");
-                    try {
-                        FileUtils.copyFile(orgFile, new File(iconFilePath));;
-                        AtpFile atpFile = new AtpFile(testScenario.getId(), Constant.FILE_TYPE_SCENARIO,
-                                taskRepository.getCurrentDate(), iconFilePath);
-                        fileRepository.insertFile(atpFile);
-                    } catch (IOException e) {
-                        LOGGER.error("copy input stream to file failed. {}", e);
-                        failures.add(CommonUtil.setFailureRes(testScenario.getId(), testScenario.getNameEn(),
-                                Constant.TEST_SCENARIO, ErrorCode.FILE_IO_EXCEPTION, ErrorCode.FILE_IO_EXCEPTION_MSG,
-                                null));
-                        failureIds.add(testScenario.getId());
-                        // roll back insert
-                        testScenarioRepository.deleteTestScenario(testScenario.getId());
-                    } catch (IllegalRequestException e) {
-                        LOGGER.error("update repository failed. ");
-                        failures.add(CommonUtil.setFailureRes(testScenario.getId(), testScenario.getId(),
-                                Constant.TEST_SCENARIO, ErrorCode.DB_ERROR,
-                                String.format(ErrorCode.DB_ERROR_MSG, "update repository failed"),
-                                new ArrayList<String>(Arrays.asList("update repository failed"))));
-                        failureIds.add(testScenario.getId());
-                        // roll back insert
-                        testScenarioRepository.deleteTestScenario(testScenario.getId());
-                    } finally {
-                        CommonUtil.deleteFile(orgFile);
-                    }
+            if (StringUtils.isNotEmpty(testScenario.getNameEn()) && !failureIds.contains(testScenario.getId())) {
+                File orgFile = scenarioIconFile.get(testScenario.getNameEn());
+                String iconFilePath = Constant.BASIC_ICON_PATH.concat(Constant.FILE_TYPE_SCENARIO)
+                        .concat(Constant.UNDER_LINE).concat(testScenario.getId()).concat(Constant.DOT).concat("png");
+                try {
+                    FileUtils.copyFile(orgFile, new File(iconFilePath));
+                    AtpFile atpFile = new AtpFile(testScenario.getId(), Constant.FILE_TYPE_SCENARIO,
+                            taskRepository.getCurrentDate(), iconFilePath);
+                    fileRepository.insertFile(atpFile);
+                } catch (IOException e) {
+                    LOGGER.error("copy input stream to file failed. {}", e);
+                    failures.add(CommonUtil.setFailureRes(testScenario.getId(), testScenario.getNameEn(),
+                            Constant.TEST_SCENARIO, ErrorCode.FILE_IO_EXCEPTION, ErrorCode.FILE_IO_EXCEPTION_MSG,
+                            null));
+                    failureIds.add(testScenario.getId());
+                    // roll back insert
+                    testScenarioRepository.deleteTestScenario(testScenario.getId());
+                } catch (IllegalRequestException e) {
+                    LOGGER.error("update repository failed. ");
+                    failures.add(CommonUtil.setFailureRes(testScenario.getId(), testScenario.getId(),
+                            Constant.TEST_SCENARIO, ErrorCode.DB_ERROR,
+                            String.format(ErrorCode.DB_ERROR_MSG, "update repository failed"),
+                            new ArrayList<String>(Arrays.asList("update repository failed"))));
+                    failureIds.add(testScenario.getId());
+                    // roll back insert
+                    testScenarioRepository.deleteTestScenario(testScenario.getId());
+                } finally {
+                    CommonUtil.deleteFile(orgFile);
                 }
             }
         });
@@ -444,7 +440,7 @@ public class TestScenarioServiceImpl implements TestScenarioService {
                     failures.add(CommonUtil.setFailureRes(testScenario.getId(), testScenario.getNameEn(),
                             Constant.TEST_SCENARIO, ErrorCode.DB_ERROR,
                             String.format(ErrorCode.DB_ERROR_MSG, "create test scenario failed"),
-                            new ArrayList<String>(Arrays.asList("create test case failed"))));
+                            new ArrayList<String>(Arrays.asList(CREATE_TEST_CASE_FAILED))));
                     failureIds.add(testScenario.getId());
                 }
             }
@@ -489,8 +485,8 @@ public class TestScenarioServiceImpl implements TestScenarioService {
                 } catch (IllegalRequestException e) {
                     LOGGER.error("create test case {} failed.", testCase.getNameEn());
                     failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(), Constant.TEST_CASE,
-                            ErrorCode.DB_ERROR, String.format(ErrorCode.DB_ERROR_MSG, "create test case failed"),
-                            new ArrayList<String>(Arrays.asList("create test case failed"))));
+                            ErrorCode.DB_ERROR, String.format(ErrorCode.DB_ERROR_MSG, CREATE_TEST_CASE_FAILED),
+                            new ArrayList<String>(Arrays.asList(CREATE_TEST_CASE_FAILED))));
                     failureIds.add(testCase.getId());
                 }
             }
