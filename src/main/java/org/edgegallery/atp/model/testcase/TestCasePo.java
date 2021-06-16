@@ -38,9 +38,8 @@ public class TestCasePo extends TestCaseBase {
                 .setExpectResultCh(this.getExpectResultCh()).setExpectResultEn(this.getExpectResultEn())
                 .setFilePath(this.getFilePath()).setHashCode(this.getHashCode()).setId(this.getId())
                 .setNameCh(this.getNameCh()).setNameEn(this.getNameEn()).setTestStepCh(this.getTestStepCh())
-                .setTestStepEn(this.getTestStepEn()).setType(this.getType()).setCreateTime(this.getCreateTime()).build()
-                .toTestCase();
-
+                .setTestStepEn(this.getTestStepEn()).setType(this.getType()).build().toTestCase();
+        testCase.setCreateTime(this.getCreateTime());
         testCase.setTestSuiteIdList(Arrays.asList(this.getTestSuiteIdList().split(Constant.COMMA)));
         return testCase;
     }

@@ -39,6 +39,28 @@ public class TestSuitePo {
 
     private Date createTime;
 
+    /**
+     * get create time.
+     * 
+     * @return date
+     */
+    public Date getCreateTime() {
+        return createTime != null ? (Date) createTime.clone() : null;
+    }
+
+    /**
+     * set create time.
+     * 
+     * @param createTime createTime
+     */
+    public void setCreateTime(Date createTime) {
+        if (createTime != null) {
+            this.createTime = (Date) createTime.clone();
+        } else {
+            this.createTime = null;
+        }
+    }
+
     public TestSuitePo() {
 
     }
@@ -66,9 +88,10 @@ public class TestSuitePo {
      * @return test suite
      */
     public TestSuite toDomain() {
-        TestSuite testSuite = TestSuite.builder().setDescriptionCh(this.descriptionCh)
-                .setDescriptionEn(this.descriptionEn).setId(this.id).setCreateTime(this.createTime)
-                .setNameCh(this.nameCh).setNameEn(this.nameEn).build();
+        TestSuite testSuite =
+                TestSuite.builder().setDescriptionCh(this.descriptionCh).setDescriptionEn(this.descriptionEn)
+                        .setId(this.id).setNameCh(this.nameCh).setNameEn(this.nameEn).build();
+        testSuite.setCreateTime(this.createTime);
         testSuite.setScenarioIdList(Arrays.asList(scenarioIdList.split(Constant.COMMA)));
         return testSuite;
     }

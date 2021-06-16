@@ -108,11 +108,10 @@ public class TestModelImportMgr {
             String nameEn = CommonUtil.setParamOrDefault(getCellValue(row, 1), getCellValue(row, 0));
             String descriptionCh = getCellValue(row, 2);
             String descriptionEn = getCellValue(row, 3);
-            TestScenario testScenario = TestScenario.builder().setId(CommonUtil.generateId())
-                    .setNameCh(nameCh).setNameEn(nameEn)
-                    .setDescriptionCh(CommonUtil.setParamOrDefault(descriptionCh, descriptionEn))
-                    .setDescriptionEn(CommonUtil.setParamOrDefault(descriptionEn, descriptionCh))
-                    .setCreateTime(taskRepository.getCurrentDate()).build();
+            TestScenario testScenario = TestScenario.builder().setId(CommonUtil.generateId()).setNameCh(nameCh)
+                    .setNameEn(nameEn).setDescriptionCh(CommonUtil.setParamOrDefault(descriptionCh, descriptionEn))
+                    .setDescriptionEn(CommonUtil.setParamOrDefault(descriptionEn, descriptionCh)).build();
+            testScenario.setCreateTime(taskRepository.getCurrentDate());
 
             if (!checkTestScenarioField(testScenario, failures, failureIds, testScenarioImportList)) {
                 continue;
@@ -123,8 +122,7 @@ public class TestModelImportMgr {
                         || null != testScenarioRepository.getTestScenarioByName(null, nameEn)) {
                     LOGGER.error("name of test scenario {} or {} already exist.", nameCh, nameEn);
                     failures.add(CommonUtil.setFailureRes(testScenario.getId(), nameEn, Constant.TEST_SCENARIO,
-                            ErrorCode.NAME_EXISTS,
-                            String.format(ErrorCode.NAME_EXISTS_MSG, nameEn),
+                            ErrorCode.NAME_EXISTS, String.format(ErrorCode.NAME_EXISTS_MSG, nameEn),
                             new ArrayList<String>(Arrays.asList(nameEn))));
                     failureIds.add(testScenario.getId());
                 }
@@ -164,11 +162,10 @@ public class TestModelImportMgr {
 
             String descriptionCh = getCellValue(row, 2);
             String descriptionEn = getCellValue(row, 3);
-            TestSuite testSuite = TestSuite.builder().setId(CommonUtil.generateId())
-                    .setNameCh(nameCh).setNameEn(nameEn)
+            TestSuite testSuite = TestSuite.builder().setId(CommonUtil.generateId()).setNameCh(nameCh).setNameEn(nameEn)
                     .setDescriptionCh(CommonUtil.setParamOrDefault(descriptionCh, descriptionEn))
-                    .setDescriptionEn(CommonUtil.setParamOrDefault(descriptionEn, descriptionCh))
-                    .setCreateTime(taskRepository.getCurrentDate()).build();
+                    .setDescriptionEn(CommonUtil.setParamOrDefault(descriptionEn, descriptionCh)).build();
+            testSuite.setCreateTime(taskRepository.getCurrentDate());
             List<String> scenarioIdList = new ArrayList<String>();
             String scenarioNameList = getCellValue(row, 4);
 
@@ -232,16 +229,15 @@ public class TestModelImportMgr {
             String expectResultEn = getCellValue(row, 7);
             String testStepCh = getCellValue(row, 8);
             String testSepEn = getCellValue(row, 9);
-            TestCase testCase = TestCase.builder().setId(CommonUtil.generateId())
-                    .setNameCh(nameCh).setNameEn(nameEn)
+            TestCase testCase = TestCase.builder().setId(CommonUtil.generateId()).setNameCh(nameCh).setNameEn(nameEn)
                     .setDescriptionCh(CommonUtil.setParamOrDefault(descriptionCh, descriptionEn))
                     .setDescriptionEn(CommonUtil.setParamOrDefault(descriptionEn, descriptionCh))
                     .setType(getCellValue(row, 4)).setCodeLanguage(getCellValue(row, 5))
                     .setExpectResultCh(CommonUtil.setParamOrDefault(expectResultCh, expectResultEn))
                     .setExpectResultEn(CommonUtil.setParamOrDefault(expectResultEn, expectResultCh))
                     .setTestStepCh(CommonUtil.setParamOrDefault(testStepCh, testSepEn))
-                    .setTestStepEn(CommonUtil.setParamOrDefault(testSepEn, testStepCh))
-                    .setCreateTime(taskRepository.getCurrentDate()).build().toTestCase();
+                    .setTestStepEn(CommonUtil.setParamOrDefault(testSepEn, testStepCh)).build().toTestCase();
+            testCase.setCreateTime(taskRepository.getCurrentDate());
             List<String> suiteIdList = new ArrayList<String>();
             String suiteNameList = getCellValue(row, 10);
 
@@ -434,8 +430,7 @@ public class TestModelImportMgr {
                 LOGGER.error("name of test suite {} or {} already exist.", testSuite.getNameCh(),
                         testSuite.getNameEn());
                 failures.add(CommonUtil.setFailureRes(testSuite.getId(), testSuite.getNameEn(), Constant.TEST_SUITE,
-                        ErrorCode.NAME_EXISTS,
-                        String.format(ErrorCode.NAME_EXISTS_MSG, testSuite.getNameEn()),
+                        ErrorCode.NAME_EXISTS, String.format(ErrorCode.NAME_EXISTS_MSG, testSuite.getNameEn()),
                         new ArrayList<String>(Arrays.asList(testSuite.getNameEn()))));
                 failureIds.add(testSuite.getId());
                 testSuiteImportList.add(testSuite);
@@ -468,8 +463,7 @@ public class TestModelImportMgr {
                     || null != testCaseRepository.findByName(null, testCase.getNameEn())) {
                 LOGGER.error("name of test case {} or {} already exist.", testCase.getNameCh(), testCase.getNameEn());
                 failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(), Constant.TEST_CASE,
-                        ErrorCode.NAME_EXISTS,
-                        String.format(ErrorCode.NAME_EXISTS_MSG, testCase.getNameEn()),
+                        ErrorCode.NAME_EXISTS, String.format(ErrorCode.NAME_EXISTS_MSG, testCase.getNameEn()),
                         new ArrayList<String>(Arrays.asList(testCase.getNameEn()))));
                 failureIds.add(testCase.getId());
                 testCaseImportList.add(testCase);

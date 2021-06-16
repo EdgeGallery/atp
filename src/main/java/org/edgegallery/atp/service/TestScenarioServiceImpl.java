@@ -312,7 +312,7 @@ public class TestScenarioServiceImpl implements TestScenarioService {
             List<TestCase> testCaseList) {
         if (CollectionUtils.isEmpty(failureIds)) {
             return ErrorCode.RET_CODE_SUCCESS;
-        } else if (failureIds.size() == (testScenarioList.size() + testSuiteList.size() + testCaseList.size())) {
+        } else if (failureIds.size() == testScenarioList.size() + testSuiteList.size() + testCaseList.size()) {
             return ErrorCode.RET_CODE_FAILURE;
         } else {
             return ErrorCode.RET_CODE_PARTIAL_SUCCESS;
