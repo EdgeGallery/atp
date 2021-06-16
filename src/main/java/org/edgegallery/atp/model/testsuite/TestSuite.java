@@ -58,6 +58,28 @@ public class TestSuite {
      */
     private Date createTime;
 
+    /**
+     * set create time.
+     * 
+     * @param createTime createTime
+     */
+    public void setCreateTime(Date createTime) {
+        if (createTime != null) {
+            this.createTime = (Date) createTime.clone();
+        } else {
+            this.createTime = null;
+        }
+    }
+
+    /**
+     * get create time.
+     * 
+     * @return date
+     */
+    public Date getCreateTime() {
+        return createTime != null ? (Date) createTime.clone() : null;
+    }
+
     public TestSuite() {
 
     }
@@ -73,7 +95,6 @@ public class TestSuite {
         this.nameEn = builder.nameEn;
         this.descriptionCh = builder.descriptionCh;
         this.descriptionEn = builder.descriptionEn;
-        this.createTime = builder.createTime;
     }
 
     public static Builder builder() {
@@ -90,8 +111,6 @@ public class TestSuite {
         private String descriptionCh;
 
         private String descriptionEn;
-
-        private Date createTime;
 
         private Builder() {
 
@@ -119,11 +138,6 @@ public class TestSuite {
 
         public Builder setDescriptionCh(String descriptionCh) {
             this.descriptionCh = descriptionCh;
-            return this;
-        }
-
-        public Builder setCreateTime(Date createTime) {
-            this.createTime = createTime;
             return this;
         }
 

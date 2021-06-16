@@ -16,12 +16,15 @@ package org.edgegallery.atp.interfaceTest;
 
 import static org.junit.Assert.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import com.google.gson.Gson;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import org.apache.http.entity.ContentType;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.commons.io.FileUtils;
 import org.apache.ibatis.io.Resources;
 import org.edgegallery.atp.ATPApplicationTest;
+import org.edgegallery.atp.model.contribution.Contribution;
+import org.edgegallery.atp.model.task.IdList;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +38,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.web.multipart.MultipartFile;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ATPApplicationTest.class)
@@ -44,19 +46,25 @@ public class ContributionTest {
     @Autowired
     private MockMvc mvc;
 
+    Gson gson = new Gson();
+
     @WithMockUser(roles = "ATP_ADMIN")
     @Test
     public void testContributionTest() throws Exception {
         // create contribution
-        File file = Resources.getResourceAsFile("testfile/Test.java");
-        InputStream csarInputStream = new FileInputStream(file);
-        MultipartFile csarMultiFile = new MockMultipartFile(file.getName(), file.getName(),
-                ContentType.APPLICATION_OCTET_STREAM.toString(), csarInputStream);
+        File csar = Resources.getResourceAsFile("testfile/AR.csar");
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/contributions")
-                .file("file", csarMultiFile.getBytes()).with(csrf()).param("name", "test").param("objective", "test")
+                .file(new MockMultipartFile("file", "contribution.zip", MediaType.TEXT_PLAIN_VALUE,
+                        FileUtils.openInputStream(csar)))
+                .with(csrf()).param("name", "test")
+                .param("objective", "test")
                 .param("step", "automatic").param("expectResult", "test").param("type", "script")).andReturn();
         int result = mvcResult.getResponse().getStatus();
         assertEquals(200, result);
+        
+        String content = mvcResult.getResponse().getContentAsString();
+        Contribution contribution = gson.fromJson(content, Contribution.class);
+        String id = contribution.getId();
 
         // get all contributions
         MvcResult mvcResultQueryAll = mvc.perform(MockMvcRequestBuilders.get("/edgegallery/atp/v1/contributions")
@@ -65,5 +73,25 @@ public class ContributionTest {
         int resultQueryAll = mvcResultQueryAll.getResponse().getStatus();
         assertEquals(200, resultQueryAll);
 
+        //download contribution
+        MvcResult mvcResultDownload = mvc
+                .perform(MockMvcRequestBuilders.get("/edgegallery/atp/v1/contributions/" + id + "/action/download")
+                .contentType(MediaType.APPLICATION_JSON_VALUE).with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+        int resultDownload = mvcResultDownload.getResponse().getStatus();
+        assertEquals(200, resultDownload);
+
+        // batch delete contributions
+        IdList list = new IdList();
+        List<String> ids = new ArrayList<String>();
+        ids.add(id);
+        list.setIds(ids);
+        MvcResult mvcResultDelete = mvc
+                .perform(MockMvcRequestBuilders.post("/edgegallery/atp/v1/contributions/batch_delete")
+                        .content(gson.toJson(list)).with(csrf()).contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+        int resultDelete = mvcResultDelete.getResponse().getStatus();
+        assertEquals(200, resultDelete);
     }
 }

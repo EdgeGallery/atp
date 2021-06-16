@@ -98,6 +98,28 @@ public class TestCaseBase implements Entity {
      */
     private Date createTime;
 
+    /**
+     * set create time.
+     * 
+     * @param createTime createTime
+     */
+    public void setCreateTime(Date createTime) {
+        if (createTime != null) {
+            this.createTime = (Date) createTime.clone();
+        } else {
+            this.createTime = null;
+        }
+    }
+
+    /**
+     * get create time.
+     * 
+     * @return date
+     */
+    public Date getCreateTime() {
+        return createTime != null ? (Date) createTime.clone() : null;
+    }
+
     public TestCaseBase() {
 
     }
@@ -122,7 +144,6 @@ public class TestCaseBase implements Entity {
         this.testStepCh = builder.testStepCh;
         this.testStepEn = builder.testStepEn;
         this.type = builder.type;
-        this.createTime = builder.createTime;
     }
 
     /**
@@ -208,8 +229,6 @@ public class TestCaseBase implements Entity {
 
         private String testStepEn;
 
-        private Date createTime;
-
         private Builder() {
 
         }
@@ -281,11 +300,6 @@ public class TestCaseBase implements Entity {
 
         public Builder setTestStepEn(String testStepEn) {
             this.testStepEn = testStepEn;
-            return this;
-        }
-
-        public Builder setCreateTime(Date createTime) {
-            this.createTime = createTime;
             return this;
         }
 
