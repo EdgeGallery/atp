@@ -49,5 +49,11 @@
             resultType="org.edgegallery.atp.model.contribution.Contribution"
             parameterType="String">
         select * from contribution_table where id = #{id}
+    </select>
+    
+    <select id="getContributionByName"
+            resultType="org.edgegallery.atp.model.contribution.Contribution"
+            parameterType="String">
+        select * from contribution_table where name = #{name}
     </select> 
 </mapper>

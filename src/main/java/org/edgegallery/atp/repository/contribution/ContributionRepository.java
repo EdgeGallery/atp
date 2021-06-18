@@ -50,4 +50,12 @@ public interface ContributionRepository {
      * @return contribution info
      */
     Contribution getContributionById(String id);
+
+    /**
+     * get contribution by contribution name.
+     * 
+     * @param name name
+     * @return contribution info
+     */
+    Contribution getContributionByName(String name);
 }

@@ -61,13 +61,7 @@ public interface Constant {
 
     String APP_INSTANCE_ID = "appInstanceId";
 
-    String DEPENDENCY_APP_INSTANCE_ID = "dependencyAppInstanceId";
-
     String DEFINITIONS = "Definition";
-
-    String MAIN_SERVICE_TEMPLATE_YAML = "MainServiceTemplate.yaml";
-
-    String DEPENDENCE = "dependencies";
 
     String APP_ID = "appId";
 
@@ -117,18 +111,6 @@ public interface Constant {
 
     String SANDBOX_TEST = "sandboxTest";
 
-    String INVENTORY_GET_MECHOSTS_URL = "/inventory/v1/tenants/%s/mechosts";
-
-    String APP_STORE_GET_APP_PACKAGE = "/mec/appstore/v1/apps/%s/packages/%s";
-
-    String APP_STORE_DOWNLOAD_CSAR = "/mec/appstore/v1/apps/%s/packages/%s/action/download";
-
-    String APM_UPLOAD_PACKAGE = "/apm/v1/tenants/%s/packages/upload";
-
-    String APPO_CREATE_APPINSTANCE = "/appo/v1/tenants/%s/app_instances";
-
-    String APPO_DELETE_APPLICATION_INSTANCE = "/appo/v1/tenants/%s/app_instances/%s";
-
     String NODE_TEMPLATES = "node_templates";
 
     String APP_CONFIGURATION = "app_configuration";
@@ -143,17 +125,7 @@ public interface Constant {
 
     String APPLICATION_JSON = "application/json";
 
-    String APPO_GET_INSTANCE = "/appo/v1/tenants/%s/app_instance_infos/%s";
-
     String CREATED = "Created";
-
-    String APPO_INSTANTIATE_APP = "/appo/v1/tenants/%s/app_instances/%s";
-
-    String INSTANTIATED = "instantiated";
-
-    String INSTANTIATE_FAILED = "Instantiation failed";
-
-    String CREATED_FAILED = "Create failed";
 
     String JAVA = "java";
 

@@ -85,4 +85,16 @@ public class ContributionRepositoryImpl implements ContributionRepository {
                     ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("query contribution by id failed")));
         }
     }
+
+    @Override
+    public Contribution getContributionByName(String name) {
+        try {
+            return contributionMapper.getContributionByName(name);
+        } catch (Exception e) {
+            LOGGER.error("query contribution by name failed. {}", e);
+            throw new IllegalRequestException(
+                    String.format(ErrorCode.DB_ERROR_MSG, "query contribution by name failed"), ErrorCode.DB_ERROR,
+                    new ArrayList<String>(Arrays.asList("query contribution by name failed")));
+        }
+    }
 }
