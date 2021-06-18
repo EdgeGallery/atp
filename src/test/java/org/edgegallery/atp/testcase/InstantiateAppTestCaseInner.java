@@ -402,41 +402,33 @@ public class InstantiateAppTestCaseInner {
      * @param body body
      */
     private void setBody(Map<String, Object> body) {
-        body.put("DC_ID", PropertiesUtil.getProperties("DC_ID"));
-        body.put("az_dc", PropertiesUtil.getProperties("az_dc"));
-        body.put("ak", PropertiesUtil.getProperties("ak"));
-        body.put("sk", PropertiesUtil.getProperties("sk"));
-        body.put("mep_certificate", PropertiesUtil.getProperties("mep_certificate"));
-        body.put("app_mp1_ip", PropertiesUtil.getProperties("app_mp1_ip"));
-        body.put("app_mp1_mask", PropertiesUtil.getProperties("app_mp1_mask"));
-        body.put("app_mp1_gw", PropertiesUtil.getProperties("app_mp1_gw"));
-        body.put("app_n6_ip", PropertiesUtil.getProperties("app_n6_ip"));
-        body.put("app_n6_mask", PropertiesUtil.getProperties("app_n6_mask"));
-        body.put("app_n6_gw", PropertiesUtil.getProperties("app_n6_gw"));
-        body.put("app_internet_ip", PropertiesUtil.getProperties("app_internet_ip"));
-        body.put("app_internet_mask", PropertiesUtil.getProperties("app_internet_mask"));
-        body.put("app_internet_gw", PropertiesUtil.getProperties("app_internet_gw"));
-        body.put("mep_ip", PropertiesUtil.getProperties("mep_ip"));
-        body.put("mep_port", PropertiesUtil.getProperties("mep_port"));
-        body.put("network_name_mep", PropertiesUtil.getProperties("network_name_mep"));
-        body.put("network_mep_physnet", PropertiesUtil.getProperties("network_mep_physnet"));
-        body.put("network_mep_vlanid", PropertiesUtil.getProperties("network_mep_vlanid"));
-        body.put("network_name_n6", PropertiesUtil.getProperties("network_name_n6"));
-        body.put("network_n6_physnet", PropertiesUtil.getProperties("network_n6_physnet"));
-        body.put("network_n6_vlanid", PropertiesUtil.getProperties("network_n6_vlanid"));
-        body.put("network_name_internet", PropertiesUtil.getProperties("network_name_internet"));
-        body.put("network_internet_physnet", PropertiesUtil.getProperties("network_internet_physnet"));
-        body.put("network_internet_vlanid", PropertiesUtil.getProperties("network_internet_vlanid"));
-        body.put("ue_ip_segment", PropertiesUtil.getProperties("ue_ip_segment"));
-        body.put("mec_internet_ip", PropertiesUtil.getProperties("mec_internet_ip"));
-        body.put("TrafficRuleSrcAddr", PropertiesUtil.getProperties("TrafficRuleSrcAddr"));
-        body.put("TrafficRuleDstAddr", PropertiesUtil.getProperties("TrafficRuleDstAddr"));
-        body.put("TrafficRuleSrcPort", PropertiesUtil.getProperties("TrafficRuleSrcPort"));
-        body.put("TrafficRuleDstPort", PropertiesUtil.getProperties("TrafficRuleDstPort"));
-        body.put("TrafficRuleProtocol", PropertiesUtil.getProperties("TrafficRuleProtocol"));
-        body.put("DnsRuleDomainName", PropertiesUtil.getProperties("DnsRuleDomainName"));
-        body.put("DnsRuleIpAddressType", PropertiesUtil.getProperties("DnsRuleIpAddressType"));
-        body.put("DnsRuleIpAddress", PropertiesUtil.getProperties("DnsRuleIpAddress"));
+        body.put("DC_ID", "FS_M:Manger_VPC");
+        body.put("az_dc", "nova");
+        body.put("ak", "");
+        body.put("sk", "");
+        body.put("mep_certificate", "YHXGFTWU!@$%@&%#(DH(122479+_)");
+        body.put("app_mp1_ip", "192.168.226.123");
+        body.put("app_mp1_mask", "255.255.255.0");
+        body.put("app_mp1_gw", "192.168.226.101");
+        body.put("app_n6_ip", "192.168.225.123");
+        body.put("app_n6_mask", "255.255.255.0");
+        body.put("app_n6_gw", "192.168.225.102");
+        body.put("app_internet_ip", "192.168.227.123");
+        body.put("app_internet_mask", "255.255.255.0");
+        body.put("app_internet_gw", "192.168.227.103");
+        body.put("mep_ip", "119.8.47.5");
+        body.put("mep_port", "8443");
+        body.put("network_name_mep", "mec_network_mep");
+        body.put("network_mep_physnet", "physnet2");
+        body.put("network_mep_vlanid", "2653");
+        body.put("network_name_n6", "mec_network_n6");
+        body.put("network_n6_physnet", "physnet2");
+        body.put("network_n6_vlanid", "2652");
+        body.put("network_name_internet", "mec_network_internet");
+        body.put("network_internet_physnet", "physnet2");
+        body.put("network_internet_vlanid", "2651");
+        body.put("ue_ip_segment", "150.30.1.0/24");
+        body.put("mec_internet_ip", "0.0.0.0");
     }
 
     /**
