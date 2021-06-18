@@ -182,10 +182,55 @@ public class TaskTest {
         assertEquals(200, resultRunTasks);
 
         // query one taks
-        MvcResult mvcResultQueryOne = mvc.perform(MockMvcRequestBuilders.get("/edgegallery/atp/v1/tasks/" + id)
+        MvcResult mvcResultQueryOne = mvc.perform(MockMvcRequestBuilders.get("/edgegallery/atp/v2/tasks/" + id)
                 .contentType(MediaType.APPLICATION_JSON_VALUE).with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
         int resultQueryOne = mvcResultQueryOne.getResponse().getStatus();
         assertEquals(200, resultQueryOne);
+    }
+
+    @WithMockUser(roles = "ATP_ADMIN")
+    @Test
+    public void getTaskByIdFileNotExistsV2() throws Exception {
+        MvcResult mvcResultQueryOne = mvc
+                .perform(MockMvcRequestBuilders.get("/edgegallery/atp/v2/tasks/33333111-1111-4f62-aabb-8ebcec357f87")
+                .contentType(MediaType.APPLICATION_JSON_VALUE).with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
+                .andReturn();
+        int resultQueryOne = mvcResultQueryOne.getResponse().getStatus();
+        assertEquals(404, resultQueryOne);
+    }
+
+    @WithMockUser(roles = "ATP_ADMIN")
+    @Test
+    public void getTaskByIdFileNotExists() throws Exception {
+        MvcResult mvcResultQueryOne = mvc
+                .perform(MockMvcRequestBuilders.get("/edgegallery/atp/v1/tasks/33333111-1111-4f62-aabb-8ebcec357f87")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE).with(csrf())
+                        .accept(MediaType.APPLICATION_JSON_VALUE))
+                .andReturn();
+        int resultQueryOne = mvcResultQueryOne.getResponse().getStatus();
+        assertEquals(404, resultQueryOne);
+    }
+
+    @WithMockUser(roles = "ATP_ADMIN")
+    @Test
+    public void runTaskIllegalRequestionExceptionV2() throws Exception {
+        // run task
+        MvcResult mvcResultRunTasks = mvc.perform(MockMvcRequestBuilders
+                .multipart("/edgegallery/atp/v2/tasks/33333111-1111-4f62-aabb-8ebcec357f87/action/run").with(csrf())
+                .param("scenarioIdList", "e71718a5-864a-49e5-855a-5805a5e9f97d")).andReturn();
+        int resultRunTasks = mvcResultRunTasks.getResponse().getStatus();
+        assertEquals(400, resultRunTasks);
+    }
+
+    @WithMockUser(roles = "ATP_ADMIN")
+    @Test
+    public void runTaskIllegalRequestionException() throws Exception {
+        // run task
+        MvcResult mvcResultRunTasks = mvc.perform(MockMvcRequestBuilders
+                .multipart("/edgegallery/atp/v1/tasks/33333111-1111-4f62-aabb-8ebcec357f87/action/run").with(csrf())
+                .param("scenarioIdList", "e71718a5-864a-49e5-855a-5805a5e9f97d")).andReturn();
+        int resultRunTasks = mvcResultRunTasks.getResponse().getStatus();
+        assertEquals(400, resultRunTasks);
     }
 }
