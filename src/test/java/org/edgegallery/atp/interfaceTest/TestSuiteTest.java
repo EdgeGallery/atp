@@ -45,10 +45,11 @@ public class TestSuiteTest {
     @Test
     public void testSuiteTest() throws Exception {
         // create test suite
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/testsuites")
-                .with(csrf()).param("nameEn", "testSuite").param("nameCh", "testSuite")
-                .param("descriptionCh", "testSuite").param("descriptionEn", "testSuite")
-                .param("scenarioIdList", "4d203111-1111-4f62-aabb-8ebcec357f87")).andReturn();
+        MvcResult mvcResult = mvc
+                .perform(MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/testsuites").with(csrf())
+                        .param("nameEn", "testSuite").param("nameCh", "").param("descriptionCh", "testSuite")
+                        .param("descriptionEn", "").param("scenarioIdList", "4d203111-1111-4f62-aabb-8ebcec357f87"))
+                .andReturn();
         int result = mvcResult.getResponse().getStatus();
         assertEquals(200, result);
 
@@ -70,6 +71,14 @@ public class TestSuiteTest {
         int resultQueryAll = mvcResultQueryAll.getResponse().getStatus();
         assertEquals(200, resultQueryAll);
 
+        // get all test suites filter query
+        MvcResult mvcResultFilterQueryAll = mvc.perform(MockMvcRequestBuilders
+                .get("/edgegallery/atp/v1/testsuites?scenarioIdList=4d203111-1111-4f62-aabb-8ebcec357f87")
+                .contentType(MediaType.APPLICATION_JSON_VALUE).with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+        int resultFilterQueryAll = mvcResultFilterQueryAll.getResponse().getStatus();
+        assertEquals(200, resultFilterQueryAll);
+
         // delete
         MvcResult mvcResultDelete = mvc
                 .perform(MockMvcRequestBuilders.delete("/edgegallery/atp/v1/testsuites/" + id).with(csrf())
@@ -77,5 +86,51 @@ public class TestSuiteTest {
                 .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
         int resultDelete = mvcResultDelete.getResponse().getStatus();
         assertEquals(200, resultDelete);
+    }
+
+    @WithMockUser(roles = "ATP_ADMIN")
+    @Test
+    public void createTestSuiteNameExistsException() throws Exception {
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/testsuites")
+                .with(csrf()).param("nameEn", "Common Compliance Test").param("nameCh", "testSuite")
+                .param("descriptionCh", "testSuite").param("descriptionEn", "testSuite")
+                .param("scenarioIdList", "4d203111-1111-4f62-aabb-8ebcec357f87")).andReturn();
+        int result = mvcResult.getResponse().getStatus();
+        assertEquals(400, result);
+    }
+
+    @WithMockUser(roles = "ATP_ADMIN")
+    @Test
+    public void createTestSuiteNameIsNullException() throws Exception {
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/testsuites")
+                .with(csrf()).param("nameEn", "").param("nameCh", "").param("descriptionCh", "")
+                .param("descriptionEn", "testSuite").param("scenarioIdList", "4d203111-1111-4f62-aabb-8ebcec357f87"))
+                .andReturn();
+        int result = mvcResult.getResponse().getStatus();
+        assertEquals(400, result);
+    }
+
+    @WithMockUser(roles = "ATP_ADMIN")
+    @Test
+    public void deleteTestSuiteIllegalException() throws Exception {
+        // delete
+        MvcResult mvcResultDelete = mvc.perform(
+                MockMvcRequestBuilders.delete("/edgegallery/atp/v1/testsuites/522684bd-d6df-4b47-aab8-b43f1b4c19c0")
+                        .with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
+                .andReturn();
+        int resultDelete = mvcResultDelete.getResponse().getStatus();
+        assertEquals(400, resultDelete);
+    }
+
+    @WithMockUser(roles = "ATP_ADMIN")
+    @Test
+    public void getTestSuiteIllegalException() throws Exception {
+        // get one test suite
+        MvcResult mvcResultQueryOne = mvc.perform(MockMvcRequestBuilders
+                .get("/edgegallery/atp/v1/testsuites/33333111-1111-4f62-aabb-8ebcec357f87")
+                .contentType(MediaType.APPLICATION_JSON_VALUE).with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
+                .andReturn();
+        int resultQueryOne = mvcResultQueryOne.getResponse().getStatus();
+        assertEquals(404, resultQueryOne);
     }
 }

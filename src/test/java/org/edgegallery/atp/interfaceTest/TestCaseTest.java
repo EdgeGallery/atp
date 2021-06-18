@@ -107,10 +107,10 @@ public class TestCaseTest {
                 ContentType.APPLICATION_OCTET_STREAM.toString(), csarInputStream);
         MvcResult mvcResult = mvc.perform(
                 MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/testcases").file("file", csarMultiFile.getBytes())
-                        .with(csrf()).param("nameEn", "test").param("nameCh", "test").param("type", "automatic")
-                        .param("descriptionCh", "test").param("descriptionEn", "test").param("codeLanguage", "java")
-                        .param("expectResultCh", "test").param("expectResultEn", "test").param("testStepEn", "test")
-                        .param("testStepCh", "test").param("testSuiteIdList", "522684bd-d6df-4b47-aab8-b43f1b4c19c0"))
+                        .with(csrf()).param("nameEn", "test").param("nameCh", "").param("type", "automatic")
+                        .param("descriptionCh", "test").param("descriptionEn", "").param("codeLanguage", "java")
+                        .param("expectResultCh", "test").param("expectResultEn", "").param("testStepEn", "test")
+                        .param("testStepCh", "").param("testSuiteIdList", "522684bd-d6df-4b47-aab8-b43f1b4c19c0"))
                 .andReturn();
         int result = mvcResult.getResponse().getStatus();
         assertEquals(200, result);
@@ -176,5 +176,102 @@ public class TestCaseTest {
                 .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
         int resultDelete = mvcResultDelete.getResponse().getStatus();
         assertEquals(200, resultDelete);
+    }
+
+    @WithMockUser(roles = "ATP_ADMIN")
+    @Test
+    public void createTestCaseNameExistsException() throws Exception {
+        File file = Resources.getResourceAsFile("testfile/Test.java");
+        InputStream csarInputStream = new FileInputStream(file);
+        MultipartFile csarMultiFile = new MockMultipartFile(file.getName(), file.getName(),
+                ContentType.APPLICATION_OCTET_STREAM.toString(), csarInputStream);
+        MvcResult mvcResult = mvc
+                .perform(MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/testcases")
+                        .file("file", csarMultiFile.getBytes()).with(csrf())
+                        .param("nameEn", "Manifest File Path Validation").param("nameCh", "").param("type", "automatic")
+                        .param("descriptionCh", "test").param("descriptionEn", "").param("codeLanguage", "java")
+                        .param("expectResultCh", "test").param("expectResultEn", "").param("testStepEn", "test")
+                        .param("testStepCh", "").param("testSuiteIdList", "522684bd-d6df-4b47-aab8-b43f1b4c19c0"))
+                .andReturn();
+        int result = mvcResult.getResponse().getStatus();
+        assertEquals(400, result);
+    }
+
+    @WithMockUser(roles = "ATP_ADMIN")
+    @Test
+    public void createTestCaseNameIsNullException() throws Exception {
+        File file = Resources.getResourceAsFile("testfile/Test.java");
+        InputStream csarInputStream = new FileInputStream(file);
+        MultipartFile csarMultiFile = new MockMultipartFile(file.getName(), file.getName(),
+                ContentType.APPLICATION_OCTET_STREAM.toString(), csarInputStream);
+        MvcResult mvcResult = mvc.perform(
+                MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/testcases").file("file", csarMultiFile.getBytes())
+                        .with(csrf()).param("nameEn", "").param("nameCh", "").param("type", "automatic")
+                        .param("descriptionCh", "test").param("descriptionEn", "").param("codeLanguage", "java")
+                        .param("expectResultCh", "test").param("expectResultEn", "").param("testStepEn", "test")
+                        .param("testStepCh", "").param("testSuiteIdList", "522684bd-d6df-4b47-aab8-b43f1b4c19c0"))
+                .andReturn();
+        int result = mvcResult.getResponse().getStatus();
+        assertEquals(400, result);
+    }
+
+    @WithMockUser(roles = "ATP_ADMIN")
+    @Test
+    public void getTestCaseNameException() throws Exception {
+        MvcResult mvcResult = mvc.perform(
+                MockMvcRequestBuilders.get("/edgegallery/atp/v1/testcases/55553173-2222-4f62-aabb-8ebcec357f87")
+                        .with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
+                .andReturn();
+        int result = mvcResult.getResponse().getStatus();
+        assertEquals(404, result);
+    }
+
+    @Test
+    public void ErrorCode() {
+        int RET_CODE_SUCCESS = org.edgegallery.atp.constant.ErrorCode.RET_CODE_SUCCESS;
+        int RET_CODE_FAILURE = org.edgegallery.atp.constant.ErrorCode.RET_CODE_FAILURE;
+        int RET_CODE_PARTIAL_SUCCESS = org.edgegallery.atp.constant.ErrorCode.RET_CODE_PARTIAL_SUCCESS;
+        int TEST_SUITE_SCENARIO_NAME_NOT_EXISTS =
+                org.edgegallery.atp.constant.ErrorCode.TEST_SUITE_SCENARIO_NAME_NOT_EXISTS;
+        String TEST_SUITE_SCENARIO_NAME_NOT_EXISTS_MSG =
+                org.edgegallery.atp.constant.ErrorCode.TEST_SUITE_SCENARIO_NAME_NOT_EXISTS_MSG;
+        int TEST_CASE_TEST_SUITE_NAME_NOT_EXISTS =
+                org.edgegallery.atp.constant.ErrorCode.TEST_CASE_TEST_SUITE_NAME_NOT_EXISTS;
+        String TEST_CASE_TEST_SUITE_NAME_NOT_EXISTS_MSG =
+                org.edgegallery.atp.constant.ErrorCode.TEST_CASE_TEST_SUITE_NAME_NOT_EXISTS_MSG;
+        int NAME_EXISTS = org.edgegallery.atp.constant.ErrorCode.NAME_EXISTS;
+        String NAME_EXISTS_MSG = org.edgegallery.atp.constant.ErrorCode.NAME_EXISTS_MSG;
+        int DB_ERROR = org.edgegallery.atp.constant.ErrorCode.DB_ERROR;
+        String DB_ERROR_MSG = org.edgegallery.atp.constant.ErrorCode.DB_ERROR_MSG;
+        int TEST_CASE_NOT_EXISTS_IN_DIR = org.edgegallery.atp.constant.ErrorCode.TEST_CASE_NOT_EXISTS_IN_DIR;
+        String TEST_CASE_NOT_EXISTS_IN_DIR_MSG = org.edgegallery.atp.constant.ErrorCode.TEST_CASE_NOT_EXISTS_IN_DIR_MSG;
+        int LENGTH_CHECK_FAILED = org.edgegallery.atp.constant.ErrorCode.LENGTH_CHECK_FAILED;
+        String LENGTH_CHECK_FAILED_MSG = org.edgegallery.atp.constant.ErrorCode.LENGTH_CHECK_FAILED_MSG;
+        int TEST_CASE_TYPE_ERROR = org.edgegallery.atp.constant.ErrorCode.TEST_CASE_TYPE_ERROR;
+        String TEST_CASE_TYPE_ERROR_MSG = org.edgegallery.atp.constant.ErrorCode.TEST_CASE_TYPE_ERROR_MSG;
+        int TEST_CASE_LANGUAGE_ERROR = org.edgegallery.atp.constant.ErrorCode.TEST_CASE_LANGUAGE_ERROR;
+        String TEST_CASE_LANGUAGE_ERROR_MSG = org.edgegallery.atp.constant.ErrorCode.TEST_CASE_LANGUAGE_ERROR_MSG;
+        int MAX_IMPORT_NUMBER_ERROR = org.edgegallery.atp.constant.ErrorCode.MAX_IMPORT_NUMBER_ERROR;
+        String MAX_IMPORT_NUMBER_ERROR_MSG = org.edgegallery.atp.constant.ErrorCode.MAX_IMPORT_NUMBER_ERROR_MSG;
+        int PARAM_IS_NULL = org.edgegallery.atp.constant.ErrorCode.PARAM_IS_NULL;
+        String PARAM_IS_NULL_MSG = org.edgegallery.atp.constant.ErrorCode.PARAM_IS_NULL_MSG;
+        int FILE_NAME_CONTAIN_BLANK = org.edgegallery.atp.constant.ErrorCode.FILE_NAME_CONTAIN_BLANK;
+        String FILE_NAME_CONTAIN_BLANK_MSG = org.edgegallery.atp.constant.ErrorCode.FILE_NAME_CONTAIN_BLANK_MSG;
+        int FILE_NAME_ILLEGAL = org.edgegallery.atp.constant.ErrorCode.FILE_NAME_ILLEGAL;
+        String FILE_NAME_ILLEGAL_MSG = org.edgegallery.atp.constant.ErrorCode.FILE_NAME_ILLEGAL_MSG;
+        int FILE_IO_EXCEPTION = org.edgegallery.atp.constant.ErrorCode.FILE_IO_EXCEPTION;
+        String FILE_IO_EXCEPTION_MSG = org.edgegallery.atp.constant.ErrorCode.FILE_IO_EXCEPTION_MSG;
+        int NOT_FOUND_EXCEPTION = org.edgegallery.atp.constant.ErrorCode.NOT_FOUND_EXCEPTION;
+        String NOT_FOUND_EXCEPTION_MSG = org.edgegallery.atp.constant.ErrorCode.NOT_FOUND_EXCEPTION_MSG;
+        int SIZE_OUT_OF_LIMIT = org.edgegallery.atp.constant.ErrorCode.SIZE_OUT_OF_LIMIT;
+        String SIZE_OUT_OF_LIMIT_MSG = org.edgegallery.atp.constant.ErrorCode.SIZE_OUT_OF_LIMIT_MSG;
+        int NUMBER_OUT_OF_LIMIT = org.edgegallery.atp.constant.ErrorCode.NUMBER_OUT_OF_LIMIT;
+        String NUMBER_OUT_OF_LIMIT_MSG = org.edgegallery.atp.constant.ErrorCode.NUMBER_OUT_OF_LIMIT_MSG;
+        int TASK_IS_RUNNING = org.edgegallery.atp.constant.ErrorCode.TASK_IS_RUNNING;
+        String TASK_IS_RUNNING_MSG = org.edgegallery.atp.constant.ErrorCode.TASK_IS_RUNNING_MSG;
+        int RUN_TASK_FAILED = org.edgegallery.atp.constant.ErrorCode.RUN_TASK_FAILED;
+        String RUN_TASK_FAILED_MSG = org.edgegallery.atp.constant.ErrorCode.RUN_TASK_FAILED_MSG;
+        int BOMB_DEFENSE_FAILED = org.edgegallery.atp.constant.ErrorCode.BOMB_DEFENSE_FAILED;
+        String BOMB_DEFENSE_FAILED_MSG = org.edgegallery.atp.constant.ErrorCode.BOMB_DEFENSE_FAILED_MSG;
     }
 }
