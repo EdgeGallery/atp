@@ -50,6 +50,12 @@ public class ContributionServiceImpl implements ContributionService {
 
     @Override
     public Contribution createContribution(Contribution contribution, MultipartFile file) {
+        if (null != contributionRepository.getContributionByName(contribution.getName())) {
+            String msg = "contribution name alreay exists.";
+            LOGGER.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
         contribution.setId(CommonUtil.generateId());
         contribution.setCreateTime(taskRepository.getCurrentDate());
         if (Constant.CONTRIBUTION_TYPE_SCRIPT.equals(contribution.getType()) && null != file
