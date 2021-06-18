@@ -58,8 +58,8 @@ public class TestScenarioTest {
                 ContentType.APPLICATION_OCTET_STREAM.toString(), iconInputStream);
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/testscenarios")
                 .file("icon", iconMultiFile.getBytes()).with(csrf()).param("nameEn", "testScenario")
-                .param("nameCh", "testScenario").param("descriptionCh", "testScenario")
-                .param("descriptionEn", "testScenario").param("label", "EdgeGallery")).andReturn();
+                .param("nameCh", "").param("descriptionCh", "testScenario").param("descriptionEn", "")
+                .param("label", "EdgeGallery")).andReturn();
         int result = mvcResult.getResponse().getStatus();
         assertEquals(200, result);
 
@@ -90,7 +90,7 @@ public class TestScenarioTest {
         // get all test case under one test scenario
         MvcResult mvcResultQueryTestCases =
                 mvc.perform(MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/testscenarios/testcases").with(csrf())
-                .param("scenarioIds", id)).andReturn();
+                        .param("scenarioIds", "4d203111-1111-4f62-aabb-8ebcec357f87")).andReturn();
         int resultQueryTestCases = mvcResultQueryTestCases.getResponse().getStatus();
         assertEquals(200, resultQueryTestCases);
 
@@ -115,5 +115,59 @@ public class TestScenarioTest {
                         .file("file", zipMultiFile.getBytes()).with(csrf())).andReturn();
         int result = mvcResult.getResponse().getStatus();
         assertEquals(206, result);
+    }
+
+    @WithMockUser(roles = "ATP_ADMIN")
+    @Test
+    public void createTestScenarioNameExistsException() throws Exception {
+        File file = Resources.getResourceAsFile("testfile/icon.png");
+        InputStream iconInputStream = new FileInputStream(file);
+        MultipartFile iconMultiFile = new MockMultipartFile(file.getName(), file.getName(),
+                ContentType.APPLICATION_OCTET_STREAM.toString(), iconInputStream);
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/testscenarios")
+                .file("icon", iconMultiFile.getBytes()).with(csrf()).param("nameEn", "EdgeGallery Community Scenario")
+                .param("nameCh", "").param("descriptionCh", "testScenario").param("descriptionEn", "")
+                .param("label", "EdgeGallery")).andReturn();
+        int result = mvcResult.getResponse().getStatus();
+        assertEquals(400, result);
+    }
+
+    @WithMockUser(roles = "ATP_ADMIN")
+    @Test
+    public void createTestScenarioNameIsNullException() throws Exception {
+        File file = Resources.getResourceAsFile("testfile/icon.png");
+        InputStream iconInputStream = new FileInputStream(file);
+        MultipartFile iconMultiFile = new MockMultipartFile(file.getName(), file.getName(),
+                ContentType.APPLICATION_OCTET_STREAM.toString(), iconInputStream);
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/testscenarios")
+                .file("icon", iconMultiFile.getBytes()).with(csrf()).param("nameEn", "")
+                .param("nameCh", "").param("descriptionCh", "testScenario").param("descriptionEn", "")
+                .param("label", "EdgeGallery")).andReturn();
+        int result = mvcResult.getResponse().getStatus();
+        assertEquals(400, result);
+    }
+
+    @WithMockUser(roles = "ATP_ADMIN")
+    @Test
+    public void deleteTestScenarioIllegalException() throws Exception {
+        // delete
+        MvcResult mvcResultDelete = mvc.perform(
+                MockMvcRequestBuilders.delete("/edgegallery/atp/v1/testscenarios/4d203111-1111-4f62-aabb-8ebcec357f87")
+                        .with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
+                .andReturn();
+        int resultDelete = mvcResultDelete.getResponse().getStatus();
+        assertEquals(400, resultDelete);
+    }
+
+    @WithMockUser(roles = "ATP_ADMIN")
+    @Test
+    public void getTestScenarioIllegalException() throws Exception {
+        // get one test suite
+        MvcResult mvcResultQueryOne = mvc.perform(MockMvcRequestBuilders
+                .get("/edgegallery/atp/v1/testscenarios/33333111-1111-4f62-aabb-8ebcec357f87")
+                .contentType(MediaType.APPLICATION_JSON_VALUE).with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
+                .andReturn();
+        int resultQueryOne = mvcResultQueryOne.getResponse().getStatus();
+        assertEquals(404, resultQueryOne);
     }
 }
