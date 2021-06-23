@@ -21,7 +21,9 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.util.List;
 import java.util.Map;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
@@ -73,11 +75,16 @@ public class ContributionController {
             @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
     @PreAuthorize("hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<Contribution> createContribution(
-            @ApiParam(value = "contribution name") @RequestParam("name") String name,
-            @ApiParam(value = "contribution objective") @RequestParam("objective") String objective,
-            @ApiParam(value = "contribution step") @RequestParam("step") String step,
-            @ApiParam(value = "contribution expectResult") @RequestParam("expectResult") String expectResult,
-            @ApiParam(value = "contribution type") @RequestParam("type") String type,
+            @ApiParam(value = "contribution name") @NotNull @Size(
+                    max = Constant.LENGTH_64) @RequestParam("name") String name,
+            @ApiParam(value = "contribution objective") @NotNull @Size(
+                    max = Constant.LENGTH_255) @RequestParam("objective") String objective,
+            @ApiParam(value = "contribution step") @NotNull @Size(
+                    max = Constant.LENGTH_255) @RequestParam("step") String step,
+            @ApiParam(value = "contribution expectResult") @Size(
+                    max = Constant.LENGTH_255) @NotNull @RequestParam("expectResult") String expectResult,
+            @ApiParam(value = "contribution type") @NotNull @Size(
+                    max = Constant.LENGTH_64) @RequestParam("type") String type,
             @ApiParam(value = "script file", required = false) @RequestPart("file") MultipartFile file) {
         Contribution contribution = Contribution.builder().setId(CommonUtil.generateId()).setExpectResult(expectResult)
                 .setName(name).setObjective(objective).setStep(step).setType(type).build();
