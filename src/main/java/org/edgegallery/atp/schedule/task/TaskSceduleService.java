@@ -65,8 +65,8 @@ public class TaskSceduleService {
             handleTestCase(new File(baseTestCasePath.concat(File.separator).concat("CommunitySecurity")));
             handleTestCase(new File(baseTestCasePath.concat(File.separator).concat("CommunitySandbox")));
             handleTestCase(new File(baseTestCasePath.concat(File.separator).concat("CommunityCompliance")));
-            handleTestCase(new File(baseTestCasePath.concat(File.separator).concat("ChinaUnicomSecurity")));
-            handleTestCase(new File(baseTestCasePath.concat(File.separator).concat("ChinaUnicomCompliance")));
+            handleTestCase(new File(baseTestCasePath.concat(File.separator).concat("AOperatorSecurity")));
+            handleTestCase(new File(baseTestCasePath.concat(File.separator).concat("AOperatorCompliance")));
 
             // handle scenario icon
             File iconDir = new File(basePath.concat(Constant.SLASH).concat(Constant.ICON));
