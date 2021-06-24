@@ -417,7 +417,8 @@
                 <version>0.7.7.201606060606</version>
                 <configuration>
                       <excludes>
-                         <exclude>testCase/*</exclude>
+                         <exclude>testCase/CommunitySandbox/*</exclude>
+                         <exclude>testCase/ChinaUnicomSecurity/*</exclude>
                      </excludes>
                     <destFile>target/coverage-reports/jacoco-unit.exec</destFile>
                     <dataFile>target/coverage-reports/jacoco-unit.exec</dataFile>
