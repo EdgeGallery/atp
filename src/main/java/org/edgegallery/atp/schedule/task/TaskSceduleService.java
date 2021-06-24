@@ -61,28 +61,12 @@ public class TaskSceduleService {
                     : PropertiesUtil.getProperties("workspace_base_dir_linux");
 
             // handle test case
-            File fileDir = new File(basePath.concat(Constant.SLASH).concat(Constant.TEST_CASE_DIR));
-            if (fileDir.exists()) {
-                File[] fileArray = fileDir.listFiles();
-                if (null != fileArray) {
-                    for (File file : fileArray) {
-                        TestCase testCase = testCaseRepository.findByName(null,
-                                file.getName().substring(0, file.getName().indexOf(Constant.DOT)));
-                        if (null != testCase) {
-                            String filePath = Constant.BASIC_TEST_CASE_PATH + testCase.getNameEn() + Constant.UNDER_LINE
-                                    + testCase.getId();
-                            FileChecker.createFile(filePath);
-                            File result = new File(filePath);
-                            FileCopyUtils.copy(file, result);
-
-                            testCase.setFilePath(filePath);
-                            testCaseRepository.update(testCase);
-                        } else {
-                            LOGGER.error("init test case failed, find by name from db is null.");
-                        }
-                    }
-                }
-            }
+            String baseTestCasePath = basePath.concat(Constant.SLASH).concat(Constant.TEST_CASE_DIR);
+            handleTestCase(new File(baseTestCasePath.concat(File.separator).concat("CommunitySecurity")));
+            handleTestCase(new File(baseTestCasePath.concat(File.separator).concat("CommunitySandbox")));
+            handleTestCase(new File(baseTestCasePath.concat(File.separator).concat("CommunityCompliance")));
+            handleTestCase(new File(baseTestCasePath.concat(File.separator).concat("ChinaUnicomSecurity")));
+            handleTestCase(new File(baseTestCasePath.concat(File.separator).concat("ChinaUnicomCompliance")));
 
             // handle scenario icon
             File iconDir = new File(basePath.concat(Constant.SLASH).concat(Constant.ICON));
@@ -115,6 +99,38 @@ public class TaskSceduleService {
         } catch (IOException e) {
             LOGGER.error("copy test case to path failed.");
         }
+    }
 
+    /**
+     * save test case to env path.
+     * 
+     * @param fileDir src dir
+     */
+    private void handleTestCase(File fileDir) {
+        try {
+            if (fileDir.exists()) {
+                File[] fileArray = fileDir.listFiles();
+                if (null != fileArray) {
+                    for (File file : fileArray) {
+                        TestCase testCase = testCaseRepository.findByName(null,
+                                file.getName().substring(0, file.getName().indexOf(Constant.DOT)));
+                        if (null != testCase) {
+                            String filePath = Constant.BASIC_TEST_CASE_PATH + testCase.getNameEn() + Constant.UNDER_LINE
+                                    + testCase.getId();
+                            FileChecker.createFile(filePath);
+                            File result = new File(filePath);
+                            FileCopyUtils.copy(file, result);
+
+                            testCase.setFilePath(filePath);
+                            testCaseRepository.update(testCase);
+                        } else {
+                            LOGGER.error("init test case failed, find by name from db is null.");
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            LOGGER.error("copy test case to path failed.");
+        }
     }
 }
