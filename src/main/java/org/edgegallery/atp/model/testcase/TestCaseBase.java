@@ -133,17 +133,17 @@ public class TestCaseBase implements Entity {
         this.id = builder.id;
         this.nameCh = builder.nameCh;
         this.nameEn = builder.nameEn;
-        this.descriptionCh = builder.descriptionCh;
-        this.descriptionEn = builder.descriptionEn;
         this.className = builder.className;
-        this.codeLanguage = builder.codeLanguage;
         this.expectResultCh = builder.expectResultCh;
         this.expectResultEn = builder.expectResultEn;
         this.filePath = builder.filePath;
         this.hashCode = builder.hashCode;
+        this.type = builder.type;
+        this.descriptionCh = builder.descriptionCh;
+        this.descriptionEn = builder.descriptionEn;
         this.testStepCh = builder.testStepCh;
         this.testStepEn = builder.testStepEn;
-        this.type = builder.type;
+        this.codeLanguage = builder.codeLanguage;
     }
 
     /**
@@ -157,17 +157,17 @@ public class TestCaseBase implements Entity {
         testCase.setCodeLanguage(this.codeLanguage);
         testCase.setDescriptionCh(this.descriptionCh);
         testCase.setDescriptionEn(this.descriptionEn);
-        testCase.setExpectResultCh(this.expectResultCh);
-        testCase.setExpectResultEn(this.expectResultEn);
         testCase.setFilePath(this.filePath);
         testCase.setHashCode(this.hashCode);
         testCase.setId(this.id);
-        testCase.setNameCh(this.nameCh);
-        testCase.setNameEn(this.nameEn);
         testCase.setTestStepCh(this.testStepCh);
         testCase.setTestStepEn(this.testStepEn);
         testCase.setType(this.type);
         testCase.setCreateTime(this.createTime);
+        testCase.setExpectResultCh(this.expectResultCh);
+        testCase.setExpectResultEn(this.expectResultEn);
+        testCase.setNameCh(this.nameCh);
+        testCase.setNameEn(this.nameEn);
         return testCase;
     }
 
@@ -179,18 +179,18 @@ public class TestCaseBase implements Entity {
     public TestCasePo toTestCasePo() {
         TestCasePo testCasePo = new TestCasePo();
         testCasePo.setClassName(this.className);
+        testCasePo.setTestStepCh(this.testStepCh);
+        testCasePo.setTestStepEn(this.testStepEn);
         testCasePo.setCodeLanguage(this.codeLanguage);
         testCasePo.setDescriptionCh(this.descriptionCh);
         testCasePo.setDescriptionEn(this.descriptionEn);
-        testCasePo.setExpectResultCh(this.expectResultCh);
-        testCasePo.setExpectResultEn(this.expectResultEn);
         testCasePo.setFilePath(this.filePath);
         testCasePo.setHashCode(this.hashCode);
         testCasePo.setId(this.id);
         testCasePo.setNameCh(this.nameCh);
         testCasePo.setNameEn(this.nameEn);
-        testCasePo.setTestStepCh(this.testStepCh);
-        testCasePo.setTestStepEn(this.testStepEn);
+        testCasePo.setExpectResultCh(this.expectResultCh);
+        testCasePo.setExpectResultEn(this.expectResultEn);
         testCasePo.setType(this.type);
         testCasePo.setCreateTime(this.createTime);
         return testCasePo;
@@ -203,31 +203,31 @@ public class TestCaseBase implements Entity {
     public static final class Builder {
         private String id;
 
-        private String nameCh;
-
-        private String nameEn;
-
         private String type;
 
         private String className;
 
-        private String descriptionCh;
+        private String codeLanguage;
 
-        private String descriptionEn;
+        private String nameCh;
+
+        private String nameEn;
 
         private String hashCode;
 
         private String filePath;
 
-        private String codeLanguage;
+        private String descriptionCh;
 
-        private String expectResultCh;
-
-        private String expectResultEn;
+        private String descriptionEn;
 
         private String testStepCh;
 
         private String testStepEn;
+
+        private String expectResultCh;
+
+        private String expectResultEn;
 
         private Builder() {
 
@@ -243,13 +243,13 @@ public class TestCaseBase implements Entity {
             return this;
         }
 
-        public Builder setNameCh(String nameCh) {
-            this.nameCh = nameCh;
+        public Builder setDescriptionEn(String descriptionEn) {
+            this.descriptionEn = descriptionEn;
             return this;
         }
 
-        public Builder setDescriptionEn(String descriptionEn) {
-            this.descriptionEn = descriptionEn;
+        public Builder setNameCh(String nameCh) {
+            this.nameCh = nameCh;
             return this;
         }
 
@@ -258,13 +258,14 @@ public class TestCaseBase implements Entity {
             return this;
         }
 
-        public Builder setHashCode(String hashCode) {
-            this.hashCode = hashCode;
+        public Builder setType(String type) {
+            this.type = type;
             return this;
         }
 
-        public Builder setType(String type) {
-            this.type = type;
+
+        public Builder setHashCode(String hashCode) {
+            this.hashCode = hashCode;
             return this;
         }
 
@@ -278,11 +279,6 @@ public class TestCaseBase implements Entity {
             return this;
         }
 
-        public Builder setCodeLanguage(String codeLanguage) {
-            this.codeLanguage = codeLanguage;
-            return this;
-        }
-
         public Builder setExpectResultCh(String expectResultCh) {
             this.expectResultCh = expectResultCh;
             return this;
@@ -290,6 +286,11 @@ public class TestCaseBase implements Entity {
 
         public Builder setExpectResultEn(String expectResultEn) {
             this.expectResultEn = expectResultEn;
+            return this;
+        }
+
+        public Builder setCodeLanguage(String codeLanguage) {
+            this.codeLanguage = codeLanguage;
             return this;
         }
 
@@ -305,7 +306,6 @@ public class TestCaseBase implements Entity {
 
         public TestCaseBase build() {
             return new TestCaseBase(this);
-
         }
     }
 }

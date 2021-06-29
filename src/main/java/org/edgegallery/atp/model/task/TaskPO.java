@@ -79,6 +79,15 @@ public class TaskPO {
     }
 
     /**
+     * get end time.
+     * 
+     * @return date
+     */
+    public Date getEndTime() {
+        return endTime != null ? (Date) endTime.clone() : null;
+    }
+
+    /**
      * set create time.
      * 
      * @param createTime createTime
@@ -89,15 +98,6 @@ public class TaskPO {
         } else {
             this.createTime = null;
         }
-    }
-
-    /**
-     * get end time.
-     * 
-     * @return date
-     */
-    public Date getEndTime() {
-        return endTime != null ? (Date) endTime.clone() : null;
     }
 
     /**
