@@ -40,6 +40,7 @@ import org.edgegallery.atp.repository.mapper.TaskMapper;
 import org.edgegallery.atp.repository.testcase.TestCaseRepository;
 import org.edgegallery.atp.repository.testscenario.TestScenarioRepository;
 import org.edgegallery.atp.repository.testsuite.TestSuiteRepository;
+import org.edgegallery.atp.utils.CommonUtil;
 import org.edgegallery.atp.utils.exception.IllegalRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -163,7 +164,9 @@ public class TaskRepositoryImpl implements TaskRepository {
         List<String> failIds = new ArrayList<String>();
         for (String id : ids) {
             try {
+                TaskPO task = taskMapper.findByTaskIdAndUserId(id, null);
                 taskMapper.deleteTaskById(id);
+                CommonUtil.deleteFile(task.getPackagePath());
             } catch (Exception e) {
                 LOGGER.error("delete task by id {} failed. {}", id, e);
                 failIds.add(id);

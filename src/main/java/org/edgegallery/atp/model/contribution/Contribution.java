@@ -14,12 +14,14 @@
 
 package org.edgegallery.atp.model.contribution;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@JsonIgnoreProperties(value = {"filePath"})
 public class Contribution {
     /**
      * id.
@@ -57,6 +59,11 @@ public class Contribution {
     private Date createTime;
 
     /**
+     * file path.
+     */
+    private String filePath;
+
+    /**
      * get create time.
      * 
      * @return date
@@ -78,10 +85,6 @@ public class Contribution {
         }
     }
 
-    /**
-     * file path.
-     */
-    private String filePath;
 
     public Contribution() {
 

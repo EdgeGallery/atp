@@ -170,9 +170,7 @@ public class TestScenarioServiceImpl implements TestScenarioService {
             throw new IllegalArgumentException("this scenario is used by some test suites, so can not be delete.");
         }
         AtpFile file = fileRepository.getFileContent(id, Constant.FILE_TYPE_SCENARIO);
-        if (new File(file.getFilePath()).delete()) {
-            LOGGER.error("delete file failed.");
-        }
+        CommonUtil.deleteFile(file.getFilePath());
         testScenarioRepository.deleteTestScenario(id);
         LOGGER.info("delete test scenario successfully.");
         return true;
