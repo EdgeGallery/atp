@@ -278,6 +278,7 @@ public class FileChecker {
             throw new IllegalRequestException(ErrorCode.FILE_IO_EXCEPTION_MSG, ErrorCode.FILE_IO_EXCEPTION, null);
         } finally {
             FileUtils.cleanDirectory(new File(tempDir));
+            CommonUtil.deleteFile(tempDir);
         }
     }
 

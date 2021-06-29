@@ -22,6 +22,7 @@ import java.util.Map;
 import org.edgegallery.atp.constant.ErrorCode;
 import org.edgegallery.atp.model.contribution.Contribution;
 import org.edgegallery.atp.repository.mapper.ContributionMapper;
+import org.edgegallery.atp.utils.CommonUtil;
 import org.edgegallery.atp.utils.exception.IllegalRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +65,11 @@ public class ContributionRepositoryImpl implements ContributionRepository {
         List<String> failIds = new ArrayList<String>();
         for (String id : ids) {
             try {
+                Contribution contribution = contributionMapper.getContributionById(id);
                 contributionMapper.deleteContributionsById(id);
+                if (null != contribution.getFilePath()) {
+                    CommonUtil.deleteFile(contribution.getFilePath());
+                }
             } catch (Exception e) {
                 LOGGER.error("delete contribution by id {} failed. {}", id, e);
                 failIds.add(id);
