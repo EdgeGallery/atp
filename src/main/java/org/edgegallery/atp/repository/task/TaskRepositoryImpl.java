@@ -166,7 +166,9 @@ public class TaskRepositoryImpl implements TaskRepository {
             try {
                 TaskPO task = taskMapper.findByTaskIdAndUserId(id, null);
                 taskMapper.deleteTaskById(id);
-                CommonUtil.deleteFile(task.getPackagePath());
+                if (null != task) {
+                    CommonUtil.deleteFile(task.getPackagePath());
+                }
             } catch (Exception e) {
                 LOGGER.error("delete task by id {} failed. {}", id, e);
                 failIds.add(id);
