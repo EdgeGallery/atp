@@ -59,11 +59,6 @@ public class Contribution {
     private Date createTime;
 
     /**
-     * file path.
-     */
-    private String filePath;
-
-    /**
      * get create time.
      * 
      * @return date
@@ -85,6 +80,10 @@ public class Contribution {
         }
     }
 
+    /**
+     * file path.
+     */
+    private String filePath;
 
     public Contribution() {
 
