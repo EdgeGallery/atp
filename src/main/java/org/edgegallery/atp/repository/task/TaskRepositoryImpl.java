@@ -15,14 +15,12 @@
 package org.edgegallery.atp.repository.task;
 
 import com.alibaba.fastjson.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ErrorCode;
