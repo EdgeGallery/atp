@@ -15,12 +15,14 @@
 package org.edgegallery.atp.repository.task;
 
 import com.alibaba.fastjson.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ErrorCode;
@@ -141,7 +143,7 @@ public class TaskRepositoryImpl implements TaskRepository {
 
     @Override
     public List<TaskRequest> findTaskByUserId(String userId, String appName, String status, String providerId,
-            String appVersion) {
+                                              String appVersion) {
         try {
             List<TaskPO> taskPoList = taskMapper.findTaskByUserId(userId, appName, status, providerId, appVersion);
             List<TaskRequest> taskRequest = new ArrayList<TaskRequest>();
@@ -162,19 +164,22 @@ public class TaskRepositoryImpl implements TaskRepository {
     public Map<String, List<String>> batchDelete(List<String> ids) {
         Map<String, List<String>> result = new HashMap<String, List<String>>();
         List<String> failIds = new ArrayList<String>();
-        for (String id : ids) {
-            try {
-                TaskPO task = taskMapper.findByTaskIdAndUserId(id, null);
-                taskMapper.deleteTaskById(id);
-                if (null != task) {
-                    CommonUtil.deleteFile(task.getPackagePath());
+        if (CollectionUtils.isNotEmpty(ids)) {
+            for (String id : ids) {
+                try {
+                    TaskPO task = taskMapper.findByTaskIdAndUserId(id, null);
+                    taskMapper.deleteTaskById(id);
+                    if (null != task) {
+                        CommonUtil.deleteFile(task.getPackagePath());
+                    }
+                } catch (Exception e) {
+                    LOGGER.error("delete task by id {} failed. {}", id, e);
+                    failIds.add(id);
                 }
-            } catch (Exception e) {
-                LOGGER.error("delete task by id {} failed. {}", id, e);
-                failIds.add(id);
             }
+        } else {
+            LOGGER.warn("ids is empty.");
         }
-
         result.put("failed", failIds);
         return result;
     }
