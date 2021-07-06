@@ -218,7 +218,7 @@ public class TaskServiceImpl implements TaskService {
             LOGGER.info("batch delete successfully.");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            LOGGER.error("batch delete tasks failed. {}",e);
+            LOGGER.error("batch delete tasks failed. {}", e);
             throw new IllegalArgumentException("batch delete tasks failed.");
         }
     }
