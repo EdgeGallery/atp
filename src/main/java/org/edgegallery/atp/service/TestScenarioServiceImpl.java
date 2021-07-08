@@ -50,6 +50,7 @@ import org.edgegallery.atp.repository.testsuite.TestSuiteRepository;
 import org.edgegallery.atp.schedule.TestModelImportMgr;
 import org.edgegallery.atp.utils.CommonUtil;
 import org.edgegallery.atp.utils.FileChecker;
+import org.edgegallery.atp.utils.exception.FileNotExistsException;
 import org.edgegallery.atp.utils.exception.IllegalRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,40 +90,40 @@ public class TestScenarioServiceImpl implements TestScenarioService {
     public TestScenario createTestScenario(TestScenario testScenario, MultipartFile icon) {
         // nameCh or nameEn must exist one
         testScenario.setNameCh(
-                StringUtils.isNotBlank(testScenario.getNameCh()) ? testScenario.getNameCh() : testScenario.getNameEn());
+            StringUtils.isNotBlank(testScenario.getNameCh()) ? testScenario.getNameCh() : testScenario.getNameEn());
         testScenario.setNameEn(
-                StringUtils.isNotBlank(testScenario.getNameEn()) ? testScenario.getNameEn() : testScenario.getNameCh());
+            StringUtils.isNotBlank(testScenario.getNameEn()) ? testScenario.getNameEn() : testScenario.getNameCh());
         if (StringUtils.isEmpty(testScenario.getNameCh()) && StringUtils.isEmpty(testScenario.getNameEn())) {
-            String msg = "both nameCh and nameEn is empty.";
-            LOGGER.error(msg);
-            throw new IllegalArgumentException(msg);
+            LOGGER.error("both nameCh and nameEn is empty.");
+            throw new IllegalRequestException(String.format(ErrorCode.PARAM_IS_NULL_MSG, "nameCh and nameEn both"),
+                ErrorCode.PARAM_IS_NULL, new ArrayList<String>(Arrays.asList("nameCh and nameEn both")));
         }
-        testScenario.setDescriptionCh(
-                StringUtils.isNotBlank(testScenario.getDescriptionCh()) ? testScenario.getDescriptionCh()
-                        : testScenario.getDescriptionEn());
-        testScenario.setDescriptionEn(
-                StringUtils.isNotBlank(testScenario.getDescriptionEn()) ? testScenario.getDescriptionEn()
-                        : testScenario.getDescriptionCh());
+        testScenario.setDescriptionCh(StringUtils.isNotBlank(testScenario.getDescriptionCh())
+            ? testScenario.getDescriptionCh()
+            : testScenario.getDescriptionEn());
+        testScenario.setDescriptionEn(StringUtils.isNotBlank(testScenario.getDescriptionEn())
+            ? testScenario.getDescriptionEn()
+            : testScenario.getDescriptionCh());
         testScenario.setCreateTime(taskRepository.getCurrentDate());
 
         checkNameExists(testScenario);
         if (null == icon) {
-            String msg = "iconName is empty.";
-            LOGGER.error(msg);
-            throw new IllegalArgumentException(msg);
+            LOGGER.error("icon file is empty.");
+            throw new IllegalRequestException(String.format(ErrorCode.PARAM_IS_NULL_MSG, "icon file"),
+                ErrorCode.PARAM_IS_NULL, new ArrayList<String>(Arrays.asList("icon file")));
         }
         String iconName = icon.getOriginalFilename();
         if (null == iconName) {
-            String msg = "iconName is empty.";
-            LOGGER.error(msg);
-            throw new IllegalArgumentException(msg);
+            LOGGER.error("icon file name is empty.");
+            throw new IllegalRequestException(String.format(ErrorCode.PARAM_IS_NULL_MSG, "icon file name"),
+                ErrorCode.PARAM_IS_NULL, new ArrayList<String>(Arrays.asList("icon file Name")));
         }
         String suffix = iconName.substring(iconName.indexOf(Constant.DOT) + 1);
         String filePath = Constant.BASIC_ICON_PATH.concat(Constant.FILE_TYPE_SCENARIO).concat(Constant.UNDER_LINE)
-                .concat(testScenario.getId()).concat(Constant.DOT).concat(suffix);
+            .concat(testScenario.getId()).concat(Constant.DOT).concat(suffix);
         FileChecker.copyMultiFileToDir(icon, filePath);
         AtpFile atpFile = new AtpFile(testScenario.getId(), Constant.FILE_TYPE_SCENARIO,
-                taskRepository.getCurrentDate(), filePath);
+            taskRepository.getCurrentDate(), filePath);
         fileRepository.insertFile(atpFile);
         testScenarioRepository.createTestScenario(testScenario);
         LOGGER.info("create test scenario successfully.");
@@ -132,22 +133,22 @@ public class TestScenarioServiceImpl implements TestScenarioService {
     @Override
     public TestScenario updateTestScenario(TestScenario testScenario, MultipartFile icon) {
         TestScenario dbData = testScenarioRepository.getTestScenarioById(testScenario.getId());
-        if (!dbData.getNameCh().equalsIgnoreCase(testScenario.getNameCh())
-                && null != testScenarioRepository.getTestScenarioByName(testScenario.getNameCh(), null)) {
-            String msg = "chinese name of test scenario already exist.";
-            LOGGER.error(msg);
-            throw new IllegalArgumentException(msg);
+        if (!dbData.getNameCh().equalsIgnoreCase(testScenario.getNameCh()) && null != testScenarioRepository
+            .getTestScenarioByName(testScenario.getNameCh(), null)) {
+            LOGGER.error("chinese name of test scenario already exist.");
+            throw new IllegalRequestException(String.format(ErrorCode.NAME_EXISTS_MSG, testScenario.getNameCh()),
+                ErrorCode.NAME_EXISTS, new ArrayList<String>(Arrays.asList(testScenario.getNameCh())));
         }
-        if (!dbData.getNameEn().equalsIgnoreCase(testScenario.getNameEn())
-                && null != testScenarioRepository.getTestScenarioByName(null, testScenario.getNameEn())) {
-            String msg = "english name of test suite already exist.";
-            LOGGER.error(msg);
-            throw new IllegalArgumentException("english name of test suite already exist.");
+        if (!dbData.getNameEn().equalsIgnoreCase(testScenario.getNameEn()) && null != testScenarioRepository
+            .getTestScenarioByName(null, testScenario.getNameEn())) {
+            LOGGER.error("english name of test suite already exist.");
+            throw new IllegalRequestException(String.format(ErrorCode.NAME_EXISTS_MSG, testScenario.getNameEn()),
+                ErrorCode.NAME_EXISTS, new ArrayList<String>(Arrays.asList(testScenario.getNameEn())));
         }
         testScenarioRepository.updateTestScenario(testScenario);
 
         if (null != icon && StringUtils.isNotBlank(icon.getOriginalFilename()) && StringUtils.isNotBlank(icon.getName())
-                && 0 != (int) icon.getSize()) {
+            && 0 != (int) icon.getSize()) {
             try {
                 AtpFile file = fileRepository.getFileContent(testScenario.getId(), Constant.FILE_TYPE_SCENARIO);
                 String filePath = file.getFilePath();
@@ -181,7 +182,8 @@ public class TestScenarioServiceImpl implements TestScenarioService {
         TestScenario result = testScenarioRepository.getTestScenarioById(id);
         if (null == result) {
             LOGGER.error("test scenario id does not exists: {}", id);
-            throw new FileNotFoundException("test scenario id does not exists.");
+            throw new FileNotExistsException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, "test scenario id"),
+                ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList("test scenario id")));
         }
         LOGGER.info("get test scenario by id successfully.");
         return result;
@@ -299,7 +301,7 @@ public class TestScenarioServiceImpl implements TestScenarioService {
 
     /**
      * get retCode.
-     * 
+     *
      * @param failureIds failure test model ids.
      * @param testScenarioList testScenarioList
      * @param testSuiteList testSuiteList
@@ -307,7 +309,7 @@ public class TestScenarioServiceImpl implements TestScenarioService {
      * @return retCode
      */
     private int getRetCode(Set<String> failureIds, List<TestScenario> testScenarioList, List<TestSuite> testSuiteList,
-            List<TestCase> testCaseList) {
+        List<TestCase> testCaseList) {
         if (CollectionUtils.isEmpty(failureIds)) {
             return ErrorCode.RET_CODE_SUCCESS;
         } else if (failureIds.size() == testScenarioList.size() + testSuiteList.size() + testCaseList.size()) {
@@ -319,14 +321,14 @@ public class TestScenarioServiceImpl implements TestScenarioService {
 
     /**
      * update test case script path.
-     * 
+     *
      * @param testCaseList testCaseList
      * @param testCaseFile testCaseFile
      * @param failures fail test model list
      * @param failureIds fail test model ids
      */
     private void updateTestCaseFile(List<TestCase> testCaseList, Map<String, File> testCaseFile,
-            List<JSONObject> failures, Set<String> failureIds) {
+        List<JSONObject> failures, Set<String> failureIds) {
         testCaseList.forEach(testCase -> {
             if (StringUtils.isNotEmpty(testCase.getNameEn()) && !failureIds.contains(testCase.getId())) {
                 // fail test cases do not need to update
@@ -334,7 +336,7 @@ public class TestScenarioServiceImpl implements TestScenarioService {
                 if (null != orgFile) {
                     // do not has test case in test case scenario
                     String testCaseFilePath = Constant.BASIC_TEST_CASE_PATH.concat(testCase.getNameEn())
-                            .concat(Constant.UNDER_LINE).concat(testCase.getId());
+                        .concat(Constant.UNDER_LINE).concat(testCase.getId());
                     File targetFile = new File(testCaseFilePath);
                     try {
                         FileUtils.copyFile(orgFile, targetFile);
@@ -346,17 +348,17 @@ public class TestScenarioServiceImpl implements TestScenarioService {
                         testCaseRepository.update(testCase);
                     } catch (IOException e) {
                         LOGGER.error("copy input stream to file failed. {}", e);
-                        failures.add(
-                                CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(), Constant.TEST_CASE,
-                                        ErrorCode.FILE_IO_EXCEPTION, ErrorCode.FILE_IO_EXCEPTION_MSG, null));
+                        failures.add(CommonUtil
+                            .setFailureRes(testCase.getId(), testCase.getNameEn(), Constant.TEST_CASE,
+                                ErrorCode.FILE_IO_EXCEPTION, ErrorCode.FILE_IO_EXCEPTION_MSG, null));
                         failureIds.add(testCase.getId());
                         // roll back insert
                         testCaseRepository.delete(testCase.getId());
                     } catch (IllegalRequestException e) {
                         LOGGER.error("update repository failed. ");
-                        failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(),
-                                Constant.TEST_CASE, ErrorCode.DB_ERROR,
-                                String.format(ErrorCode.DB_ERROR_MSG, CREATE_TEST_CASE_FAILED),
+                        failures.add(CommonUtil
+                            .setFailureRes(testCase.getId(), testCase.getNameEn(), Constant.TEST_CASE,
+                                ErrorCode.DB_ERROR, String.format(ErrorCode.DB_ERROR_MSG, CREATE_TEST_CASE_FAILED),
                                 new ArrayList<String>(Arrays.asList(CREATE_TEST_CASE_FAILED))));
                         failureIds.add(testCase.getId());
                         // roll back insert
@@ -368,7 +370,7 @@ public class TestScenarioServiceImpl implements TestScenarioService {
                     // there is not test case script in test case file dir
                     LOGGER.error("there is not test case {} script in test case file dir", testCase.getNameEn());
                     failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(), Constant.TEST_CASE,
-                            ErrorCode.TEST_CASE_NOT_EXISTS_IN_DIR, ErrorCode.TEST_CASE_NOT_EXISTS_IN_DIR_MSG, null));
+                        ErrorCode.TEST_CASE_NOT_EXISTS_IN_DIR, ErrorCode.TEST_CASE_NOT_EXISTS_IN_DIR_MSG, null));
                     failureIds.add(testCase.getId());
                     testCaseRepository.delete(testCase.getId());
                 }
@@ -378,37 +380,37 @@ public class TestScenarioServiceImpl implements TestScenarioService {
 
     /**
      * update test scenario icon file.
-     * 
+     *
      * @param testScenarioList testScenarioList
      * @param scenarioIconFile scenarioIconFile
      * @param failures fail test model list
      * @param failureIds fail test model ids
      */
     private void updateScenarioAndIconFile(List<TestScenario> testScenarioList, Map<String, File> scenarioIconFile,
-            List<JSONObject> failures, Set<String> failureIds) {
+        List<JSONObject> failures, Set<String> failureIds) {
         testScenarioList.forEach(testScenario -> {
             if (StringUtils.isNotEmpty(testScenario.getNameEn()) && !failureIds.contains(testScenario.getId())) {
                 File orgFile = scenarioIconFile.get(testScenario.getNameEn());
                 String iconFilePath = Constant.BASIC_ICON_PATH.concat(Constant.FILE_TYPE_SCENARIO)
-                        .concat(Constant.UNDER_LINE).concat(testScenario.getId()).concat(Constant.DOT).concat("png");
+                    .concat(Constant.UNDER_LINE).concat(testScenario.getId()).concat(Constant.DOT).concat("png");
                 try {
                     FileUtils.copyFile(orgFile, new File(iconFilePath));
                     AtpFile atpFile = new AtpFile(testScenario.getId(), Constant.FILE_TYPE_SCENARIO,
-                            taskRepository.getCurrentDate(), iconFilePath);
+                        taskRepository.getCurrentDate(), iconFilePath);
                     fileRepository.insertFile(atpFile);
                 } catch (IOException e) {
                     LOGGER.error("copy input stream to file failed. {}", e);
-                    failures.add(CommonUtil.setFailureRes(testScenario.getId(), testScenario.getNameEn(),
-                            Constant.TEST_SCENARIO, ErrorCode.FILE_IO_EXCEPTION, ErrorCode.FILE_IO_EXCEPTION_MSG,
-                            null));
+                    failures.add(CommonUtil
+                        .setFailureRes(testScenario.getId(), testScenario.getNameEn(), Constant.TEST_SCENARIO,
+                            ErrorCode.FILE_IO_EXCEPTION, ErrorCode.FILE_IO_EXCEPTION_MSG, null));
                     failureIds.add(testScenario.getId());
                     // roll back insert
                     testScenarioRepository.deleteTestScenario(testScenario.getId());
                 } catch (IllegalRequestException e) {
                     LOGGER.error("update repository failed. ");
-                    failures.add(CommonUtil.setFailureRes(testScenario.getId(), testScenario.getId(),
-                            Constant.TEST_SCENARIO, ErrorCode.DB_ERROR,
-                            String.format(ErrorCode.DB_ERROR_MSG, "update repository failed"),
+                    failures.add(CommonUtil
+                        .setFailureRes(testScenario.getId(), testScenario.getId(), Constant.TEST_SCENARIO,
+                            ErrorCode.DB_ERROR, String.format(ErrorCode.DB_ERROR_MSG, "update repository failed"),
                             new ArrayList<String>(Arrays.asList("update repository failed"))));
                     failureIds.add(testScenario.getId());
                     // roll back insert
@@ -422,22 +424,22 @@ public class TestScenarioServiceImpl implements TestScenarioService {
 
     /**
      * save test scenario model to db.
-     * 
+     *
      * @param testScenarioList testScenarioList
      * @param failures fail test model list
      * @param failureIds fail test model ids
      */
     private void saveScenario2DB(List<TestScenario> testScenarioList, List<JSONObject> failures,
-            Set<String> failureIds) {
+        Set<String> failureIds) {
         testScenarioList.forEach(testScenario -> {
             if (!failureIds.contains(testScenario.getId())) {
                 try {
                     testScenarioRepository.createTestScenario(testScenario);
                 } catch (IllegalRequestException e) {
                     LOGGER.error("create test scenario {} failed.", testScenario.getNameEn());
-                    failures.add(CommonUtil.setFailureRes(testScenario.getId(), testScenario.getNameEn(),
-                            Constant.TEST_SCENARIO, ErrorCode.DB_ERROR,
-                            String.format(ErrorCode.DB_ERROR_MSG, "create test scenario failed"),
+                    failures.add(CommonUtil
+                        .setFailureRes(testScenario.getId(), testScenario.getNameEn(), Constant.TEST_SCENARIO,
+                            ErrorCode.DB_ERROR, String.format(ErrorCode.DB_ERROR_MSG, "create test scenario failed"),
                             new ArrayList<String>(Arrays.asList(CREATE_TEST_CASE_FAILED))));
                     failureIds.add(testScenario.getId());
                 }
@@ -447,7 +449,7 @@ public class TestScenarioServiceImpl implements TestScenarioService {
 
     /**
      * save test suite model to db.
-     * 
+     *
      * @param testSuiteList testSuiteList
      * @param failures fail test model list
      * @param failureIds fail test model ids
@@ -460,8 +462,8 @@ public class TestScenarioServiceImpl implements TestScenarioService {
                 } catch (IllegalRequestException e) {
                     LOGGER.error("create test suite {} failed.", testSuite.getNameEn());
                     failures.add(CommonUtil.setFailureRes(testSuite.getId(), testSuite.getNameEn(), Constant.TEST_SUITE,
-                            ErrorCode.DB_ERROR, String.format(ErrorCode.DB_ERROR_MSG, "create test suite failed"),
-                            new ArrayList<String>(Arrays.asList("create test suite failed"))));
+                        ErrorCode.DB_ERROR, String.format(ErrorCode.DB_ERROR_MSG, "create test suite failed"),
+                        new ArrayList<String>(Arrays.asList("create test suite failed"))));
                     failureIds.add(testSuite.getId());
                 }
             }
@@ -470,7 +472,7 @@ public class TestScenarioServiceImpl implements TestScenarioService {
 
     /**
      * save test case model to db.
-     * 
+     *
      * @param testCaseList testCaseList
      * @param failures fail test model list
      * @param failureIds fail test model ids
@@ -482,8 +484,9 @@ public class TestScenarioServiceImpl implements TestScenarioService {
                     testCaseRepository.insert(testCase);
                 } catch (IllegalRequestException e) {
                     LOGGER.error("create test case {} failed.", testCase.getNameEn());
-                    failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(), Constant.TEST_CASE,
-                            ErrorCode.DB_ERROR, String.format(ErrorCode.DB_ERROR_MSG, CREATE_TEST_CASE_FAILED),
+                    failures.add(CommonUtil
+                        .setFailureRes(testCase.getId(), testCase.getNameEn(), Constant.TEST_CASE, ErrorCode.DB_ERROR,
+                            String.format(ErrorCode.DB_ERROR_MSG, CREATE_TEST_CASE_FAILED),
                             new ArrayList<String>(Arrays.asList(CREATE_TEST_CASE_FAILED))));
                     failureIds.add(testCase.getId());
                 }
@@ -493,12 +496,12 @@ public class TestScenarioServiceImpl implements TestScenarioService {
 
     /**
      * check name exists.
-     * 
+     *
      * @param testScenario test scenario model
      */
     public void checkNameExists(TestScenario testScenario) {
         if (null != testScenarioRepository.getTestScenarioByName(testScenario.getNameCh(), null)
-                || null != testScenarioRepository.getTestScenarioByName(null, testScenario.getNameEn())) {
+            || null != testScenarioRepository.getTestScenarioByName(null, testScenario.getNameEn())) {
             String msg = "name of test scenario already exist.";
             LOGGER.error(msg);
             throw new IllegalArgumentException(msg);

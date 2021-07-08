@@ -19,14 +19,18 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import org.edgegallery.atp.constant.Constant;
+import org.edgegallery.atp.constant.ErrorCode;
 import org.edgegallery.atp.model.contribution.Contribution;
 import org.edgegallery.atp.repository.contribution.ContributionRepository;
 import org.edgegallery.atp.repository.task.TaskRepository;
 import org.edgegallery.atp.utils.CommonUtil;
 import org.edgegallery.atp.utils.FileChecker;
+import org.edgegallery.atp.utils.exception.IllegalRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,24 +51,23 @@ public class ContributionServiceImpl implements ContributionService {
     @Autowired
     ContributionRepository contributionRepository;
 
-
     @Override
     public Contribution createContribution(Contribution contribution, MultipartFile file) {
         if (null != contributionRepository.getContributionByName(contribution.getName())) {
-            String msg = "contribution name alreay exists.";
-            LOGGER.error(msg);
-            throw new IllegalArgumentException(msg);
+            LOGGER.error("contribution name alreay exists.");
+            throw new IllegalRequestException(String.format(ErrorCode.NAME_EXISTS_MSG, contribution.getName()),
+                ErrorCode.NAME_EXISTS, new ArrayList<String>(Arrays.asList(contribution.getName())));
         }
 
         contribution.setId(CommonUtil.generateId());
         contribution.setCreateTime(taskRepository.getCurrentDate());
-        if (Constant.CONTRIBUTION_TYPE_SCRIPT.equals(contribution.getType()) && null != file
-                && 0 != (int) file.getSize()) {
+        if (Constant.CONTRIBUTION_TYPE_SCRIPT.equals(contribution.getType()) && null != file && 0 != (int) file
+            .getSize()) {
             String fileName = file.getOriginalFilename();
             if (null != fileName && !fileName.endsWith(Constant.ZIP)) {
-                String msg = "file pattern is wrong, must zip pattern.";
-                LOGGER.error(msg);
-                throw new IllegalArgumentException(msg);
+                LOGGER.error("file pattern is wrong, must zip pattern.");
+                throw new IllegalRequestException(String.format(ErrorCode.PATTERN_CHECK_FAILED_MSG, Constant.ZIP),
+                    ErrorCode.PATTERN_CHECK_FAILED, new ArrayList<String>(Arrays.asList(Constant.ZIP)));
             }
             // save script file
             String filePath = Constant.BASIC_CONTRIBUTION_PATH.concat(contribution.getId());
@@ -75,7 +78,7 @@ public class ContributionServiceImpl implements ContributionService {
                 contribution.setFilePath(filePath);
             } catch (IOException e) {
                 LOGGER.error("create file failed, contribution name is: {}", contribution.getName());
-                throw new IllegalArgumentException("create file failed.");
+                throw new IllegalRequestException(ErrorCode.FILE_IO_EXCEPTION_MSG, ErrorCode.FILE_IO_EXCEPTION, null);
             }
         }
 
@@ -83,7 +86,6 @@ public class ContributionServiceImpl implements ContributionService {
         LOGGER.info("create contribution successfully.");
         return contribution;
     }
-
 
     @Override
     public List<Contribution> getAllContribution(String name) {
@@ -98,7 +100,6 @@ public class ContributionServiceImpl implements ContributionService {
         LOGGER.info("batch delete contributions by ids successfully.");
         return failedIdList;
     }
-
 
     @Override
     public ResponseEntity<InputStreamResource> downloadContributions(String id) {

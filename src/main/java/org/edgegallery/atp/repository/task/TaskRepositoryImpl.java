@@ -71,7 +71,7 @@ public class TaskRepositoryImpl implements TaskRepository {
         } catch (Exception e) {
             LOGGER.error("insert task failed. {}", e);
             throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "insert task failed"),
-                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("insert task failed")));
+                ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("insert task failed")));
         }
     }
 
@@ -88,7 +88,7 @@ public class TaskRepositoryImpl implements TaskRepository {
         } catch (Exception e) {
             LOGGER.error("queryAllRunningTasks failed. {}", e);
             throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "queryAllRunningTasks failed"),
-                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("queryAllRunningTasks failed")));
+                ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("queryAllRunningTasks failed")));
         }
 
     }
@@ -100,7 +100,7 @@ public class TaskRepositoryImpl implements TaskRepository {
         } catch (Exception e) {
             LOGGER.error("update failed. {}", e);
             throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "update task failed"),
-                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("update task failed")));
+                ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("update task failed")));
         }
     }
 
@@ -111,7 +111,7 @@ public class TaskRepositoryImpl implements TaskRepository {
         } catch (Exception e) {
             LOGGER.error("getCurrentDate failed. {}", e);
             throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "getCurrentDate failed"),
-                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("getCurrentDate failed")));
+                ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("getCurrentDate failed")));
         }
     }
 
@@ -122,26 +122,25 @@ public class TaskRepositoryImpl implements TaskRepository {
         } catch (Exception e) {
             LOGGER.error("delHisTask failed. {}", e);
             throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "delHisTask failed"),
-                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("delHisTask failed")));
+                ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("delHisTask failed")));
         }
     }
 
     @Override
     public TaskRequest findByTaskIdAndUserId(String taskId, String userId) {
         try {
-            return null != taskMapper.findByTaskIdAndUserId(taskId, userId)
-                    ? toDomain(taskMapper.findByTaskIdAndUserId(taskId, userId))
-                    : null;
+            return null != taskMapper.findByTaskIdAndUserId(taskId, userId) ? toDomain(
+                taskMapper.findByTaskIdAndUserId(taskId, userId)) : null;
         } catch (Exception e) {
             LOGGER.error("findByTaskIdAndUserId failed. {}", e);
             throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "findByTaskIdAndUserId failed"),
-                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("findByTaskIdAndUserId failed")));
+                ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("findByTaskIdAndUserId failed")));
         }
     }
 
     @Override
     public List<TaskRequest> findTaskByUserId(String userId, String appName, String status, String providerId,
-                                              String appVersion) {
+        String appVersion) {
         try {
             List<TaskPO> taskPoList = taskMapper.findTaskByUserId(userId, appName, status, providerId, appVersion);
             List<TaskRequest> taskRequest = new ArrayList<TaskRequest>();
@@ -154,7 +153,7 @@ public class TaskRepositoryImpl implements TaskRepository {
         } catch (Exception e) {
             LOGGER.error("findTaskByUserId failed. {}", e);
             throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "findTaskByUserId failed"),
-                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("findTaskByUserId failed")));
+                ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("findTaskByUserId failed")));
         }
     }
 
@@ -183,8 +182,8 @@ public class TaskRepositoryImpl implements TaskRepository {
     }
 
     private TaskRequest toDomain(TaskPO taskRequsetPo) {
-        List<TaskTestScenarioPo> taskTestScenarioPoList =
-                JSONObject.parseArray(taskRequsetPo.getTestCaseDetail(), TaskTestScenarioPo.class);
+        List<TaskTestScenarioPo> taskTestScenarioPoList = JSONObject
+            .parseArray(taskRequsetPo.getTestCaseDetail(), TaskTestScenarioPo.class);
         List<TaskTestScenario> testScenarios = new ArrayList<TaskTestScenario>();
         String status = Constant.SUCCESS;
         boolean isChanged = false;
@@ -250,10 +249,10 @@ public class TaskRepositoryImpl implements TaskRepository {
         }
 
         TaskRequest result = TaskRequest.builder().setAppName(taskRequsetPo.getAppName())
-                .setAppVersion(taskRequsetPo.getAppVersion()).setPackagePath(taskRequsetPo.getPackagePath())
-                .setProviderId(taskRequsetPo.getProviderId()).setId(taskRequsetPo.getId())
-                .setStatus(taskRequsetPo.getStatus()).setTestCaseDetail(testScenarios)
-                .setUser(new User(taskRequsetPo.getUserId(), taskRequsetPo.getUserName())).build();
+            .setAppVersion(taskRequsetPo.getAppVersion()).setPackagePath(taskRequsetPo.getPackagePath())
+            .setProviderId(taskRequsetPo.getProviderId()).setId(taskRequsetPo.getId())
+            .setStatus(taskRequsetPo.getStatus()).setTestCaseDetail(testScenarios)
+            .setUser(new User(taskRequsetPo.getUserId(), taskRequsetPo.getUserName())).build();
         result.setCreateTime(taskRequsetPo.getCreateTime());
         result.setEndTime(taskRequsetPo.getEndTime());
         // some test scenario or test suite or test case is changed, need to update
