@@ -71,12 +71,12 @@ public interface ErrorCode {
     int LENGTH_CHECK_FAILED = 40005;
 
     String LENGTH_CHECK_FAILED_MSG = "length check failed.";
-    
+
     /**
      * test case type error, must be: automatic or manual.
      */
     int TEST_CASE_TYPE_ERROR = 40006;
-    
+
     String TEST_CASE_TYPE_ERROR_MSG = "test case type error, must be: automatic or manual.";
 
     /**
@@ -98,7 +98,7 @@ public interface ErrorCode {
      */
     int PARAM_IS_NULL = 40009;
 
-    String PARAM_IS_NULL_MSG = "param %s is null.";
+    String PARAM_IS_NULL_MSG = "%s is null.";
 
     /**
      * file name contains blank.
@@ -162,4 +162,12 @@ public interface ErrorCode {
     int BOMB_DEFENSE_FAILED = 40018;
 
     String BOMB_DEFENSE_FAILED_MSG = "bomb defense failed.";
+
+    /**
+     * file pattern not right.
+     */
+    int PATTERN_CHECK_FAILED = 40019;
+
+    String PATTERN_CHECK_FAILED_MSG = "file pattern is not right, must be: %s";
+
 }
