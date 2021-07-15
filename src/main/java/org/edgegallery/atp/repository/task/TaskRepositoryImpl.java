@@ -165,7 +165,7 @@ public class TaskRepositoryImpl implements TaskRepository {
             for (String id : ids) {
                 try {
                     TaskPO task = taskMapper.findByTaskIdAndUserId(id, null);
-                    taskMapper.deleteTaskById(id);
+                    taskMapper.deleteTaskById(id, null);
                     if (null != task) {
                         CommonUtil.deleteFile(task.getPackagePath());
                     }
@@ -179,6 +179,17 @@ public class TaskRepositoryImpl implements TaskRepository {
         }
         result.put("failed", failIds);
         return result;
+    }
+
+    @Override
+    public void deleteTaskById(String taskId, String userId) {
+        try {
+            taskMapper.deleteTaskById(taskId, userId);
+        } catch (Exception e) {
+            LOGGER.error("deleteTaskById failed. {}", e);
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "deleteTaskById failed"),
+                ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("deleteTaskById failed")));
+        }
     }
 
     private TaskRequest toDomain(TaskPO taskRequsetPo) {

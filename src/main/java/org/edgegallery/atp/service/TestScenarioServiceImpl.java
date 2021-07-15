@@ -203,7 +203,8 @@ public class TestScenarioServiceImpl implements TestScenarioService {
             TestScenario testScenario = testScenarioRepository.getTestScenarioById(scenarioId);
             if (null == testScenario) {
                 LOGGER.error("scenarioId {} not exists", scenarioId);
-                throw new IllegalArgumentException("scenarioId not exists.");
+                throw new IllegalRequestException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, scenarioId),
+                    ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList(scenarioId)));
             }
 
             AllTestScenarios allTestScenarios = new AllTestScenarios(testScenario);

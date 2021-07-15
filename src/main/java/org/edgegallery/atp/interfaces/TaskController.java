@@ -40,6 +40,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -170,14 +171,27 @@ public class TaskController {
      */
     @PutMapping(value = "/tasks/{taskId}/testcase", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "update test case status", response = Boolean.class)
-    @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
-            @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
+    @ApiResponses(value = {
+        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
+        @ApiResponse(code = 500, message = "resource grant error", response = String.class)
+    })
     @PreAuthorize("hasRole('ATP_ADMIN')")
     public ResponseEntity<Boolean> updateTestCaseStatus(
-            @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = Constant.REG_ID) String taskId,
-            @ApiParam(
-                    value = "modify test case status request body") 
-            @RequestBody List<TestCaseStatusReq> testCaseStatus) {
+        @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = Constant.REG_ID) String taskId,
+        @ApiParam(value = "modify test case status request body") @RequestBody List<TestCaseStatusReq> testCaseStatus) {
         return taskService.modifyTestCaseStatus(testCaseStatus, taskId);
+    }
+
+    @DeleteMapping(value = "/tasks/{taskId}", produces = MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "delete test task by id.", response = Boolean.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
+        @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)
+    })
+    @PreAuthorize("hasRole('ATP_ADMIN') || hasRole('ATP_TENANT')")
+    public ResponseEntity<Boolean> deleteTaskById(
+        @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = Constant.REG_ID) String taskId) {
+        CommonUtil.validateContext();
+        return taskService.deleteTaskById(taskId);
     }
 }
