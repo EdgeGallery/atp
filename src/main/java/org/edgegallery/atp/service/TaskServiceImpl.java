@@ -142,6 +142,21 @@ public class TaskServiceImpl implements TaskService {
         }
     }
 
+    @Override
+    public ResponseEntity<Boolean> deleteTaskById(String taskId) {
+        Map<String, String> context = AccessTokenFilter.context.get();
+        String userId = context.get(Constant.USER_ID);
+
+        TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, userId);
+        if (null != task) {
+            taskRepository.deleteTaskById(taskId, userId);
+            CommonUtil.deleteFile(task.getPackagePath());
+        } else {
+            LOGGER.warn("task with id: {}, userId: {} not exists in db.", taskId, userId);
+        }
+        return ResponseEntity.ok(Boolean.TRUE);
+    }
+
     private List<TaskTestScenario> initTestScenarios(List<String> scenarioIdList) {
         List<TaskTestScenario> result = new ArrayList<TaskTestScenario>();
         scenarioIdList.forEach(scenarioId -> {
@@ -149,9 +164,9 @@ public class TaskServiceImpl implements TaskService {
             if (null == testScenario) {
                 LOGGER.error("scenarioId {} not exists", scenarioId);
                 throw new IllegalRequestException(
-                        String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, "scenarioId: ".concat(scenarioId)),
-                        ErrorCode.NOT_FOUND_EXCEPTION,
-                        new ArrayList<String>(Arrays.asList("scenarioId: ".concat(scenarioId))));
+                    String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, "scenarioId: ".concat(scenarioId)),
+                    ErrorCode.NOT_FOUND_EXCEPTION,
+                    new ArrayList<String>(Arrays.asList("scenarioId: ".concat(scenarioId))));
             }
 
             TaskTestScenario scenario = new TaskTestScenario();
@@ -307,7 +322,7 @@ public class TaskServiceImpl implements TaskService {
 
         confirmTaskStatus(task);
         taskRepository.update(task);
-        return ResponseEntity.ok(true);
+        return ResponseEntity.ok(Boolean.TRUE);
     }
 
 

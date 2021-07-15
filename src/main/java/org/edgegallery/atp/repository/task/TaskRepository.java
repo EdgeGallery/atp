@@ -69,9 +69,17 @@ public interface TaskRepository {
 
     /**
      * batch delete tasks.
-     * 
+     *
      * @param ids task id list
      * @return delete failed id list
      */
     Map<String, List<String>> batchDelete(List<String> ids);
+
+    /**
+     * delete task by id.
+     *
+     * @param taskId taskId
+     * @param userId userId
+     */
+    void deleteTaskById(String taskId, String userId);
 }

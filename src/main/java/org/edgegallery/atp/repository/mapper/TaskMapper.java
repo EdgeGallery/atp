@@ -87,8 +87,10 @@ public interface TaskMapper {
 
     /**
      * delete task by id.
-     * 
-     * @param id id
+     *
+     * @param taskId taskId
+     * @param userId userId
      */
-    void deleteTaskById(String id);
+    void deleteTaskById(@Param("id") String taskId, @Param("userId") String userId);
+
 }

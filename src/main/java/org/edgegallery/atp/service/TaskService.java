@@ -107,13 +107,21 @@ public interface TaskService {
      * @throws FileNotExistsException FileNotExistsException
      */
     ResponseEntity<ResponseObject<TaskRequest>> getTaskByIdV2(String taskId) throws FileNotExistsException;
-    
+
     /**
      * run task v2 method.
-     * 
+     *
      * @param taskId taskId
      * @param scenarioIdList scenarioIdList
      * @return ResponseObject
      */
     ResponseEntity<ResponseObject<TaskRequest>> runTaskV2(String taskId, List<String> scenarioIdList);
+
+    /**
+     * delete task by id.
+     *
+     * @param taskId taskId
+     * @return true
+     */
+    ResponseEntity<Boolean> deleteTaskById(String taskId);
 }

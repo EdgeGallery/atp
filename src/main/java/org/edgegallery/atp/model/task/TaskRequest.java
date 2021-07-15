@@ -19,14 +19,13 @@ import java.util.Date;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
-import org.edgegallery.atp.model.Entity;
 import org.edgegallery.atp.model.task.testscenarios.TaskTestScenario;
 import org.edgegallery.atp.model.user.User;
 
 @Getter
 @Setter
 @JsonIgnoreProperties(value = {"packagePath"})
-public class TaskRequest implements Entity {
+public class TaskRequest {
 
     private String id;
 

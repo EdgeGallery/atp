@@ -17,11 +17,10 @@ package org.edgegallery.atp.model.testcase;
 import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
-import org.edgegallery.atp.model.Entity;
 
 @Setter
 @Getter
-public class TestCaseBase implements Entity {
+public class TestCaseBase {
 
     /**
      * test case id.

@@ -83,5 +83,8 @@
 		delete from
 		task_table
 		where id = #{id}
+		<if test="userId != null and userId !=''">
+			and userId = #{userId}
+		</if>
 	</delete>
 </mapper>
