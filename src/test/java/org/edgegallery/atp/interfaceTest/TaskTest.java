@@ -220,7 +220,7 @@ public class TaskTest {
                 .multipart("/edgegallery/atp/v2/tasks/33333111-1111-4f62-aabb-8ebcec357f87/action/run").with(csrf())
                 .param("scenarioIdList", "e71718a5-864a-49e5-855a-5805a5e9f97d")).andReturn();
         int resultRunTasks = mvcResultRunTasks.getResponse().getStatus();
-        assertEquals(400, resultRunTasks);
+        assertEquals(404, resultRunTasks);
     }
 
     @WithMockUser(roles = "ATP_ADMIN")
@@ -231,6 +231,6 @@ public class TaskTest {
                 .multipart("/edgegallery/atp/v1/tasks/33333111-1111-4f62-aabb-8ebcec357f87/action/run").with(csrf())
                 .param("scenarioIdList", "e71718a5-864a-49e5-855a-5805a5e9f97d")).andReturn();
         int resultRunTasks = mvcResultRunTasks.getResponse().getStatus();
-        assertEquals(400, resultRunTasks);
+        assertEquals(404, resultRunTasks);
     }
 }

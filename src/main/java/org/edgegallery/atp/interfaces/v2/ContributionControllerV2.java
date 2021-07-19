@@ -86,7 +86,7 @@ public class ContributionControllerV2 {
             String objective,
         @ApiParam(value = "contribution step") @NotNull @Size(max = Constant.LENGTH_255) @RequestParam("step")
             String step, @ApiParam(value = "contribution expectResult") @Size(max = Constant.LENGTH_255) @NotNull
-    @RequestParam("expectResult") String expectResult,
+        @RequestParam("expectResult") String expectResult,
         @ApiParam(value = "contribution type") @NotNull @Size(max = Constant.LENGTH_64) @RequestParam("type")
             String type, @ApiParam(value = "script file", required = false) @RequestPart("file") MultipartFile file) {
         Contribution contribution = Contribution.builder().setId(CommonUtil.generateId()).setExpectResult(expectResult)
