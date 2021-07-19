@@ -49,13 +49,15 @@ public class TaskRequest {
 
     private String packagePath;
 
+    private String reportPath;
+
     public Date getCreateTime() {
         return createTime != null ? (Date) createTime.clone() : null;
     }
 
     /**
      * set create time.
-     * 
+     *
      * @param createTime createTime
      */
     public void setCreateTime(Date createTime) {
@@ -99,6 +101,7 @@ public class TaskRequest {
         this.testScenarios = builder.testScenarios;
         this.packagePath = builder.packagePath;
         this.providerId = builder.providerId;
+        this.reportPath = builder.reportPath;
     }
 
     public static Builder builder() {
@@ -120,10 +123,17 @@ public class TaskRequest {
 
         private User user;
 
+        private String reportPath;
+
         private List<TaskTestScenario> testScenarios;
 
         private Builder() {
             // private construct
+        }
+
+        public Builder setReportPath(String reportPath) {
+            this.reportPath = reportPath;
+            return this;
         }
 
         public Builder setProviderId(String providerId) {

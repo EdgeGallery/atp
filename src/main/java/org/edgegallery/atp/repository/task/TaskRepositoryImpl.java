@@ -263,7 +263,8 @@ public class TaskRepositoryImpl implements TaskRepository {
             .setAppVersion(taskRequsetPo.getAppVersion()).setPackagePath(taskRequsetPo.getPackagePath())
             .setProviderId(taskRequsetPo.getProviderId()).setId(taskRequsetPo.getId())
             .setStatus(taskRequsetPo.getStatus()).setTestCaseDetail(testScenarios)
-            .setUser(new User(taskRequsetPo.getUserId(), taskRequsetPo.getUserName())).build();
+            .setUser(new User(taskRequsetPo.getUserId(), taskRequsetPo.getUserName()))
+            .setReportPath(taskRequsetPo.getReportPath()).build();
         result.setCreateTime(taskRequsetPo.getCreateTime());
         result.setEndTime(taskRequsetPo.getEndTime());
         // some test scenario or test suite or test case is changed, need to update

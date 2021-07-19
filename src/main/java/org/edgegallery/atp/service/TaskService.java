@@ -124,4 +124,13 @@ public interface TaskService {
      * @return true
      */
     ResponseEntity<Boolean> deleteTaskById(String taskId);
+
+    /**
+     * upload self-test report.
+     *
+     * @param taskId taskId
+     * @param file self-test report file
+     * @return self-report file path
+     */
+    ResponseEntity<String> uploadReport(String taskId, MultipartFile file);
 }

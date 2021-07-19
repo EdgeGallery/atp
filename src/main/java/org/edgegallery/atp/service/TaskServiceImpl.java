@@ -52,6 +52,7 @@ import org.edgegallery.atp.utils.exception.IllegalRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -59,6 +60,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Service("TaskService")
 public class TaskServiceImpl implements TaskService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskServiceImpl.class);
+
+    private static final String BASE_PATH = "/report/";
 
     @Autowired
     TaskRepository taskRepository;
@@ -74,6 +77,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Autowired
     TestSuiteRepository testSuiteRepository;
+
+    @Value("${servicecomb.uploads.directory}")
+    private String uploadPath;
 
     @Override
     public TaskRequest createTask(MultipartFile file) {
@@ -155,6 +161,29 @@ public class TaskServiceImpl implements TaskService {
             LOGGER.warn("task with id: {}, userId: {} not exists in db.", taskId, userId);
         }
         return ResponseEntity.ok(Boolean.TRUE);
+    }
+
+    @Override
+    public ResponseEntity<String> uploadReport(String taskId, MultipartFile file) {
+        TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, null);
+        if (null == task) {
+            LOGGER.error("taskId {} not exists in db.", taskId);
+            throw new IllegalArgumentException("taskId not exists in db");
+        }
+        String path = BASE_PATH.concat(taskId).concat(".pdf");
+        String filePath = uploadPath.concat(path);
+        try {
+            FileChecker.createFile(filePath);
+            File result = new File(filePath);
+            file.transferTo(result);
+            //save to db.
+            task.setReportPath(path);
+            taskRepository.update(task);
+            return ResponseEntity.ok(path);
+        } catch (IOException e) {
+            LOGGER.error("upload report failed.");
+            throw new IllegalArgumentException("upload report failed.");
+        }
     }
 
     private List<TaskTestScenario> initTestScenarios(List<String> scenarioIdList) {

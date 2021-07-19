@@ -26,6 +26,10 @@ spring:
   main:
     allow-bean-definition-overriding: true
 
+servicecomb:
+  uploads:
+    directory: /usr/atp/file/
+
 ###mybtis####
 mybatis:
   mapper-locations: classpath:mybatis/sql/*.xml
