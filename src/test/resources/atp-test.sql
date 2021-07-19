@@ -12,6 +12,7 @@
         PACKAGEPATH              VARCHAR(200)       NULL,
         USERID                   VARCHAR(200)       NULL,
         USERNAME                 VARCHAR(200)       NULL,
+        REPORTPATH               VARCHAR(200)       NULL,
         CONSTRAINT task_table_pkey PRIMARY KEY (ID)
     );
 

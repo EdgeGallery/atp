@@ -25,8 +25,8 @@ servicecomb:
     servlet:
       urlPattern: /cse/*
   uploads:
-    directory: /usr/atp
-#    directory: c:\atp
+    directory: /usr/atp/file/
+    #directory: c:\atp
     maxSize: -1
 #  request:
 #    timeout: 18000000
@@ -53,6 +53,8 @@ spring:
       max-request-size: 10GB
   jackson:
     default-property-inclusion: non_null
+  resources:
+    static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,file:${servicecomb.uploads.directory}
 
 ###mybtis####
 mybatis:

@@ -54,7 +54,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller
 @RestSchema(schemaId = "testTask")
 @RequestMapping("/edgegallery/atp/v1")
-@Api(tags = {"APT Test Controller"})
+@Api(tags = {"ATP Test Controller"})
 @Validated
 public class TaskController {
 
@@ -193,5 +193,25 @@ public class TaskController {
         @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = Constant.REG_ID) String taskId) {
         CommonUtil.validateContext();
         return taskService.deleteTaskById(taskId);
+    }
+
+    /**
+     * upload self-test report.
+     *
+     * @param taskId taskId
+     * @param file self-test report file
+     * @return self-test report file path
+     */
+    @PostMapping(value = "/tasks/{taskId}/action/upload-report")
+    @ApiOperation(value = "upload self-test report.", response = String.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
+        @ApiResponse(code = 500, message = "resource grant error", response = String.class)
+    })
+    @PreAuthorize("hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
+    public ResponseEntity<String> uploadReport(
+        @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = Constant.REG_ID) String taskId,
+        @ApiParam(value = "application files", required = true) @RequestPart("file") MultipartFile file) {
+        return taskService.uploadReport(taskId, file);
     }
 }

@@ -69,9 +69,12 @@ public class TaskPO {
     @Column(name = "packagePath")
     private String packagePath;
 
+    @Column(name = "reportPath")
+    private String reportPath;
+
     /**
      * get create time.
-     * 
+     *
      * @return date
      */
     public Date getCreateTime() {
@@ -129,6 +132,7 @@ public class TaskPO {
         taskPo.setStatus(startTest.getStatus());
         taskPo.setUserId(startTest.getUser().getUserId());
         taskPo.setUserName(startTest.getUser().getUserName());
+        taskPo.setReportPath(startTest.getReportPath());
         List<TaskTestScenarioPo> taskTestScenarioPoList = new ArrayList<TaskTestScenarioPo>();
         if (CollectionUtils.isNotEmpty(startTest.getTestScenarios())) {
             startTest.getTestScenarios().forEach(taskTestScenario -> {

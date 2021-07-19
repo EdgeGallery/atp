@@ -25,10 +25,14 @@
 	</insert>
 
 	<update id="update"
-		parameterType="org.edgegallery.atp.model.task.TaskPO">
+			parameterType="org.edgegallery.atp.model.task.TaskPO">
 		update
 		task_table
-		SET status = #{status}, endTime = #{endTime}, testCaseDetail =
+		SET
+		<if test="reportPath != null and reportPath !=''">
+			reportPath = #{reportPath},
+		</if>
+		status = #{status}, endTime = #{endTime}, testCaseDetail =
 		#{testCaseDetail}
 		WHERE id = #{id}
 	</update>
