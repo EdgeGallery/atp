@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ErrorCode;
 import org.edgegallery.atp.model.contribution.Contribution;
 import org.edgegallery.atp.repository.mapper.ContributionMapper;
@@ -76,7 +77,7 @@ public class ContributionRepositoryImpl implements ContributionRepository {
             }
         }
 
-        result.put("failed", failIds);
+        result.put(Constant.FAILED, failIds);
         return result;
     }
 

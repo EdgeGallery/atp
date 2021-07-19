@@ -17,7 +17,6 @@ package org.edgegallery.atp.service;
 import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
-import org.edgegallery.atp.model.ResponseObject;
 import org.edgegallery.atp.model.task.AnalysisResult;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.task.TestCaseStatusReq;
@@ -29,21 +28,21 @@ public interface TaskService {
 
     /**
      * run a test task.
-     * 
+     *
      * @param taskId taskId
      * @param scenarioIdList scenarioIdList
      * @return task info
      */
-    TaskRequest runTask(String taskId, List<String> scenarioIdList);
+    TaskRequest runTask(String taskId, List<String> scenarioIdList) throws FileNotExistsException;
 
     /**
      * get task info by taskId.
-     * 
+     *
      * @param taskId taskId
      * @return TaskRequest
      * @throws FileNotFoundException FileNotFoundException
      */
-    ResponseEntity<TaskRequest> getTaskById(String taskId) throws FileNotFoundException;
+    TaskRequest getTaskById(String taskId) throws FileNotFoundException;
 
     /**
      * get all task info.
@@ -66,21 +65,20 @@ public interface TaskService {
      */
     TaskRequest createTask(MultipartFile packages);
 
-
     /**
      * batch delete tasks by task ids.
-     * 
+     *
      * @param taskIds taskIds
      * @return delete failed ids
      */
-    ResponseEntity<Map<String, List<String>>> batchDelete(List<String> taskIds);
+    Map<String, List<String>> batchDelete(List<String> taskIds);
 
     /**
      * task number analysis.
-     * 
+     *
      * @return analysis result
      */
-    ResponseEntity<AnalysisResult> taskAnalysis();
+    AnalysisResult taskAnalysis();
 
     /**
      * modify test case status.
@@ -91,32 +89,6 @@ public interface TaskService {
      */
     ResponseEntity<Boolean> modifyTestCaseStatus(List<TestCaseStatusReq> testCaseStatus, String taskId);
     
-    /**
-     * create task v2 method.
-     * 
-     * @param file file
-     * @return ResponseObject
-     */
-    ResponseEntity<ResponseObject<TaskRequest>> createTaskV2(MultipartFile file);
-
-    /**
-     * get task by id v2 method.
-     * 
-     * @param taskId taskId
-     * @return ResponseObject
-     * @throws FileNotExistsException FileNotExistsException
-     */
-    ResponseEntity<ResponseObject<TaskRequest>> getTaskByIdV2(String taskId) throws FileNotExistsException;
-
-    /**
-     * run task v2 method.
-     *
-     * @param taskId taskId
-     * @param scenarioIdList scenarioIdList
-     * @return ResponseObject
-     */
-    ResponseEntity<ResponseObject<TaskRequest>> runTaskV2(String taskId, List<String> scenarioIdList);
-
     /**
      * delete task by id.
      *
@@ -132,5 +104,5 @@ public interface TaskService {
      * @param file self-test report file
      * @return self-report file path
      */
-    ResponseEntity<String> uploadReport(String taskId, MultipartFile file);
+    String uploadReport(String taskId, MultipartFile file) throws FileNotExistsException;
 }

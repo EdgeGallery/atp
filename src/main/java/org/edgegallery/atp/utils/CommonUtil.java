@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -33,11 +34,14 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
+import org.edgegallery.atp.constant.ErrorCode;
 import org.edgegallery.atp.constant.ExceptionConstant;
 import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
+import org.edgegallery.atp.model.BatchOpsRes;
 import org.edgegallery.atp.model.task.testscenarios.TaskTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 public class CommonUtil {
@@ -250,7 +254,7 @@ public class CommonUtil {
 
     /**
      * set fail response body.
-     * 
+     *
      * @param id id
      * @param nameEn nameEn
      * @param type testScenario or testCase or testSuite
@@ -260,7 +264,7 @@ public class CommonUtil {
      * @return fail response body
      */
     public static JSONObject setFailureRes(String id, String nameEn, String type, int errCode, String errMsg,
-            List<String> params) {
+        List<String> params) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put(Constant.ID, id);
         jsonObject.put(Constant.NAME_EN, nameEn);
@@ -272,8 +276,31 @@ public class CommonUtil {
     }
 
     /**
+     * set batch delete failed response body.
+     *
+     * @param result failed id list
+     * @return batch operation response body
+     */
+    public static BatchOpsRes setBatchDeleteFailedRes(Map<String, List<String>> result) {
+        List<String> failed = result.get(Constant.FAILED);
+        List<JSONObject> failures = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(failed)) {
+            failed.forEach(failId -> {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put(Constant.ID, failId);
+                jsonObject.put(Constant.ERROR_CODE, ErrorCode.DB_ERROR);
+                jsonObject.put(Constant.ERROR_MSG, ErrorCode.DB_ERROR_MSG);
+                jsonObject.put(Constant.PARAMS, null);
+                failures.add(jsonObject);
+            });
+        }
+
+        return new BatchOpsRes(ErrorCode.RET_CODE_SUCCESS, null, failures);
+    }
+
+    /**
      * set param value, if param equal null, return defaultValue.
-     * 
+     *
      * @param param param
      * @param defaultValue defaultValue
      * @return param

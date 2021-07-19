@@ -177,7 +177,7 @@ public class TaskRepositoryImpl implements TaskRepository {
         } else {
             LOGGER.warn("ids is empty.");
         }
-        result.put("failed", failIds);
+        result.put(Constant.FAILED, failIds);
         return result;
     }
 

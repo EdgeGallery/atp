@@ -19,13 +19,19 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.io.FileNotFoundException;
 import java.util.List;
+import java.util.Map;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import javax.ws.rs.core.MediaType;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
 import org.edgegallery.atp.constant.Constant;
+import org.edgegallery.atp.constant.ErrorCode;
+import org.edgegallery.atp.model.BatchOpsRes;
 import org.edgegallery.atp.model.ResponseObject;
+import org.edgegallery.atp.model.task.AnalysisResult;
+import org.edgegallery.atp.model.task.IdList;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.service.TaskService;
 import org.edgegallery.atp.utils.CommonUtil;
@@ -38,6 +44,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -67,7 +74,9 @@ public class TaskControllerV2 {
     public ResponseEntity<ResponseObject<TaskRequest>> createTest(
             @ApiParam(value = "application files", required = true) @RequestPart("file") MultipartFile file) {
         CommonUtil.validateContext();
-        return taskService.createTaskV2(file);
+        ResponseObject<TaskRequest> result = new ResponseObject<TaskRequest>(taskService.createTask(file),
+            ErrorCode.RET_CODE_SUCCESS, null, "create task successfully.");
+        return ResponseEntity.ok(result);
     }
 
     /**
@@ -78,15 +87,19 @@ public class TaskControllerV2 {
      */
     @PostMapping(value = "/tasks/{taskId}/action/run", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "run test task.", response = String.class)
-    @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
-            @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
+    @ApiResponses(value = {
+        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
+        @ApiResponse(code = 500, message = "resource grant error", response = String.class)
+    })
     @PreAuthorize("hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<ResponseObject<TaskRequest>> runTest(
-            @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = Constant.REG_ID) String taskId,
-            @ApiParam(value = "id of test scenarios selected") @RequestParam("scenarioIdList") @Size(
-                    max = Constant.LENGTH_255) List<String> scenarioIdList) {
+        @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = Constant.REG_ID) String taskId,
+        @ApiParam(value = "id of test scenarios selected") @RequestParam("scenarioIdList")
+        @Size(max = Constant.LENGTH_255) List<String> scenarioIdList) throws FileNotExistsException {
         CommonUtil.validateContext();
-        return taskService.runTaskV2(taskId, scenarioIdList);
+        ResponseObject<TaskRequest> result = new ResponseObject<TaskRequest>(
+            taskService.runTask(taskId, scenarioIdList), ErrorCode.RET_CODE_SUCCESS, null, "run task successfully.");
+        return ResponseEntity.ok(result);
     }
 
     /**
@@ -98,12 +111,51 @@ public class TaskControllerV2 {
      */
     @GetMapping(value = "/tasks/{taskId}", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "get tasks by taskId.", response = TaskRequest.class)
-    @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
-            @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
+    @ApiResponses(value = {
+        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
+        @ApiResponse(code = 500, message = "resource grant error", response = String.class)
+    })
     public ResponseEntity<ResponseObject<TaskRequest>> getTaskById(
-            @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = Constant.REG_ID) String taskId)
-            throws FileNotExistsException {
-        return taskService.getTaskByIdV2(taskId);
+        @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = Constant.REG_ID) String taskId)
+        throws FileNotFoundException {
+        ResponseObject<TaskRequest> result = new ResponseObject<TaskRequest>(taskService.getTaskById(taskId),
+            ErrorCode.RET_CODE_SUCCESS, null, "get task by id successfully.");
+        return ResponseEntity.ok(result);
     }
 
+    /**
+     * test task analysis.
+     *
+     * @return analysis result
+     */
+    @GetMapping(value = "/tasks/action/analysize", produces = MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "test tasks number analysis", response = String.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
+        @ApiResponse(code = 500, message = "resource grant error", response = String.class)
+    })
+    @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
+    public ResponseEntity<ResponseObject<AnalysisResult>> taskAnalysis() {
+        ResponseObject<AnalysisResult> result = new ResponseObject<AnalysisResult>(taskService.taskAnalysis(),
+            ErrorCode.RET_CODE_SUCCESS, null, "get task analysis successfully.");
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * batch delete test tasks.
+     *
+     * @param taskIds the test task id which will be deleted
+     * @return fail task id list
+     */
+    @PostMapping(value = "/tasks/batch_delete", produces = MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "batch delete test tasks.", response = String.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
+        @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)
+    })
+    @PreAuthorize("hasRole('ATP_ADMIN')")
+    public ResponseEntity<BatchOpsRes> batchDelete(@ApiParam(value = "test task id list") @RequestBody IdList taskIds) {
+        Map<String, List<String>> result = taskService.batchDelete(taskIds.getIds());
+        return ResponseEntity.ok(CommonUtil.setBatchDeleteFailedRes(result));
+    }
 }

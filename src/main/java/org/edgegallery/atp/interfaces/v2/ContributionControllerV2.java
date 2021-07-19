@@ -14,13 +14,11 @@
 
 package org.edgegallery.atp.interfaces.v2;
 
-import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.validation.constraints.NotNull;
@@ -35,7 +33,6 @@ import org.edgegallery.atp.model.BatchOpsRes;
 import org.edgegallery.atp.model.ResponseObject;
 import org.edgegallery.atp.model.contribution.Contribution;
 import org.edgegallery.atp.model.task.IdList;
-import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.service.ContributionService;
 import org.edgegallery.atp.utils.CommonUtil;
 import org.hibernate.validator.constraints.Length;
@@ -44,7 +41,6 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -90,7 +86,7 @@ public class ContributionControllerV2 {
             String objective,
         @ApiParam(value = "contribution step") @NotNull @Size(max = Constant.LENGTH_255) @RequestParam("step")
             String step, @ApiParam(value = "contribution expectResult") @Size(max = Constant.LENGTH_255) @NotNull
-        @RequestParam("expectResult") String expectResult,
+    @RequestParam("expectResult") String expectResult,
         @ApiParam(value = "contribution type") @NotNull @Size(max = Constant.LENGTH_64) @RequestParam("type")
             String type, @ApiParam(value = "script file", required = false) @RequestPart("file") MultipartFile file) {
         Contribution contribution = Contribution.builder().setId(CommonUtil.generateId()).setExpectResult(expectResult)
@@ -133,20 +129,7 @@ public class ContributionControllerV2 {
     @PreAuthorize("hasRole('ATP_ADMIN')")
     public ResponseEntity<BatchOpsRes> batchDelete(@ApiParam(value = "contribution id list") @RequestBody IdList ids) {
         Map<String, List<String>> result = contributionService.batchDelete(ids.getIds());
-        List<String> failed = result.get("failed");
-        List<JSONObject> failures = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(failed)) {
-            failed.forEach(failId -> {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put(Constant.ID, failId);
-                jsonObject.put(Constant.ERROR_CODE, ErrorCode.DB_ERROR);
-                jsonObject.put(Constant.ERROR_MSG, ErrorCode.DB_ERROR_MSG);
-                jsonObject.put(Constant.PARAMS, null);
-                failures.add(jsonObject);
-            });
-        }
-
-        return ResponseEntity.ok(new BatchOpsRes(ErrorCode.RET_CODE_SUCCESS, null, failures));
+        return ResponseEntity.ok(CommonUtil.setBatchDeleteFailedRes(result));
     }
 
     @GetMapping(value = "/contributions/{id}/action/download", produces = MediaType.APPLICATION_JSON)
