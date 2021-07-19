@@ -29,7 +29,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ErrorCode;
 import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
-import org.edgegallery.atp.model.ResponseObject;
 import org.edgegallery.atp.model.task.AnalysisResult;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.task.TestCaseStatusReq;
@@ -107,45 +106,44 @@ public class TaskServiceImpl implements TaskService {
             return task;
         } catch (IOException e) {
             LOGGER.error("create task {} failed, file name is: {}", taskId, tempFile.getName());
-            throw new IllegalArgumentException("create task failed.");
+            throw new IllegalRequestException(ErrorCode.FILE_IO_EXCEPTION_MSG, ErrorCode.FILE_IO_EXCEPTION, null);
         }
     }
 
     @Override
-    public TaskRequest runTask(String taskId, List<String> scenarioIdList) {
-        try {
-            Map<String, String> context = AccessTokenFilter.context.get();
-            if (CollectionUtils.isEmpty(scenarioIdList)) {
-                String msg = "scenarioIdList is empty.";
-                LOGGER.error(msg);
-                throw new IllegalArgumentException(msg);
-            }
-            initTestScenarios(scenarioIdList);
-            TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, context.get(Constant.USER_ID));
-            if (null == task) {
-                LOGGER.error("get task from db is null.taskId: {}, userId: {}, userName: {}", taskId,
-                        context.get(Constant.USER_ID), context.get(Constant.USER_NAME));
-                throw new IllegalArgumentException("get task from db is null");
-            }
-            if (Constant.RUNNING.equals(task.getStatus())) {
-                String msg = "this task already in running.";
-                LOGGER.error(msg);
-                throw new IllegalArgumentException(msg);
-            }
-            task.setTestScenarios(initTestScenarios(scenarioIdList));
-            task.setAccessToken(context.get(Constant.ACCESS_TOKEN));
-            task.setStatus(Constant.WAITING);
-
-            taskRepository.update(task);
-            String filePath = task.getPackagePath();
-            testCaseManager.executeTestCase(task, filePath);
-
-            LOGGER.info("run task successfully.");
-            return task;
-        } catch (Exception e) {
-            LOGGER.error("run task failed. {}", e);
-            throw new IllegalArgumentException("run task failed");
+    public TaskRequest runTask(String taskId, List<String> scenarioIdList) throws FileNotExistsException {
+        Map<String, String> context = AccessTokenFilter.context.get();
+        if (CollectionUtils.isEmpty(scenarioIdList)) {
+            LOGGER.error("scenarioIdList is empty.");
+            throw new IllegalRequestException(String.format(ErrorCode.PARAM_IS_NULL_MSG, "scenarioIdList"),
+                ErrorCode.PARAM_IS_NULL, new ArrayList<String>(Arrays.asList("scenarioIdList")));
         }
+
+        initTestScenarios(scenarioIdList);
+
+        TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, context.get(Constant.USER_ID));
+        if (null == task) {
+            LOGGER.error("get task from db is null.taskId: {}, userId: {}, userName: {}", taskId,
+                context.get(Constant.USER_ID), context.get(Constant.USER_NAME));
+            throw new FileNotExistsException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, Constant.TASK_ID),
+                ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList(Constant.TASK_ID)));
+        }
+
+        if (Constant.RUNNING.equals(task.getStatus())) {
+            LOGGER.error("this task already in running.");
+            throw new IllegalRequestException(ErrorCode.TASK_IS_RUNNING_MSG, ErrorCode.TASK_IS_RUNNING, null);
+        }
+
+        task.setTestScenarios(initTestScenarios(scenarioIdList));
+        task.setAccessToken(context.get(Constant.ACCESS_TOKEN));
+        task.setStatus(Constant.WAITING);
+        taskRepository.update(task);
+
+        String filePath = task.getPackagePath();
+        testCaseManager.executeTestCase(task, filePath);
+
+        LOGGER.info("run task successfully.");
+        return task;
     }
 
     @Override
@@ -164,11 +162,12 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public ResponseEntity<String> uploadReport(String taskId, MultipartFile file) {
+    public String uploadReport(String taskId, MultipartFile file) throws FileNotExistsException {
         TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, null);
         if (null == task) {
             LOGGER.error("taskId {} not exists in db.", taskId);
-            throw new IllegalArgumentException("taskId not exists in db");
+            throw new FileNotExistsException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, Constant.TASK_ID),
+                ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList(Constant.TASK_ID)));
         }
         String path = BASE_PATH.concat(taskId).concat(".pdf");
         String filePath = uploadPath.concat(path);
@@ -179,10 +178,10 @@ public class TaskServiceImpl implements TaskService {
             //save to db.
             task.setReportPath(path);
             taskRepository.update(task);
-            return ResponseEntity.ok(path);
+            return path;
         } catch (IOException e) {
             LOGGER.error("upload report failed.");
-            throw new IllegalArgumentException("upload report failed.");
+            throw new IllegalRequestException(ErrorCode.FILE_IO_EXCEPTION_MSG, ErrorCode.FILE_IO_EXCEPTION, null);
         }
     }
 
@@ -238,37 +237,33 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public ResponseEntity<List<TaskRequest>> getAllTasks(String userId, String appName, String status,
-            String providerId, String appVersion) {
+        String providerId, String appVersion) {
         List<TaskRequest> response = taskRepository.findTaskByUserId(userId, appName, status, providerId, appVersion);
         LOGGER.info("get all task successfully.");
         return ResponseEntity.ok(response);
     }
 
     @Override
-    public ResponseEntity<TaskRequest> getTaskById(String taskId) throws FileNotFoundException {
+    public TaskRequest getTaskById(String taskId) throws FileNotFoundException {
         TaskRequest response = taskRepository.findByTaskIdAndUserId(taskId, null);
         if (null == response) {
             LOGGER.error("taskId does not exists: {}", taskId);
-            throw new FileNotFoundException("taskId does not exists");
+            throw new FileNotExistsException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, Constant.TASK_ID),
+                ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList(Constant.TASK_ID)));
         }
         LOGGER.info("get task by id successfully.");
-        return ResponseEntity.ok(response);
+        return response;
     }
 
     @Override
-    public ResponseEntity<Map<String, List<String>>> batchDelete(List<String> taskIds) {
-        try {
-            Map<String, List<String>> response = taskRepository.batchDelete(taskIds);
-            LOGGER.info("batch delete successfully.");
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            LOGGER.error("batch delete tasks failed. {}", e);
-            throw new IllegalArgumentException("batch delete tasks failed.");
-        }
+    public Map<String, List<String>> batchDelete(List<String> taskIds) {
+        Map<String, List<String>> response = taskRepository.batchDelete(taskIds);
+        LOGGER.info("batch delete successfully.");
+        return response;
     }
 
     @Override
-    public ResponseEntity<AnalysisResult> taskAnalysis() {
+    public AnalysisResult taskAnalysis() {
         Date curTime = taskRepository.getCurrentDate();
         Calendar calendar = Calendar.getInstance();
         int date = curTime.getDate();
@@ -294,16 +289,15 @@ public class TaskServiceImpl implements TaskService {
         List<TaskRequest> response = taskRepository.findTaskByUserId(null, null, null, null, null);
         AnalysisResult analysisResult = new AnalysisResult();
         response.forEach(task -> {
-            if (task.getCreateTime().getYear() == curTime.getYear()
-                    && task.getCreateTime().getMonth() == curTime.getMonth()) {
+            if (task.getCreateTime().getYear() == curTime.getYear() && task.getCreateTime().getMonth() == curTime
+                .getMonth()) {
                 analysisResult.increaseCurrentMonth();
             } else {
                 // just consider day, not hours
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 try {
-                    int day = (int) ((dateFormat.parse(dateFormat.format(firstDayOfMonth)).getTime()
-                            - dateFormat.parse(dateFormat.format(task.getCreateTime())).getTime())
-                            / (1000 * 3600 * 24));
+                    int day = (int) ((dateFormat.parse(dateFormat.format(firstDayOfMonth)).getTime() - dateFormat
+                        .parse(dateFormat.format(task.getCreateTime())).getTime()) / (1000 * 3600 * 24));
                     if (day < oneMonthDays) {
                         analysisResult.increaseOneMonthAgo();
                     } else if (oneMonthDays <= day && day < last2Days) {
@@ -322,7 +316,7 @@ public class TaskServiceImpl implements TaskService {
         });
 
         analysisResult.setTotal();
-        return ResponseEntity.ok(analysisResult);
+        return analysisResult;
     }
 
     @Override
@@ -354,97 +348,9 @@ public class TaskServiceImpl implements TaskService {
         return ResponseEntity.ok(Boolean.TRUE);
     }
 
-
-    @Override
-    public ResponseEntity<ResponseObject<TaskRequest>> createTaskV2(MultipartFile file) {
-        String taskId = CommonUtil.generateId();
-        File tempFile = FileChecker.check(file, taskId);
-
-        TaskRequest task = new TaskRequest();
-        task.setId(taskId);
-
-        try {
-            String filePath = tempFile.getCanonicalPath();
-            // init task
-            Map<String, String> context = AccessTokenFilter.context.get();
-            task.setCreateTime(taskRepository.getCurrentDate());
-            task.setStatus(Constant.ATP_CREATED);
-            task.setUser(new User(context.get(Constant.USER_ID), context.get(Constant.USER_NAME)));
-            task.setPackagePath(filePath);
-            Map<String, String> packageInfo = CommonUtil.getPackageInfo(filePath);
-            task.setAppName(packageInfo.get(Constant.APP_NAME));
-            task.setAppVersion(packageInfo.get(Constant.APP_VERSION));
-            task.setProviderId(packageInfo.get(Constant.PROVIDER_ID));
-
-            taskRepository.insert(task);
-
-            ResponseObject<TaskRequest> result = new ResponseObject<TaskRequest>(task, ErrorCode.RET_CODE_SUCCESS, null,
-                    "create task successfully.");
-            return ResponseEntity.ok(result);
-        } catch (IOException e) {
-            LOGGER.error("create task {} failed, file name is: {}", taskId, tempFile.getName());
-            throw new IllegalRequestException(ErrorCode.FILE_IO_EXCEPTION_MSG, ErrorCode.FILE_IO_EXCEPTION, null);
-        }
-    }
-
-    @Override
-    public ResponseEntity<ResponseObject<TaskRequest>> getTaskByIdV2(String taskId) throws FileNotExistsException {
-        TaskRequest response = taskRepository.findByTaskIdAndUserId(taskId, null);
-        if (null == response) {
-            LOGGER.error("taskId does not exists: {}", taskId);
-            throw new FileNotExistsException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, Constant.TASK_ID),
-                    ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList(Constant.TASK_ID)));
-        }
-
-        ResponseObject<TaskRequest> result = new ResponseObject<TaskRequest>(response, ErrorCode.RET_CODE_SUCCESS, null,
-                "get task by id successfully.");
-        return ResponseEntity.ok(result);
-    }
-
-    @Override
-    public ResponseEntity<ResponseObject<TaskRequest>> runTaskV2(String taskId, List<String> scenarioIdList) {
-        try {
-            Map<String, String> context = AccessTokenFilter.context.get();
-            if (CollectionUtils.isEmpty(scenarioIdList)) {
-                String msg = "scenarioIdList is empty.";
-                LOGGER.error(msg);
-                throw new IllegalRequestException(String.format(ErrorCode.PARAM_IS_NULL_MSG, "scenarioIdList"),
-                        ErrorCode.PARAM_IS_NULL, new ArrayList<String>(Arrays.asList("scenarioIdList")));
-            }
-
-            initTestScenarios(scenarioIdList);
-            TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, context.get(Constant.USER_ID));
-            if (null == task) {
-                LOGGER.error("get task from db is null.taskId: {}, userId: {}, userName: {}", taskId,
-                        context.get(Constant.USER_ID), context.get(Constant.USER_NAME));
-                throw new IllegalRequestException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, "get task from db"),
-                        ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList("get task from db")));
-            }
-
-            if (Constant.RUNNING.equals(task.getStatus())) {
-                LOGGER.error("this task already in running.");
-                throw new IllegalRequestException(ErrorCode.TASK_IS_RUNNING_MSG, ErrorCode.TASK_IS_RUNNING, null);
-            }
-            task.setTestScenarios(initTestScenarios(scenarioIdList));
-            task.setAccessToken(context.get(Constant.ACCESS_TOKEN));
-            task.setStatus(Constant.WAITING);
-
-            taskRepository.update(task);
-            String filePath = task.getPackagePath();
-            testCaseManager.executeTestCase(task, filePath);
-
-            ResponseObject<TaskRequest> result =
-                    new ResponseObject<TaskRequest>(task, ErrorCode.RET_CODE_SUCCESS, null, "run task successfully.");
-            return ResponseEntity.ok(result);
-        } catch (Exception e) {
-            LOGGER.error("run task failed. {}", e);
-            throw new IllegalRequestException(ErrorCode.RUN_TASK_FAILED_MSG, ErrorCode.RUN_TASK_FAILED, null);
-        }
-    }
-
     /**
      * confirm task total status.
-     * 
+     *
      * @param task task info
      */
     private void confirmTaskStatus(TaskRequest task) {
