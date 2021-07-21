@@ -49,7 +49,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RestSchema(schemaId = "testSuite")
 @RequestMapping("/edgegallery/atp/v1")
-@Api(tags = {"APT Test Suite Controller"})
+@Api(tags = {"ATP Test Suite Controller"})
 @Validated
 public class TestSuiteController {
 

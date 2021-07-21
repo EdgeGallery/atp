@@ -14,10 +14,12 @@
 
 package org.edgegallery.atp.service;
 
-import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
+import org.edgegallery.atp.constant.ErrorCode;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.model.testscenario.TestScenario;
 import org.edgegallery.atp.model.testsuite.TestSuite;
@@ -25,6 +27,8 @@ import org.edgegallery.atp.repository.task.TaskRepository;
 import org.edgegallery.atp.repository.testcase.TestCaseRepository;
 import org.edgegallery.atp.repository.testscenario.TestScenarioRepository;
 import org.edgegallery.atp.repository.testsuite.TestSuiteRepository;
+import org.edgegallery.atp.utils.exception.FileNotExistsException;
+import org.edgegallery.atp.utils.exception.IllegalRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,9 +59,9 @@ public class TestSuiteServiceImpl implements TestSuiteService {
         testSuite.setNameEn(
                 StringUtils.isNotBlank(testSuite.getNameEn()) ? testSuite.getNameEn() : testSuite.getNameCh());
         if (StringUtils.isEmpty(testSuite.getNameCh()) && StringUtils.isEmpty(testSuite.getNameEn())) {
-            String msg = "both nameCh and nameEn is null.";
-            LOGGER.error(msg);
-            throw new IllegalArgumentException(msg);
+            LOGGER.error("both nameCh and nameEn is null.");
+            throw new IllegalRequestException(String.format(ErrorCode.PARAM_IS_NULL_MSG, "nameCh and nameEn both"),
+                ErrorCode.PARAM_IS_NULL, new ArrayList<String>(Arrays.asList("nameCh and nameEn both")));
         }
         testSuite.setDescriptionCh(StringUtils.isNotBlank(testSuite.getDescriptionCh()) ? testSuite.getDescriptionCh()
                 : testSuite.getDescriptionEn());
@@ -67,9 +71,10 @@ public class TestSuiteServiceImpl implements TestSuiteService {
 
         if (null != testSuiteRepository.getTestSuiteByName(testSuite.getNameCh(), null)
                 || null != testSuiteRepository.getTestSuiteByName(null, testSuite.getNameEn())) {
-            String msg = "name of test suite already exist.";
-            LOGGER.error(msg);
-            throw new IllegalArgumentException(msg);
+            LOGGER.error("name of test suite already exist.");
+            String param = testSuite.getNameCh() + " or " + testSuite.getNameEn();
+            throw new IllegalRequestException(String.format(ErrorCode.NAME_EXISTS_MSG, param), ErrorCode.NAME_EXISTS,
+                new ArrayList<String>(Arrays.asList(param)));
         }
         checkTestScenarioIdsExist(testSuite);
         testSuiteRepository.createTestSuite(testSuite);
@@ -82,15 +87,15 @@ public class TestSuiteServiceImpl implements TestSuiteService {
         TestSuite dbData = testSuiteRepository.getTestSuiteById(testSuite.getId());
         if (!dbData.getNameCh().equalsIgnoreCase(testSuite.getNameCh())
                 && null != testSuiteRepository.getTestSuiteByName(testSuite.getNameCh(), null)) {
-            String msg = "chinese name of test suite already exist.";
-            LOGGER.error(msg);
-            throw new IllegalArgumentException(msg);
+            LOGGER.error("chinese name of test suite already exist.");
+            throw new IllegalRequestException(String.format(ErrorCode.NAME_EXISTS_MSG, testSuite.getNameCh()),
+                ErrorCode.NAME_EXISTS, new ArrayList<String>(Arrays.asList(testSuite.getNameCh())));
         }
         if (!dbData.getNameEn().equalsIgnoreCase(testSuite.getNameEn())
                 && null != testSuiteRepository.getTestSuiteByName(null, testSuite.getNameEn())) {
-            String msg = "english name of test suite already exist.";
-            LOGGER.error(msg);
-            throw new IllegalArgumentException(msg);
+            LOGGER.error("english name of test suite already exist.");
+            throw new IllegalRequestException(String.format(ErrorCode.NAME_EXISTS_MSG, testSuite.getNameEn()),
+                ErrorCode.NAME_EXISTS, new ArrayList<String>(Arrays.asList(testSuite.getNameEn())));
         }
         checkTestScenarioIdsExist(testSuite);
         testSuiteRepository.updateTestSuite(testSuite);
@@ -103,7 +108,7 @@ public class TestSuiteServiceImpl implements TestSuiteService {
         List<TestCase> testCaseList = testCaseRepository.findAllTestCases(null, null, null, id);
         if (!CollectionUtils.isEmpty(testCaseList)) {
             LOGGER.error("test suite {} is used by some test cases, can not be deleted.", id);
-            throw new IllegalArgumentException("this test suite is used by some test cases, can not be deleted..");
+            throw new IllegalRequestException(ErrorCode.TEST_SUITE_IS_CITED_MSG, ErrorCode.TEST_SUITE_IS_CITED, null);
         }
         testSuiteRepository.deleteTestSuite(id);
         LOGGER.info("delete test suite successfully.");
@@ -111,11 +116,12 @@ public class TestSuiteServiceImpl implements TestSuiteService {
     }
 
     @Override
-    public TestSuite getTestSuite(String id) throws FileNotFoundException {
+    public TestSuite getTestSuite(String id) throws FileNotExistsException {
         TestSuite testSuite = testSuiteRepository.getTestSuiteById(id);
         if (null == testSuite) {
             LOGGER.error("test suite id does not exists: {}", id);
-            throw new FileNotFoundException("test suite id does not exists.");
+            throw new FileNotExistsException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, "test suite id"),
+                ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList("test suite id")));
         }
         LOGGER.info("get test suite successfully.");
         return testSuite;
@@ -154,9 +160,10 @@ public class TestSuiteServiceImpl implements TestSuiteService {
         List<TestScenario> testScenarioList =
                 testScenarioRepository.batchQueryTestScenario(testSuite.getScenarioIdList());
         if (testScenarioList.size() != testSuite.getScenarioIdList().size()) {
-            String msg = "some test scenario ids do not exist.";
-            LOGGER.error(msg);
-            throw new IllegalArgumentException(msg);
+            LOGGER.error("some test scenario ids do not exist.");
+            throw new IllegalRequestException(
+                String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, "some test scenario ids."),
+                ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList("some test scenario ids.")));
         }
     }
 }

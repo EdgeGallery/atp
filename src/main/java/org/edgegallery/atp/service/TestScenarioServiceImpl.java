@@ -168,7 +168,8 @@ public class TestScenarioServiceImpl implements TestScenarioService {
         List<TestSuite> testSuiteList = testSuiteRepository.getAllTestSuites(null, null, id);
         if (CollectionUtils.isNotEmpty(testSuiteList)) {
             LOGGER.error("scenario id {} is used by some test suites, so can not be delete.", id);
-            throw new IllegalArgumentException("this scenario is used by some test suites, so can not be delete.");
+            throw new IllegalRequestException(ErrorCode.TEST_SCENARIO_IS_CITED_MSG, ErrorCode.TEST_SCENARIO_IS_CITED,
+                null);
         }
         AtpFile file = fileRepository.getFileContent(id, Constant.FILE_TYPE_SCENARIO);
         CommonUtil.deleteFile(file.getFilePath());
@@ -286,7 +287,7 @@ public class TestScenarioServiceImpl implements TestScenarioService {
         } catch (IOException e) {
             LOGGER.error("import test models analysize zip package failed. {}", e);
             CommonUtil.deleteFile(filePath);
-            throw new IllegalArgumentException("import test models analysize zip package failed.");
+            throw new IllegalRequestException(ErrorCode.FILE_IO_EXCEPTION_MSG, ErrorCode.FILE_IO_EXCEPTION, null);
         }
 
         // update file info to db
@@ -503,9 +504,10 @@ public class TestScenarioServiceImpl implements TestScenarioService {
     public void checkNameExists(TestScenario testScenario) {
         if (null != testScenarioRepository.getTestScenarioByName(testScenario.getNameCh(), null)
             || null != testScenarioRepository.getTestScenarioByName(null, testScenario.getNameEn())) {
-            String msg = "name of test scenario already exist.";
-            LOGGER.error(msg);
-            throw new IllegalArgumentException(msg);
+            LOGGER.error("name of test scenario already exist.");
+            String param = testScenario.getNameCh() + " or " + testScenario.getNameEn();
+            throw new IllegalRequestException(String.format(ErrorCode.NAME_EXISTS_MSG, param), ErrorCode.NAME_EXISTS,
+                new ArrayList<String>(Arrays.asList(param)));
         }
     }
 

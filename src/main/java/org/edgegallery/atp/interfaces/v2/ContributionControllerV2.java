@@ -52,9 +52,9 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 @Controller
-@RestSchema(schemaId = "contribution")
+@RestSchema(schemaId = "contributionV2")
 @RequestMapping("/edgegallery/atp/v2")
-@Api(tags = {"ATP Contribution Controller"})
+@Api(tags = {"ATP Contribution ControllerV2"})
 @Validated
 public class ContributionControllerV2 {
 

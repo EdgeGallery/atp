@@ -20,29 +20,23 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.io.FileNotFoundException;
-import java.util.List;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ErrorCode;
 import org.edgegallery.atp.model.BatchOpsRes;
 import org.edgegallery.atp.model.ResponseObject;
-import org.edgegallery.atp.model.contribution.Contribution;
 import org.edgegallery.atp.model.testscenario.TestScenario;
-import org.edgegallery.atp.model.testscenario.testcase.AllTestScenarios;
 import org.edgegallery.atp.service.TestScenarioService;
 import org.edgegallery.atp.utils.CommonUtil;
-import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -53,9 +47,9 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 @Controller
-@RestSchema(schemaId = "testScenario")
+@RestSchema(schemaId = "testScenarioV2")
 @RequestMapping("/edgegallery/atp/v2")
-@Api(tags = {"APT Test Scenario Controller"})
+@Api(tags = {"ATP Test Scenario ControllerV2"})
 @Validated
 public class TestScenarioControllerV2 {
 
@@ -134,24 +128,6 @@ public class TestScenarioControllerV2 {
     }
 
     /**
-     * delete test scenario.
-     *
-     * @param id id
-     * @return true
-     */
-    @DeleteMapping(value = "/testscenarios/{id}", produces = MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "delete test scenario.", response = Boolean.class)
-    @ApiResponses(value = {
-        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
-        @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)
-    })
-    @PreAuthorize("hasRole('ATP_ADMIN')")
-    public ResponseEntity<Boolean> deleteTestScenario(
-        @ApiParam(value = "test scenario id") @PathVariable("id") @Pattern(regexp = Constant.REG_ID) String id) {
-        return ResponseEntity.ok(testScenarioService.deleteTestScenario(id));
-    }
-
-    /**
      * query test scenario.
      *
      * @param id id
@@ -171,44 +147,6 @@ public class TestScenarioControllerV2 {
         TestScenario result = testScenarioService.getTestScenario(id);
         return ResponseEntity.ok(new ResponseObject<TestScenario>(result, ErrorCode.RET_CODE_SUCCESS, null,
             "query test scenario by id successfully."));
-    }
-
-    /**
-     * query all test scenario.
-     *
-     * @param locale locale
-     * @param name name
-     * @return test scenario list
-     */
-    @GetMapping(value = "/testscenarios", produces = MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "get all test scenarios.", response = TestScenario.class)
-    @ApiResponses(value = {
-        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
-        @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)
-    })
-    @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
-    public ResponseEntity<List<TestScenario>> queryAllTestScenario(
-        @ApiParam(value = "locale language") @Length(max = Constant.LENGTH_64) @QueryParam("locale") String locale,
-        @ApiParam(value = "test scenario name") @Length(max = Constant.LENGTH_64) @QueryParam("name") String name) {
-        return ResponseEntity.ok(testScenarioService.queryAllTestScenario(locale, name));
-    }
-
-    /**
-     * get test cases by scenarioIds.
-     *
-     * @param ids ids
-     * @return test scenario lists.
-     */
-    @PostMapping(value = "/testscenarios/testcases", produces = MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "get all test cases belonged to special test scenario id list.", response = String.class)
-    @ApiResponses(value = {
-        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
-        @ApiResponse(code = 500, message = "resource grant error", response = String.class)
-    })
-    @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
-    public ResponseEntity<List<AllTestScenarios>> getTestCasesByScenarioIds(
-        @ApiParam(value = "test scenario id list", required = true) @RequestParam("scenarioIds") List<String> ids) {
-        return ResponseEntity.ok(testScenarioService.getTestCasesByScenarioIds(ids));
     }
 
     /**
