@@ -39,7 +39,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RestSchema(schemaId = "file")
 @RequestMapping("/edgegallery/atp/v1")
-@Api(tags = {"APT File Controller"})
+@Api(tags = {"ATP File Controller"})
 @Validated
 public class FileController {
 

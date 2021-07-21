@@ -51,7 +51,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller
 @RestSchema(schemaId = "testCase")
 @RequestMapping("/edgegallery/atp/v1")
-@Api(tags = {"APT Test Case Controller"})
+@Api(tags = {"ATP Test Case Controller"})
 @Validated
 public class TestCaseController {
 

@@ -53,7 +53,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller
 @RestSchema(schemaId = "testScenario")
 @RequestMapping("/edgegallery/atp/v1")
-@Api(tags = {"APT Test Scenario Controller"})
+@Api(tags = {"ATP Test Scenario Controller"})
 @Validated
 public class TestScenarioController {
 

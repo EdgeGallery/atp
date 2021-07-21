@@ -14,9 +14,9 @@
 
 package org.edgegallery.atp.service;
 
-import java.io.FileNotFoundException;
 import java.util.List;
 import org.edgegallery.atp.model.testsuite.TestSuite;
+import org.edgegallery.atp.utils.exception.FileNotExistsException;
 
 public interface TestSuiteService {
     /**
@@ -45,11 +45,11 @@ public interface TestSuiteService {
 
     /**
      * get test suite by id.
-     * 
+     *
      * @param id test suite id
      * @return test suite info
      */
-    TestSuite getTestSuite(String id) throws FileNotFoundException;
+    TestSuite getTestSuite(String id) throws FileNotExistsException;
 
     /**
      * get all test suites.

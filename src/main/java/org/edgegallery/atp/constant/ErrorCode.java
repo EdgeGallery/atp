@@ -170,4 +170,18 @@ public interface ErrorCode {
 
     String PATTERN_CHECK_FAILED_MSG = "file pattern is not right, must be: %s";
 
+    /**
+     * the scenario is used by some test suites, so can not be delete.
+     */
+    int TEST_SCENARIO_IS_CITED = 40020;
+
+    String TEST_SCENARIO_IS_CITED_MSG = "the scenario is used by some test suites, so can not be delete.";
+
+    /**
+     * the test suite is used by some test cases, can not be deleted.
+     */
+    int TEST_SUITE_IS_CITED = 40021;
+
+    String TEST_SUITE_IS_CITED_MSG = "the test suite is used by some test cases, can not be deleted.";
+
 }
