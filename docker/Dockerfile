@@ -55,6 +55,7 @@ RUN chmod 750 $APP_HOME &&\
     chown -R $USER_NAME:$GROUP_NAME $APP_HOME
 
 RUN mkdir -p -m 750 /usr/atp &&\
+    mkdir -p -m 750 /usr/atp/file &&\
     chown -R $USER_NAME:$GROUP_NAME /usr/atp
 
 COPY --chown=$USER_NAME:$GROUP_NAME target/*.jar $APP_HOME/bin
