@@ -46,7 +46,7 @@ public class CommonUtilTest {
         contextMap.put(Constant.ACCESS_TOKEN, "aaa");
         contextMap.put(Constant.USER_ID, "4eed814b-5d29-4e4c-ba73-51fc6db4ed86");
         contextMap.put(Constant.USER_NAME, "atp");
-        AccessTokenFilter.context.set(contextMap);
+        AccessTokenFilter.CONTEXT.set(contextMap);
     }
 
     @Test

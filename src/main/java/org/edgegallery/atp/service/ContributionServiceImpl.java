@@ -15,14 +15,12 @@
 package org.edgegallery.atp.service;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.io.FileUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ErrorCode;
 import org.edgegallery.atp.model.contribution.Contribution;
@@ -34,9 +32,7 @@ import org.edgegallery.atp.utils.exception.IllegalRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -102,7 +98,7 @@ public class ContributionServiceImpl implements ContributionService {
     }
 
     @Override
-    public ResponseEntity<InputStreamResource> downloadContributions(String id) {
+    public ResponseEntity<byte[]> downloadContributions(String id) {
         Contribution contribution = contributionRepository.getContributionById(id);
         if (null == contribution) {
             String msg = "contribution not exists.";
@@ -111,13 +107,14 @@ public class ContributionServiceImpl implements ContributionService {
         }
         File file = new File(contribution.getFilePath());
         try {
-            InputStream fileContent = new FileInputStream(file);
             HttpHeaders headers = new HttpHeaders();
             headers.add("Content-Type", "application/octet-stream");
+            headers.add("Content-Disposition", "attachment; filename=" + contribution.getName());
+            byte[] fileData = FileUtils.readFileToByteArray(file);
             LOGGER.info("download contribution successfully.");
-            return new ResponseEntity<>(new InputStreamResource(fileContent), headers, HttpStatus.OK);
-        } catch (FileNotFoundException e) {
-            String msg = "file not exists.";
+            return ResponseEntity.ok().headers(headers).body(fileData);
+        } catch (IOException e) {
+            String msg = "download contribution test case failed.";
             LOGGER.error(msg);
             throw new IllegalArgumentException(msg);
         }

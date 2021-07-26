@@ -91,7 +91,7 @@ public class TaskServiceImpl implements TaskService {
         try {
             String filePath = tempFile.getCanonicalPath();
             // init task
-            Map<String, String> context = AccessTokenFilter.context.get();
+            Map<String, String> context = AccessTokenFilter.CONTEXT.get();
             task.setCreateTime(taskRepository.getCurrentDate());
             task.setStatus(Constant.ATP_CREATED);
             task.setUser(new User(context.get(Constant.USER_ID), context.get(Constant.USER_NAME)));
@@ -107,12 +107,14 @@ public class TaskServiceImpl implements TaskService {
         } catch (IOException e) {
             LOGGER.error("create task {} failed, file name is: {}", taskId, tempFile.getName());
             throw new IllegalRequestException(ErrorCode.FILE_IO_EXCEPTION_MSG, ErrorCode.FILE_IO_EXCEPTION, null);
+        } finally {
+            AccessTokenFilter.deleteContext();
         }
     }
 
     @Override
     public TaskRequest runTask(String taskId, List<String> scenarioIdList) throws FileNotExistsException {
-        Map<String, String> context = AccessTokenFilter.context.get();
+        Map<String, String> context = AccessTokenFilter.CONTEXT.get();
         if (CollectionUtils.isEmpty(scenarioIdList)) {
             LOGGER.error("scenarioIdList is empty.");
             throw new IllegalRequestException(String.format(ErrorCode.PARAM_IS_NULL_MSG, "scenarioIdList"),
@@ -143,12 +145,13 @@ public class TaskServiceImpl implements TaskService {
         testCaseManager.executeTestCase(task, filePath);
 
         LOGGER.info("run task successfully.");
+        AccessTokenFilter.deleteContext();
         return task;
     }
 
     @Override
     public ResponseEntity<Boolean> deleteTaskById(String taskId) {
-        Map<String, String> context = AccessTokenFilter.context.get();
+        Map<String, String> context = AccessTokenFilter.CONTEXT.get();
         String userId = context.get(Constant.USER_ID);
 
         TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, userId);
@@ -158,6 +161,7 @@ public class TaskServiceImpl implements TaskService {
         } else {
             LOGGER.warn("task with id: {}, userId: {} not exists in db.", taskId, userId);
         }
+        AccessTokenFilter.deleteContext();
         return ResponseEntity.ok(Boolean.TRUE);
     }
 

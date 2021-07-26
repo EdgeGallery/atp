@@ -16,6 +16,8 @@ package org.edgegallery.atp.interfaceTest;
 
 import static org.junit.Assert.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+
+
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import java.io.File;
@@ -25,6 +27,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import mockit.Mock;
+import mockit.MockUp;
 import org.apache.http.entity.ContentType;
 import org.apache.ibatis.io.Resources;
 import org.edgegallery.atp.ATPApplicationTest;
@@ -50,8 +54,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.multipart.MultipartFile;
-import mockit.Mock;
-import mockit.MockUp;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ATPApplicationTest.class)
@@ -65,11 +67,15 @@ public class TaskTest {
 
     @Before
     public void setUp() throws Exception {
+        AccessTokenFilter.CONTEXT.set(setContext());
+    }
+
+    private Map<String, String> setContext() {
         Map<String, String> contextMap = new HashMap<String, String>();
         contextMap.put(Constant.ACCESS_TOKEN, "aaa");
         contextMap.put(Constant.USER_ID, "4eed814b-5d29-4e4c-ba73-51fc6db4ed86");
         contextMap.put(Constant.USER_NAME, "atp");
-        AccessTokenFilter.context.set(contextMap);
+        return contextMap;
     }
 
     @WithMockUser(roles = "ATP_ADMIN")
@@ -95,6 +101,7 @@ public class TaskTest {
         String id = task.getId();
 
         // run task
+        AccessTokenFilter.CONTEXT.set(setContext());
         MvcResult mvcResultRunTasks =
                 mvc.perform(MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/tasks/" + id + "/action/run")
                         .with(csrf()).param("scenarioIdList", "e71718a5-864a-49e5-855a-5805a5e9f97d")).andReturn();
@@ -175,6 +182,7 @@ public class TaskTest {
         String id = task.getId();
 
         // run task
+        AccessTokenFilter.CONTEXT.set(setContext());
         MvcResult mvcResultRunTasks =
                 mvc.perform(MockMvcRequestBuilders.multipart("/edgegallery/atp/v2/tasks/" + id + "/action/run")
                         .with(csrf()).param("scenarioIdList", "e71718a5-864a-49e5-855a-5805a5e9f97d")).andReturn();

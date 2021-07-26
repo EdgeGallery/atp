@@ -164,7 +164,7 @@ public class CommonUtil {
      * @param param parameter
      */
     public static void isUuidPattern(String param) {
-        Pattern pattern = Pattern.compile("[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}");
+        Pattern pattern = Pattern.compile(Constant.REG_ID);
         if (!pattern.matcher(param).matches()) {
             LOGGER.error("param is not uuid pattern.");
             throw new IllegalArgumentException(String.format("%s is not uuid pattern.", param));
@@ -175,7 +175,7 @@ public class CommonUtil {
      * validate context is not empty.
      */
     public static void validateContext() {
-        if (null == AccessTokenFilter.context.get()) {
+        if (null == AccessTokenFilter.CONTEXT.get()) {
             LOGGER.error("context is null.");
             throw new IllegalArgumentException(ExceptionConstant.CONTEXT_IS_NULL);
         }
