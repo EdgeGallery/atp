@@ -17,7 +17,6 @@ package org.edgegallery.atp.service;
 import java.util.List;
 import java.util.Map;
 import org.edgegallery.atp.model.contribution.Contribution;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -49,9 +48,9 @@ public interface ContributionService {
 
     /**
      * download script contributions.
-     * 
+     *
      * @param id contribution id
      * @return file stream
      */
-    ResponseEntity<InputStreamResource> downloadContributions(String id);
+    ResponseEntity<byte[]> downloadContributions(String id);
 }

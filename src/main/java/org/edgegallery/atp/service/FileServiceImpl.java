@@ -15,9 +15,9 @@
 package org.edgegallery.atp.service;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.IOException;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.model.file.AtpFile;
@@ -25,9 +25,7 @@ import org.edgegallery.atp.repository.file.FileRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +37,7 @@ public class FileServiceImpl implements FileService {
     FileRepository fileRepository;
 
     @Override
-    public ResponseEntity<InputStreamResource> getFileContent(String fileId, String type) throws FileNotFoundException {
+    public ResponseEntity<byte[]> getFileContent(String fileId, String type) throws FileNotFoundException {
         type = StringUtils.isEmpty(type) ? Constant.FILE_TYPE_SCENARIO : type;
         AtpFile fileInfo = fileRepository.getFileContent(fileId, type);
         if (null == fileInfo) {
@@ -49,13 +47,14 @@ public class FileServiceImpl implements FileService {
 
         File file = new File(fileInfo.getFilePath());
         try {
-            InputStream fileContent = new FileInputStream(file);
             HttpHeaders headers = new HttpHeaders();
             headers.add("Content-Type", "application/octet-stream");
+            headers.add("Content-Disposition", "attachment; filename=" + fileInfo.getFileId());
+            byte[] fileData = FileUtils.readFileToByteArray(file);
             LOGGER.info("get file content successfully.");
-            return new ResponseEntity<>(new InputStreamResource(fileContent), headers, HttpStatus.OK);
-        } catch (FileNotFoundException e) {
-            String msg = "file not exists.";
+            return ResponseEntity.ok().headers(headers).body(fileData);
+        } catch (IOException e) {
+            String msg = "download file failed.";
             LOGGER.error(msg);
             throw new IllegalArgumentException(msg);
         }

@@ -184,4 +184,10 @@ public interface ErrorCode {
 
     String TEST_SUITE_IS_CITED_MSG = "the test suite is used by some test cases, can not be deleted.";
 
+    /**
+     * test case type in testSuiteIds is not the same as others, must be all automatic or all manual.
+     */
+    int TEST_CASE_TYPE_COMPATIBILITY_ERROR = 40022;
+
+    String TEST_CASE_TYPE_COMPATIBILITY_ERROR_MSG = "test case type in testSuiteIds is not the same as others.";
 }

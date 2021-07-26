@@ -43,9 +43,9 @@ public class AccessTokenFilter extends OncePerRequestFilter {
     @Autowired
     TokenStore jwtTokenStore;
 
-    public static final ThreadLocal<Map<String, String>> context = new ThreadLocal<>();
+    public static final ThreadLocal<Map<String, String>> CONTEXT = new ThreadLocal<>();
 
-    private static final String[] NoNeedTokenUrls = {"GET /health", "GET /edgegallery/atp/v1/tasks/[^/]+"};
+    private static final String[] NO_NEED_TOKEN_URLS = {"GET /health", "GET /edgegallery/atp/v1/tasks/[^/]+"};
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -91,11 +91,15 @@ public class AccessTokenFilter extends OncePerRequestFilter {
             contextMap.put(Constant.ACCESS_TOKEN, accessTokenStr);
             contextMap.put(Constant.USER_ID, userIdFromToken);
             contextMap.put(Constant.USER_NAME, userNameFromToken);
-            context.set(contextMap);
+            CONTEXT.set(contextMap);
 
             SecurityContextHolder.getContext().setAuthentication(auth);
         }
         filterChain.doFilter(request, response);
+    }
+
+    public static void deleteContext() {
+        CONTEXT.remove();
     }
 
     private boolean isNoNeedToken(HttpServletRequest request) {
@@ -103,7 +107,7 @@ public class AccessTokenFilter extends OncePerRequestFilter {
             return true;
         }
         String accessUrl = String.format("%s %s", request.getMethod(), request.getRequestURI());
-        for (String filter : NoNeedTokenUrls) {
+        for (String filter : NO_NEED_TOKEN_URLS) {
             if (accessUrl.matches(filter)) {
                 return true;
             }

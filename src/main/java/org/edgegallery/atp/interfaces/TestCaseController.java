@@ -19,6 +19,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
 import javax.validation.constraints.Pattern;
@@ -31,9 +32,9 @@ import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.model.testsuite.TestSuiteIdList;
 import org.edgegallery.atp.service.TestCaseService;
 import org.edgegallery.atp.utils.CommonUtil;
+import org.edgegallery.atp.utils.exception.FileNotExistsException;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -173,22 +174,17 @@ public class TestCaseController {
             @ApiParam(value = "test case expect result in chinese",
                     required = false) @Size(
                             max = Constant.LENGTH_255) @RequestParam("expectResultCh") String expectResultCh,
-            @ApiParam(value = "test case expect result in english",
-                    required = false) @Size(
-                            max = Constant.LENGTH_255) @RequestParam("expectResultEn") String expectResultEn,
-            @ApiParam(value = "test case test step in chinese",
-                    required = false) @Size(max = Constant.LENGTH_255) @RequestParam(
-                            value = "testStepCh") String testStepCh,
-            @ApiParam(value = "test case test step in english",
-                    required = false) @Size(max = Constant.LENGTH_255) @RequestParam(
-                            value = "testStepEn") String testStepEn,
-            @ApiParam(value = "test suite list the test case belong to",
-                    required = false) @Size(
-                            max = Constant.LENGTH_255) @RequestParam("testSuiteIdList") List<String> testSuiteIds) {
-        TestCase testCase = TestCase.builder().setId(id).setCodeLanguage(codeLanguage)
-                .setDescriptionCh(descriptionCh).setDescriptionEn(descriptionEn).setExpectResultCh(expectResultCh)
-                .setExpectResultEn(expectResultEn).setTestStepCh(testStepCh).setTestStepEn(testStepEn).build()
-                .toTestCase();
+            @ApiParam(value = "test case expect result in english", required = false) @Size(max = Constant.LENGTH_255)
+            @RequestParam("expectResultEn") String expectResultEn,
+        @ApiParam(value = "test case test step in chinese", required = false) @Size(max = Constant.LENGTH_255)
+        @RequestParam(value = "testStepCh") String testStepCh,
+        @ApiParam(value = "test case test step in english", required = false) @Size(max = Constant.LENGTH_255)
+        @RequestParam(value = "testStepEn") String testStepEn,
+        @ApiParam(value = "test suite list the test case belong to", required = false) @Size(max = Constant.LENGTH_255)
+        @RequestParam("testSuiteIdList") List<String> testSuiteIds) throws FileNotExistsException {
+        TestCase testCase = TestCase.builder().setId(id).setCodeLanguage(codeLanguage).setDescriptionCh(descriptionCh)
+            .setDescriptionEn(descriptionEn).setExpectResultCh(expectResultCh).setExpectResultEn(expectResultEn)
+            .setTestStepCh(testStepCh).setTestStepEn(testStepEn).build().toTestCase();
         testCase.setTestSuiteIdList(testSuiteIds);
         return ResponseEntity.ok(testCaseService.updateTestCase(file, testCase));
     }
@@ -229,17 +225,19 @@ public class TestCaseController {
 
     /**
      * download test case.
-     * 
+     *
      * @param id id
      * @return stream
      */
     @GetMapping(value = "/testcases/{id}/action/download", produces = MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "download test case", response = InputStreamResource.class)
-    @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
-            @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
+    @ApiOperation(value = "download test case", response = File.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
+        @ApiResponse(code = 500, message = "resource grant error", response = String.class)
+    })
     @PreAuthorize("hasRole('ATP_ADMIN')")
-    public ResponseEntity<InputStreamResource> downloadTestCase(
-            @ApiParam(value = "test case id") @PathVariable("id") @Pattern(regexp = Constant.REG_ID) String id) {
+    public ResponseEntity<byte[]> downloadTestCase(
+        @ApiParam(value = "test case id") @PathVariable("id") @Pattern(regexp = Constant.REG_ID) String id) {
         return testCaseService.downloadTestCase(id);
     }
 }

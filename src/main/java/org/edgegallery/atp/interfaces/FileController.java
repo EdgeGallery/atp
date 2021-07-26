@@ -19,6 +19,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.io.File;
 import java.io.FileNotFoundException;
 import javax.validation.constraints.Pattern;
 import javax.ws.rs.QueryParam;
@@ -27,7 +28,6 @@ import org.apache.servicecomb.provider.rest.common.RestSchema;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -48,20 +48,22 @@ public class FileController {
 
     /**
      * get all files.
-     * 
+     *
      * @param id id
      * @param type type
      * @return binary stream
      * @throws FileNotFoundException FileNotFoundException
      */
     @GetMapping(value = "/files/{id}", produces = MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "get one file.", response = InputStreamResource.class)
-    @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
-            @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
+    @ApiOperation(value = "get one file.", response = File.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
+        @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)
+    })
     @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
-    public ResponseEntity<InputStreamResource> getAllFile(
-            @ApiParam(value = "file id") @PathVariable("id") @Pattern(regexp = Constant.REG_ID) String id,
-            @ApiParam(value = "file type") @QueryParam("type") String type) throws FileNotFoundException {
+    public ResponseEntity<byte[]> getAllFile(
+        @ApiParam(value = "file id") @PathVariable("id") @Pattern(regexp = Constant.REG_ID) String id,
+        @ApiParam(value = "file type") @QueryParam("type") String type) throws FileNotFoundException {
         return fileService.getFileContent(id, type);
     }
 }

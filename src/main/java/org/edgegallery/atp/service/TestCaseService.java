@@ -14,10 +14,9 @@
 
 package org.edgegallery.atp.service;
 
-import java.io.FileNotFoundException;
 import java.util.List;
 import org.edgegallery.atp.model.testcase.TestCase;
-import org.springframework.core.io.InputStreamResource;
+import org.edgegallery.atp.utils.exception.FileNotExistsException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -46,12 +45,12 @@ public interface TestCaseService {
 
     /**
      * update test case.
-     * 
+     *
      * @param file test case file
      * @param testCase test case info
      * @return test case info
      */
-    TestCase updateTestCase(MultipartFile file, TestCase testCase);
+    TestCase updateTestCase(MultipartFile file, TestCase testCase) throws FileNotExistsException;
 
     /**
      * delete test case.
@@ -63,17 +62,17 @@ public interface TestCaseService {
 
     /**
      * get one test case.
-     * 
+     *
      * @param id id
      * @return test case info
      */
-    TestCase getTestCase(String id) throws FileNotFoundException;
+    TestCase getTestCase(String id) throws FileNotExistsException;
 
     /**
      * download test case.
-     * 
+     *
      * @param id test case id
      * @return test case binary stream.
      */
-    ResponseEntity<InputStreamResource> downloadTestCase(String id);
+    ResponseEntity<byte[]> downloadTestCase(String id);
 }

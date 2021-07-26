@@ -15,14 +15,15 @@
 package org.edgegallery.atp.service;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
+import org.edgegallery.atp.constant.ErrorCode;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.model.testsuite.TestSuite;
 import org.edgegallery.atp.repository.task.TaskRepository;
@@ -30,12 +31,12 @@ import org.edgegallery.atp.repository.testcase.TestCaseRepository;
 import org.edgegallery.atp.repository.testsuite.TestSuiteRepository;
 import org.edgegallery.atp.utils.CommonUtil;
 import org.edgegallery.atp.utils.FileChecker;
+import org.edgegallery.atp.utils.exception.FileNotExistsException;
+import org.edgegallery.atp.utils.exception.IllegalRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -86,15 +87,16 @@ public class TestCaseServiceImpl implements TestCaseService {
         testCase.setNameCh(StringUtils.isNotBlank(testCase.getNameCh()) ? testCase.getNameCh() : testCase.getNameEn());
         testCase.setNameEn(StringUtils.isNotBlank(testCase.getNameEn()) ? testCase.getNameEn() : testCase.getNameCh());
         if (StringUtils.isEmpty(testCase.getNameCh()) && StringUtils.isEmpty(testCase.getNameEn())) {
-            String msg = "both nameCh and nameEn is empty";
-            LOGGER.error(msg);
-            throw new IllegalArgumentException(msg);
+            LOGGER.error("both nameCh and nameEn is empty");
+            throw new IllegalRequestException(String.format(ErrorCode.PARAM_IS_NULL_MSG, "nameCh and nameEn both"),
+                ErrorCode.PARAM_IS_NULL, new ArrayList<String>(Arrays.asList("nameCh and nameEn both")));
         }
         if (null != testCaseRepository.findByName(testCase.getNameCh(), null)
                 || null != testCaseRepository.findByName(null, testCase.getNameEn())) {
-            String msg = "name of test case already exist.";
-            LOGGER.error(msg);
-            throw new IllegalArgumentException(msg);
+            LOGGER.error("name of test case already exist.");
+            String param = testCase.getNameCh() + " or " + testCase.getNameEn();
+            throw new IllegalRequestException(String.format(ErrorCode.NAME_EXISTS_MSG, param), ErrorCode.NAME_EXISTS,
+                new ArrayList<String>(Arrays.asList(param)));
         }
         checkTestSuiteIdsExist(testCase);
 
@@ -117,9 +119,9 @@ public class TestCaseServiceImpl implements TestCaseService {
             List<TestCase> testCaseList = testCaseRepository.findAllTestCases(null, null, null, testSuiteId);
             testCaseList.forEach(testCaseDb -> {
                 if (!testCaseDb.getType().equals(testCase.getType())) {
-                    String msg = "test case type in testSuiteIds is not the same as others.";
-                    LOGGER.error(msg);
-                    throw new IllegalArgumentException(msg);
+                    LOGGER.error("test case type in testSuiteIds is not the same as others.");
+                    throw new IllegalRequestException(ErrorCode.TEST_CASE_TYPE_COMPATIBILITY_ERROR_MSG,
+                        ErrorCode.TEST_CASE_TYPE_COMPATIBILITY_ERROR, null);
                 }
             });
         });
@@ -138,23 +140,24 @@ public class TestCaseServiceImpl implements TestCaseService {
             testCaseRepository.insert(testCase);
         } catch (IOException e) {
             LOGGER.error("create file failed, test case name is: {}", testCase.getNameEn());
-            throw new IllegalArgumentException("create file failed.");
+            throw new IllegalRequestException(ErrorCode.FILE_IO_EXCEPTION_MSG, ErrorCode.FILE_IO_EXCEPTION, null);
         }
         LOGGER.info("create test case successfully.");
         return testCase;
     }
 
     @Override
-    public TestCase updateTestCase(MultipartFile file, TestCase testCase) {
+    public TestCase updateTestCase(MultipartFile file, TestCase testCase) throws FileNotExistsException {
         TestCase dbData = testCaseRepository.getTestCaseById(testCase.getId());
         if (null == dbData) {
             LOGGER.error("this test case {} not exists.", testCase.getId());
-            throw new IllegalArgumentException("this test case not exists.");
+            throw new FileNotExistsException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, "test case id"),
+                ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList("test case id")));
         }
 
         try {
-            if (null != file && StringUtils.isNotBlank(file.getOriginalFilename())
-                    && StringUtils.isNotBlank(file.getName()) && 0 != (int) file.getSize()) {
+            if (null != file && StringUtils.isNotBlank(file.getOriginalFilename()) && StringUtils
+                .isNotBlank(file.getName()) && 0 != (int) file.getSize()) {
                 String filePath = dbData.getFilePath();
                 CommonUtil.deleteFile(filePath);
                 File result = new File(filePath);
@@ -167,7 +170,7 @@ public class TestCaseServiceImpl implements TestCaseService {
             testCaseRepository.update(testCase);
         } catch (IOException e) {
             LOGGER.error("transfer file content failed.{}", e.getMessage());
-            throw new IllegalArgumentException("update file failed.");
+            throw new IllegalRequestException(ErrorCode.FILE_IO_EXCEPTION_MSG, ErrorCode.FILE_IO_EXCEPTION, null);
         }
         return testCaseRepository.getTestCaseById(testCase.getId());
     }
@@ -184,19 +187,19 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
-    public TestCase getTestCase(String id) throws FileNotFoundException {
+    public TestCase getTestCase(String id) throws FileNotExistsException {
         TestCase response = testCaseRepository.getTestCaseById(id);
         if (null == response) {
             LOGGER.error("test case id does not exists: {}", id);
-            throw new FileNotFoundException("test case id does not exists.");
+            throw new FileNotExistsException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, "test case id"),
+                ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList("test case id")));
         }
         LOGGER.info("get test case successfully.");
         return response;
     }
 
-
     @Override
-    public ResponseEntity<InputStreamResource> downloadTestCase(String id) {
+    public ResponseEntity<byte[]> downloadTestCase(String id) {
         TestCase testCase = testCaseRepository.getTestCaseById(id);
         if (null == testCase) {
             String msg = "test case not exists.";
@@ -205,13 +208,14 @@ public class TestCaseServiceImpl implements TestCaseService {
         }
         File file = new File(testCase.getFilePath());
         try {
-            InputStream fileContent = new FileInputStream(file);
             HttpHeaders headers = new HttpHeaders();
             headers.add("Content-Type", "application/octet-stream");
+            headers.add("Content-Disposition", "attachment; filename=" + testCase.getNameEn());
+            byte[] fileData = FileUtils.readFileToByteArray(file);
             LOGGER.info("download test case successfully.");
-            return new ResponseEntity<>(new InputStreamResource(fileContent), headers, HttpStatus.OK);
-        } catch (FileNotFoundException e) {
-            String msg = "file not exists.";
+            return ResponseEntity.ok().headers(headers).body(fileData);
+        } catch (IOException e) {
+            String msg = "download test case failed.";
             LOGGER.error(msg);
             throw new IllegalArgumentException(msg);
         }
@@ -219,15 +223,15 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     /**
      * check test suite ids is right.
-     * 
-     * @param testSuite test suite info
+     *
+     * @param testCase test suite info
      */
     private void checkTestSuiteIdsExist(TestCase testCase) {
         List<TestSuite> testSuiteList = testSuiteRepository.batchQueryTestSuites(testCase.getTestSuiteIdList());
         if (testSuiteList.size() != testCase.getTestSuiteIdList().size()) {
-            String msg = "some test suite ids do not exist.";
-            LOGGER.error(msg);
-            throw new IllegalArgumentException(msg);
+            LOGGER.error("some test suite ids do not exist.");
+            throw new IllegalRequestException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, "some test suite ids."),
+                ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList("some test suite ids.")));
         }
     }
 }
