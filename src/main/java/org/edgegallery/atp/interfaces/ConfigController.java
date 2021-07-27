@@ -19,19 +19,25 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import javax.validation.constraints.Pattern;
 import javax.ws.rs.core.MediaType;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
+import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ErrorCode;
 import org.edgegallery.atp.model.ResponseObject;
 import org.edgegallery.atp.model.config.Config;
 import org.edgegallery.atp.model.config.ConfigBase;
 import org.edgegallery.atp.service.ConfigService;
+import org.edgegallery.atp.utils.exception.FileNotExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -57,11 +63,53 @@ public class ConfigController {
         @ApiResponse(code = 404, message = "microservice not found", response = String.class),
         @ApiResponse(code = 500, message = "resource grant error", response = String.class)
     })
-    @PreAuthorize("hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
+    @PreAuthorize("hasRole('ATP_ADMIN')")
     public ResponseEntity<ResponseObject<Config>> createConfig(
         @ApiParam(value = "config request param") @RequestBody ConfigBase config) {
         ResponseObject<Config> result = new ResponseObject<Config>(configService.createConfig(config),
             ErrorCode.RET_CODE_SUCCESS, null, "create a config successfully.");
         return ResponseEntity.ok(result);
+    }
+
+    /**
+     * update a config.
+     *
+     * @param config config info
+     * @param id config id
+     * @return config info after updated
+     * @throws FileNotExistsException FileNotExistsException
+     */
+    @PutMapping(value = "/configs/{id}", produces = MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "update a config.", response = String.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
+        @ApiResponse(code = 500, message = "resource grant error", response = String.class)
+    })
+    @PreAuthorize("hasRole('ATP_ADMIN')")
+    public ResponseEntity<ResponseObject<Config>> updateConfig(
+        @ApiParam(value = "config request param") @RequestBody ConfigBase config,
+        @ApiParam(value = "config id") @PathVariable("id") @Pattern(regexp = Constant.REG_ID) String id)
+        throws FileNotExistsException {
+        ResponseObject<Config> result = new ResponseObject<Config>(configService.updateConfig(config, id),
+            ErrorCode.RET_CODE_SUCCESS, null, "update a config successfully.");
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * delete a config by id.
+     *
+     * @param id config id
+     * @return true
+     */
+    @DeleteMapping(value = "/configs/{id}", produces = MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "delete a config.", response = Boolean.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
+        @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)
+    })
+    @PreAuthorize("hasRole('ATP_ADMIN')")
+    public ResponseEntity<Boolean> deleteConfig(
+        @ApiParam(value = "config id") @PathVariable("id") @Pattern(regexp = Constant.REG_ID) String id) {
+        return ResponseEntity.ok(configService.deleteConfig(id));
     }
 }

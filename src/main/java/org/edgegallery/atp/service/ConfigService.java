@@ -16,6 +16,7 @@ package org.edgegallery.atp.service;
 
 import org.edgegallery.atp.model.config.Config;
 import org.edgegallery.atp.model.config.ConfigBase;
+import org.edgegallery.atp.utils.exception.FileNotExistsException;
 
 public interface ConfigService {
     /**
@@ -25,4 +26,21 @@ public interface ConfigService {
      * @return config info
      */
     Config createConfig(ConfigBase config);
+
+    /**
+     * update a config.
+     *
+     * @param config config info
+     * @param id config id
+     * @return config info
+     */
+    Config updateConfig(ConfigBase config, String id) throws FileNotExistsException;
+
+    /**
+     * delete a config.
+     *
+     * @param id config id
+     * @return true
+     */
+    Boolean deleteConfig(String id);
 }

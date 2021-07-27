@@ -43,4 +43,37 @@ public class ConfigRepositoryImpl implements ConfigRepository {
                 ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("insert config failed")));
         }
     }
+
+    @Override
+    public Config queryConfigById(String id) {
+        try {
+            return configMapper.queryConfigById(id);
+        } catch (Exception e) {
+            LOGGER.error("query config by id failed. {}", e);
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "query config by id failed"),
+                ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("query config by id failed")));
+        }
+    }
+
+    @Override
+    public void updateConfig(Config config) {
+        try {
+            configMapper.updateConfig(config);
+        } catch (Exception e) {
+            LOGGER.error("update a config failed. {}", e);
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "update a config failed"),
+                ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("update a config failed")));
+        }
+    }
+
+    @Override
+    public void deleteConfig(String id) {
+        try {
+            configMapper.deleteConfig(id);
+        } catch (Exception e) {
+            LOGGER.error("delete a config failed. {}", e);
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "delete a config failed"),
+                ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("delete a config failed")));
+        }
+    }
 }

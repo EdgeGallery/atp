@@ -126,7 +126,7 @@ public interface ErrorCode {
      */
     int NOT_FOUND_EXCEPTION = 40013;
 
-    String NOT_FOUND_EXCEPTION_MSG = "%s do not exists.";
+    String NOT_FOUND_EXCEPTION_MSG = "%s does not exist.";
 
     /**
      * param1 size is out of limit param2.

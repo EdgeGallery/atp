@@ -25,4 +25,39 @@
         VALUES
         (#{id}, #{nameCh}, #{nameEn}, #{descriptionCh}, #{descriptionEn}, #{configuration}, #{createTime})
     </insert>
+
+    <update id="updateConfig" parameterType="org.edgegallery.atp.model.config.Config">
+        UPDATE
+        config_table set
+        <if test="descriptionCh != null and descriptionCh !=''">
+            descriptionCh = #{descriptionCh},
+        </if>
+        <if test="descriptionEn != null and descriptionEn !=''">
+            descriptionEn = #{descriptionEn},
+        </if>
+        <if test="nameEn != null and nameEn !=''">
+            nameEn = #{nameEn},
+        </if>
+        <if test="nameCh != null and nameCh !=''">
+            nameCh = #{nameCh},
+        </if>
+        <if test="configuration != null and configuration !=''">
+            configuration = #{configuration},
+        </if>
+        id=#{id}
+        where id = #{id}
+    </update>
+
+    <select id="queryConfigById"
+            resultType="org.edgegallery.atp.model.config.Config"
+            parameterType="String">
+        select * from config_table where id = #{id}
+    </select>
+
+    <delete id="deleteConfig" parameterType="java.lang.String">
+        DELETE FROM
+        config_table
+        WHERE
+        id = #{id}
+    </delete>
 </mapper>
