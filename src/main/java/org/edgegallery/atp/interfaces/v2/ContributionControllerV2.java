@@ -19,6 +19,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 import javax.validation.constraints.NotNull;
@@ -37,7 +38,6 @@ import org.edgegallery.atp.service.ContributionService;
 import org.edgegallery.atp.utils.CommonUtil;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -133,13 +133,13 @@ public class ContributionControllerV2 {
     }
 
     @GetMapping(value = "/contributions/{id}/action/download", produces = MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "download contribution scripts", response = InputStreamResource.class)
+    @ApiOperation(value = "download contribution scripts", response = File.class)
     @ApiResponses(value = {
         @ApiResponse(code = 404, message = "microservice not found", response = String.class),
         @ApiResponse(code = 500, message = "resource grant error", response = String.class)
     })
     @PreAuthorize("hasRole('ATP_ADMIN')")
-    public ResponseEntity<InputStreamResource> downloadContributionScripts(
+    public ResponseEntity<byte[]> downloadContributionScripts(
         @ApiParam(value = "contribution id") @PathVariable("id") @Pattern(regexp = Constant.REG_ID) String id) {
         return contributionService.downloadContributions(id);
     }

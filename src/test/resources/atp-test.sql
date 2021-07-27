@@ -88,6 +88,20 @@
         CONSTRAINT contribution_table_pkey PRIMARY KEY (ID)
     );
 
+     DROP TABLE IF EXISTS CONFIG_TABLE;
+
+     CREATE TABLE CONFIG_TABLE (
+         ID                       VARCHAR(200)       NOT NULL,
+         NAMECH                   VARCHAR(200)       NULL,
+         NAMEEN                   VARCHAR(200)       NULL,
+         DESCRIPTIONCh            TEXT               NULL,
+         DESCRIPTIONEN            TEXT               NULL,
+         CONFIGURATION            TEXT               NOT NULL,
+         CREATETIME               TIMESTAMP          NULL,
+         CONSTRAINT config_table_pkey PRIMARY KEY (ID)
+     );
+
+
      INSERT INTO public.test_scenario_table(
       id, nameCh,nameEn, descriptionCh,descriptionEn,label,createTime)
       VALUES ('4d203111-1111-4f62-aabb-8ebcec357f87','社区场景','EdgeGallery Community Scenario','适用于社区场景的测试','suite for EdgeGallery community test','EdgeGallery', now()::timestamp without time zone),

@@ -43,23 +43,15 @@ public interface Constant {
 
     String TENANT_ID = "tenantId";
 
-    String IP = "ip";
-
-    String PORT = "port";
-
     String DOT = ".";
 
     String COLON = ":";
-
-    String DOUBLE_SLASH = "//";
 
     String SLASH = "/";
 
     String COMMA = ",";
 
     String STRIKE = "-";
-
-    String APP_INSTANCE_ID = "appInstanceId";
 
     String DEFINITIONS = "Definition";
 
@@ -77,39 +69,19 @@ public interface Constant {
 
     String ATP_CREATED = "created";
 
-    String ATP_CREATED_FAILED = "create failed";
-
     String WORK_TEMP_DIR = FileChecker.getDir() + File.separator + "/file/temp";
 
     String REG = "[^\\s\\\\/:*?\"<>|](\\x20|[^\\s\\\\/:*?\"<>|])*[^\\s\\\\/:*?\"<>|.]$";
 
     int MAX_LENGTH_FILE_NAME = 255;
 
-    String PACKAGE_XML_FORMAT = ".xml";
-
     String PACKAGE_YAML_FORMAT = ".yaml";
-
-    String PACKAGE_CSH_FORMAT = ".csh";
-
-    String PACKAGE_META_FORMAT = ".meta";
-
-    String PACKAGE_TXT_FORMAT = ".txt";
-
-    String MANIFEST = ".mf";
-
-    String MARK_DOWN = ".md";
 
     int BUFFER = 512;
 
     long TOO_BIG = 0x280000000L; // max size of unzipped data, 10GB
 
     int TOO_MANY = 1024; // max number of files
-
-    String SECURITY_TEST = "securityTest";
-
-    String COMPLIANCE_TEST = "complianceTest";
-
-    String SANDBOX_TEST = "sandboxTest";
 
     String NODE_TEMPLATES = "node_templates";
 
@@ -119,13 +91,7 @@ public interface Constant {
 
     String APP_SERVICE_REQUIRED = "appServiceRequired";
 
-    String SERNAME = "serName";
-
-    String CONTENT_TYPE = "Content-Type";
-
     String APPLICATION_JSON = "application/json";
-
-    String CREATED = "Created";
 
     String JAVA = "java";
 
@@ -134,8 +100,6 @@ public interface Constant {
     String JAR = "jar";
 
     String JAVA_FILE = ".java";
-
-    String EDGE_GALLERY = "EdgeGallery";
 
     String TEST_CASE_DIR = "testCases";
 
@@ -158,8 +122,6 @@ public interface Constant {
     String TASK_TYPE_MANUAL = "manual";
 
     String TASK_TYPE_AUTOMATIC = "automatic";
-    
-    String CONTRIBUTION_TYPE_TEXT = "text";
     
     String CONTRIBUTION_TYPE_SCRIPT = "script";
 
@@ -196,4 +158,8 @@ public interface Constant {
     String INVENTORY_SERVER_ADDRESS = "inventoryServerAddress";
 
     String APPSTORE_SERSVER_ADDRESS = "appstoreServerAddress";
+
+    String SEMICOLON = ";";
+
+    String EQUAL_MARK = "=";
 }

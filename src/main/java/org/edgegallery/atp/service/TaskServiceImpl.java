@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ErrorCode;
 import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
@@ -158,6 +159,9 @@ public class TaskServiceImpl implements TaskService {
         if (null != task) {
             taskRepository.deleteTaskById(taskId, userId);
             CommonUtil.deleteFile(task.getPackagePath());
+            if (StringUtils.isNotEmpty(task.getReportPath())) {
+                CommonUtil.deleteFile(uploadPath.concat(task.getReportPath()));
+            }
         } else {
             LOGGER.warn("task with id: {}, userId: {} not exists in db.", taskId, userId);
         }

@@ -89,15 +89,12 @@ public class TestScenarioServiceImpl implements TestScenarioService {
     @Override
     public TestScenario createTestScenario(TestScenario testScenario, MultipartFile icon) {
         // nameCh or nameEn must exist one
+        CommonUtil.nameExistenceValidation(testScenario.getNameCh(), testScenario.getNameEn());
         testScenario.setNameCh(
             StringUtils.isNotBlank(testScenario.getNameCh()) ? testScenario.getNameCh() : testScenario.getNameEn());
         testScenario.setNameEn(
             StringUtils.isNotBlank(testScenario.getNameEn()) ? testScenario.getNameEn() : testScenario.getNameCh());
-        if (StringUtils.isEmpty(testScenario.getNameCh()) && StringUtils.isEmpty(testScenario.getNameEn())) {
-            LOGGER.error("both nameCh and nameEn is empty.");
-            throw new IllegalRequestException(String.format(ErrorCode.PARAM_IS_NULL_MSG, "nameCh and nameEn both"),
-                ErrorCode.PARAM_IS_NULL, new ArrayList<String>(Arrays.asList("nameCh and nameEn both")));
-        }
+
         testScenario.setDescriptionCh(StringUtils.isNotBlank(testScenario.getDescriptionCh())
             ? testScenario.getDescriptionCh()
             : testScenario.getDescriptionEn());

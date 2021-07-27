@@ -23,6 +23,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -39,6 +40,7 @@ import org.edgegallery.atp.constant.ExceptionConstant;
 import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
 import org.edgegallery.atp.model.BatchOpsRes;
 import org.edgegallery.atp.model.task.testscenarios.TaskTestCase;
+import org.edgegallery.atp.utils.exception.IllegalRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
@@ -322,5 +324,19 @@ public class CommonUtil {
             return false;
         }
         return true;
+    }
+
+    /**
+     * validate nameCh and nameEn existence.
+     *
+     * @param nameCh chinese name
+     * @param nameEn english name
+     */
+    public static void nameExistenceValidation(String nameCh, String nameEn) {
+        if (StringUtils.isEmpty(nameCh) && StringUtils.isEmpty(nameEn)) {
+            LOGGER.error("nameCh and nameEn both not exist.");
+            throw new IllegalRequestException(String.format(ErrorCode.PARAM_IS_NULL_MSG, "nameCh and nameEn both"),
+                ErrorCode.PARAM_IS_NULL, new ArrayList<String>(Arrays.asList("nameCh and nameEn both")));
+        }
     }
 }
