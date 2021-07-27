@@ -84,15 +84,12 @@ public class TestCaseServiceImpl implements TestCaseService {
     @Override
     public TestCase createTestCase(MultipartFile file, TestCase testCase) {
         // nameCh or nameEn must exist one
+        CommonUtil.nameExistenceValidation(testCase.getNameCh(), testCase.getNameEn());
         testCase.setNameCh(StringUtils.isNotBlank(testCase.getNameCh()) ? testCase.getNameCh() : testCase.getNameEn());
         testCase.setNameEn(StringUtils.isNotBlank(testCase.getNameEn()) ? testCase.getNameEn() : testCase.getNameCh());
-        if (StringUtils.isEmpty(testCase.getNameCh()) && StringUtils.isEmpty(testCase.getNameEn())) {
-            LOGGER.error("both nameCh and nameEn is empty");
-            throw new IllegalRequestException(String.format(ErrorCode.PARAM_IS_NULL_MSG, "nameCh and nameEn both"),
-                ErrorCode.PARAM_IS_NULL, new ArrayList<String>(Arrays.asList("nameCh and nameEn both")));
-        }
-        if (null != testCaseRepository.findByName(testCase.getNameCh(), null)
-                || null != testCaseRepository.findByName(null, testCase.getNameEn())) {
+
+        if (null != testCaseRepository.findByName(testCase.getNameCh(), null) || null != testCaseRepository
+            .findByName(null, testCase.getNameEn())) {
             LOGGER.error("name of test case already exist.");
             String param = testCase.getNameCh() + " or " + testCase.getNameEn();
             throw new IllegalRequestException(String.format(ErrorCode.NAME_EXISTS_MSG, param), ErrorCode.NAME_EXISTS,
@@ -100,8 +97,9 @@ public class TestCaseServiceImpl implements TestCaseService {
         }
         checkTestSuiteIdsExist(testCase);
 
-        testCase.setDescriptionCh(StringUtils.isNotBlank(testCase.getDescriptionCh()) ? testCase.getDescriptionCh()
-                : testCase.getDescriptionEn());
+        testCase.setDescriptionCh(StringUtils.isNotBlank(testCase.getDescriptionCh())
+            ? testCase.getDescriptionCh()
+            : testCase.getDescriptionEn());
         testCase.setDescriptionEn(StringUtils.isNotBlank(testCase.getDescriptionEn()) ? testCase.getDescriptionEn()
                 : testCase.getDescriptionCh());
         testCase.setExpectResultCh(StringUtils.isNotBlank(testCase.getExpectResultCh()) ? testCase.getExpectResultCh()

@@ -27,6 +27,7 @@ import org.edgegallery.atp.repository.task.TaskRepository;
 import org.edgegallery.atp.repository.testcase.TestCaseRepository;
 import org.edgegallery.atp.repository.testscenario.TestScenarioRepository;
 import org.edgegallery.atp.repository.testsuite.TestSuiteRepository;
+import org.edgegallery.atp.utils.CommonUtil;
 import org.edgegallery.atp.utils.exception.FileNotExistsException;
 import org.edgegallery.atp.utils.exception.IllegalRequestException;
 import org.slf4j.Logger;
@@ -54,15 +55,12 @@ public class TestSuiteServiceImpl implements TestSuiteService {
     @Override
     public TestSuite createTestSuite(TestSuite testSuite) {
         // nameCh or nameEn must exist one
-        testSuite.setNameCh(
-                StringUtils.isNotBlank(testSuite.getNameCh()) ? testSuite.getNameCh() : testSuite.getNameEn());
+        CommonUtil.nameExistenceValidation(testSuite.getNameCh(), testSuite.getNameEn());
+        testSuite
+            .setNameCh(StringUtils.isNotBlank(testSuite.getNameCh()) ? testSuite.getNameCh() : testSuite.getNameEn());
         testSuite.setNameEn(
                 StringUtils.isNotBlank(testSuite.getNameEn()) ? testSuite.getNameEn() : testSuite.getNameCh());
-        if (StringUtils.isEmpty(testSuite.getNameCh()) && StringUtils.isEmpty(testSuite.getNameEn())) {
-            LOGGER.error("both nameCh and nameEn is null.");
-            throw new IllegalRequestException(String.format(ErrorCode.PARAM_IS_NULL_MSG, "nameCh and nameEn both"),
-                ErrorCode.PARAM_IS_NULL, new ArrayList<String>(Arrays.asList("nameCh and nameEn both")));
-        }
+
         testSuite.setDescriptionCh(StringUtils.isNotBlank(testSuite.getDescriptionCh()) ? testSuite.getDescriptionCh()
                 : testSuite.getDescriptionEn());
         testSuite.setDescriptionEn(StringUtils.isNotBlank(testSuite.getDescriptionEn()) ? testSuite.getDescriptionEn()

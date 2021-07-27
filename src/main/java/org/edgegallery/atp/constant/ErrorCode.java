@@ -190,4 +190,12 @@ public interface ErrorCode {
     int TEST_CASE_TYPE_COMPATIBILITY_ERROR = 40022;
 
     String TEST_CASE_TYPE_COMPATIBILITY_ERROR_MSG = "test case type in testSuiteIds is not the same as others.";
+
+    /**
+     * config param pattern error.
+     */
+    int CONFIG_PARAM_PATTERN_ERROR = 40023;
+
+    String CONFIG_PARAM_PATTERN_ERROR_MSG
+        = "config param pattern wrong,each param must split by ; and key value must split by =";
 }

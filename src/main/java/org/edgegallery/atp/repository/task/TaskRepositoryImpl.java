@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ErrorCode;
 import org.edgegallery.atp.model.task.TaskPO;
@@ -45,6 +46,7 @@ import org.edgegallery.atp.utils.exception.IllegalRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -63,6 +65,9 @@ public class TaskRepositoryImpl implements TaskRepository {
 
     @Autowired
     TestSuiteRepository testSuiteRepository;
+
+    @Value("${servicecomb.uploads.directory}")
+    private String uploadPath;
 
     @Override
     public void insert(TaskRequest task) {
@@ -168,6 +173,9 @@ public class TaskRepositoryImpl implements TaskRepository {
                     taskMapper.deleteTaskById(id, null);
                     if (null != task) {
                         CommonUtil.deleteFile(task.getPackagePath());
+                        if (StringUtils.isNotEmpty(task.getReportPath())) {
+                            CommonUtil.deleteFile(uploadPath.concat(task.getReportPath()));
+                        }
                     }
                 } catch (Exception e) {
                     LOGGER.error("delete task by id {} failed. {}", id, e);
