@@ -27,4 +27,26 @@ public interface ConfigMapper {
      * @param config config info
      */
     void insert(Config config);
+
+    /**
+     * query config by id.
+     *
+     * @param id config id
+     * @return config info
+     */
+    Config queryConfigById(String id);
+
+    /**
+     * update config.
+     *
+     * @param config config info
+     */
+    void updateConfig(Config config);
+
+    /**
+     * delete config.
+     *
+     * @param id config id
+     */
+    void deleteConfig(String id);
 }

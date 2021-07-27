@@ -14,6 +14,9 @@
 
 package org.edgegallery.atp.service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import org.apache.commons.lang.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ErrorCode;
 import org.edgegallery.atp.model.config.Config;
@@ -21,9 +24,11 @@ import org.edgegallery.atp.model.config.ConfigBase;
 import org.edgegallery.atp.repository.config.ConfigRepository;
 import org.edgegallery.atp.repository.task.TaskRepository;
 import org.edgegallery.atp.utils.CommonUtil;
+import org.edgegallery.atp.utils.exception.FileNotExistsException;
 import org.edgegallery.atp.utils.exception.IllegalRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,10 +44,15 @@ public class ConfigServiceImpl implements ConfigService {
 
     @Override
     public Config createConfig(ConfigBase configBase) {
-        Config config = new Config();
+        if (StringUtils.isEmpty(configBase.getConfiguration())) {
+            LOGGER.error("configuration is null.");
+            throw new IllegalRequestException(String.format(ErrorCode.PARAM_IS_NULL_MSG, "configuration"),
+                ErrorCode.PARAM_IS_NULL, new ArrayList<String>(Arrays.asList("configuration")));
+        }
         CommonUtil.nameExistenceValidation(configBase.getNameCh(), configBase.getNameEn());
         checkParamPattern(configBase.getConfiguration());
 
+        Config config = new Config();
         config.setId(CommonUtil.generateId());
         config.setNameCh(null == configBase.getNameCh() ? configBase.getNameEn() : configBase.getNameCh());
         config.setNameEn(null == configBase.getNameEn() ? configBase.getNameCh() : configBase.getNameEn());
@@ -55,8 +65,34 @@ public class ConfigServiceImpl implements ConfigService {
 
         configRepository.insert(config);
         LOGGER.info("create config successfully.");
-        //TODO PARAMS validate
-        return null;
+        return config;
+    }
+
+    @Override
+    public Config updateConfig(ConfigBase configBase, String id) throws FileNotExistsException {
+        if (StringUtils.isNotEmpty(configBase.getConfiguration())) {
+            checkParamPattern(configBase.getConfiguration());
+        }
+        Config configDB = configRepository.queryConfigById(id);
+        if (null == configDB) {
+            LOGGER.error("this config {} not exists.", id);
+            throw new FileNotExistsException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, "config id"),
+                ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList("config id")));
+        }
+
+        Config config = new Config();
+        BeanUtils.copyProperties(configBase, config);
+        config.setId(id);
+        configRepository.updateConfig(config);
+        LOGGER.info("update config successfully.");
+        return configRepository.queryConfigById(id);
+    }
+
+    @Override
+    public Boolean deleteConfig(String id) {
+        configRepository.deleteConfig(id);
+        LOGGER.info("delete config successfully.");
+        return true;
     }
 
     /**
