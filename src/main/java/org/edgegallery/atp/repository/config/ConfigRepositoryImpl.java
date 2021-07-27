@@ -39,7 +39,8 @@ public class ConfigRepositoryImpl implements ConfigRepository {
             configMapper.insert(config);
         } catch (Exception e) {
             LOGGER.error("insert config failed. {}", e);
-            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "insert config failed"), ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("insert config failed")));
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "insert config failed"),
+                ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("insert config failed")));
         }
     }
 }

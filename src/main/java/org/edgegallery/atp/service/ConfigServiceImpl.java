@@ -68,14 +68,16 @@ public class ConfigServiceImpl implements ConfigService {
         String[] params = configuration.split(Constant.SEMICOLON);
         if (0 == params.length) {
             LOGGER.error("config param pattern error, not having ;");
-            throw new IllegalRequestException(ErrorCode.CONFIG_PARAM_PATTERN_ERROR_MSG, ErrorCode.CONFIG_PARAM_PATTERN_ERROR, null);
+            throw new IllegalRequestException(ErrorCode.CONFIG_PARAM_PATTERN_ERROR_MSG,
+                ErrorCode.CONFIG_PARAM_PATTERN_ERROR, null);
         }
         for (String param : params) {
             String[] config = param.split(Constant.EQUAL_MARK);
             // param patter: key = value;
             if (2 != config.length) {
                 LOGGER.error("config param pattern error,not having =");
-                throw new IllegalRequestException(ErrorCode.CONFIG_PARAM_PATTERN_ERROR_MSG, ErrorCode.CONFIG_PARAM_PATTERN_ERROR, null);
+                throw new IllegalRequestException(ErrorCode.CONFIG_PARAM_PATTERN_ERROR_MSG,
+                    ErrorCode.CONFIG_PARAM_PATTERN_ERROR, null);
             }
         }
     }
