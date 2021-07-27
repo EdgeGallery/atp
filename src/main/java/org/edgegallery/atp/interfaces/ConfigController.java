@@ -54,12 +54,14 @@ public class ConfigController {
     @PostMapping(value = "/configs", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "create a config.", response = String.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 404, message = "microservice not found", response = String.class), @ApiResponse(code = 500, message = "resource grant error", response = String.class)
+        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
+        @ApiResponse(code = 500, message = "resource grant error", response = String.class)
     })
     @PreAuthorize("hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<ResponseObject<Config>> createConfig(
         @ApiParam(value = "config request param") @RequestBody ConfigBase config) {
-        ResponseObject<Config> result = new ResponseObject<Config>(configService.createConfig(config), ErrorCode.RET_CODE_SUCCESS, null, "create a config successfully.");
+        ResponseObject<Config> result = new ResponseObject<Config>(configService.createConfig(config),
+            ErrorCode.RET_CODE_SUCCESS, null, "create a config successfully.");
         return ResponseEntity.ok(result);
     }
 }
