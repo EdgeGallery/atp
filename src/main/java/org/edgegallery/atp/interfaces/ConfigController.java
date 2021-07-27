@@ -1,3 +1,17 @@
+/*
+ * Copyright 2021 Huawei Technologies Co., Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
 package org.edgegallery.atp.interfaces;
 
 import io.swagger.annotations.Api;
@@ -40,14 +54,12 @@ public class ConfigController {
     @PostMapping(value = "/configs", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "create a config.", response = String.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
-        @ApiResponse(code = 500, message = "resource grant error", response = String.class)
+        @ApiResponse(code = 404, message = "microservice not found", response = String.class), @ApiResponse(code = 500, message = "resource grant error", response = String.class)
     })
     @PreAuthorize("hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<ResponseObject<Config>> createConfig(
         @ApiParam(value = "config request param") @RequestBody ConfigBase config) {
-        ResponseObject<Config> result = new ResponseObject<Config>(configService.createConfig(config),
-            ErrorCode.RET_CODE_SUCCESS, null, "create a config successfully.");
+        ResponseObject<Config> result = new ResponseObject<Config>(configService.createConfig(config), ErrorCode.RET_CODE_SUCCESS, null, "create a config successfully.");
         return ResponseEntity.ok(result);
     }
 }
