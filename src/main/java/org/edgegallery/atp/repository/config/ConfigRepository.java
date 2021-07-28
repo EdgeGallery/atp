@@ -14,6 +14,7 @@
 
 package org.edgegallery.atp.repository.config;
 
+import java.util.List;
 import org.edgegallery.atp.model.config.Config;
 
 public interface ConfigRepository {
@@ -45,4 +46,24 @@ public interface ConfigRepository {
      * @param id config id
      */
     void deleteConfig(String id);
+
+    /**
+     * get total count of configs.
+     *
+     * @param nameCh nameCh
+     * @param nameEn nameEn
+     * @return total nums
+     */
+    int countTotal(String nameCh, String nameEn);
+
+    /**
+     * get all configs with pagination.
+     *
+     * @param limit limit
+     * @param offset offset
+     * @param nameCh nameCh
+     * @param nameEn nameEn
+     * @return config info list
+     */
+    List<Config> getAllWithPagination(int limit, int offset, String nameCh, String nameEn);
 }

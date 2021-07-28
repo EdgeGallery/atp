@@ -60,4 +60,28 @@
         WHERE
         id = #{id}
     </delete>
+
+    <select id="countTotal" resultType="java.lang.Integer">
+        select count(*) FROM config_table where
+        <if test="nameCh != null and nameCh !=''">
+            nameCh ~* #{nameCh} and
+        </if>
+        <if test="nameEn != null and nameEn !=''">
+            nameEn ~* #{nameEn} and
+        </if>
+        1=1
+    </select>
+
+    <select id="getAllWithPagination"
+            resultType="org.edgegallery.atp.model.config.Config">
+        select * from config_table where
+        <if test="nameCh != null and nameCh !=''">
+            nameCh ~* #{nameCh} and
+        </if>
+        <if test="nameEn != null and nameEn !=''">
+            nameEn ~* #{nameEn} and
+        </if>
+        1=1
+        ORDER BY createTime limit #{limit} offset #{offset}
+    </select>
 </mapper>
