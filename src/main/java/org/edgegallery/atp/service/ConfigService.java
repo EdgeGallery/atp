@@ -14,6 +14,7 @@
 
 package org.edgegallery.atp.service;
 
+import org.edgegallery.atp.model.PageResult;
 import org.edgegallery.atp.model.config.Config;
 import org.edgegallery.atp.model.config.ConfigBase;
 import org.edgegallery.atp.utils.exception.FileNotExistsException;
@@ -43,4 +44,23 @@ public interface ConfigService {
      * @return true
      */
     Boolean deleteConfig(String id);
+
+    /**
+     * query config by id.
+     *
+     * @param id config id
+     * @return config info
+     */
+    Config queryConfig(String id) throws FileNotExistsException;
+
+    /**
+     * query all configs.
+     *
+     * @param limit limit
+     * @param offset offset
+     * @param locale locale
+     * @param name name
+     * @return config info with page pattern
+     */
+    PageResult<Config> queryAllConfigs(int limit, int offset, String locale, String name);
 }

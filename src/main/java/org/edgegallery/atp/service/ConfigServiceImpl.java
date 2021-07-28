@@ -19,6 +19,7 @@ import java.util.Arrays;
 import org.apache.commons.lang.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ErrorCode;
+import org.edgegallery.atp.model.PageResult;
 import org.edgegallery.atp.model.config.Config;
 import org.edgegallery.atp.model.config.ConfigBase;
 import org.edgegallery.atp.repository.config.ConfigRepository;
@@ -93,6 +94,29 @@ public class ConfigServiceImpl implements ConfigService {
         configRepository.deleteConfig(id);
         LOGGER.info("delete config successfully.");
         return true;
+    }
+
+    @Override
+    public Config queryConfig(String id) throws FileNotExistsException {
+        Config config = configRepository.queryConfigById(id);
+        if (null == config) {
+            LOGGER.error("config id does not exists: {}", id);
+            throw new FileNotExistsException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, "config id"),
+                ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList("config id")));
+        }
+        LOGGER.info("query config by id successfully.");
+        return config;
+    }
+
+    @Override
+    public PageResult<Config> queryAllConfigs(int limit, int offset, String locale, String name) {
+        String nameCh = Constant.LOCALE_CH.equalsIgnoreCase(locale) ? name : null;
+        String nameEn = Constant.LOCALE_EN.equalsIgnoreCase(locale) ? name : null;
+        PageResult<Config> pageResult = new PageResult<Config>(offset, limit);
+        pageResult.setTotal(configRepository.countTotal(nameCh, nameEn));
+        pageResult.setResults(configRepository.getAllWithPagination(limit, offset, nameCh, nameEn));
+        LOGGER.info("query all configs successfully.");
+        return pageResult;
     }
 
     /**

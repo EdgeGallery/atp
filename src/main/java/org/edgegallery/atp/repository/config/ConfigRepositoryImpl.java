@@ -16,6 +16,7 @@ package org.edgegallery.atp.repository.config;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import org.edgegallery.atp.constant.ErrorCode;
 import org.edgegallery.atp.model.config.Config;
 import org.edgegallery.atp.repository.mapper.ConfigMapper;
@@ -74,6 +75,29 @@ public class ConfigRepositoryImpl implements ConfigRepository {
             LOGGER.error("delete a config failed. {}", e);
             throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "delete a config failed"),
                 ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("delete a config failed")));
+        }
+    }
+
+    @Override
+    public int countTotal(String nameCh, String nameEn) {
+        try {
+            return configMapper.countTotal(nameCh, nameEn);
+        } catch (Exception e) {
+            LOGGER.error("get total count failed. {}", e);
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "get total count failed"),
+                ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("get total count failed")));
+        }
+    }
+
+    @Override
+    public List<Config> getAllWithPagination(int limit, int offset, String nameCh, String nameEn) {
+        try {
+            return configMapper.getAllWithPagination(limit, offset, nameCh, nameEn);
+        } catch (Exception e) {
+            LOGGER.error("get all configs with pagination failed. {}", e);
+            throw new IllegalRequestException(
+                String.format(ErrorCode.DB_ERROR_MSG, "get all configs with pagination failed"), ErrorCode.DB_ERROR,
+                new ArrayList<String>(Arrays.asList("get all configs with pagination failed")));
         }
     }
 }

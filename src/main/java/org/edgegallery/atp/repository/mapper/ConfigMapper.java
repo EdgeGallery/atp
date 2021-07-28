@@ -14,7 +14,9 @@
 
 package org.edgegallery.atp.repository.mapper;
 
+import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.edgegallery.atp.model.config.Config;
 import org.springframework.stereotype.Component;
 
@@ -49,4 +51,25 @@ public interface ConfigMapper {
      * @param id config id
      */
     void deleteConfig(String id);
+
+    /**
+     * get total count of configs.
+     *
+     * @param nameCh nameCh
+     * @param nameEn nameEn
+     * @return total nums
+     */
+    int countTotal(@Param("nameCh") String nameCh, @Param("nameEn") String nameEn);
+
+    /**
+     * get all configs with pagination.
+     *
+     * @param limit limit
+     * @param offset offset
+     * @param nameCh nameCh
+     * @param nameEn nameEn
+     * @return config info list
+     */
+    List<Config> getAllWithPagination(@Param("limit") int limit, @Param("offset") int offset,
+        @Param("nameCh") String nameCh, @Param("nameEn") String nameEn);
 }
