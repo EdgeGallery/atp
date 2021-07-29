@@ -100,43 +100,43 @@ public class TestCaseController {
      */
     @PostMapping(value = "/testcases", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "create test case.", response = TestCase.class)
-    @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
-            @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
+    @ApiResponses(value = {
+        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
+        @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)
+    })
     @PreAuthorize("hasRole('ATP_ADMIN')")
     public ResponseEntity<TestCase> createTestCase(
-            @ApiParam(value = "test case file", required = true) @RequestPart("file") MultipartFile file,
-            @ApiParam(value = "test case chinese name",
-                    required = true) @Size(max = Constant.LENGTH_64) @RequestParam("nameCh") String nameCh,
-            @ApiParam(value = "test case english name",
-                    required = true) @Size(max = Constant.LENGTH_64) @RequestParam("nameEn") String nameEn,
-            @ApiParam(value = "test case type",
-                    required = true) @Size(max = Constant.LENGTH_64) @RequestParam("type") String type,
-            @ApiParam(value = "test case chinese description",
-                    required = true) @Size(
-                            max = Constant.LENGTH_255) @RequestParam("descriptionCh") String descriptionCh,
-            @ApiParam(value = "test case english description",
-                    required = true) @Size(
-                            max = Constant.LENGTH_255) @RequestParam("descriptionEn") String descriptionEn,
-            @ApiParam(value = "test case code language",
-                    required = true) @Size(max = Constant.LENGTH_64) @RequestParam("codeLanguage") String codeLanguage,
-            @ApiParam(value = "test case expect result in chinese",
-                    required = true) @Size(
-                            max = Constant.LENGTH_255) @RequestParam("expectResultCh") String expectResultCh,
-            @ApiParam(value = "test case expect result in english",
-                    required = true) @Size(
-                            max = Constant.LENGTH_255) @RequestParam("expectResultEn") String expectResultEn,
-            @ApiParam(value = "test case expect result in chinese",
-                    required = true) @Size(max = Constant.LENGTH_255) @RequestParam("testStepCh") String testStepCh,
-            @ApiParam(value = "test case expect result in english",
-                    required = true) @Size(max = Constant.LENGTH_255) @RequestParam("testStepEn") String testStepEn,
-            @ApiParam(value = "test suite list the test case belong to",
-                    required = true) @Size(
-                            max = Constant.LENGTH_255) @RequestParam("testSuiteIdList") List<String> testSuiteIds) {
+        @ApiParam(value = "test case file", required = true) @RequestPart("file") MultipartFile file,
+        @ApiParam(value = "test case chinese name", required = true) @Size(max = Constant.LENGTH_64)
+        @RequestParam("nameCh") String nameCh,
+        @ApiParam(value = "test case english name", required = true) @Size(max = Constant.LENGTH_64)
+        @RequestParam("nameEn") String nameEn,
+        @ApiParam(value = "test case type", required = true) @Size(max = Constant.LENGTH_64) @RequestParam("type")
+            String type,
+        @ApiParam(value = "test case chinese description", required = true) @Size(max = Constant.LENGTH_255)
+        @RequestParam("descriptionCh") String descriptionCh,
+        @ApiParam(value = "test case english description", required = true) @Size(max = Constant.LENGTH_255)
+        @RequestParam("descriptionEn") String descriptionEn,
+        @ApiParam(value = "test case code language", required = true) @Size(max = Constant.LENGTH_64)
+        @RequestParam("codeLanguage") String codeLanguage,
+        @ApiParam(value = "test case expect result in chinese", required = true) @Size(max = Constant.LENGTH_255)
+        @RequestParam("expectResultCh") String expectResultCh,
+        @ApiParam(value = "test case expect result in english", required = true) @Size(max = Constant.LENGTH_255)
+        @RequestParam("expectResultEn") String expectResultEn,
+        @ApiParam(value = "test case expect result in chinese", required = true) @Size(max = Constant.LENGTH_255)
+        @RequestParam("testStepCh") String testStepCh,
+        @ApiParam(value = "test case expect result in english", required = true) @Size(max = Constant.LENGTH_255)
+        @RequestParam("testStepEn") String testStepEn,
+        @ApiParam(value = "test suite list the test case belong to", required = true) @Size(max = Constant.LENGTH_255)
+        @RequestParam("testSuiteIdList") List<String> testSuiteIds,
+        @ApiParam(value = "config list the test case connected to", required = false) @Size(max = Constant.LENGTH_255)
+        @RequestParam("configIdList") List<String> configIds) {
         TestCase testCase = TestCase.builder().setId(CommonUtil.generateId()).setCodeLanguage(codeLanguage)
-                .setDescriptionCh(descriptionCh).setDescriptionEn(descriptionEn).setExpectResultCh(expectResultCh)
-                .setExpectResultEn(expectResultEn).setNameCh(nameCh).setNameEn(nameEn).setTestStepCh(testStepCh)
-                .setTestStepEn(testStepEn).setType(type).build().toTestCase();
+            .setDescriptionCh(descriptionCh).setDescriptionEn(descriptionEn).setExpectResultCh(expectResultCh)
+            .setExpectResultEn(expectResultEn).setNameCh(nameCh).setNameEn(nameEn).setTestStepCh(testStepCh)
+            .setTestStepEn(testStepEn).setType(type).build().toTestCase();
         testCase.setTestSuiteIdList(testSuiteIds);
+        testCase.setConfigIdList(configIds);
         return ResponseEntity.ok(testCaseService.createTestCase(file, testCase));
     }
 
@@ -161,31 +161,31 @@ public class TestCaseController {
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_ADMIN')")
     public ResponseEntity<TestCase> updateTestCase(
-            @ApiParam(value = "test case id", required = true) @RequestParam("id") String id,
-            @ApiParam(value = "test case file", required = false) @RequestPart("file") MultipartFile file,
-            @ApiParam(value = "test case chinese description",
-                    required = false) @Size(
-                            max = Constant.LENGTH_255) @RequestParam("descriptionCh") String descriptionCh,
-            @ApiParam(value = "test case english description",
-                    required = false) @Size(
-                            max = Constant.LENGTH_255) @RequestParam("descriptionEn") String descriptionEn,
-            @ApiParam(value = "test case code language",
-                    required = false) @Size(max = Constant.LENGTH_64) @RequestParam("codeLanguage") String codeLanguage,
-            @ApiParam(value = "test case expect result in chinese",
-                    required = false) @Size(
-                            max = Constant.LENGTH_255) @RequestParam("expectResultCh") String expectResultCh,
-            @ApiParam(value = "test case expect result in english", required = false) @Size(max = Constant.LENGTH_255)
-            @RequestParam("expectResultEn") String expectResultEn,
+        @ApiParam(value = "test case id", required = true) @RequestParam("id") String id,
+        @ApiParam(value = "test case file", required = false) @RequestPart("file") MultipartFile file,
+        @ApiParam(value = "test case chinese description", required = false) @Size(max = Constant.LENGTH_255)
+        @RequestParam("descriptionCh") String descriptionCh,
+        @ApiParam(value = "test case english description", required = false) @Size(max = Constant.LENGTH_255)
+        @RequestParam("descriptionEn") String descriptionEn,
+        @ApiParam(value = "test case code language", required = false) @Size(max = Constant.LENGTH_64)
+        @RequestParam("codeLanguage") String codeLanguage,
+        @ApiParam(value = "test case expect result in chinese", required = false) @Size(max = Constant.LENGTH_255)
+        @RequestParam("expectResultCh") String expectResultCh,
+        @ApiParam(value = "test case expect result in english", required = false) @Size(max = Constant.LENGTH_255)
+        @RequestParam("expectResultEn") String expectResultEn,
         @ApiParam(value = "test case test step in chinese", required = false) @Size(max = Constant.LENGTH_255)
         @RequestParam(value = "testStepCh") String testStepCh,
         @ApiParam(value = "test case test step in english", required = false) @Size(max = Constant.LENGTH_255)
         @RequestParam(value = "testStepEn") String testStepEn,
         @ApiParam(value = "test suite list the test case belong to", required = false) @Size(max = Constant.LENGTH_255)
-        @RequestParam("testSuiteIdList") List<String> testSuiteIds) throws FileNotExistsException {
+        @RequestParam("testSuiteIdList") List<String> testSuiteIds,
+        @ApiParam(value = "config list the test case connected to", required = false) @Size(max = Constant.LENGTH_255)
+        @RequestParam("configIdList") List<String> configIds) throws FileNotExistsException {
         TestCase testCase = TestCase.builder().setId(id).setCodeLanguage(codeLanguage).setDescriptionCh(descriptionCh)
             .setDescriptionEn(descriptionEn).setExpectResultCh(expectResultCh).setExpectResultEn(expectResultEn)
             .setTestStepCh(testStepCh).setTestStepEn(testStepEn).build().toTestCase();
         testCase.setTestSuiteIdList(testSuiteIds);
+        testCase.setConfigIdList(configIds);
         return ResponseEntity.ok(testCaseService.updateTestCase(file, testCase));
     }
 

@@ -24,8 +24,10 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ErrorCode;
+import org.edgegallery.atp.model.config.Config;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.model.testsuite.TestSuite;
+import org.edgegallery.atp.repository.config.ConfigRepository;
 import org.edgegallery.atp.repository.task.TaskRepository;
 import org.edgegallery.atp.repository.testcase.TestCaseRepository;
 import org.edgegallery.atp.repository.testsuite.TestSuiteRepository;
@@ -56,9 +58,12 @@ public class TestCaseServiceImpl implements TestCaseService {
     @Autowired
     TaskRepository taskRepository;
 
+    @Autowired
+    ConfigRepository configRepository;
+
     @Override
     public ResponseEntity<List<TestCase>> getAllTestCases(String type, String locale, String name,
-            List<String> testSuiteIds) {
+        List<String> testSuiteIds) {
         List<TestCase> result = new LinkedList<TestCase>();
         if (null == testSuiteIds || CollectionUtils.isEmpty(testSuiteIds)) {
             result = testCaseRepository.findAllTestCases(type, locale, name, null);
@@ -96,6 +101,7 @@ public class TestCaseServiceImpl implements TestCaseService {
                 new ArrayList<String>(Arrays.asList(param)));
         }
         checkTestSuiteIdsExist(testCase);
+        checkConfigIdsExist(testCase.getConfigIdList());
 
         testCase.setDescriptionCh(StringUtils.isNotBlank(testCase.getDescriptionCh())
             ? testCase.getDescriptionCh()
@@ -230,6 +236,25 @@ public class TestCaseServiceImpl implements TestCaseService {
             LOGGER.error("some test suite ids do not exist.");
             throw new IllegalRequestException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, "some test suite ids."),
                 ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList("some test suite ids.")));
+        }
+    }
+
+    /**
+     * check existence of config id.
+     *
+     * @param configIds configIds
+     */
+    private void checkConfigIdsExist(List<String> configIds) {
+        if (!CollectionUtils.isEmpty(configIds)) {
+            configIds.forEach(id -> {
+                Config config = configRepository.queryConfigById(id);
+                if (null == config) {
+                    LOGGER.error("config id {} does not exist", id);
+                    throw new IllegalRequestException(
+                        String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, "config id: ".concat(id)),
+                        ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList("config id: ".concat(id))));
+                }
+            });
         }
     }
 }

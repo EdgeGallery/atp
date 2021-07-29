@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
+import org.edgegallery.atp.constant.Constant;
 import org.springframework.util.CollectionUtils;
 
 /**
@@ -35,21 +36,28 @@ public class TestCase extends TestCaseBase {
     private List<String> testSuiteIdList;
 
     /**
+     * config id list the test case connected to.
+     */
+    private List<String> configIdList;
+
+    /**
      * model transfer.
-     * 
+     *
      * @return testCasePo
      */
     public TestCasePo of() {
-        TestCasePo testCasePo =
-                TestCasePo.builder().setClassName(this.getClassName()).setCodeLanguage(this.getCodeLanguage())
-                        .setDescriptionCh(this.getDescriptionCh()).setDescriptionEn(this.getDescriptionEn())
-                        .setExpectResultCh(this.getExpectResultCh()).setExpectResultEn(this.getExpectResultEn())
-                        .setFilePath(this.getFilePath()).setHashCode(this.getHashCode()).setId(this.getId())
-                        .setNameCh(this.getNameCh()).setNameEn(this.getNameEn()).setTestStepCh(this.getTestStepCh())
-                        .setTestStepEn(this.getTestStepEn()).setType(this.getType()).build().toTestCasePo();
+        TestCasePo testCasePo = TestCasePo.builder().setClassName(this.getClassName())
+            .setCodeLanguage(this.getCodeLanguage()).setDescriptionCh(this.getDescriptionCh())
+            .setDescriptionEn(this.getDescriptionEn()).setExpectResultCh(this.getExpectResultCh())
+            .setExpectResultEn(this.getExpectResultEn()).setFilePath(this.getFilePath()).setHashCode(this.getHashCode())
+            .setId(this.getId()).setNameCh(this.getNameCh()).setNameEn(this.getNameEn())
+            .setTestStepCh(this.getTestStepCh()).setTestStepEn(this.getTestStepEn()).setType(this.getType()).build()
+            .toTestCasePo();
         testCasePo.setCreateTime(this.getCreateTime());
         testSuiteIdList = CollectionUtils.isEmpty(testSuiteIdList) ? new ArrayList<String>() : this.testSuiteIdList;
-        testCasePo.setTestSuiteIdList(this.getTestSuiteIdList().stream().collect(Collectors.joining(",")));
+        configIdList = CollectionUtils.isEmpty(configIdList) ? new ArrayList<String>() : this.configIdList;
+        testCasePo.setTestSuiteIdList(this.getTestSuiteIdList().stream().collect(Collectors.joining(Constant.COMMA)));
+        testCasePo.setConfigIdList(this.getConfigIdList().stream().collect(Collectors.joining(Constant.COMMA)));
         return testCasePo;
     }
 }

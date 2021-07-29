@@ -35,6 +35,7 @@
        TESTSTEPCH               TEXT               NULL,
        TESTSTEPEN               TEXT               NULL,
        CREATETIME               TIMESTAMP          NULL,
+       CONFIGIDLIST             TEXT               NULL,
        CONSTRAINT test_case_table_pkey PRIMARY KEY (ID)
     );
 
