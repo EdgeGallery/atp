@@ -16,6 +16,8 @@ package org.edgegallery.atp.interfaceTest;
 
 import static org.junit.Assert.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+
+
 import com.google.gson.Gson;
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,6 +25,8 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import mockit.Mock;
+import mockit.MockUp;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.entity.ContentType;
 import org.apache.ibatis.io.Resources;
@@ -50,8 +54,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
-import mockit.Mock;
-import mockit.MockUp;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ATPApplicationTest.class)
@@ -106,11 +108,12 @@ public class TestCaseTest {
         MultipartFile csarMultiFile = new MockMultipartFile(file.getName(), file.getName(),
                 ContentType.APPLICATION_OCTET_STREAM.toString(), csarInputStream);
         MvcResult mvcResult = mvc.perform(
-                MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/testcases").file("file", csarMultiFile.getBytes())
-                        .with(csrf()).param("nameEn", "test").param("nameCh", "").param("type", "automatic")
-                        .param("descriptionCh", "test").param("descriptionEn", "").param("codeLanguage", "java")
-                        .param("expectResultCh", "test").param("expectResultEn", "").param("testStepEn", "test")
-                        .param("testStepCh", "").param("testSuiteIdList", "522684bd-d6df-4b47-aab8-b43f1b4c19c0"))
+            MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/testcases").file("file", csarMultiFile.getBytes())
+                .with(csrf()).param("nameEn", "test").param("nameCh", "").param("type", "automatic")
+                .param("descriptionCh", "test").param("descriptionEn", "").param("codeLanguage", "java")
+                .param("expectResultCh", "test").param("expectResultEn", "").param("testStepEn", "test")
+                .param("testStepCh", "").param("testSuiteIdList", "522684bd-d6df-4b47-aab8-b43f1b4c19c0")
+                .param("configIdList", ""))
                 .andReturn();
         int result = mvcResult.getResponse().getStatus();
         assertEquals(200, result);
