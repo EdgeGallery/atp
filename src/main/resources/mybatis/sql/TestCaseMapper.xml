@@ -65,15 +65,17 @@
     </select>
     
     <insert id="insert"
-		parameterType="org.edgegallery.atp.model.testcase.TestCasePo">
-		insert into
-		test_case_table
-		(id, nameCh,nameEn, hashCode, type, className, descriptionCh,descriptionEn, filePath,codeLanguage,
-		expectResultCh,expectResultEn, testStepCh,testStepEn,testSuiteIdList,createTime)
-		VALUES
-		(#{id}, #{nameCh}, #{nameEn}, #{hashCode},#{type},#{className}, #{descriptionCh},#{descriptionEn}, #{filePath},#{codeLanguage},
-		#{expectResultCh},#{expectResultEn},#{testStepCh},#{testStepEn}, #{testSuiteIdList},#{createTime})
-	</insert>
+            parameterType="org.edgegallery.atp.model.testcase.TestCasePo">
+        insert into
+        test_case_table
+        (id, nameCh,nameEn, hashCode, type, className, descriptionCh,descriptionEn, filePath,codeLanguage,
+        expectResultCh,expectResultEn, testStepCh,testStepEn,testSuiteIdList,createTime,configIdList)
+        VALUES
+        (#{id}, #{nameCh}, #{nameEn}, #{hashCode},#{type},#{className}, #{descriptionCh},#{descriptionEn},
+        #{filePath},#{codeLanguage},
+        #{expectResultCh},#{expectResultEn},#{testStepCh},#{testStepEn},
+        #{testSuiteIdList},#{createTime},#{configIdList})
+    </insert>
     
     <update id="update" parameterType="org.edgegallery.atp.model.testcase.TestCasePo">
         UPDATE
@@ -87,28 +89,31 @@
           <if test="codeLanguage != null and codeLanguage !=''">
             codeLanguage = #{codeLanguage},
           </if>
-          <if test="expectResultCh != null and expectResultCh !=''">
+        <if test="expectResultCh != null and expectResultCh !=''">
             expectResultCh = #{expectResultCh},
-          </if> 
-          <if test="expectResultEn != null and expectResultEn !=''">
+        </if>
+        <if test="expectResultEn != null and expectResultEn !=''">
             expectResultEn = #{expectResultEn},
-          </if> 
-          <if test="className != null and className !=''">
+        </if>
+        <if test="className != null and className !=''">
             className = #{className},
-          </if>   
-          <if test="filePath != null and filePath !=''">
+        </if>
+        <if test="filePath != null and filePath !=''">
             filePath = #{filePath},
-          </if> 
-          <if test="testStepCh != null and testStepCh !=''">
+        </if>
+        <if test="testStepCh != null and testStepCh !=''">
             testStepCh = #{testStepCh},
-          </if> 
-          <if test="testStepEn != null and testStepEn !=''">
+        </if>
+        <if test="testStepEn != null and testStepEn !=''">
             testStepEn = #{testStepEn},
-          </if>
-          <if test="testSuiteIdList != null and testSuiteIdList !=''">
+        </if>
+        <if test="testSuiteIdList != null and testSuiteIdList !=''">
             testSuiteIdList = #{testSuiteIdList},
-          </if>                                  
-           id=#{id}
+        </if>
+        <if test="configIdList != null and configIdList !=''">
+            configIdList = #{configIdList},
+        </if>
+        id=#{id}
         where id = #{id}
     </update>
     

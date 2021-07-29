@@ -17,6 +17,7 @@ package org.edgegallery.atp.model.testcase;
 import java.util.Arrays;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 
 /**
@@ -27,20 +28,25 @@ import org.edgegallery.atp.constant.Constant;
 public class TestCasePo extends TestCaseBase {
     private String testSuiteIdList;
 
+    private String configIdList;
+
     /**
      * model transfer.
-     * 
+     *
      * @return test case
      */
     public TestCase toDomain() {
         TestCase testCase = TestCase.builder().setClassName(this.getClassName()).setCodeLanguage(this.getCodeLanguage())
-                .setDescriptionCh(this.getDescriptionCh()).setDescriptionEn(this.getDescriptionEn())
-                .setExpectResultCh(this.getExpectResultCh()).setExpectResultEn(this.getExpectResultEn())
-                .setFilePath(this.getFilePath()).setHashCode(this.getHashCode()).setId(this.getId())
-                .setNameCh(this.getNameCh()).setNameEn(this.getNameEn()).setTestStepCh(this.getTestStepCh())
-                .setTestStepEn(this.getTestStepEn()).setType(this.getType()).build().toTestCase();
+            .setDescriptionCh(this.getDescriptionCh()).setDescriptionEn(this.getDescriptionEn())
+            .setExpectResultCh(this.getExpectResultCh()).setExpectResultEn(this.getExpectResultEn())
+            .setFilePath(this.getFilePath()).setHashCode(this.getHashCode()).setId(this.getId())
+            .setNameCh(this.getNameCh()).setNameEn(this.getNameEn()).setTestStepCh(this.getTestStepCh())
+            .setTestStepEn(this.getTestStepEn()).setType(this.getType()).build().toTestCase();
         testCase.setCreateTime(this.getCreateTime());
         testCase.setTestSuiteIdList(Arrays.asList(this.getTestSuiteIdList().split(Constant.COMMA)));
+        if (!StringUtils.isEmpty(this.getConfigIdList())) {
+            testCase.setConfigIdList(Arrays.asList(this.getConfigIdList().split(Constant.COMMA)));
+        }
         return testCase;
     }
 }
