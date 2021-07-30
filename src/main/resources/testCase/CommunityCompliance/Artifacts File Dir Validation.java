@@ -20,24 +20,21 @@ import java.util.zip.ZipFile;
 
 /**
  * root path must contain Artifacts file dir.
- * 
  */
 public class ArtifactsValidation {
     private static final String ARTIFACTS_NOT_EXISTS = "root path must contain Artifacts file dir.";
+
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
 
     /**
      * execute test case.
-     * 
+     *
      * @param filePath csar file path
      * @param context context
      * @return result
      */
     public String execute(String filePath, Map<String, String> context) {
-        try {
-            Thread.sleep(600);
-        } catch (InterruptedException e1) {
-        }
+        delay();
         try (ZipFile zipFile = new ZipFile(filePath)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
@@ -51,5 +48,15 @@ public class ArtifactsValidation {
         }
 
         return ARTIFACTS_NOT_EXISTS;
+    }
+
+    /**
+     * add delay.
+     */
+    private void delay() {
+        try {
+            Thread.sleep(600);
+        } catch (InterruptedException e) {
+        }
     }
 }

@@ -20,24 +20,21 @@ import java.util.zip.ZipFile;
 
 /**
  * root path must contain APPD file dir.
- * 
  */
 public class APPDValidation {
     private static final String APPD_NOT_EXISTS = "root path must contain APPD file dir.";
+
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
 
     /**
      * execute test case.
-     * 
+     *
      * @param filePath csar file path
      * @param context context
      * @return result
      */
     public String execute(String filePath, Map<String, String> context) {
-        try {
-            Thread.sleep(800);
-        } catch (InterruptedException e1) {
-        }
+        delay();
         try (ZipFile zipFile = new ZipFile(filePath)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
@@ -51,5 +48,15 @@ public class APPDValidation {
         }
 
         return APPD_NOT_EXISTS;
+    }
+
+    /**
+     * add delay.
+     */
+    private void delay() {
+        try {
+            Thread.sleep(800);
+        } catch (InterruptedException e) {
+        }
     }
 }

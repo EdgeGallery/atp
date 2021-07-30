@@ -28,18 +28,21 @@ import java.util.zip.ZipInputStream;
 
 /**
  * cpu description filed: num_virtual_cpu in main yaml file validation
- * 
  */
 public class CPUNumberDescriptionValidation {
     private static final String CPU_DESCRIPTION_NOT_EXISTS = "There is no cpu description filed: num_virtual_cpu";
+
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
+
     private static final String NUM_VIRTUAL_CPU = "num_virtual_cpu";
+
     private static final String SUCCESS = "success";
+
     private static final String ENTRY_DEFINITIONS_NOT_EXISTS = "there is no Entry-Definitions field in .meta file.";
 
     /**
      * execute test case.
-     * 
+     *
      * @param filePath csar file path
      * @param context context
      * @return result
@@ -52,7 +55,7 @@ public class CPUNumberDescriptionValidation {
                 ZipEntry entry = entries.nextElement();
                 String[] nameArray = entry.getName().split("/");
                 // find zip package in APPD file path.
-                if (nameArray.length == 2 && "APPD".equalsIgnoreCase(nameArray[0]) && nameArray[1].endsWith(".zip")) {
+                if (2 == nameArray.length && "APPD".equalsIgnoreCase(nameArray[0]) && nameArray[1].endsWith(".zip")) {
                     String yamlPath = getYamlPath(zipFile, entry);
                     if (null != yamlPath) {
                         return analysizeAppdZip(zipFile, entry, yamlPath) ? SUCCESS : CPU_DESCRIPTION_NOT_EXISTS;
@@ -80,7 +83,7 @@ public class CPUNumberDescriptionValidation {
 
     /**
      * get main yaml file path.
-     * 
+     *
      * @param zipFile zipFile
      * @param entry entry
      * @return main yaml file path
@@ -93,16 +96,16 @@ public class CPUNumberDescriptionValidation {
                 if (appdEntry.getName().endsWith(".meta")) {
                     byte[] data = getByte(appdZis);
                     InputStream inputStream = new ByteArrayInputStream(data);
-                    try (BufferedReader br =
-                            new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+                    try (BufferedReader br = new BufferedReader(
+                        new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
                         String line = "";
                         while ((line = br.readLine()) != null) {
                             // prefix: path
-                          String[] splitByColon = line.split(":");
-                          if (splitByColon.length > 1
-                                  && "Entry-Definitions".equalsIgnoreCase(splitByColon[0].trim())) {
-                              return splitByColon[1].trim();
-                          }
+                            String[] splitByColon = line.split(":");
+                            if (splitByColon.length > 1 && "Entry-Definitions"
+                                .equalsIgnoreCase(splitByColon[0].trim())) {
+                                return splitByColon[1].trim();
+                            }
                         }
                     }
                 }
@@ -114,7 +117,7 @@ public class CPUNumberDescriptionValidation {
 
     /**
      * analysize zip file and get main yaml file content.
-     * 
+     *
      * @param zipFile zipFile
      * @param entry entry
      * @param yamlPath yamlPath
@@ -138,7 +141,7 @@ public class CPUNumberDescriptionValidation {
 
     /**
      * get bytes from inputStream.
-     * 
+     *
      * @param zis inputStream
      * @return file bytes
      */
@@ -157,13 +160,12 @@ public class CPUNumberDescriptionValidation {
 
     /**
      * analysize if has cpu description field/
-     * 
+     *
      * @param inputStream main yaml file content
      * @return result
      */
     private boolean hasCPUDescription(InputStream inputStream) {
-        try (BufferedReader br =
-                new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
             String line = "";
             while ((line = br.readLine()) != null) {
                 if (line.trim().startsWith(NUM_VIRTUAL_CPU)) {

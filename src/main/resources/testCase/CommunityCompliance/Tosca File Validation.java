@@ -28,11 +28,17 @@ import java.util.zip.ZipFile;
  */
 public class TOSCAFileTestCaseInner {
     private static final String TOSCA_META = "TOSCA.meta";
+
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
+
     private static final String TOSCA_FILE_NOT_EXISTS = "tosca.meta not exists.";
+
     private static final String TOSCA_LOSS_FIELD = "tosca.meta file may lost the following filed:Entry-Definitions.";
+
     private static final String FILE_NOT_EXIT = "the value of field Entry-Definitions do not exist corresponding file.";
+
     private static final String FILE_MUST_BE_YAML = "the value of field Entry-Definitions must be yaml file path.";
+
     private static Set<String> pathSet = new HashSet<String>();
 
     private static Set<String> field = new HashSet<String>() {
@@ -43,7 +49,7 @@ public class TOSCAFileTestCaseInner {
 
     /**
      * execute test case.
-     * 
+     *
      * @param filePath csar file path
      * @param context context
      * @return result
@@ -73,13 +79,13 @@ public class TOSCAFileTestCaseInner {
         }
 
         return isExistTosca == false
-                ? TOSCA_FILE_NOT_EXISTS
-                : pathSet.containsAll(sourcePathSet) ? "success" : FILE_NOT_EXIT;
+            ? TOSCA_FILE_NOT_EXISTS
+            : pathSet.containsAll(sourcePathSet) ? "success" : FILE_NOT_EXIT;
     }
 
     /**
      * if contain all fields in prefixSet.
-     * 
+     *
      * @param zipFile zipFile
      * @param entry entry
      * @param prefixSet prefixSet
@@ -87,8 +93,8 @@ public class TOSCAFileTestCaseInner {
      */
     private boolean isExistAll(ZipFile zipFile, ZipEntry entry, Set<String> prefixSet) {
         Set<String> sourcePathSet = new HashSet<String>();
-        try (BufferedReader br =
-                new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
+        try (BufferedReader br = new BufferedReader(
+            new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
             String line = "";
             while ((line = br.readLine()) != null) {
                 // prefix: path
@@ -105,7 +111,7 @@ public class TOSCAFileTestCaseInner {
 
     /**
      * remove last slash.
-     * 
+     *
      * @param path path
      * @return path after removing last slash
      */
@@ -118,7 +124,7 @@ public class TOSCAFileTestCaseInner {
 
     /**
      * get Source file path and put in set.
-     * 
+     *
      * @param zipFile zipFile
      * @param entry entry
      * @param prefixSet prefixSet
@@ -126,8 +132,8 @@ public class TOSCAFileTestCaseInner {
      */
     private Set<String> getPathSet(ZipFile zipFile, ZipEntry entry, Set<String> prefixSet) {
         Set<String> pathSet = new HashSet<String>();
-        try (BufferedReader br =
-                new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
+        try (BufferedReader br = new BufferedReader(
+            new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
             String line = "";
             while ((line = br.readLine()) != null) {
                 String[] splitByColon = line.split(":");

@@ -20,25 +20,21 @@ import java.util.zip.ZipFile;
 
 /**
  * file number must less than 1024.
- *
  */
 public class FileNumberValidation {
     private static final String FILE_TOO_MANY = "file number must less than 1024.";
+
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
 
     /**
      * execute test case.
-     * 
+     *
      * @param filePath csar file path
      * @param context context
      * @return result
      */
     public String execute(String filePath, Map<String, String> context) {
-        try {
-            Thread.sleep(800);
-        } catch (InterruptedException e) {
-        }
-        
+        delay();
         int num = 0;
         try (ZipFile zipFile = new ZipFile(filePath)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
@@ -54,6 +50,16 @@ public class FileNumberValidation {
         }
 
         return "success";
+    }
+
+    /**
+     * add delay.
+     */
+    private void delay() {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+        }
     }
 }
 

@@ -19,19 +19,19 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 /**
- * Swagger file dir in root path validation.
+ * existence of helm tgz file validation
  */
-public class SwaggerFileDirValidation {
-    private static final String SWAGGER_NOT_EXISTS = "root path must contain Swagger file dir.";
-
+public class HelmTgzFileValidation {
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
+
+    private static final String TGZ_NOT_EXISTS = "there is no .tgz file in Artifacts/Deployment/Charts dir";
 
     /**
      * execute test case.
      *
      * @param filePath csar file path
-     * @param context context
-     * @return result
+     * @param context context info
+     * @return execute result
      */
     public String execute(String filePath, Map<String, String> context) {
         delay();
@@ -39,7 +39,7 @@ public class SwaggerFileDirValidation {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
-                if (entry.getName().startsWith("Swagger/")) {
+                if (entry.getName().startsWith("Artifacts/Deployment/Charts") && entry.getName().endsWith(".tgz")) {
                     return "success";
                 }
             }
@@ -47,7 +47,7 @@ public class SwaggerFileDirValidation {
             return INNER_EXCEPTION;
         }
 
-        return SWAGGER_NOT_EXISTS;
+        return TGZ_NOT_EXISTS;
     }
 
     /**
@@ -55,7 +55,7 @@ public class SwaggerFileDirValidation {
      */
     private void delay() {
         try {
-            Thread.sleep(1000);
+            Thread.sleep(800);
         } catch (InterruptedException e) {
         }
     }

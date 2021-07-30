@@ -25,22 +25,16 @@ import java.util.zip.ZipFile;
 
 /**
  * mf file field existence validation.
- * 
  */
 public class CUMFFieldValidation {
 
-    private static final String MF_FILE_LOSS_FIELD =
-            ".mf file may lost the following fileds:app_name,app_provider,app_package_version,app_release_data_time,app_type or app_package_description.";
+    private static final String MF_FILE_LOSS_FIELD
+        = ".mf file may lost the following fileds:app_name,app_provider,app_package_version,app_release_data_time,app_type or app_package_description.";
+
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
+
     private static final String FILE_NOT_EXIST = ".mf file may not exist or it do not in the root directory.";
 
-    /**
-     * execute test case.
-     * 
-     * @param filePath csar file path
-     * @param context context
-     * @return result
-     */
     private static Set<String> field = new HashSet<String>() {
         {
             add("app_name");
@@ -52,20 +46,22 @@ public class CUMFFieldValidation {
         }
     };
 
+    /**
+     * execute test case.
+     *
+     * @param filePath csar file path
+     * @param context context
+     * @return result
+     */
     public String execute(String filePath, Map<String, String> context) {
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e1) {
-        }
+        delay();
         try (ZipFile zipFile = new ZipFile(filePath)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
                 if (entry.getName().split("/").length == 1 && fileSuffixValidate("mf", entry.getName())) {
                     // some fields not exist in .mf file
-                    return isExistAll(zipFile, entry, field)
-                            ? "success"
-                            : MF_FILE_LOSS_FIELD;
+                    return isExistAll(zipFile, entry, field) ? "success" : MF_FILE_LOSS_FIELD;
                 }
             }
         } catch (IOException e) {
@@ -77,7 +73,7 @@ public class CUMFFieldValidation {
 
     /**
      * file pattern is right.
-     * 
+     *
      * @param pattern file pattern
      * @param fileName file name
      * @return is checking passed
@@ -92,7 +88,7 @@ public class CUMFFieldValidation {
 
     /**
      * file contains field in prefixSet.
-     * 
+     *
      * @param zipFile zipFile
      * @param entry entry
      * @param prefixSet prefixSet
@@ -100,8 +96,8 @@ public class CUMFFieldValidation {
      */
     private boolean isExistAll(ZipFile zipFile, ZipEntry entry, Set<String> prefixSet) {
         Set<String> sourcePathSet = new HashSet<String>();
-        try (BufferedReader br =
-                new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
+        try (BufferedReader br = new BufferedReader(
+            new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
             String line = "";
             while ((line = br.readLine()) != null) {
                 // prefix: path
@@ -114,5 +110,15 @@ public class CUMFFieldValidation {
         }
 
         return sourcePathSet.containsAll(prefixSet);
+    }
+
+    /**
+     * add delay.
+     */
+    private void delay() {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+        }
     }
 }

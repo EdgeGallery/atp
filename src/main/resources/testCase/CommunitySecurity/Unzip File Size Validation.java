@@ -28,13 +28,16 @@ import java.util.zip.ZipInputStream;
  */
 public class UnzipFileSizeValidation {
     private static final int BUFFER = 512;
+
     private static final String FILE_TOO_BIG = "unzip file size must less than 10G";
+
     private static final String UNZIP_PACKAGE_ERROR = "unzip csar with exception";
+
     String WORK_TEMP_DIR = getDir() + File.separator + "temp/fileNumber/";
 
     /**
      * execute test case.
-     * 
+     *
      * @param filePath csar file path
      * @param context context
      * @return result
@@ -46,7 +49,7 @@ public class UnzipFileSizeValidation {
         String tempDir = WORK_TEMP_DIR.concat(UUID.randomUUID().toString());
 
         try (FileInputStream fis = new FileInputStream(filePath);
-                ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis))) {
+             ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis))) {
             while ((entry = zis.getNextEntry()) != null) {
                 int count;
                 String name = sanitizeFileName(entry.getName(), tempDir);
@@ -57,7 +60,7 @@ public class UnzipFileSizeValidation {
 
                 createFile(name);
                 try (FileOutputStream fos = new FileOutputStream(name);
-                        BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER)) {
+                     BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER)) {
                     while (total <= 0x280000000L && (count = zis.read(data, 0, BUFFER)) != -1) {
                         dest.write(data, 0, count);
                         total += count;
@@ -80,7 +83,7 @@ public class UnzipFileSizeValidation {
 
     /**
      * delete file die.
-     * 
+     *
      * @param file file
      */
     private void deleteFileDir(File file) {
@@ -96,10 +99,10 @@ public class UnzipFileSizeValidation {
             file.delete();
         }
     }
-    
+
     /**
      * get root dir.
-     * 
+     *
      * @return root dir
      */
     private String getDir() {
@@ -112,7 +115,7 @@ public class UnzipFileSizeValidation {
 
     /**
      * get right file name.
-     * 
+     *
      * @param entryName entryName
      * @param intendedDir intendedDir
      * @return file path
@@ -135,7 +138,7 @@ public class UnzipFileSizeValidation {
 
     /**
      * create file.
-     * 
+     *
      * @param filePath filePath
      * @throws IOException IOException
      */
@@ -153,7 +156,7 @@ public class UnzipFileSizeValidation {
 
     /**
      * judge file is dir.
-     * 
+     *
      * @param entry entry
      * @param f file
      * @return is dir

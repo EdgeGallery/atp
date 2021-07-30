@@ -28,18 +28,20 @@ import java.util.zip.ZipInputStream;
 
 /**
  * main yaml file existence validation.
- *
  */
 public class YamlDescriptionFileValidation {
-    private static final String YAML_FILE_NOT_EXISTS =
-            "there is no yaml file according to the definition in .meta file Entry-Definitions field.";
+    private static final String YAML_FILE_NOT_EXISTS
+        = "there is no yaml file according to the definition in .meta file Entry-Definitions field.";
+
     private static final String ENTRY_DEFINITIONS_NOT_EXISTS = "there is no Entry-Definitions field in .meta file.";
+
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
+
     private static final String SUCCESS = "success";
 
     /**
      * execute test case.
-     * 
+     *
      * @param filePath csar file path
      * @param context context
      * @return result
@@ -81,7 +83,7 @@ public class YamlDescriptionFileValidation {
 
     /**
      * get main yaml file path.
-     * 
+     *
      * @param zipFile zipFile
      * @param entry entry
      * @return main yaml file path
@@ -94,14 +96,14 @@ public class YamlDescriptionFileValidation {
                 if (appdEntry.getName().endsWith(".meta")) {
                     byte[] data = getByte(appdZis);
                     InputStream inputStream = new ByteArrayInputStream(data);
-                    try (BufferedReader br =
-                            new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+                    try (BufferedReader br = new BufferedReader(
+                        new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
                         String line = "";
                         while ((line = br.readLine()) != null) {
                             // prefix: path
                             String[] splitByColon = line.split(":");
-                            if (splitByColon.length > 1
-                                    && "Entry-Definitions".equalsIgnoreCase(splitByColon[0].trim())) {
+                            if (splitByColon.length > 1 && "Entry-Definitions"
+                                .equalsIgnoreCase(splitByColon[0].trim())) {
                                 return splitByColon[1].trim();
                             }
                         }
@@ -115,7 +117,7 @@ public class YamlDescriptionFileValidation {
 
     /**
      * analysize zip file and get main yaml file content.
-     * 
+     *
      * @param zipFile zipFile
      * @param entry entry
      * @param yamlPath yamlPath
@@ -136,7 +138,7 @@ public class YamlDescriptionFileValidation {
 
     /**
      * get bytes from inputStream.
-     * 
+     *
      * @param zis inputStream
      * @return file bytes
      */

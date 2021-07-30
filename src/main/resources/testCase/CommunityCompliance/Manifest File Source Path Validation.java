@@ -25,37 +25,35 @@ import java.util.zip.ZipFile;
 
 /**
  * mf file Source field path validation.
- *
  */
 public class SourcePathTestCaseInner {
     private static final String SLASH = "/";
+
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
+
     private static final String SOURCE_PATH_FILE_NOT_EXISTS = "some source path file in .mf may not exist.";
+
     private static Set<String> pathSet = new HashSet<String>();
+
     private static final String SUCCESS = "success";
 
     /**
      * execute test case.
-     * 
+     *
      * @param filePath csar file path
      * @param context context
      * @return result
      */
     public String execute(String filePath, Map<String, String> context) {
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e1) {
-        }
+        delay();
         Set<String> sourcePathSet = new HashSet<String>();
         try (ZipFile zipFile = new ZipFile(filePath)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
                 pathSet.add(removeLastSlash(entry.getName()));
-
                 // root directory and file is end of mf
-                if (entry.getName().split(SLASH).length == 1
-                        && fileSuffixValidate("mf", entry.getName())) {
+                if (entry.getName().split(SLASH).length == 1 && fileSuffixValidate("mf", entry.getName())) {
                     Set<String> prefix = new HashSet<String>() {
                         {
                             add("Source");
@@ -72,7 +70,7 @@ public class SourcePathTestCaseInner {
 
     /**
      * if file suffix is in pattern.
-     * 
+     *
      * @param pattern pattern
      * @param fileName fileName
      * @return file suffix is in pattern
@@ -87,7 +85,7 @@ public class SourcePathTestCaseInner {
 
     /**
      * get Source file path and put in set.
-     * 
+     *
      * @param zipFile zipFile
      * @param entry entry
      * @param prefixSet prefixSet
@@ -95,8 +93,8 @@ public class SourcePathTestCaseInner {
      */
     private Set<String> getPathSet(ZipFile zipFile, ZipEntry entry, Set<String> prefixSet) {
         Set<String> pathSet = new HashSet<String>();
-        try (BufferedReader br =
-                new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
+        try (BufferedReader br = new BufferedReader(
+            new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
             String line = "";
             while ((line = br.readLine()) != null) {
                 String[] splitByColon = line.split(":");
@@ -113,7 +111,7 @@ public class SourcePathTestCaseInner {
 
     /**
      * remove last slash.
-     * 
+     *
      * @param path path
      * @return path after removing last slash
      */
@@ -126,7 +124,7 @@ public class SourcePathTestCaseInner {
 
     /**
      * get app_type.
-     * 
+     *
      * @param filePath filePath
      * @return appType
      */
@@ -137,7 +135,7 @@ public class SourcePathTestCaseInner {
                 ZipEntry entry = entries.nextElement();
                 if (entry.getName().split("/").length == 1 && entry.getName().endsWith(".mf")) {
                     try (BufferedReader br = new BufferedReader(
-                            new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
+                        new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
                         String line = "";
                         while ((line = br.readLine()) != null) {
                             // prefix: path
@@ -151,5 +149,15 @@ public class SourcePathTestCaseInner {
         } catch (IOException e) {
         }
         return null;
+    }
+
+    /**
+     * add delay.
+     */
+    private void delay() {
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+        }
     }
 }
