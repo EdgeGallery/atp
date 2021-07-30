@@ -20,25 +20,21 @@ import java.util.zip.ZipFile;
 
 /**
  * file dir depth must less than 10.
- *
  */
 public class FileDirDepthValidation {
     private static final String FILE_DEPTH_OUT_OF_LIMIT = "file dir depth must less than 10.";
+
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
 
     /**
      * execute test case.
-     * 
+     *
      * @param filePath csar file path
      * @param context context
      * @return result
      */
     public String execute(String filePath, Map<String, String> context) {
-        try {
-            Thread.sleep(800);
-        } catch (InterruptedException e) {
-        }
-        
+        delay();
         try (ZipFile zipFile = new ZipFile(filePath)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
@@ -50,7 +46,17 @@ public class FileDirDepthValidation {
         } catch (IOException e) {
             return INNER_EXCEPTION;
         }
-        
+
         return "success";
+    }
+
+    /**
+     * add delay.
+     */
+    private void delay() {
+        try {
+            Thread.sleep(800);
+        } catch (InterruptedException e) {
+        }
     }
 }

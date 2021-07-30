@@ -23,25 +23,23 @@ import java.util.zip.ZipFile;
 
 /**
  * Each Source file must has hash description.
- *
  */
 public class ManifestFileHashListValidation {
     private static final String HASH_FIELD_NOT_EXISTS = "Some Source file does not have Hash filed.";
+
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
+
     private static final String SOURCE = "Source";
 
     /**
      * execute test case.
-     * 
+     *
      * @param filePath csar file path
      * @param context context
      * @return result
      */
     public String execute(String filePath, Map<String, String> context) {
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e1) {
-        }
+        delay();
         try (ZipFile zipFile = new ZipFile(filePath)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
@@ -59,14 +57,14 @@ public class ManifestFileHashListValidation {
 
     /**
      * if has hash description.
-     * 
+     *
      * @param zipFile zipFile
      * @param entry entry
      * @return has hash description
      */
     private boolean hasHash(ZipFile zipFile, ZipEntry entry) {
-        try (BufferedReader br =
-                new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
+        try (BufferedReader br = new BufferedReader(
+            new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
             String line = "";
             while ((line = br.readLine()) != null) {
                 String[] splitByColon = line.split(":");
@@ -96,7 +94,7 @@ public class ManifestFileHashListValidation {
 
     /**
      * if file suffix is in pattern.
-     * 
+     *
      * @param pattern pattern
      * @param fileName fileName
      * @return file suffix is in pattern
@@ -107,5 +105,15 @@ public class ManifestFileHashListValidation {
             return true;
         }
         return false;
+    }
+
+    /**
+     * add delay.
+     */
+    private void delay() {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+        }
     }
 }

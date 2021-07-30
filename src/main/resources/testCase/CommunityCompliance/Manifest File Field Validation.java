@@ -25,12 +25,13 @@ import java.util.zip.ZipFile;
 
 /**
  * mf file requirement field validation.
- *
  */
 public class MFContentTestCaseInner {
-    private static final String MF_LOSS_FIELD =
-            ".mf file may lost the following fileds:app_product_name,app_provider_id,app_package_version,app_class,app_release_date_time or app_package_description.";
+    private static final String MF_LOSS_FIELD
+        = ".mf file may lost the following fileds:app_product_name,app_provider_id,app_package_version,app_class,app_release_date_time or app_package_description.";
+
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
+
     private static final String FILE_NOT_EXIST = ".mf file may not exist or it do not in the root directory.";
 
     private static Set<String> field = new HashSet<String>() {
@@ -46,25 +47,20 @@ public class MFContentTestCaseInner {
 
     /**
      * execute test case.
-     * 
+     *
      * @param filePath csar file path
      * @param context context
      * @return result
      */
     public String execute(String filePath, Map<String, String> context) {
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e1) {
-        }
+        delay();
         try (ZipFile zipFile = new ZipFile(filePath)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
                 if (entry.getName().split("/").length == 1 && fileSuffixValidate("mf", entry.getName())) {
                     // some fields not exist in tosca.meta file
-                    return isExistAll(zipFile, entry, field)
-                            ? "success"
-                            : MF_LOSS_FIELD;
+                    return isExistAll(zipFile, entry, field) ? "success" : MF_LOSS_FIELD;
                 }
             }
         } catch (IOException e) {
@@ -76,22 +72,19 @@ public class MFContentTestCaseInner {
 
     /**
      * file suffix is in pattern.
-     * 
+     *
      * @param pattern pattern
      * @param fileName fileName
      * @return file suffix is in pattern.
      */
     private boolean fileSuffixValidate(String pattern, String fileName) {
         String suffix = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
-        if ((null != suffix) && suffix.equals(pattern)) {
-            return true;
-        }
-        return false;
+        return null != suffix && suffix.equals(pattern);
     }
 
     /**
      * if contain all field.
-     * 
+     *
      * @param zipFile zipFile
      * @param entry entry
      * @param prefixSet required fields set
@@ -99,8 +92,8 @@ public class MFContentTestCaseInner {
      */
     private boolean isExistAll(ZipFile zipFile, ZipEntry entry, Set<String> prefixSet) {
         Set<String> sourcePathSet = new HashSet<String>();
-        try (BufferedReader br =
-                new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
+        try (BufferedReader br = new BufferedReader(
+            new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
             String line = "";
             while ((line = br.readLine()) != null) {
                 // prefix: path
@@ -113,5 +106,15 @@ public class MFContentTestCaseInner {
         }
 
         return sourcePathSet.containsAll(prefixSet);
+    }
+
+    /**
+     * add delay.
+     */
+    private void delay() {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+        }
     }
 }

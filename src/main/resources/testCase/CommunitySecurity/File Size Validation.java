@@ -17,30 +17,36 @@ import java.util.Map;
 
 /**
  * package file size must less than 5GB.
- *
  */
 public class FileSizeValidation {
     private static final long MAX_SIZE = 5 * 1024 * 1024 * 1024;
+
     private static final String FILE_TOO_BIG = "package file size must less than 5GB.";
 
     /**
      * execute test case.
-     * 
+     *
      * @param filePath csar file path
      * @param context context
      * @return result
      */
     public String execute(String filePath, Map<String, String> context) {
-        try {
-            Thread.sleep(800);
-        } catch (InterruptedException e1) {
-        }
-
+        delay();
         File file = new File(filePath);
         if (file.length() <= MAX_SIZE) {
             return "success";
         } else {
             return FILE_TOO_BIG;
+        }
+    }
+
+    /**
+     * add delay.
+     */
+    private void delay() {
+        try {
+            Thread.sleep(600);
+        } catch (InterruptedException e) {
         }
     }
 }

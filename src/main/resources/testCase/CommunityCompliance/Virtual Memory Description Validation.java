@@ -28,18 +28,22 @@ import java.util.zip.ZipInputStream;
 
 /**
  * yaml file has virtual_mem_size field validation.
- *
  */
 public class VirtualMemoryDescriptionValidation {
-    private static final String VIRTUAL_MEMORY_NOT_EXISTS = "There is no virtual memory description filed: virtual_mem_size";
+    private static final String VIRTUAL_MEMORY_NOT_EXISTS
+        = "There is no virtual memory description filed: virtual_mem_size";
+
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
+
     private static final String VIRTUAL_MEM_SIZE = "virtual_mem_size";
+
     private static final String SUCCESS = "success";
+
     private static final String ENTRY_DEFINITIONS_NOT_EXISTS = "there is no Entry-Definitions field in .meta file.";
 
     /**
      * execute test case.
-     * 
+     *
      * @param filePath csar file path
      * @param context context
      * @return result
@@ -65,7 +69,7 @@ public class VirtualMemoryDescriptionValidation {
         } catch (IOException e) {
             return INNER_EXCEPTION;
         }
-        
+
         return INNER_EXCEPTION;
     }
 
@@ -81,7 +85,7 @@ public class VirtualMemoryDescriptionValidation {
 
     /**
      * get main yaml file path.
-     * 
+     *
      * @param zipFile zipFile
      * @param entry entry
      * @return main yaml file path
@@ -94,14 +98,14 @@ public class VirtualMemoryDescriptionValidation {
                 if (appdEntry.getName().endsWith(".meta")) {
                     byte[] data = getByte(appdZis);
                     InputStream inputStream = new ByteArrayInputStream(data);
-                    try (BufferedReader br =
-                            new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+                    try (BufferedReader br = new BufferedReader(
+                        new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
                         String line = "";
                         while ((line = br.readLine()) != null) {
                             // prefix: path
                             String[] splitByColon = line.split(":");
-                            if (splitByColon.length > 1
-                                    && "Entry-Definitions".equalsIgnoreCase(splitByColon[0].trim())) {
+                            if (splitByColon.length > 1 && "Entry-Definitions"
+                                .equalsIgnoreCase(splitByColon[0].trim())) {
                                 return splitByColon[1].trim();
                             }
                         }
@@ -115,7 +119,7 @@ public class VirtualMemoryDescriptionValidation {
 
     /**
      * analysize zip file and get main yaml file content.
-     * 
+     *
      * @param zipFile zipFile
      * @param entry entry
      * @param yamlPath yamlPath
@@ -139,7 +143,7 @@ public class VirtualMemoryDescriptionValidation {
 
     /**
      * get bytes from inputStream.
-     * 
+     *
      * @param zis inputStream
      * @return file bytes
      */
@@ -158,20 +162,19 @@ public class VirtualMemoryDescriptionValidation {
 
     /**
      * if has virtual memory description.
-     * 
+     *
      * @param inputStream inputStream
      * @return has virtual memory description
      */
     private static boolean hasVirtualMemDescription(InputStream inputStream) {
-        try (BufferedReader br =
-                new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
             String line = "";
             while ((line = br.readLine()) != null) {
-                if(line.trim().startsWith(VIRTUAL_MEM_SIZE)) {
+                if (line.trim().startsWith(VIRTUAL_MEM_SIZE)) {
                     String[] splitByColon = line.split(":");
                     // Source: path
                     if (splitByColon.length > 1 && VIRTUAL_MEM_SIZE.equals((splitByColon[0].trim()))) {
-                          return true;   
+                        return true;
                     }
                 }
             }
