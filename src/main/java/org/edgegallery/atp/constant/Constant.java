@@ -122,12 +122,14 @@ public interface Constant {
     String TASK_TYPE_MANUAL = "manual";
 
     String TASK_TYPE_AUTOMATIC = "automatic";
-    
+
     String CONTRIBUTION_TYPE_SCRIPT = "script";
 
     int LENGTH_64 = 64;
 
     int LENGTH_255 = 255;
+
+    int LENGTH_2000 = 2000;
 
     String REG_ID = "[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}";
 
@@ -162,4 +164,6 @@ public interface Constant {
     String SEMICOLON = ";";
 
     String EQUAL_MARK = "=";
+
+    String CONFIG_PARAM_LIST = "configParamList";
 }
