@@ -30,7 +30,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import org.edgegallery.atp.utils.PropertiesUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
@@ -47,35 +46,57 @@ import org.springframework.web.client.RestTemplate;
 
 /**
  * Instantiate app.
- *
  */
 public class InstantiateAppTestCaseInner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InstantiateAppTestCaseInner.class);
 
     private static final String RESPONSE_FROM_APM_FAILED = "upload csar file to apm failed, and the response code is: ";
+
     private static final String INSTANTIATE_APP_FAILED = "instantiate app from appo failed.";
+
     private static final String APP_NAME = "app_product_name";
+
     private static final String APP_VERSION = "app_package_version";
+
     private static final String ACCESS_TOKEN = "access_token";
+
     private static final String APP_CLASS = "app_class";
+
     private static final String APP_INSTANCE_ID = "appInstanceId";
+
     private static final String APP_ID = "appId";
+
     private static final String PACKAGE_ID = "packageId";
+
     private static final String SUCCESS = "success";
+
     private static final String APM_UPLOAD_PACKAGE = "/apm/v1/tenants/%s/packages/upload";
+
     private static final String APM_GET_PACKAGE = "/apm/v1/tenants/%s/packages/%s";
+
     private static final String INVENTORY_GET_MECHOSTS_URL = "/inventory/v1/mechosts";
+
     private static final String TENANT_ID = "tenantId";
+
     private static final String CONTENT_TYPE = "Content-Type";
+
     private static final String APPO_CREATE_APPINSTANCE = "/appo/v1/tenants/%s/app_instances";
+
     private static final String APPLICATION_JSON = "application/json";
+
     private static final String CREATED = "Created";
+
     private static final String APPO_INSTANTIATE_APP = "/appo/v1/tenants/%s/app_instances/%s";
+
     private static final String APPO_GET_INSTANCE = "/appo/v1/tenants/%s/app_instance_infos/%s";
+
     private static final String PROVIDER_ID = "app_provider_id";
+
     private static final String INSTANTIATED = "instantiated";
+
     private static final String ARCHITECTURE = "app_architecture";
+
     private static final String VM = "vm";
 
     private RestTemplate restTemplate = new RestTemplate();
@@ -91,11 +112,12 @@ public class InstantiateAppTestCaseInner {
         }
 
         ResponseEntity<String> response = uploadFileToAPM(filePath, context, hostIp, packageInfo);
-        if (null == response || !(HttpStatus.OK.equals(response.getStatusCode())
-                || HttpStatus.ACCEPTED.equals(response.getStatusCode()))) {
+        if (null == response || !(HttpStatus.OK.equals(response.getStatusCode()) || HttpStatus.ACCEPTED
+            .equals(response.getStatusCode()))) {
             LOGGER.error("uploadFileToAPM failed, response: {}", response);
-            return null == response ? RESPONSE_FROM_APM_FAILED
-                    : RESPONSE_FROM_APM_FAILED.concat(response.getStatusCode().toString());
+            return null == response
+                ? RESPONSE_FROM_APM_FAILED
+                : RESPONSE_FROM_APM_FAILED.concat(response.getStatusCode().toString());
         }
 
         JsonObject jsonObject = new JsonParser().parse(response.getBody()).getAsJsonObject();
@@ -124,7 +146,7 @@ public class InstantiateAppTestCaseInner {
 
     /**
      * get package from apm.
-     * 
+     *
      * @param context context
      * @param packageId packageId
      * @param hostIp hostIp
@@ -135,7 +157,7 @@ public class InstantiateAppTestCaseInner {
         headers.set(ACCESS_TOKEN, context.get(ACCESS_TOKEN));
         HttpEntity<String> request = new HttpEntity<>(headers);
         String url = context.get("apmServerAddress")
-                .concat(String.format(APM_GET_PACKAGE, context.get(TENANT_ID), packageId));
+            .concat(String.format(APM_GET_PACKAGE, context.get(TENANT_ID), packageId));
         LOGGER.warn("getApmPackage URL: " + url);
 
         long startTime = System.currentTimeMillis();
@@ -149,8 +171,8 @@ public class InstantiateAppTestCaseInner {
 
                 ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, request, String.class);
                 if (!HttpStatus.OK.equals(response.getStatusCode())) {
-                    LOGGER.error("get package from apm reponse failed. The status code is {}",
-                            response.getStatusCode());
+                    LOGGER
+                        .error("get package from apm reponse failed. The status code is {}", response.getStatusCode());
                     return false;
                 }
 
@@ -176,7 +198,7 @@ public class InstantiateAppTestCaseInner {
                 Thread.sleep(6000);
             } catch (RestClientException e) {
                 LOGGER.error("Failed to get package from apm which packageId is {} exception {}", packageId,
-                        e.getMessage());
+                    e.getMessage());
                 return false;
             } catch (InterruptedException e) {
                 LOGGER.error("thead sleep exception.");
@@ -187,7 +209,7 @@ public class InstantiateAppTestCaseInner {
 
     /**
      * send request to inventory to get mecHost ip.
-     * 
+     *
      * @param context context info
      * @return mecHostIp
      */
@@ -208,7 +230,7 @@ public class InstantiateAppTestCaseInner {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, request, String.class);
             if (!HttpStatus.OK.equals(response.getStatusCode())) {
                 LOGGER.error("Instantiate through applcm reponse failed. The status code is {}",
-                        response.getStatusCode());
+                    response.getStatusCode());
                 return null;
             }
 
@@ -220,8 +242,8 @@ public class InstantiateAppTestCaseInner {
                 if (null != mecHostIp && null != affinity && null != vim) {
                     String vimStr = vim.getAsString();
                     vimStr = "OpenStack".equalsIgnoreCase(vimStr) ? "vm" : "container";
-                    if (packageInfo.get(ARCHITECTURE).equals(affinity.getAsString())
-                            && packageInfo.get(APP_CLASS).equalsIgnoreCase(vimStr)) {
+                    if (packageInfo.get(ARCHITECTURE).equals(affinity.getAsString()) && packageInfo.get(APP_CLASS)
+                        .equalsIgnoreCase(vimStr)) {
                         mecHostIpList.add(mecHostIp.getAsString());
                     }
                 }
@@ -240,12 +262,10 @@ public class InstantiateAppTestCaseInner {
 
     /**
      * create app instance from appo.
-     * 
-     * @param filePath csar file path
+     *
      * @param context context info
      * @param appInfo contains appName,appId,appPackageId
      * @param hostIp mec host ip
-     * @param ipPort protocl://ip:port
      * @return create app instance sucess or not.s
      */
     private String createInstanceFromAppo(Map<String, String> context, Map<String, String> appInfo, String hostIp) {
@@ -261,21 +281,21 @@ public class InstantiateAppTestCaseInner {
         headers.set(CONTENT_TYPE, APPLICATION_JSON);
 
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
-        String url =
-                context.get("appoServerAddress").concat(String.format(APPO_CREATE_APPINSTANCE, context.get(TENANT_ID)));
+        String url = context.get("appoServerAddress")
+            .concat(String.format(APPO_CREATE_APPINSTANCE, context.get(TENANT_ID)));
 
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
             LOGGER.info("response is: {}", response.getStatusCode());
-            if (HttpStatus.OK.equals(response.getStatusCode())
-                    || HttpStatus.ACCEPTED.equals(response.getStatusCode())) {
+            if (HttpStatus.OK.equals(response.getStatusCode()) || HttpStatus.ACCEPTED
+                .equals(response.getStatusCode())) {
                 JsonObject jsonObject = new JsonParser().parse(response.getBody()).getAsJsonObject();
                 JsonObject responseBody = jsonObject.get("response").getAsJsonObject();
                 if (null != responseBody) {
                     String appInstanceId = responseBody.get("app_instance_id").getAsString();
                     LOGGER.info("appInstanceId: {}", appInstanceId);
-                    if (getApplicationInstance(context, appInstanceId, CREATED)
-                            && instantiateAppFromAppo(context, appInstanceId)) {
+                    if (getApplicationInstance(context, appInstanceId, CREATED) && instantiateAppFromAppo(context,
+                        appInstanceId)) {
                         if (getApplicationInstance(context, appInstanceId, INSTANTIATED)) {
                             return appInstanceId;
                         }
@@ -285,14 +305,14 @@ public class InstantiateAppTestCaseInner {
             }
         } catch (RestClientException e) {
             LOGGER.error("Failed to create app instance from appo which appId is {} exception {}", appInfo.get(APP_ID),
-                    e.getMessage());
+                e.getMessage());
         }
         return null;
     }
 
     /**
      * get application instance from appo.
-     * 
+     *
      * @param context context
      * @param appInstanceId appInstanceId
      * @param status status
@@ -304,7 +324,7 @@ public class InstantiateAppTestCaseInner {
         HttpEntity<String> request = new HttpEntity<>(headers);
 
         String url = context.get("appoServerAddress")
-                .concat(String.format(APPO_GET_INSTANCE, context.get(TENANT_ID), appInstanceId));
+            .concat(String.format(APPO_GET_INSTANCE, context.get(TENANT_ID), appInstanceId));
 
         LOGGER.warn("getApplicationInstance URL: " + url);
 
@@ -314,18 +334,18 @@ public class InstantiateAppTestCaseInner {
                 ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, request, String.class);
                 if (!HttpStatus.OK.equals(response.getStatusCode())) {
                     LOGGER.error("get application instance from appo reponse failed. The status code is {}",
-                            response.getStatusCode());
+                        response.getStatusCode());
                     return false;
                 }
 
                 JsonObject jsonObject = new JsonParser().parse(response.getBody()).getAsJsonObject();
                 JsonObject responseBody = jsonObject.get("response").getAsJsonObject();
                 LOGGER.info("status: {}, operationalStatus: {}", status,
-                        responseBody.get("operationalStatus").getAsString());
+                    responseBody.get("operationalStatus").getAsString());
 
                 String responseStatus = responseBody.get("operationalStatus").getAsString();
-                if ("Instantiation failed".equalsIgnoreCase(responseStatus)
-                        || "Create failed".equalsIgnoreCase(responseStatus)) {
+                if ("Instantiation failed".equalsIgnoreCase(responseStatus) || "Create failed"
+                    .equalsIgnoreCase(responseStatus)) {
                     LOGGER.error("instantiate or create app failed. The status  is {}", responseStatus);
                     return false;
                 }
@@ -342,7 +362,7 @@ public class InstantiateAppTestCaseInner {
                 Thread.sleep(5000);
             } catch (RestClientException e) {
                 LOGGER.error("Failed to get application instance from appo which app_instance_id is {} exception {}",
-                        appInstanceId, e.getMessage());
+                    appInstanceId, e.getMessage());
                 return false;
             } catch (InterruptedException e) {
                 LOGGER.error("thead sleep exception.");
@@ -354,7 +374,7 @@ public class InstantiateAppTestCaseInner {
 
     /**
      * instantiate application by appo.
-     * 
+     *
      * @param context context info.
      * @param appInstanceId appInstanceId
      * @return instantiate app successful
@@ -370,7 +390,7 @@ public class InstantiateAppTestCaseInner {
             // if package is vm, need parameters body
             LOGGER.info("package is vm.");
             Map<String, Object> parameters = new HashMap<String, Object>();
-            setBody(parameters);
+            setBody(parameters, context);
             body.put("parameters", parameters);
             request = new HttpEntity<>(body, headers);
         } else {
@@ -378,19 +398,19 @@ public class InstantiateAppTestCaseInner {
         }
 
         String url = context.get("appoServerAddress")
-                .concat(String.format(APPO_INSTANTIATE_APP, context.get(TENANT_ID), appInstanceId));
+            .concat(String.format(APPO_INSTANTIATE_APP, context.get(TENANT_ID), appInstanceId));
         LOGGER.info("instantiateAppFromAppo URL : {}", url);
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
             if (!HttpStatus.ACCEPTED.equals(response.getStatusCode())) {
                 LOGGER.error("instantiate application from appo reponse failed. The status code is {}",
-                        response.getStatusCode());
+                    response.getStatusCode());
                 return false;
             }
             LOGGER.info("instantiateAppFromAppo: {}", response.getStatusCode());
         } catch (RestClientException e) {
             LOGGER.error("Failed to instantiate application from appo which app_instance_id is {} exception {}",
-                    appInstanceId, e.getMessage());
+                appInstanceId, e.getMessage());
             return false;
         }
         return true;
@@ -398,42 +418,26 @@ public class InstantiateAppTestCaseInner {
 
     /**
      * set request parameters.
-     * 
+     *
      * @param body body
+     * @param context context
      */
-    private void setBody(Map<String, Object> body) {
-        body.put("DC_ID", "FS_M:Manger_VPC");
-        body.put("az_dc", "nova");
-        body.put("ak", "");
-        body.put("sk", "");
-        body.put("mep_certificate", "YHXGFTWU!@$%@&%#(DH(122479+_)");
-        body.put("app_mp1_ip", "192.168.226.123");
-        body.put("app_mp1_mask", "255.255.255.0");
-        body.put("app_mp1_gw", "192.168.226.101");
-        body.put("app_n6_ip", "192.168.225.123");
-        body.put("app_n6_mask", "255.255.255.0");
-        body.put("app_n6_gw", "192.168.225.102");
-        body.put("app_internet_ip", "192.168.227.123");
-        body.put("app_internet_mask", "255.255.255.0");
-        body.put("app_internet_gw", "192.168.227.103");
-        body.put("mep_ip", "119.8.47.5");
-        body.put("mep_port", "8443");
-        body.put("network_name_mep", "mec_network_mep");
-        body.put("network_mep_physnet", "physnet2");
-        body.put("network_mep_vlanid", "2653");
-        body.put("network_name_n6", "mec_network_n6");
-        body.put("network_n6_physnet", "physnet2");
-        body.put("network_n6_vlanid", "2652");
-        body.put("network_name_internet", "mec_network_internet");
-        body.put("network_internet_physnet", "physnet2");
-        body.put("network_internet_vlanid", "2651");
-        body.put("ue_ip_segment", "150.30.1.0/24");
-        body.put("mec_internet_ip", "0.0.0.0");
+    private void setBody(Map<String, Object> body, Map<String, String> context) {
+        String configParam = context.get("configParamList");
+        String[] configList = configParam.split(",");
+        for (String config : configList) {
+            String[] params = config.split(";");
+            for (String param : params) {
+                String[] configItem = param.split("=");
+                // param patter: key = value or key = ;
+                body.put(configItem[0].trim(), 1 == configItem.length ? "" : configItem[1].trim());
+            }
+        }
     }
 
     /**
      * get package info from csar file.
-     * 
+     *
      * @param filePath file path
      * @return package info
      */
@@ -445,7 +449,7 @@ public class InstantiateAppTestCaseInner {
                 ZipEntry entry = entries.nextElement();
                 if (entry.getName().split("/").length == 1 && fileSuffixValidate("mf", entry.getName())) {
                     try (BufferedReader br = new BufferedReader(
-                            new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
+                        new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
                         String line = "";
                         while ((line = br.readLine()) != null) {
                             // prefix: path
@@ -464,10 +468,10 @@ public class InstantiateAppTestCaseInner {
                         }
                     }
                 }
-                if (entry.getName().split("/").length == 2
-                        && "SwImageDesc.json".equals(entry.getName().substring(entry.getName().lastIndexOf("/") + 1))) {
+                if (2 == entry.getName().split("/").length && "SwImageDesc.json"
+                    .equals(entry.getName().substring(entry.getName().lastIndexOf("/") + 1))) {
                     try (BufferedReader br = new BufferedReader(
-                            new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
+                        new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
                         String line = "";
                         while ((line = br.readLine()) != null) {
                             // prefix: path
@@ -489,15 +493,14 @@ public class InstantiateAppTestCaseInner {
 
     /**
      * upload file to apm service.
-     * 
+     *
      * @param filePath file path
      * @param context context info
-     * @param ipPort protocol://ip:port
      * @param hostIp host ip
      * @return response from atp
      */
     private ResponseEntity<String> uploadFileToAPM(String filePath, Map<String, String> context, String hostIp,
-            Map<String, String> packageInfo) {
+        Map<String, String> packageInfo) {
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         body.add("file", new FileSystemResource(filePath));
         body.add("hostList", hostIp);
@@ -524,7 +527,7 @@ public class InstantiateAppTestCaseInner {
 
     /**
      * validate fileName is .pattern.
-     * 
+     *
      * @param pattern filePattern
      * @param fileName fileName
      * @return

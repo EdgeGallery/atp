@@ -51,6 +51,6 @@ public class ConfigBase {
     /**
      * config params.
      */
-    @Size(max = Constant.LENGTH_255, message = "configuration params must not exceed more than 255 characters") String
+    @Size(max = Constant.LENGTH_2000, message = "configuration params must not exceed more than 2000 characters") String
         configuration;
 }
