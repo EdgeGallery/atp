@@ -12,7 +12,10 @@
  * the License.
  */
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -21,10 +24,14 @@ import java.util.zip.ZipFile;
 /**
  * existence of helm tgz file validation
  */
-public class HelmTgzFileValidation {
+public class ContainerHelmTgzFileValidation {
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
 
     private static final String TGZ_NOT_EXISTS = "there is no .tgz file in Artifacts/Deployment/Charts dir";
+
+    private static final String VM = "vm";
+
+    private static final String SUCCESS = "success";
 
     /**
      * execute test case.
@@ -35,12 +42,16 @@ public class HelmTgzFileValidation {
      */
     public String execute(String filePath, Map<String, String> context) {
         delay();
+        //vm app does not has helm chart file.
+        if (VM.equalsIgnoreCase(getAppType(filePath))) {
+            return SUCCESS;
+        }
         try (ZipFile zipFile = new ZipFile(filePath)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
                 if (entry.getName().startsWith("Artifacts/Deployment/Charts") && entry.getName().endsWith(".tgz")) {
-                    return "success";
+                    return SUCCESS;
                 }
             }
         } catch (IOException e) {
@@ -55,8 +66,37 @@ public class HelmTgzFileValidation {
      */
     private void delay() {
         try {
-            Thread.sleep(800);
+            Thread.sleep(200);
         } catch (InterruptedException e) {
         }
+    }
+
+    /**
+     * get app_type.
+     *
+     * @param filePath filePath
+     * @return appType appType
+     */
+    private String getAppType(String filePath) {
+        try (ZipFile zipFile = new ZipFile(filePath)) {
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = entries.nextElement();
+                if (entry.getName().split("/").length == 1 && entry.getName().endsWith(".mf")) {
+                    try (BufferedReader br = new BufferedReader(
+                        new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
+                        String line = "";
+                        while ((line = br.readLine()) != null) {
+                            // prefix: path
+                            if (line.trim().startsWith("app_class")) {
+                                return line.split(":")[1].trim();
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+        }
+        return null;
     }
 }
