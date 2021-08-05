@@ -1,0 +1,4 @@
+1.将clamavSetUp.sh放到linux服务器任意目录
+2.运行脚本:  . clamavSetUp.sh
+3.将要校验的应用包放到linux服务器任意目录，例如：/temp/package/
+4.运行扫描命令：/usr/local/clamav/bin/clamscan -r /temp/package/   或者 /usr/local/clamav/bin/clamscan /temp/package/app.csar
