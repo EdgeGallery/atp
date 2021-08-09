@@ -81,7 +81,8 @@ public class ContainerTgzTemplatesValidaion {
             new GzipCompressorInputStream(new BufferedInputStream(zipFile.getInputStream(entry))))) {
             TarArchiveEntry entryTar = null;
             while ((entryTar = tarIn.getNextTarEntry()) != null) {
-                if (entryTar.getName().endsWith("/templates/")) {
+                String[] nameArray = entryTar.getName().split("/");
+                if (3 == nameArray.length && "templates".equalsIgnoreCase(nameArray[1])) {
                     return SUCCESS;
                 }
             }
