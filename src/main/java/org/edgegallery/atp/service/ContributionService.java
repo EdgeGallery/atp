@@ -16,6 +16,7 @@ package org.edgegallery.atp.service;
 
 import java.util.List;
 import java.util.Map;
+import org.edgegallery.atp.model.PageResult;
 import org.edgegallery.atp.model.contribution.Contribution;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,15 +33,25 @@ public interface ContributionService {
 
     /**
      * get all contributions.
-     * 
+     *
      * @param name contribution name
      * @returnContribution list
      */
     List<Contribution> getAllContribution(String name);
 
     /**
+     * get all contribution by pagination.
+     *
+     * @param name name
+     * @param limit limit
+     * @param offset offset
+     * @return contribution list with pagination
+     */
+    PageResult<Contribution> getAllByPagination(String name, int limit, int offset);
+
+    /**
      * batch delete contributions by id list.
-     * 
+     *
      * @param ids contribution id list
      * @return failed id list
      */

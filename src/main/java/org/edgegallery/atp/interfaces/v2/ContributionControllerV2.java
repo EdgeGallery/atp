@@ -19,11 +19,9 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import java.io.File;
 import java.util.List;
 import java.util.Map;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -31,6 +29,7 @@ import org.apache.servicecomb.provider.rest.common.RestSchema;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ErrorCode;
 import org.edgegallery.atp.model.BatchOpsRes;
+import org.edgegallery.atp.model.PageResult;
 import org.edgegallery.atp.model.ResponseObject;
 import org.edgegallery.atp.model.contribution.Contribution;
 import org.edgegallery.atp.model.task.IdList;
@@ -43,7 +42,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -97,9 +95,11 @@ public class ContributionControllerV2 {
     }
 
     /**
-     * query all contribution.
+     * query all contribution by pagination.
      *
      * @param name contribution name
+     * @param limit limit
+     * @param offset offset
      * @return contribution list
      */
     @GetMapping(value = "/contributions", produces = MediaType.APPLICATION_JSON)
@@ -109,9 +109,11 @@ public class ContributionControllerV2 {
         @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)
     })
     @PreAuthorize("hasRole('ATP_ADMIN')")
-    public ResponseEntity<List<Contribution>> queryAllContribution(
-        @ApiParam(value = "contribution name") @Length(max = Constant.LENGTH_64) @QueryParam("name") String name) {
-        return ResponseEntity.ok(contributionService.getAllContribution(name));
+    public ResponseEntity<PageResult<Contribution>> queryAllContribution(
+        @ApiParam(value = "contribution name") @Length(max = Constant.LENGTH_64) @QueryParam("name") String name,
+        @ApiParam(value = "limit") @QueryParam("limit") @NotNull int limit,
+        @ApiParam(value = "offset") @QueryParam("offset") @NotNull int offset) {
+        return ResponseEntity.ok(contributionService.getAllByPagination(name, limit, offset));
     }
 
     /**
@@ -130,18 +132,6 @@ public class ContributionControllerV2 {
     public ResponseEntity<BatchOpsRes> batchDelete(@ApiParam(value = "contribution id list") @RequestBody IdList ids) {
         Map<String, List<String>> result = contributionService.batchDelete(ids.getIds());
         return ResponseEntity.ok(CommonUtil.setBatchDeleteFailedRes(result));
-    }
-
-    @GetMapping(value = "/contributions/{id}/action/download", produces = MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "download contribution scripts", response = File.class)
-    @ApiResponses(value = {
-        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
-        @ApiResponse(code = 500, message = "resource grant error", response = String.class)
-    })
-    @PreAuthorize("hasRole('ATP_ADMIN')")
-    public ResponseEntity<byte[]> downloadContributionScripts(
-        @ApiParam(value = "contribution id") @PathVariable("id") @Pattern(regexp = Constant.REG_ID) String id) {
-        return contributionService.downloadContributions(id);
     }
 }
 

@@ -32,21 +32,46 @@ public interface TaskRepository {
 
     /**
      * find task list by userId.
-     * 
+     *
      * @param userId userId
      * @return
      */
     List<TaskRequest> findTaskByUserId(String userId, String appName, String status, String providerId,
-            String appVersion);
+        String appVersion);
+
+    /**
+     * get task count.
+     *
+     * @param userId userId
+     * @param appName appName
+     * @param status status
+     * @param providerId providerId
+     * @param appVersion appVersion
+     * @return task count
+     */
+    int countTotal(String userId, String appName, String status, String providerId, String appVersion);
+
+    /**
+     * get all tasks with pagination.
+     *
+     * @param limit limit
+     * @param offset offset
+     * @param userId userId
+     * @param appName appName
+     * @param status status
+     * @param providerId providerId
+     * @param appVersion appVersion
+     * @return task info with pagination
+     */
+    List<TaskRequest> getAllWithPagination(int limit, int offset, String userId, String appName, String status,
+        String providerId, String appVersion);
 
     /**
      * create task info.
-     * 
+     *
      * @param task task
      */
     void insert(TaskRequest task);
-
-    List<TaskRequest> queryAllRunningTasks();
 
     /**
      * update task info.

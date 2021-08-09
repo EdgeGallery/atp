@@ -48,22 +48,60 @@
             resultType="org.edgegallery.atp.model.testcase.TestCasePo">
         select * from test_case_table
         <where>
-          <if test="type != null and type !=''">
-            type = #{type}
-          </if>
-          <if test="nameEn != null and nameEn !=''">
-            and nameEn ~* #{nameEn}
-          </if>
-          <if test="nameCh != null and nameCh !=''">
-             and nameCh ~* #{nameCh}
-          </if>
-          <if test="testSuiteId != null and testSuiteId !=''">
-            and testSuiteIdList ~* #{testSuiteId}
-          </if>                   
+            <if test="type != null and type !=''">
+                type = #{type}
+            </if>
+            <if test="nameEn != null and nameEn !=''">
+                and nameEn ~* #{nameEn}
+            </if>
+            <if test="nameCh != null and nameCh !=''">
+                and nameCh ~* #{nameCh}
+            </if>
+            <if test="testSuiteId != null and testSuiteId !=''">
+                and testSuiteIdList ~* #{testSuiteId}
+            </if>
         </where>
         ORDER BY testSuiteIdList ASC, nameEn ASC
     </select>
-    
+
+    <select id="countTotal" resultType="java.lang.Integer">
+        select count(*) FROM test_case_table
+        <where>
+            <if test="type != null and type !=''">
+                type = #{type}
+            </if>
+            <if test="nameEn != null and nameEn !=''">
+                and nameEn ~* #{nameEn}
+            </if>
+            <if test="nameCh != null and nameCh !=''">
+                and nameCh ~* #{nameCh}
+            </if>
+            <if test="testSuiteId != null and testSuiteId !=''">
+                and testSuiteIdList ~* #{testSuiteId}
+            </if>
+        </where>
+    </select>
+
+    <select id="findAllTestCasesByPaginition"
+            resultType="org.edgegallery.atp.model.testcase.TestCasePo">
+        select * from test_case_table
+        <where>
+            <if test="type != null and type !=''">
+                type = #{type}
+            </if>
+            <if test="nameEn != null and nameEn !=''">
+                and nameEn ~* #{nameEn}
+            </if>
+            <if test="nameCh != null and nameCh !=''">
+                and nameCh ~* #{nameCh}
+            </if>
+            <if test="testSuiteId != null and testSuiteId !=''">
+                and testSuiteIdList ~* #{testSuiteId}
+            </if>
+        </where>
+        ORDER BY testSuiteIdList ASC, nameEn ASC limit #{limit} offset #{offset}
+    </select>
+
     <insert id="insert"
             parameterType="org.edgegallery.atp.model.testcase.TestCasePo">
         insert into

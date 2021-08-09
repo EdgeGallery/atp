@@ -10,85 +10,127 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper
-	namespace="org.edgegallery.atp.repository.mapper.TaskMapper">
+        namespace="org.edgegallery.atp.repository.mapper.TaskMapper">
 
-	<insert id="insert"
-		parameterType="org.edgegallery.atp.model.task.TaskPO">
-		insert into
-		task_table
-		(id, appName, appVersion, status, createTime, endTime, providerId,packagePath,userId, userName,
-		testCaseDetail)
-		VALUES
-		(#{id}, #{appName}, #{appVersion},
-		#{status},
-		#{createTime}, #{endTime}, #{providerId},#{packagePath},#{userId}, #{userName},#{testCaseDetail})
-	</insert>
+    <insert id="insert"
+            parameterType="org.edgegallery.atp.model.task.TaskPO">
+        insert into
+        task_table
+        (id, appName, appVersion, status, createTime, endTime, providerId,packagePath,userId, userName,
+        testCaseDetail)
+        VALUES
+        (#{id}, #{appName}, #{appVersion},
+        #{status},
+        #{createTime}, #{endTime}, #{providerId},#{packagePath},#{userId}, #{userName},#{testCaseDetail})
+    </insert>
 
-	<update id="update"
-			parameterType="org.edgegallery.atp.model.task.TaskPO">
-		update
-		task_table
-		SET
-		<if test="reportPath != null and reportPath !=''">
-			reportPath = #{reportPath},
-		</if>
-		status = #{status}, endTime = #{endTime}, testCaseDetail =
-		#{testCaseDetail}
-		WHERE id = #{id}
-	</update>
+    <update id="update"
+            parameterType="org.edgegallery.atp.model.task.TaskPO">
+        update
+        task_table
+        SET
+        <if test="reportPath != null and reportPath !=''">
+            reportPath = #{reportPath},
+        </if>
+        status = #{status}, endTime = #{endTime}, testCaseDetail =
+        #{testCaseDetail}
+        WHERE id = #{id}
+    </update>
 
-	<select id="findByTaskIdAndUserId"
-		resultType="org.edgegallery.atp.model.task.TaskPO"
-		parameterType="String">
-		select * from task_table where id = #{taskId}
-		<if test="userId != null and userId !=''">
-			and userId = #{userId}
-		</if>
-	</select>
+    <select id="findByTaskIdAndUserId"
+            resultType="org.edgegallery.atp.model.task.TaskPO"
+            parameterType="String">
+        select * from task_table where id = #{taskId}
+        <if test="userId != null and userId !=''">
+            and userId = #{userId}
+        </if>
+    </select>
 
-	<select id="findTaskByUserId" resultType="org.edgegallery.atp.model.task.TaskPO"
-		parameterType="String">
-		select * from task_table 
-		<where>
-			<if test="userId != null and userId !=''">
-				userId = #{userId}
-			</if>
-			<if test="appName != null and appName !=''">
-				and appName ~* #{appName}
-			</if>
-			<if test="status != null and status !=''">
-				and status = #{status}
-			</if>
-			<if test="providerId != null and providerId !=''">
-				and providerId = #{providerId}
-			</if>
-			<if test="appVersion != null and appVersion !=''">
-				and appVersion = #{appVersion}
-			</if>
-		</where>
-		ORDER BY createTime DESC
-	</select>
-	
-	<delete id="delHisTask">
-		delete from
-		task_table
-		where (now()::timestamp without time zone-createTime::timestamp without time zone) > (7 * '1 day'::interval)
-	</delete>
+    <select id="findTaskByUserId" resultType="org.edgegallery.atp.model.task.TaskPO"
+            parameterType="String">
+        select * from task_table
+        <where>
+            <if test="userId != null and userId !=''">
+                userId = #{userId}
+            </if>
+            <if test="appName != null and appName !=''">
+                and appName ~* #{appName}
+            </if>
+            <if test="status != null and status !=''">
+                and status = #{status}
+            </if>
+            <if test="providerId != null and providerId !=''">
+                and providerId = #{providerId}
+            </if>
+            <if test="appVersion != null and appVersion !=''">
+                and appVersion = #{appVersion}
+            </if>
+        </where>
+        ORDER BY createTime DESC
+    </select>
 
-	<select id="getCurrentDate" resultType="java.util.Date">
-		select now()::timestamp without time zone
-	</select>
+    <select id="countTotal" resultType="java.lang.Integer">
+        select count(*) FROM task_table where
+        <if test="userId != null and userId !=''">
+            userId = #{userId}
+        </if>
+        <if test="appName != null and appName !=''">
+            and appName ~* #{appName}
+        </if>
+        <if test="status != null and status !=''">
+            and status = #{status}
+        </if>
+        <if test="providerId != null and providerId !=''">
+            and providerId = #{providerId}
+        </if>
+        <if test="appVersion != null and appVersion !=''">
+            and appVersion = #{appVersion}
+        </if>
+        1=1
+    </select>
 
-	<select id="queryAllRunningTasks" resultType="org.edgegallery.atp.model.task.TaskPO">
-		select * from task_table where status = 'running'
-	</select>
-	
-	<delete id="deleteTaskById">
-		delete from
-		task_table
-		where id = #{id}
-		<if test="userId != null and userId !=''">
-			and userId = #{userId}
-		</if>
-	</delete>
+    <select id="getAllWithPagination"
+            resultType="org.edgegallery.atp.model.task.TaskPO">
+        select * from task_table where
+        <if test="userId != null and userId !=''">
+            userId = #{userId}
+        </if>
+        <if test="appName != null and appName !=''">
+            and appName ~* #{appName}
+        </if>
+        <if test="status != null and status !=''">
+            and status = #{status}
+        </if>
+        <if test="providerId != null and providerId !=''">
+            and providerId = #{providerId}
+        </if>
+        <if test="appVersion != null and appVersion !=''">
+            and appVersion = #{appVersion}
+        </if>
+        1=1
+        ORDER BY createTime DESC limit #{limit} offset #{offset}
+    </select>
+
+    <delete id="delHisTask">
+        delete from
+        task_table
+        where (now()::timestamp without time zone-createTime::timestamp without time zone) > (7 * '1 day'::interval)
+    </delete>
+
+    <select id="getCurrentDate" resultType="java.util.Date">
+        select now()::timestamp without time zone
+    </select>
+
+    <select id="queryAllRunningTasks" resultType="org.edgegallery.atp.model.task.TaskPO">
+        select * from task_table where status = 'running'
+    </select>
+
+    <delete id="deleteTaskById">
+        delete from
+        task_table
+        where id = #{id}
+        <if test="userId != null and userId !=''">
+            and userId = #{userId}
+        </if>
+    </delete>
 </mapper>

@@ -81,24 +81,6 @@ public class TaskRepositoryImpl implements TaskRepository {
     }
 
     @Override
-    public List<TaskRequest> queryAllRunningTasks() {
-        try {
-            List<TaskRequest> taskRequest = new ArrayList<TaskRequest>();
-            taskMapper.queryAllRunningTasks().forEach(taskPo -> {
-                if (null != taskPo) {
-                    taskRequest.add(toDomain(taskPo));
-                }
-            });
-            return taskRequest;
-        } catch (Exception e) {
-            LOGGER.error("queryAllRunningTasks failed. {}", e);
-            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "queryAllRunningTasks failed"),
-                ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("queryAllRunningTasks failed")));
-        }
-
-    }
-
-    @Override
     public void update(TaskRequest task) {
         try {
             taskMapper.update(TaskPO.of(task));
@@ -159,6 +141,38 @@ public class TaskRepositoryImpl implements TaskRepository {
             LOGGER.error("findTaskByUserId failed. {}", e);
             throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "findTaskByUserId failed"),
                 ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("findTaskByUserId failed")));
+        }
+    }
+
+    @Override
+    public int countTotal(String userId, String appName, String status, String providerId, String appVersion) {
+        try {
+            return taskMapper.countTotal(userId, appName, status, providerId, appVersion);
+        } catch (Exception e) {
+            LOGGER.error("get task total count failed. {}", e);
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "get task total count failed"),
+                ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("get task total count failed")));
+        }
+    }
+
+    @Override
+    public List<TaskRequest> getAllWithPagination(int limit, int offset, String userId, String appName, String status,
+        String providerId, String appVersion) {
+        try {
+            List<TaskPO> taskPoList = taskMapper
+                .getAllWithPagination(limit, offset, userId, appName, status, providerId, appVersion);
+            List<TaskRequest> taskRequest = new ArrayList<TaskRequest>();
+            taskPoList.forEach(taskPo -> {
+                if (null != taskPo) {
+                    taskRequest.add(toDomain(taskPo));
+                }
+            });
+            return taskRequest;
+        } catch (Exception e) {
+            LOGGER.error("get all tasks with pagination failed. {}", e);
+            throw new IllegalRequestException(
+                String.format(ErrorCode.DB_ERROR_MSG, "get all tasks with pagination failed"), ErrorCode.DB_ERROR,
+                new ArrayList<String>(Arrays.asList("get all tasks with pagination failed")));
         }
     }
 

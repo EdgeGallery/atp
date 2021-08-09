@@ -56,7 +56,32 @@ public class ContributionRepositoryImpl implements ContributionRepository {
         } catch (Exception e) {
             LOGGER.error("query all contributions failed. {}", e);
             throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "query all contributions failed"),
-                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("query all contributions failed")));
+                ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("query all contributions failed")));
+        }
+    }
+
+    @Override
+    public int countTotal(String name) {
+        try {
+            return contributionMapper.countTotal(name);
+        } catch (Exception e) {
+            LOGGER.error("get contribution total count failed. {}", e);
+            throw new IllegalRequestException(
+                String.format(ErrorCode.DB_ERROR_MSG, "get contribution total count failed"), ErrorCode.DB_ERROR,
+                new ArrayList<String>(Arrays.asList("get contribution total count failed")));
+        }
+    }
+
+    @Override
+    public List<Contribution> getAllWithPagination(int limit, int offset, String name) {
+        try {
+            return contributionMapper.getAllWithPagination(limit, offset, name);
+        } catch (Exception e) {
+            LOGGER.error("get all contribution with pagination failed. {}", e);
+            throw new IllegalRequestException(
+                String.format(ErrorCode.DB_ERROR_MSG, "get all contribution with pagination failed"),
+                ErrorCode.DB_ERROR,
+                new ArrayList<String>(Arrays.asList("get all contribution with pagination failed")));
         }
     }
 

@@ -23,6 +23,7 @@ import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ErrorCode;
+import org.edgegallery.atp.model.PageResult;
 import org.edgegallery.atp.model.contribution.Contribution;
 import org.edgegallery.atp.repository.contribution.ContributionRepository;
 import org.edgegallery.atp.repository.task.TaskRepository;
@@ -88,6 +89,20 @@ public class ContributionServiceImpl implements ContributionService {
         List<Contribution> contributionList = contributionRepository.getAllContributions(name);
         LOGGER.info("query all contributions successfully.");
         return contributionList;
+    }
+
+    @Override
+    public PageResult<Contribution> getAllByPagination(String name, int limit, int offset) {
+        try {
+            PageResult<Contribution> pageResult = new PageResult<Contribution>(offset, limit);
+            pageResult.setTotal(contributionRepository.countTotal(name));
+            pageResult.setResults(contributionRepository.getAllWithPagination(limit, offset, name));
+            LOGGER.info("query all contributions by pagination successfully.");
+            return pageResult;
+        } catch (Exception e) {
+            System.out.println("a" + e);
+            return null;
+        }
     }
 
     @Override

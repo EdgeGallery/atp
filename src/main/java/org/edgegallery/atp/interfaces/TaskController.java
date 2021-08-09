@@ -106,7 +106,7 @@ public class TaskController {
     }
 
     /**
-     * get all tasks according userId.
+     * get all tasks.
      *
      * @return task list
      */

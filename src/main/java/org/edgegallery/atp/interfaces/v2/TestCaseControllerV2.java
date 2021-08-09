@@ -21,17 +21,22 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.io.FileNotFoundException;
 import java.util.List;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ErrorCode;
+import org.edgegallery.atp.model.PageResult;
 import org.edgegallery.atp.model.ResponseObject;
 import org.edgegallery.atp.model.testcase.TestCase;
+import org.edgegallery.atp.model.testsuite.TestSuiteIdList;
 import org.edgegallery.atp.service.TestCaseService;
 import org.edgegallery.atp.utils.CommonUtil;
 import org.edgegallery.atp.utils.exception.FileNotExistsException;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -186,5 +191,31 @@ public class TestCaseControllerV2 {
         TestCase result = testCaseService.getTestCase(id);
         return ResponseEntity.ok(new ResponseObject<TestCase>(result, ErrorCode.RET_CODE_SUCCESS, null,
             "query test case successfully."));
+    }
+
+    /**
+     * get all testcases.
+     *
+     * @param type type
+     * @param locale locale
+     * @param name name
+     * @param testSuiteIds testSuiteIds
+     * @return test case list
+     */
+    @GetMapping(value = "/testcases", produces = MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "get all test cases.", response = TestCase.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
+        @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)
+    })
+    @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
+    public ResponseEntity<PageResult<TestCase>> getAllTestCases(
+        @QueryParam("type") @Length(max = Constant.LENGTH_64) String type,
+        @QueryParam("locale") @Length(max = Constant.LENGTH_64) String locale,
+        @QueryParam("name") @Length(max = Constant.LENGTH_64) String name,
+        @QueryParam("testSuiteIdList") TestSuiteIdList testSuiteIds, @QueryParam("limit") @NotNull int limit,
+        @QueryParam("offset") @NotNull int offset) {
+        return testCaseService
+            .getAllTestCasesByPagination(type, locale, name, testSuiteIds.getTestSuiteIdList(), limit, offset);
     }
 }

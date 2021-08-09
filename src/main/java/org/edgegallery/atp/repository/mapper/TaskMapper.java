@@ -35,24 +35,52 @@ public interface TaskMapper {
 
     /**
      * get task list by userId.
-     * 
+     *
      * @param userId userId
      * @return TaskPO
      */
     List<TaskPO> findTaskByUserId(@Param("userId") String userId, @Param("appName") String appName,
-            @Param("status") String status, @Param("providerId") String providerId,
-            @Param("appVersion") String appVersion);
+        @Param("status") String status, @Param("providerId") String providerId, @Param("appVersion") String appVersion);
+
+    /**
+     * get task count.
+     *
+     * @param userId userId
+     * @param appName appName
+     * @param status status
+     * @param providerId providerId
+     * @param appVersion appVersion
+     * @return task count
+     */
+    int countTotal(@Param("userId") String userId, @Param("appName") String appName, @Param("status") String status,
+        @Param("providerId") String providerId, @Param("appVersion") String appVersion);
+
+    /**
+     * get all tasks with pagination.
+     *
+     * @param limit limit
+     * @param offset offset
+     * @param userId userId
+     * @param appName appName
+     * @param status status
+     * @param providerId providerId
+     * @param appVersion appVersion
+     * @return task info with pagination
+     */
+    List<TaskPO> getAllWithPagination(@Param("limit") int limit, @Param("offset") int offset,
+        @Param("userId") String userId, @Param("appName") String appName, @Param("status") String status,
+        @Param("providerId") String providerId, @Param("appVersion") String appVersion);
 
     /**
      * create task info.
-     * 
+     *
      * @param taskPO taskPO
      */
     void insert(TaskPO taskPO);
 
     /**
      * query all running tasks.
-     * 
+     *
      * @return running task info list
      */
     List<TaskPO> queryAllRunningTasks();

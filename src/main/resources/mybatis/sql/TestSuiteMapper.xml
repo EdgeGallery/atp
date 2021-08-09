@@ -36,29 +36,61 @@
             parameterType="String">
         select * from test_suite_table
          <where>
-          <if test="nameEn != null and nameEn !=''">
-            nameEn ~* #{nameEn}
-          </if>
-          <if test="nameCh != null and nameCh !=''">
-             nameCh ~* #{nameCh}
-          </if>
-          <if test="scenarioId != null and scenarioId !=''">
-            and scenarioIdList ~* #{scenarioId}
-          </if>
-        </where>
+             <if test="nameEn != null and nameEn !=''">
+                 nameEn ~* #{nameEn}
+             </if>
+             <if test="nameCh != null and nameCh !=''">
+                 nameCh ~* #{nameCh}
+             </if>
+             <if test="scenarioId != null and scenarioId !=''">
+                 and scenarioIdList ~* #{scenarioId}
+             </if>
+         </where>
         ORDER BY createTime
     </select>
-    
+
+    <select id="countTotal" resultType="java.lang.Integer">
+        select count(*) FROM test_suite_table
+        <where>
+            <if test="nameEn != null and nameEn !=''">
+                nameEn ~* #{nameEn}
+            </if>
+            <if test="nameCh != null and nameCh !=''">
+                nameCh ~* #{nameCh}
+            </if>
+            <if test="scenarioId != null and scenarioId !=''">
+                and scenarioIdList ~* #{scenarioId}
+            </if>
+        </where>
+    </select>
+
+    <select id="getAllTestSuitesByPagination"
+            resultType="org.edgegallery.atp.model.testsuite.TestSuitePo">
+        select * from test_suite_table
+        <where>
+            <if test="nameEn != null and nameEn !=''">
+                nameEn ~* #{nameEn}
+            </if>
+            <if test="nameCh != null and nameCh !=''">
+                nameCh ~* #{nameCh}
+            </if>
+            <if test="scenarioId != null and scenarioId !=''">
+                and scenarioIdList ~* #{scenarioId}
+            </if>
+        </where>
+        ORDER BY createTime limit #{limit} offset #{offset}
+    </select>
+
     <insert id="createTestSuite"
-		parameterType="org.edgegallery.atp.model.testsuite.TestSuitePo">
-		insert into
-		test_suite_table
-		(id, nameCh, nameEn, descriptionCh, descriptionEn,scenarioIdList,createTime)
-		VALUES
-		(#{id}, #{nameCh}, #{nameEn},
-		#{descriptionCh},
-		#{descriptionEn},#{scenarioIdList},#{createTime})
-	</insert>
+            parameterType="org.edgegallery.atp.model.testsuite.TestSuitePo">
+        insert into
+        test_suite_table
+        (id, nameCh, nameEn, descriptionCh, descriptionEn,scenarioIdList,createTime)
+        VALUES
+        (#{id}, #{nameCh}, #{nameEn},
+        #{descriptionCh},
+        #{descriptionEn},#{scenarioIdList},#{createTime})
+    </insert>
   
    <update id="updateTestSuite" parameterType="org.edgegallery.atp.model.testsuite.TestSuitePo">
         UPDATE

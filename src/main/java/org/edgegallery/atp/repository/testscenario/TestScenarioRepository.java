@@ -55,10 +55,10 @@ public interface TestScenarioRepository {
      * @param id test scenario id
      */
     void deleteTestScenario(String id);
-    
+
     /**
      * get all test scenarios.
-     * 
+     *
      * @param locale locale
      * @param name test scenario name
      * @return test scenario list
@@ -66,8 +66,28 @@ public interface TestScenarioRepository {
     List<TestScenario> getAllTestScenarios(String locale, String name);
 
     /**
+     * get test scenarios count.
+     *
+     * @param locale locale
+     * @param name name
+     * @return test scenarios count
+     */
+    int countTotal(String locale, String name);
+
+    /**
+     * get all test scenarios with pagination.
+     *
+     * @param limit limit
+     * @param offset offset
+     * @param locale locale
+     * @param name name
+     * @return test scenarios info list
+     */
+    List<TestScenario> getAllWithPagination(int limit, int offset, String locale, String name);
+
+    /**
      * batch query test scenario by ids.
-     * 
+     *
      * @param ids test scenario ids
      * @return test scenario list
      */
