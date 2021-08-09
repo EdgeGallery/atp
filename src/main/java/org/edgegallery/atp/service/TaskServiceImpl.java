@@ -30,6 +30,7 @@ import org.apache.commons.lang.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ErrorCode;
 import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
+import org.edgegallery.atp.model.PageResult;
 import org.edgegallery.atp.model.task.AnalysisResult;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.task.TestCaseStatusReq;
@@ -249,6 +250,17 @@ public class TaskServiceImpl implements TaskService {
         List<TaskRequest> response = taskRepository.findTaskByUserId(userId, appName, status, providerId, appVersion);
         LOGGER.info("get all task successfully.");
         return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public PageResult<TaskRequest> getAllTasksByPagination(String userId, String appName, String status,
+        String providerId, String appVersion, int limit, int offset) {
+        PageResult<TaskRequest> pageResult = new PageResult<TaskRequest>(offset, limit);
+        pageResult.setTotal(taskRepository.countTotal(userId, appName, status, providerId, appVersion));
+        pageResult.setResults(
+            taskRepository.getAllWithPagination(limit, offset, null, appName, status, providerId, appVersion));
+        LOGGER.info("query all tasks by pagination successfully.");
+        return pageResult;
     }
 
     @Override

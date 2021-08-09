@@ -21,7 +21,7 @@ public interface TestCaseRepository {
 
     /**
      * find all test case.
-     * 
+     *
      * @param type manual or automatic
      * @param locale ch or en
      * @param name test case name
@@ -31,8 +31,33 @@ public interface TestCaseRepository {
     List<TestCase> findAllTestCases(String type, String locale, String name, String testSuiteId);
 
     /**
+     * find all test cases.
+     *
+     * @param type manual or automatic
+     * @param locale ch or en
+     * @param name test case name
+     * @param testSuiteId test suite id the test case belong to
+     * @param limit limit
+     * @param offset offset
+     * @return test case list
+     */
+    List<TestCase> findAllTestCasesByPaginition(String type, String locale, String name, String testSuiteId, int limit,
+        int offset);
+
+    /**
+     * get test case count.
+     *
+     * @param type manual or automatic
+     * @param locale ch or en
+     * @param name test case name
+     * @param testSuiteId test suite id the test case belong to
+     * @return test case count
+     */
+    int countTotal(String type, String locale, String name, String testSuiteId);
+
+    /**
      * find test case by test case name and test case type.
-     * 
+     *
      * @param name test case name
      * @param type test case type
      * @return

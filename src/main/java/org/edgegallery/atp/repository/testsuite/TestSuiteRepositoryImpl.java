@@ -43,31 +43,33 @@ public class TestSuiteRepositoryImpl implements TestSuiteRepository {
         } catch (Exception e) {
             LOGGER.error("insert test suite failed. {}", e);
             throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "insert test suite failed"),
-                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("insert test suite failed")));
+                ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("insert test suite failed")));
         }
     }
 
     @Override
     public TestSuite getTestSuiteByName(String nameCh, String nameEn) {
         try {
-            return null == testSuiteMapper.getTestSuiteByName(nameCh, nameEn) ? null
-                    : testSuiteMapper.getTestSuiteByName(nameCh, nameEn).toDomain();
+            return null == testSuiteMapper.getTestSuiteByName(nameCh, nameEn)
+                ? null
+                : testSuiteMapper.getTestSuiteByName(nameCh, nameEn).toDomain();
         } catch (Exception e) {
             LOGGER.error("get test suite by name {} failed. {}", nameEn, e);
             throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "get test suite by name failed"),
-                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("get test suite by name failed")));
+                ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("get test suite by name failed")));
         }
     }
 
     @Override
     public TestSuite getTestSuiteById(String id) {
         try {
-            return null == testSuiteMapper.getTestSuiteById(id) ? null
-                    : testSuiteMapper.getTestSuiteById(id).toDomain();
+            return null == testSuiteMapper.getTestSuiteById(id)
+                ? null
+                : testSuiteMapper.getTestSuiteById(id).toDomain();
         } catch (Exception e) {
             LOGGER.error("get test suite by id {} failed. {}", id, e);
             throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "get test suite by id failed"),
-                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("get test suite by id failed")));
+                ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("get test suite by id failed")));
         }
     }
 
@@ -78,7 +80,7 @@ public class TestSuiteRepositoryImpl implements TestSuiteRepository {
         } catch (Exception e) {
             LOGGER.error("update test suite failed. {}", e);
             throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "update test suite failed"),
-                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("update test suite failed")));
+                ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("update test suite failed")));
         }
     }
 
@@ -89,7 +91,7 @@ public class TestSuiteRepositoryImpl implements TestSuiteRepository {
         } catch (Exception e) {
             LOGGER.error("delete test suite {} failed. {}", id, e);
             throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "delete test suite failed"),
-                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("delete test suite failed")));
+                ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("delete test suite failed")));
         }
     }
 
@@ -99,13 +101,44 @@ public class TestSuiteRepositoryImpl implements TestSuiteRepository {
             String nameCh = Constant.LOCALE_CH.equalsIgnoreCase(locale) ? name : null;
             String nameEn = Constant.LOCALE_EN.equalsIgnoreCase(locale) ? name : null;
             List<TestSuitePo> testSuitePoList = testSuiteMapper.getAllTestSuite(nameCh, nameEn, id);
-            return null != testSuitePoList
-                    ? testSuitePoList.stream().map(testSuitePo -> testSuitePo.toDomain()).collect(Collectors.toList())
-                    : null;
+            return null != testSuitePoList ? testSuitePoList.stream().map(testSuitePo -> testSuitePo.toDomain())
+                .collect(Collectors.toList()) : null;
         } catch (Exception e) {
             LOGGER.error("get all test suite failed. {}", e);
             throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "get all test suites failed"),
-                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("get all test suites failed")));
+                ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("get all test suites failed")));
+        }
+    }
+
+    @Override
+    public int countTotal(String locale, String name, String scenarioId) {
+        try {
+            String nameCh = Constant.LOCALE_CH.equalsIgnoreCase(locale) ? name : null;
+            String nameEn = Constant.LOCALE_EN.equalsIgnoreCase(locale) ? name : null;
+            return testSuiteMapper.countTotal(nameCh, nameEn, scenarioId);
+        } catch (Exception e) {
+            LOGGER.error("get test suite total count failed. {}", e);
+            throw new IllegalRequestException(
+                String.format(ErrorCode.DB_ERROR_MSG, "get test suite total count failed"), ErrorCode.DB_ERROR,
+                new ArrayList<String>(Arrays.asList("get test suite total count failed")));
+        }
+    }
+
+    @Override
+    public List<TestSuite> getAllTestSuitesByPagination(String locale, String name, String scenarioId, int limit,
+        int offset) {
+        try {
+            String nameCh = Constant.LOCALE_CH.equalsIgnoreCase(locale) ? name : null;
+            String nameEn = Constant.LOCALE_EN.equalsIgnoreCase(locale) ? name : null;
+            List<TestSuitePo> testSuitePoList = testSuiteMapper
+                .getAllTestSuitesByPagination(nameCh, nameEn, scenarioId, limit, offset);
+            return null != testSuitePoList ? testSuitePoList.stream().map(testSuitePo -> testSuitePo.toDomain())
+                .collect(Collectors.toList()) : null;
+        } catch (Exception e) {
+            LOGGER.error("get all test suite by pagination failed. {}", e);
+            throw new IllegalRequestException(
+                String.format(ErrorCode.DB_ERROR_MSG, "get all test suites by pagination failed"), ErrorCode.DB_ERROR,
+                new ArrayList<String>(Arrays.asList("get all test suites by pagination failed")));
         }
     }
 
@@ -117,7 +150,7 @@ public class TestSuiteRepositoryImpl implements TestSuiteRepository {
         } catch (Exception e) {
             LOGGER.error("batch query test suite failed. {}", e);
             throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "batch query test suites failed"),
-                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("batch query test suites failed")));
+                ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("batch query test suites failed")));
         }
     }
 

@@ -58,7 +58,7 @@ public interface TestSuiteRepository {
 
     /**
      * get all test suites.
-     * 
+     *
      * @param locale locale
      * @param name test suite name
      * @param scenarioId scenario id test suite belongs to
@@ -67,8 +67,30 @@ public interface TestSuiteRepository {
     List<TestSuite> getAllTestSuites(String locale, String name, String scenarioId);
 
     /**
+     * get test scenarios count.
+     *
+     * @param locale locale
+     * @param name test suite name
+     * @param scenarioId scenario id test suite belongs to
+     * @return test scenarios count
+     */
+    int countTotal(String locale, String name, String scenarioId);
+
+    /**
+     * get all test suites by pagination.
+     *
+     * @param locale locale
+     * @param name test suite name
+     * @param scenarioId scenario id test suite belongs to
+     * @param limit limit
+     * @param offset offset
+     * @return test suite list
+     */
+    List<TestSuite> getAllTestSuitesByPagination(String locale, String name, String scenarioId, int limit, int offset);
+
+    /**
      * batch query test suites.
-     * 
+     *
      * @param ids test suite ids
      * @return test suite list
      */

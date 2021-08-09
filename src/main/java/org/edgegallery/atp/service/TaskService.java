@@ -17,6 +17,7 @@ package org.edgegallery.atp.service;
 import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
+import org.edgegallery.atp.model.PageResult;
 import org.edgegallery.atp.model.task.AnalysisResult;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.task.TestCaseStatusReq;
@@ -46,7 +47,7 @@ public interface TaskService {
 
     /**
      * get all task info.
-     * 
+     *
      * @param userId userId
      * @param appName appName
      * @param status status
@@ -54,12 +55,27 @@ public interface TaskService {
      * @param appVersion appVersion
      * @return TaskRequest list
      */
-    ResponseEntity<List<TaskRequest>> getAllTasks(String userId, String appName, String status,
-            String providerId, String appVersion);
+    ResponseEntity<List<TaskRequest>> getAllTasks(String userId, String appName, String status, String providerId,
+        String appVersion);
+
+    /**
+     * get all task info by pagination.
+     *
+     * @param userId userId
+     * @param appName appName
+     * @param status status
+     * @param providerId providerId
+     * @param appVersion appVersion
+     * @param limit limit
+     * @param offset offset
+     * @return task info
+     */
+    PageResult<TaskRequest> getAllTasksByPagination(String userId, String appName, String status, String providerId,
+        String appVersion, int limit, int offset);
 
     /**
      * create test task.
-     * 
+     *
      * @param packages csar file
      * @return taskInfo
      */

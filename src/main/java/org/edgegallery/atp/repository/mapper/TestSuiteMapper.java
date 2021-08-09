@@ -25,14 +25,14 @@ import org.springframework.stereotype.Component;
 public interface TestSuiteMapper {
     /**
      * create test suite.
-     * 
+     *
      * @param testSuitePo testSuitePo
      */
     void createTestSuite(TestSuitePo testSuitePo);
 
     /**
      * get test suite by name.
-     * 
+     *
      * @param nameCh nameCh
      * @param nameEn nameEn
      * @return TestSuitePo
@@ -41,25 +41,49 @@ public interface TestSuiteMapper {
 
     /**
      * get all test suites, name is fuzzy query.
-     * 
+     *
      * @param nameCh nameCh
      * @param nameEn nameEn
      * @param scenarioId scenario id test suite belongs to
      * @return TestSuitePo list
      */
     List<TestSuitePo> getAllTestSuite(@Param("nameCh") String nameCh, @Param("nameEn") String nameEn,
-            @Param("scenarioId") String scenarioId);
+        @Param("scenarioId") String scenarioId);
+
+    /**
+     * get test suite count.
+     *
+     * @param nameCh nameCh
+     * @param nameEn nameEn
+     * @param scenarioId scenario id test suite belongs to
+     * @return test suite count
+     */
+    int countTotal(@Param("nameCh") String nameCh, @Param("nameEn") String nameEn,
+        @Param("scenarioId") String scenarioId);
+
+    /**
+     * get all test suites by pagination.
+     *
+     * @param nameCh nameCh
+     * @param nameEn nameEn
+     * @param scenarioId scenario id test suite belongs to
+     * @param limit limit
+     * @param offset offset
+     * @return test suite list
+     */
+    List<TestSuitePo> getAllTestSuitesByPagination(@Param("nameCh") String nameCh, @Param("nameEn") String nameEn,
+        @Param("scenarioId") String scenarioId, @Param("limit") int limit, @Param("offset") int offset);
 
     /**
      * update test suite.
-     * 
+     *
      * @param testSuitePo testSuitePo
      */
     void updateTestSuite(TestSuitePo testSuitePo);
-    
+
     /**
      * get test suite by id.
-     * 
+     *
      * @param id id
      * @return test suite info
      */
@@ -67,14 +91,14 @@ public interface TestSuiteMapper {
 
     /**
      * delete test suite by id.
-     * 
+     *
      * @param id test suite id
      */
     void deleteTestSuite(String id);
 
     /**
      * batch query test suites.
-     * 
+     *
      * @param ids test suite ids
      * @return test suite list
      */

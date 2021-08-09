@@ -15,6 +15,7 @@
 package org.edgegallery.atp.service;
 
 import java.util.List;
+import org.edgegallery.atp.model.PageResult;
 import org.edgegallery.atp.model.testsuite.TestSuite;
 import org.edgegallery.atp.utils.exception.FileNotExistsException;
 
@@ -53,11 +54,24 @@ public interface TestSuiteService {
 
     /**
      * get all test suites.
-     * 
+     *
      * @param locale locale language
      * @param name test case name
      * @param scenarioIdList scenario id list test suite belongs to
      * @return test suite list
      */
     List<TestSuite> queryAllTestSuite(String locale, String name, List<String> scenarioIdList);
+
+    /**
+     * get all test suites by pagination.
+     *
+     * @param locale locale language
+     * @param name test case name
+     * @param scenarioIdList scenario id list test suite belongs to
+     * @param limit limit
+     * @param offset offset
+     * @return test suite list by pagination
+     */
+    PageResult<TestSuite> queryAllTestSuiteByPagination(String locale, String name, List<String> scenarioIdList,
+        int limit, int offset);
 }

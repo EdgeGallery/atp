@@ -21,17 +21,22 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.io.FileNotFoundException;
 import java.util.List;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ErrorCode;
+import org.edgegallery.atp.model.PageResult;
 import org.edgegallery.atp.model.ResponseObject;
+import org.edgegallery.atp.model.testscenario.TestScenarioIds;
 import org.edgegallery.atp.model.testsuite.TestSuite;
 import org.edgegallery.atp.service.TestSuiteService;
 import org.edgegallery.atp.utils.CommonUtil;
 import org.edgegallery.atp.utils.exception.FileNotExistsException;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -151,6 +156,31 @@ public class TestSuiteControllerV2 {
         ResponseObject<TestSuite> result = new ResponseObject<TestSuite>(testSuiteService.getTestSuite(id),
             ErrorCode.RET_CODE_SUCCESS, null, "get test suite by id successfully.");
         return ResponseEntity.ok(result);
+    }
+
+    /**
+     * query all test suite.
+     *
+     * @param locale locale
+     * @param name name
+     * @param scenarioIdList scenarioIdList
+     * @return test suite info
+     */
+    @GetMapping(value = "/testsuites", produces = MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "get all test suites.", response = TestSuite.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
+        @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)
+    })
+    @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
+    public ResponseEntity<PageResult<TestSuite>> queryAllTestSuite(
+        @ApiParam(value = "locale language") @Length(max = Constant.LENGTH_64) @QueryParam("locale") String locale,
+        @ApiParam(value = "test Suite name") @Length(max = Constant.LENGTH_64) @QueryParam("name") String name,
+        @ApiParam(value = "test scenario id list belongs to test suite") @QueryParam("scenarioIdList")
+            TestScenarioIds scenarioIdList, @ApiParam(value = "limit") @QueryParam("limit") @NotNull int limit,
+        @ApiParam(value = "offset") @QueryParam("offset") @NotNull int offset) {
+        return ResponseEntity.ok(testSuiteService
+            .queryAllTestSuiteByPagination(locale, name, scenarioIdList.getScenarioIdList(), limit, offset));
     }
 }
 

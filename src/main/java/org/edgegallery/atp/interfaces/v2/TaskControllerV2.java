@@ -22,13 +22,16 @@ import io.swagger.annotations.ApiResponses;
 import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ErrorCode;
 import org.edgegallery.atp.model.BatchOpsRes;
+import org.edgegallery.atp.model.PageResult;
 import org.edgegallery.atp.model.ResponseObject;
 import org.edgegallery.atp.model.task.AnalysisResult;
 import org.edgegallery.atp.model.task.IdList;
@@ -36,6 +39,7 @@ import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.service.TaskService;
 import org.edgegallery.atp.utils.CommonUtil;
 import org.edgegallery.atp.utils.exception.FileNotExistsException;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -62,17 +66,19 @@ public class TaskControllerV2 {
 
     /**
      * create test task.
-     * 
+     *
      * @param file csar package
      * @return test task info
      */
     @PostMapping(value = "/tasks", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "create test task v2 interface.", response = String.class)
-    @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
-            @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
+    @ApiResponses(value = {
+        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
+        @ApiResponse(code = 500, message = "resource grant error", response = String.class)
+    })
     @PreAuthorize("hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<ResponseObject<TaskRequest>> createTest(
-            @ApiParam(value = "application files", required = true) @RequestPart("file") MultipartFile file) {
+        @ApiParam(value = "application files", required = true) @RequestPart("file") MultipartFile file) {
         CommonUtil.validateContext();
         ResponseObject<TaskRequest> result = new ResponseObject<TaskRequest>(taskService.createTask(file),
             ErrorCode.RET_CODE_SUCCESS, null, "create task successfully.");
@@ -100,6 +106,28 @@ public class TaskControllerV2 {
         ResponseObject<TaskRequest> result = new ResponseObject<TaskRequest>(
             taskService.runTask(taskId, scenarioIdList), ErrorCode.RET_CODE_SUCCESS, null, "run task successfully.");
         return ResponseEntity.ok(result);
+    }
+
+    /**
+     * get all tasks by pagination.
+     *
+     * @return task list
+     */
+    @GetMapping(value = "/tasks", produces = MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "get all tasks by userId.", response = TaskRequest.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
+        @ApiResponse(code = 500, message = "resource grant error", response = String.class)
+    })
+    @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
+    public ResponseEntity<PageResult<TaskRequest>> getAllTasks(
+        @QueryParam("appName") @Length(max = Constant.LENGTH_64) String appName,
+        @QueryParam("status") @Length(max = Constant.LENGTH_64) String status,
+        @QueryParam("providerId") @Length(max = Constant.LENGTH_64) String providerId,
+        @QueryParam("appVersion") @Length(max = Constant.LENGTH_64) String appVersion,
+        @QueryParam("limit") @NotNull int limit, @QueryParam("offset") @NotNull int offset) {
+        return ResponseEntity
+            .ok(taskService.getAllTasksByPagination(null, appName, status, providerId, appVersion, limit, offset));
     }
 
     /**

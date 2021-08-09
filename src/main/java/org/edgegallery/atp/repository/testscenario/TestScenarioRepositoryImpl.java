@@ -98,7 +98,36 @@ public class TestScenarioRepositoryImpl implements TestScenarioRepository {
         } catch (Exception e) {
             LOGGER.error("get all test scenario failed. {}", e);
             throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "get all test scenarios failed"),
-                    ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("get all test scenarios failed")));
+                ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("get all test scenarios failed")));
+        }
+    }
+
+    @Override
+    public int countTotal(String locale, String name) {
+        try {
+            String nameCh = Constant.LOCALE_CH.equalsIgnoreCase(locale) ? name : null;
+            String nameEn = Constant.LOCALE_EN.equalsIgnoreCase(locale) ? name : null;
+            return testScenarioMapper.countTotal(nameCh, nameEn);
+        } catch (Exception e) {
+            LOGGER.error("get test scenario total count failed. {}", e);
+            throw new IllegalRequestException(
+                String.format(ErrorCode.DB_ERROR_MSG, "get test scenario total count failed"), ErrorCode.DB_ERROR,
+                new ArrayList<String>(Arrays.asList("get test scenario total count failed")));
+        }
+    }
+
+    @Override
+    public List<TestScenario> getAllWithPagination(int limit, int offset, String locale, String name) {
+        try {
+            String nameCh = Constant.LOCALE_CH.equalsIgnoreCase(locale) ? name : null;
+            String nameEn = Constant.LOCALE_EN.equalsIgnoreCase(locale) ? name : null;
+            return testScenarioMapper.getAllWithPagination(limit, offset, nameCh, nameEn);
+        } catch (Exception e) {
+            LOGGER.error("get all test scenarios by pagination failed. {}", e);
+            throw new IllegalRequestException(
+                String.format(ErrorCode.DB_ERROR_MSG, "get all test scenarios by pagination failed"),
+                ErrorCode.DB_ERROR,
+                new ArrayList<String>(Arrays.asList("get all test scenarios by pagination failed")));
         }
     }
 
@@ -109,8 +138,8 @@ public class TestScenarioRepositoryImpl implements TestScenarioRepository {
         } catch (Exception e) {
             LOGGER.error("batch query test scenario failed. {}", e);
             throw new IllegalRequestException(
-                    String.format(ErrorCode.DB_ERROR_MSG, "batch query test scenarios failed"), ErrorCode.DB_ERROR,
-                    new ArrayList<String>(Arrays.asList("batch query test scenarios failed")));
+                String.format(ErrorCode.DB_ERROR_MSG, "batch query test scenarios failed"), ErrorCode.DB_ERROR,
+                new ArrayList<String>(Arrays.asList("batch query test scenarios failed")));
         }
     }
 }

@@ -26,34 +26,52 @@
 		#{filePath},
 		#{createTime})
 	</insert>
-	
+
 	<select id="getAllContributions"
-            resultType="org.edgegallery.atp.model.contribution.Contribution"
-            parameterType="String">
-        select * from contribution_table
-       <where>
-          <if test="name != null and name !=''">
-             name ~* #{name}
-          </if>
-        </where>
-        ORDER BY name ASC
-    </select>
-    
-    <delete id="deleteContributionsById">
+			resultType="org.edgegallery.atp.model.contribution.Contribution"
+			parameterType="String">
+		select * from contribution_table
+		<where>
+			<if test="name != null and name !=''">
+				name ~* #{name}
+			</if>
+		</where>
+		ORDER BY name ASC
+	</select>
+
+	<delete id="deleteContributionsById">
 		delete from
 		contribution_table
 		where id = #{id}
 	</delete>
-	
+
 	<select id="getContributionById"
-            resultType="org.edgegallery.atp.model.contribution.Contribution"
-            parameterType="String">
-        select * from contribution_table where id = #{id}
-    </select>
-    
-    <select id="getContributionByName"
-            resultType="org.edgegallery.atp.model.contribution.Contribution"
-            parameterType="String">
-        select * from contribution_table where name = #{name}
-    </select> 
+			resultType="org.edgegallery.atp.model.contribution.Contribution"
+			parameterType="String">
+		select * from contribution_table where id = #{id}
+	</select>
+
+	<select id="getContributionByName"
+			resultType="org.edgegallery.atp.model.contribution.Contribution"
+			parameterType="String">
+		select * from contribution_table where name = #{name}
+	</select>
+
+	<select id="countTotal" resultType="java.lang.Integer">
+		select count(*) FROM contribution_table where
+		<if test="name != null and name !=''">
+			name ~* #{name} and
+		</if>
+		1=1
+	</select>
+
+	<select id="getAllWithPagination"
+			resultType="org.edgegallery.atp.model.contribution.Contribution">
+		select * from contribution_table where
+		<if test="name != null and name !=''">
+			name ~* #{name} and
+		</if>
+		1=1
+		ORDER BY name ASC limit #{limit} offset #{offset}
+	</select>
 </mapper>

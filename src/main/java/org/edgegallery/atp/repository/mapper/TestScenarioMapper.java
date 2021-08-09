@@ -41,7 +41,7 @@ public interface TestScenarioMapper {
 
     /**
      * get all test scenarios, name is fuzzy query.
-     * 
+     *
      * @param nameCh nameCh
      * @param nameEn nameEn
      * @return TestScenario list
@@ -49,12 +49,33 @@ public interface TestScenarioMapper {
     List<TestScenario> getAllTestScenario(@Param("nameCh") String nameCh, @Param("nameEn") String nameEn);
 
     /**
+     * get test scenarios count.
+     *
+     * @param nameCh nameCh
+     * @param nameEn nameEn
+     * @return test scenarios count
+     */
+    int countTotal(@Param("nameCh") String nameCh, @Param("nameEn") String nameEn);
+
+    /**
+     * get all test scenarios with pagination.
+     *
+     * @param limit limit
+     * @param offset offset
+     * @param nameCh nameCh
+     * @param nameEn nameEn
+     * @return test scenarios info list
+     */
+    List<TestScenario> getAllWithPagination(@Param("limit") int limit, @Param("offset") int offset,
+        @Param("nameCh") String nameCh, @Param("nameEn") String nameEn);
+
+    /**
      * update test scenario.
-     * 
+     *
      * @param testScenario testScenario
      */
     void updateTestScenario(TestScenario testScenario);
-    
+
     /**
      * get test scenario by id.
      * 

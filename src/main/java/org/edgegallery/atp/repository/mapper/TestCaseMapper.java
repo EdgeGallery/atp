@@ -46,15 +46,42 @@ public interface TestCaseMapper {
 
     /**
      * get all test cases.
-     * 
+     *
      * @return test case list
      */
     List<TestCasePo> findAllTestCases(@Param("type") String type, @Param("nameCh") String nameCh,
-            @Param("nameEn") String nameEn, @Param("testSuiteId") String testSuiteId);
+        @Param("nameEn") String nameEn, @Param("testSuiteId") String testSuiteId);
+
+    /**
+     * find all test cases.
+     *
+     * @param type manual or automatic
+     * @param nameCh nameCh
+     * @param nameEn nameEn
+     * @param testSuiteId test suite id the test case belong to
+     * @param limit limit
+     * @param offset offset
+     * @return test case list
+     */
+    List<TestCasePo> findAllTestCasesByPaginition(@Param("type") String type, @Param("nameCh") String nameCh,
+        @Param("nameEn") String nameEn, @Param("testSuiteId") String testSuiteId, @Param("limit") int limit,
+        @Param("offset") int offset);
+
+    /**
+     * get test case count.
+     *
+     * @param type manual or automatic
+     * @param nameCh nameCh
+     * @param nameEn nameEn
+     * @param testSuiteId test suite id the test case belong to
+     * @return test case count
+     */
+    int countTotal(@Param("type") String type, @Param("nameCh") String nameCh, @Param("nameEn") String nameEn,
+        @Param("testSuiteId") String testSuiteId);
 
     /**
      * find test case by test case className.
-     * 
+     *
      * @param className test case className
      * @return testCase info
      */

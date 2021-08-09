@@ -15,6 +15,7 @@
 package org.edgegallery.atp.service;
 
 import java.util.List;
+import org.edgegallery.atp.model.PageResult;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.utils.exception.FileNotExistsException;
 import org.springframework.http.ResponseEntity;
@@ -24,19 +25,32 @@ public interface TestCaseService {
 
     /**
      * query all test cases.
-     * 
+     *
      * @param type manual or automatic
      * @param locale ch or zh
      * @param name test case name
      * @param testSuiteIds test suite id list the test case belong to
      * @return test case info list
      */
-    ResponseEntity<List<TestCase>> getAllTestCases(String type, String locale, String name,
-            List<String> testSuiteIds);
+    ResponseEntity<List<TestCase>> getAllTestCases(String type, String locale, String name, List<String> testSuiteIds);
+
+    /**
+     * query all test cases by pagination.
+     *
+     * @param type manual or automatic
+     * @param locale ch or zh
+     * @param name test case name
+     * @param testSuiteIds test suite id list the test case belong to
+     * @param limit limit
+     * @param offset offset
+     * @return test case info list
+     */
+    ResponseEntity<PageResult<TestCase>> getAllTestCasesByPagination(String type, String locale, String name,
+        List<String> testSuiteIds, int limit, int offset);
 
     /**
      * create test cases.
-     * 
+     *
      * @param file test case file
      * @param testCase test case info
      * @return test case info

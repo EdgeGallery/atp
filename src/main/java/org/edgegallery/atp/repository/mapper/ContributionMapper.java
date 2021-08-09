@@ -16,6 +16,7 @@ package org.edgegallery.atp.repository.mapper;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.edgegallery.atp.model.contribution.Contribution;
 import org.springframework.stereotype.Component;
 
@@ -24,14 +25,14 @@ import org.springframework.stereotype.Component;
 public interface ContributionMapper {
     /**
      * insert contribution to db.
-     * 
+     *
      * @param contribution contribution
      */
     void insert(Contribution contribution);
 
     /**
      * get all contributions.
-     * 
+     *
      * @param name contribution name
      * @return contribution list
      */
@@ -39,14 +40,14 @@ public interface ContributionMapper {
 
     /**
      * delete contributions by id.
-     * 
+     *
      * @param id contribution id
      */
     void deleteContributionsById(String id);
 
     /**
      * get contribution by contribution id.
-     * 
+     *
      * @param id contribution id
      * @return contribution info
      */
@@ -54,9 +55,28 @@ public interface ContributionMapper {
 
     /**
      * get contribution by contribution name.
-     * 
+     *
      * @param name name
      * @return contribution info
      */
     Contribution getContributionByName(String name);
+
+    /**
+     * get contribution count.
+     *
+     * @param name name
+     * @return contribution count
+     */
+    int countTotal(String name);
+
+    /**
+     * get all contributions with pagination.
+     *
+     * @param limit limit
+     * @param offset offset
+     * @param name name
+     * @return contributions info list
+     */
+    List<Contribution> getAllWithPagination(@Param("limit") int limit, @Param("offset") int offset,
+        @Param("name") String name);
 }

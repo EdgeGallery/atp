@@ -20,17 +20,21 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.io.FileNotFoundException;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ErrorCode;
 import org.edgegallery.atp.model.BatchOpsRes;
+import org.edgegallery.atp.model.PageResult;
 import org.edgegallery.atp.model.ResponseObject;
 import org.edgegallery.atp.model.testscenario.TestScenario;
 import org.edgegallery.atp.service.TestScenarioService;
 import org.edgegallery.atp.utils.CommonUtil;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -172,6 +176,28 @@ public class TestScenarioControllerV2 {
         } else {
             return new ResponseEntity<>(batchOpsRes, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    /**
+     * query all test scenario.
+     *
+     * @param locale locale
+     * @param name name
+     * @return test scenario list
+     */
+    @GetMapping(value = "/testscenarios", produces = MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "get all test scenarios.", response = TestScenario.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
+        @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)
+    })
+    @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
+    public ResponseEntity<PageResult<TestScenario>> queryAllTestScenario(
+        @ApiParam(value = "locale language") @Length(max = Constant.LENGTH_64) @QueryParam("locale") String locale,
+        @ApiParam(value = "test scenario name") @Length(max = Constant.LENGTH_64) @QueryParam("name") String name,
+        @ApiParam(value = "limit") @QueryParam("limit") @NotNull int limit,
+        @ApiParam(value = "offset") @QueryParam("offset") @NotNull int offset) {
+        return ResponseEntity.ok(testScenarioService.queryAllTestScenarioByPagination(locale, name, limit, offset));
     }
 }
 

@@ -36,6 +36,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ErrorCode;
 import org.edgegallery.atp.model.BatchOpsRes;
+import org.edgegallery.atp.model.PageResult;
 import org.edgegallery.atp.model.file.AtpFile;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.model.testscenario.TestScenario;
@@ -192,6 +193,16 @@ public class TestScenarioServiceImpl implements TestScenarioService {
         List<TestScenario> testScenarioList = testScenarioRepository.getAllTestScenarios(locale, name);
         LOGGER.info("get all test scenarios successfully.");
         return testScenarioList;
+    }
+
+    @Override
+    public PageResult<TestScenario> queryAllTestScenarioByPagination(String locale, String name, int limit,
+        int offset) {
+        PageResult<TestScenario> pageResult = new PageResult<TestScenario>(offset, limit);
+        pageResult.setTotal(testScenarioRepository.countTotal(locale, name));
+        pageResult.setResults(testScenarioRepository.getAllWithPagination(limit, offset, locale, name));
+        LOGGER.info("get all test scenarios by pagination successfully.");
+        return pageResult;
     }
 
     @Override

@@ -29,15 +29,33 @@ public interface ContributionRepository {
 
     /**
      * get all contributions.
-     * 
+     *
      * @param name contribution name
      * @return contribution list
      */
     List<Contribution> getAllContributions(String name);
 
     /**
+     * get contribution count.
+     *
+     * @param name name
+     * @return contribution count
+     */
+    int countTotal(String name);
+
+    /**
+     * get all contributions with pagination.
+     *
+     * @param limit limit
+     * @param offset offset
+     * @param name name
+     * @return contributions info list
+     */
+    List<Contribution> getAllWithPagination(int limit, int offset, String name);
+
+    /**
      * batch delete contributions by contribution ids.
-     * 
+     *
      * @param ids contribution ids
      * @return failed id list
      */

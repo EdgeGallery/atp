@@ -24,6 +24,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ErrorCode;
+import org.edgegallery.atp.model.PageResult;
 import org.edgegallery.atp.model.config.Config;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.model.testsuite.TestSuite;
@@ -87,6 +88,37 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
+    public ResponseEntity<PageResult<TestCase>> getAllTestCasesByPagination(String type, String locale, String name,
+        List<String> testSuiteIds, int limit, int offset) {
+        List<TestCase> result = new LinkedList<TestCase>();
+        PageResult<TestCase> pageResult = new PageResult<TestCase>(offset, limit);
+        if (null == testSuiteIds || CollectionUtils.isEmpty(testSuiteIds)) {
+            result = testCaseRepository.findAllTestCasesByPaginition(type, locale, name, null, limit, offset);
+            pageResult.setTotal(testCaseRepository.countTotal(type, locale, name, null));
+
+        } else {
+            List<TestCase> testCaseList = testCaseRepository
+                .findAllTestCasesByPaginition(type, locale, name, testSuiteIds.get(0), limit, offset);
+            for (TestCase testCase : testCaseList) {
+                boolean isSatisfy = true;
+                for (String id : testSuiteIds) {
+                    if (!testCase.getTestSuiteIdList().contains(id)) {
+                        isSatisfy = false;
+                        break;
+                    }
+                }
+                if (isSatisfy) {
+                    result.add(testCase);
+                }
+            }
+        }
+
+        pageResult.setResults(result);
+        LOGGER.info("query all test cases by pagination successfully.");
+        return ResponseEntity.ok(pageResult);
+    }
+
+    @Override
     public TestCase createTestCase(MultipartFile file, TestCase testCase) {
         // nameCh or nameEn must exist one
         CommonUtil.nameExistenceValidation(testCase.getNameCh(), testCase.getNameEn());
@@ -106,16 +138,19 @@ public class TestCaseServiceImpl implements TestCaseService {
         testCase.setDescriptionCh(StringUtils.isNotBlank(testCase.getDescriptionCh())
             ? testCase.getDescriptionCh()
             : testCase.getDescriptionEn());
-        testCase.setDescriptionEn(StringUtils.isNotBlank(testCase.getDescriptionEn()) ? testCase.getDescriptionEn()
-                : testCase.getDescriptionCh());
-        testCase.setExpectResultCh(StringUtils.isNotBlank(testCase.getExpectResultCh()) ? testCase.getExpectResultCh()
-                : testCase.getExpectResultEn());
-        testCase.setExpectResultEn(StringUtils.isNotBlank(testCase.getExpectResultEn()) ? testCase.getExpectResultEn()
-                : testCase.getExpectResultCh());
+        testCase.setDescriptionEn(StringUtils.isNotBlank(testCase.getDescriptionEn())
+            ? testCase.getDescriptionEn()
+            : testCase.getDescriptionCh());
+        testCase.setExpectResultCh(StringUtils.isNotBlank(testCase.getExpectResultCh())
+            ? testCase.getExpectResultCh()
+            : testCase.getExpectResultEn());
+        testCase.setExpectResultEn(StringUtils.isNotBlank(testCase.getExpectResultEn())
+            ? testCase.getExpectResultEn()
+            : testCase.getExpectResultCh());
         testCase.setTestStepCh(
-                StringUtils.isNotBlank(testCase.getTestStepCh()) ? testCase.getTestStepCh() : testCase.getTestStepEn());
+            StringUtils.isNotBlank(testCase.getTestStepCh()) ? testCase.getTestStepCh() : testCase.getTestStepEn());
         testCase.setTestStepEn(
-                StringUtils.isNotBlank(testCase.getTestStepEn()) ? testCase.getTestStepEn() : testCase.getTestStepCh());
+            StringUtils.isNotBlank(testCase.getTestStepEn()) ? testCase.getTestStepEn() : testCase.getTestStepCh());
         testCase.setCreateTime(taskRepository.getCurrentDate());
 
         // check one test case type must same in one test suite
@@ -131,7 +166,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         });
 
         String filePath = Constant.BASIC_TEST_CASE_PATH.concat(testCase.getNameEn()).concat(Constant.UNDER_LINE)
-                .concat(testCase.getId());
+            .concat(testCase.getId());
         try {
             FileChecker.createFile(filePath);
             File result = new File(filePath);

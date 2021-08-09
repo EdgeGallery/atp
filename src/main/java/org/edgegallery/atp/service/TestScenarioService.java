@@ -17,6 +17,7 @@ package org.edgegallery.atp.service;
 import java.io.FileNotFoundException;
 import java.util.List;
 import org.edgegallery.atp.model.BatchOpsRes;
+import org.edgegallery.atp.model.PageResult;
 import org.edgegallery.atp.model.testscenario.TestScenario;
 import org.edgegallery.atp.model.testscenario.testcase.AllTestScenarios;
 import org.springframework.web.multipart.MultipartFile;
@@ -56,7 +57,7 @@ public interface TestScenarioService {
 
     /**
      * get all test scenarios.
-     * 
+     *
      * @param locale locale language
      * @param name test case name
      * @return test scenario list
@@ -64,8 +65,19 @@ public interface TestScenarioService {
     List<TestScenario> queryAllTestScenario(String locale, String name);
 
     /**
+     * get all test scenarios.
+     *
+     * @param locale locale language
+     * @param name test case name
+     * @param limit limit
+     * @param offset offset
+     * @return test scenario list
+     */
+    PageResult<TestScenario> queryAllTestScenarioByPagination(String locale, String name, int limit, int offset);
+
+    /**
      * get all test cases according to scenario ids.
-     * 
+     *
      * @param ids test scenario ids
      * @return test scenario info
      */

@@ -60,8 +60,8 @@ public class TestCaseController {
     private TestCaseService testCaseService;
 
     /**
-     * get all tasks according userId.
-     * 
+     * get all testcases.
+     *
      * @param type type
      * @param locale locale
      * @param name name

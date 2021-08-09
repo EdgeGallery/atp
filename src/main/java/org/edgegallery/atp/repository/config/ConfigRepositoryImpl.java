@@ -83,9 +83,9 @@ public class ConfigRepositoryImpl implements ConfigRepository {
         try {
             return configMapper.countTotal(nameCh, nameEn);
         } catch (Exception e) {
-            LOGGER.error("get total count failed. {}", e);
-            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "get total count failed"),
-                ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("get total count failed")));
+            LOGGER.error("get config total count failed. {}", e);
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "get config total count failed"),
+                ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("get config total count failed")));
         }
     }
 
