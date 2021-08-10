@@ -116,7 +116,6 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public TaskRequest runTask(String taskId, List<String> scenarioIdList) throws FileNotExistsException {
-        Map<String, String> context = AccessTokenFilter.CONTEXT.get();
         if (CollectionUtils.isEmpty(scenarioIdList)) {
             LOGGER.error("scenarioIdList is empty.");
             throw new IllegalRequestException(String.format(ErrorCode.PARAM_IS_NULL_MSG, "scenarioIdList"),
@@ -124,7 +123,6 @@ public class TaskServiceImpl implements TaskService {
         }
 
         initTestScenarios(scenarioIdList);
-
         TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, null);
         if (null == task) {
             LOGGER.error("get task from db is null.taskId: {}", taskId);
@@ -137,6 +135,7 @@ public class TaskServiceImpl implements TaskService {
             throw new IllegalRequestException(ErrorCode.TASK_IS_RUNNING_MSG, ErrorCode.TASK_IS_RUNNING, null);
         }
 
+        Map<String, String> context = AccessTokenFilter.CONTEXT.get();
         task.setTestScenarios(initTestScenarios(scenarioIdList));
         task.setAccessToken(context.get(Constant.ACCESS_TOKEN));
         task.setStatus(Constant.WAITING);
