@@ -71,9 +71,11 @@ public class ContributionController {
      */
     @PostMapping(value = "/contributions", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "create test contribution.", response = String.class)
-    @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
-            @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
-    @PreAuthorize("hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
+    @ApiResponses(value = {
+        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
+        @ApiResponse(code = 500, message = "resource grant error", response = String.class)
+    })
+    @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<Contribution> createContribution(
             @ApiParam(value = "contribution name") @NotNull @Size(
                     max = Constant.LENGTH_64) @RequestParam("name") String name,

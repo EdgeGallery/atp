@@ -108,17 +108,15 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public TaskRequest runTask(String taskId, List<String> scenarioIdList) {
         try {
-            Map<String, String> context = AccessTokenFilter.context.get();
             if (CollectionUtils.isEmpty(scenarioIdList)) {
                 String msg = "scenarioIdList is empty.";
                 LOGGER.error(msg);
                 throw new IllegalArgumentException(msg);
             }
             initTestScenarios(scenarioIdList);
-            TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, context.get(Constant.USER_ID));
+            TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, null);
             if (null == task) {
-                LOGGER.error("get task from db is null.taskId: {}, userId: {}, userName: {}", taskId,
-                        context.get(Constant.USER_ID), context.get(Constant.USER_NAME));
+                LOGGER.error("get task from db is null.taskId: {}", taskId);
                 throw new IllegalArgumentException("get task from db is null");
             }
             if (Constant.RUNNING.equals(task.getStatus())) {
@@ -126,6 +124,7 @@ public class TaskServiceImpl implements TaskService {
                 LOGGER.error(msg);
                 throw new IllegalArgumentException(msg);
             }
+            Map<String, String> context = AccessTokenFilter.context.get();
             task.setTestScenarios(initTestScenarios(scenarioIdList));
             task.setAccessToken(context.get(Constant.ACCESS_TOKEN));
             task.setStatus(Constant.WAITING);
@@ -149,9 +148,9 @@ public class TaskServiceImpl implements TaskService {
             if (null == testScenario) {
                 LOGGER.error("scenarioId {} not exists", scenarioId);
                 throw new IllegalRequestException(
-                        String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, "scenarioId: ".concat(scenarioId)),
-                        ErrorCode.NOT_FOUND_EXCEPTION,
-                        new ArrayList<String>(Arrays.asList("scenarioId: ".concat(scenarioId))));
+                    String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, "scenarioId: ".concat(scenarioId)),
+                    ErrorCode.NOT_FOUND_EXCEPTION,
+                    new ArrayList<String>(Arrays.asList("scenarioId: ".concat(scenarioId))));
             }
 
             TaskTestScenario scenario = new TaskTestScenario();
@@ -194,7 +193,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public ResponseEntity<List<TaskRequest>> getAllTasks(String userId, String appName, String status,
-            String providerId, String appVersion) {
+        String providerId, String appVersion) {
         List<TaskRequest> response = taskRepository.findTaskByUserId(userId, appName, status, providerId, appVersion);
         LOGGER.info("get all task successfully.");
         return ResponseEntity.ok(response);
@@ -245,16 +244,15 @@ public class TaskServiceImpl implements TaskService {
         List<TaskRequest> response = taskRepository.findTaskByUserId(null, null, null, null, null);
         AnalysisResult analysisResult = new AnalysisResult();
         response.forEach(task -> {
-            if (task.getCreateTime().getYear() == curTime.getYear()
-                    && task.getCreateTime().getMonth() == curTime.getMonth()) {
+            if (task.getCreateTime().getYear() == curTime.getYear() && task.getCreateTime().getMonth() == curTime
+                .getMonth()) {
                 analysisResult.increaseCurrentMonth();
             } else {
                 // just consider day, not hours
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 try {
-                    int day = (int) ((dateFormat.parse(dateFormat.format(firstDayOfMonth)).getTime()
-                            - dateFormat.parse(dateFormat.format(task.getCreateTime())).getTime())
-                            / (1000 * 3600 * 24));
+                    int day = (int) ((dateFormat.parse(dateFormat.format(firstDayOfMonth)).getTime() - dateFormat
+                        .parse(dateFormat.format(task.getCreateTime())).getTime()) / (1000 * 3600 * 24));
                     if (day < oneMonthDays) {
                         analysisResult.increaseOneMonthAgo();
                     } else if (oneMonthDays <= day && day < last2Days) {
@@ -305,7 +303,6 @@ public class TaskServiceImpl implements TaskService {
         return ResponseEntity.ok(true);
     }
 
-
     @Override
     public ResponseEntity<ResponseObject<TaskRequest>> createTaskV2(MultipartFile file) {
         String taskId = CommonUtil.generateId();
@@ -330,7 +327,7 @@ public class TaskServiceImpl implements TaskService {
             taskRepository.insert(task);
 
             ResponseObject<TaskRequest> result = new ResponseObject<TaskRequest>(task, ErrorCode.RET_CODE_SUCCESS, null,
-                    "create task successfully.");
+                "create task successfully.");
             return ResponseEntity.ok(result);
         } catch (IOException e) {
             LOGGER.error("create task {} failed, file name is: {}", taskId, tempFile.getName());
@@ -344,38 +341,37 @@ public class TaskServiceImpl implements TaskService {
         if (null == response) {
             LOGGER.error("taskId does not exists: {}", taskId);
             throw new FileNotExistsException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, Constant.TASK_ID),
-                    ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList(Constant.TASK_ID)));
+                ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList(Constant.TASK_ID)));
         }
 
         ResponseObject<TaskRequest> result = new ResponseObject<TaskRequest>(response, ErrorCode.RET_CODE_SUCCESS, null,
-                "get task by id successfully.");
+            "get task by id successfully.");
         return ResponseEntity.ok(result);
     }
 
     @Override
     public ResponseEntity<ResponseObject<TaskRequest>> runTaskV2(String taskId, List<String> scenarioIdList) {
         try {
-            Map<String, String> context = AccessTokenFilter.context.get();
             if (CollectionUtils.isEmpty(scenarioIdList)) {
                 String msg = "scenarioIdList is empty.";
                 LOGGER.error(msg);
                 throw new IllegalRequestException(String.format(ErrorCode.PARAM_IS_NULL_MSG, "scenarioIdList"),
-                        ErrorCode.PARAM_IS_NULL, new ArrayList<String>(Arrays.asList("scenarioIdList")));
+                    ErrorCode.PARAM_IS_NULL, new ArrayList<String>(Arrays.asList("scenarioIdList")));
             }
 
             initTestScenarios(scenarioIdList);
-            TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, context.get(Constant.USER_ID));
+            TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, null);
             if (null == task) {
-                LOGGER.error("get task from db is null.taskId: {}, userId: {}, userName: {}", taskId,
-                        context.get(Constant.USER_ID), context.get(Constant.USER_NAME));
+                LOGGER.error("get task from db is null.taskId: {}", taskId);
                 throw new IllegalRequestException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, "get task from db"),
-                        ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList("get task from db")));
+                    ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList("get task from db")));
             }
 
             if (Constant.RUNNING.equals(task.getStatus())) {
                 LOGGER.error("this task already in running.");
                 throw new IllegalRequestException(ErrorCode.TASK_IS_RUNNING_MSG, ErrorCode.TASK_IS_RUNNING, null);
             }
+            Map<String, String> context = AccessTokenFilter.context.get();
             task.setTestScenarios(initTestScenarios(scenarioIdList));
             task.setAccessToken(context.get(Constant.ACCESS_TOKEN));
             task.setStatus(Constant.WAITING);
@@ -384,8 +380,8 @@ public class TaskServiceImpl implements TaskService {
             String filePath = task.getPackagePath();
             testCaseManager.executeTestCase(task, filePath);
 
-            ResponseObject<TaskRequest> result =
-                    new ResponseObject<TaskRequest>(task, ErrorCode.RET_CODE_SUCCESS, null, "run task successfully.");
+            ResponseObject<TaskRequest> result = new ResponseObject<TaskRequest>(task, ErrorCode.RET_CODE_SUCCESS, null,
+                "run task successfully.");
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             LOGGER.error("run task failed. {}", e);
@@ -395,7 +391,7 @@ public class TaskServiceImpl implements TaskService {
 
     /**
      * confirm task total status.
-     * 
+     *
      * @param task task info
      */
     private void confirmTaskStatus(TaskRequest task) {
