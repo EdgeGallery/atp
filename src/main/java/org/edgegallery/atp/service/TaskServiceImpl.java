@@ -125,10 +125,9 @@ public class TaskServiceImpl implements TaskService {
 
         initTestScenarios(scenarioIdList);
 
-        TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, context.get(Constant.USER_ID));
+        TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, null);
         if (null == task) {
-            LOGGER.error("get task from db is null.taskId: {}, userId: {}, userName: {}", taskId,
-                context.get(Constant.USER_ID), context.get(Constant.USER_NAME));
+            LOGGER.error("get task from db is null.taskId: {}", taskId);
             throw new FileNotExistsException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, Constant.TASK_ID),
                 ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList(Constant.TASK_ID)));
         }
