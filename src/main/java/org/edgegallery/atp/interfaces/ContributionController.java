@@ -71,9 +71,11 @@ public class ContributionController {
      */
     @PostMapping(value = "/contributions", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "create test contribution.", response = String.class)
-    @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
-            @ApiResponse(code = 500, message = "resource grant error", response = String.class)})
-    @PreAuthorize("hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
+    @ApiResponses(value = {
+        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
+        @ApiResponse(code = 500, message = "resource grant error", response = String.class)
+    })
+    @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<Contribution> createContribution(
             @ApiParam(value = "contribution name") @NotNull @Size(
                     max = Constant.LENGTH_64) @RequestParam("name") String name,
@@ -115,14 +117,22 @@ public class ContributionController {
      */
     @PostMapping(value = "/contributions/batch_delete", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "batch delete contributions", response = String.class)
-    @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
-            @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
+    @ApiResponses(value = {
+        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
+        @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)
+    })
     @PreAuthorize("hasRole('ATP_ADMIN')")
     public ResponseEntity<Map<String, List<String>>> batchDelete(
-            @ApiParam(value = "contribution id list") @RequestBody IdList ids) {
+        @ApiParam(value = "contribution id list") @RequestBody IdList ids) {
         return ResponseEntity.ok(contributionService.batchDelete(ids.getIds()));
     }
 
+    /**
+     * download contribution script.
+     *
+     * @param id contribution id
+     * @return contribution script content
+     */
     @GetMapping(value = "/contributions/{id}/action/download", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "download contribution scripts", response = File.class)
     @ApiResponses(value = {

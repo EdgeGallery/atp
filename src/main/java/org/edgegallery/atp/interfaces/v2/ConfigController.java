@@ -12,7 +12,7 @@
  * the License.
  */
 
-package org.edgegallery.atp.interfaces;
+package org.edgegallery.atp.interfaces.v2;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -49,7 +49,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RestSchema(schemaId = "config")
-@RequestMapping("/edgegallery/atp/v1")
+@RequestMapping("/edgegallery/atp/v2")
 @Api(tags = {"ATP Config Controller"})
 @Validated
 public class ConfigController {

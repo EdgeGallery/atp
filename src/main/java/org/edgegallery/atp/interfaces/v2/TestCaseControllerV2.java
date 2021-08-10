@@ -19,6 +19,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
 import javax.validation.constraints.NotNull;
@@ -42,6 +43,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -217,5 +219,41 @@ public class TestCaseControllerV2 {
         @QueryParam("offset") @NotNull int offset) {
         return testCaseService
             .getAllTestCasesByPagination(type, locale, name, testSuiteIds.getTestSuiteIdList(), limit, offset);
+    }
+
+    /**
+     * download test case.
+     *
+     * @param id id
+     * @return stream
+     */
+    @GetMapping(value = "/testcases/{id}/action/download", produces = MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "download test case", response = File.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
+        @ApiResponse(code = 500, message = "resource grant error", response = String.class)
+    })
+    @PreAuthorize("hasRole('ATP_ADMIN')")
+    public ResponseEntity<byte[]> downloadTestCase(
+        @ApiParam(value = "test case id") @PathVariable("id") @Pattern(regexp = Constant.REG_ID) String id) {
+        return testCaseService.downloadTestCase(id);
+    }
+
+    /**
+     * delete test case.
+     *
+     * @param id id
+     * @return true
+     */
+    @DeleteMapping(value = "/testcases/{id}", produces = MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "delete test case.", response = Boolean.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
+        @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)
+    })
+    @PreAuthorize("hasRole('ATP_ADMIN')")
+    public ResponseEntity<Boolean> deleteTestCase(
+        @ApiParam(value = "test case id") @PathVariable("id") @Pattern(regexp = Constant.REG_ID) String id) {
+        return ResponseEntity.ok(testCaseService.deleteTestCase(id));
     }
 }
