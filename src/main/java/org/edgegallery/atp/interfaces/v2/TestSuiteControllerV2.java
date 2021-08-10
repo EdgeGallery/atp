@@ -43,6 +43,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -181,6 +182,24 @@ public class TestSuiteControllerV2 {
         @ApiParam(value = "offset") @QueryParam("offset") @NotNull int offset) {
         return ResponseEntity.ok(testSuiteService
             .queryAllTestSuiteByPagination(locale, name, scenarioIdList.getScenarioIdList(), limit, offset));
+    }
+
+    /**
+     * delete test suite.
+     *
+     * @param id id
+     * @return true
+     */
+    @DeleteMapping(value = "/testsuites/{id}", produces = MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "delete test suite.", response = Boolean.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
+        @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)
+    })
+    @PreAuthorize("hasRole('ATP_ADMIN')")
+    public ResponseEntity<Boolean> deleteTestSuite(
+        @ApiParam(value = "test suite id") @PathVariable("id") @Pattern(regexp = Constant.REG_ID) String id) {
+        return ResponseEntity.ok(testSuiteService.deleteTestSuite(id));
     }
 }
 

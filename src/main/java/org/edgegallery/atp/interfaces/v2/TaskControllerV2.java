@@ -20,6 +20,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.io.FileNotFoundException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.validation.constraints.NotNull;
@@ -36,6 +37,7 @@ import org.edgegallery.atp.model.ResponseObject;
 import org.edgegallery.atp.model.task.AnalysisResult;
 import org.edgegallery.atp.model.task.IdList;
 import org.edgegallery.atp.model.task.TaskRequest;
+import org.edgegallery.atp.model.task.TestCaseStatusReq;
 import org.edgegallery.atp.service.TaskService;
 import org.edgegallery.atp.utils.CommonUtil;
 import org.edgegallery.atp.utils.exception.FileNotExistsException;
@@ -45,9 +47,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -97,7 +101,7 @@ public class TaskControllerV2 {
         @ApiResponse(code = 404, message = "microservice not found", response = String.class),
         @ApiResponse(code = 500, message = "resource grant error", response = String.class)
     })
-    @PreAuthorize("hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
+    @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<ResponseObject<TaskRequest>> runTest(
         @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = Constant.REG_ID) String taskId,
         @ApiParam(value = "id of test scenarios selected") @RequestParam("scenarioIdList")
@@ -185,5 +189,69 @@ public class TaskControllerV2 {
     public ResponseEntity<BatchOpsRes> batchDelete(@ApiParam(value = "test task id list") @RequestBody IdList taskIds) {
         Map<String, List<String>> result = taskService.batchDelete(taskIds.getIds());
         return ResponseEntity.ok(CommonUtil.setBatchDeleteFailedRes(result));
+    }
+
+    /**
+     * delete task by task id and user id.
+     *
+     * @param taskId taskId
+     * @return true
+     */
+    @DeleteMapping(value = "/tasks/{taskId}", produces = MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "delete test task by id.", response = Boolean.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
+        @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)
+    })
+    @PreAuthorize("hasRole('ATP_ADMIN') || hasRole('ATP_TENANT')")
+    public ResponseEntity<Boolean> deleteTaskById(
+        @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = Constant.REG_ID) String taskId) {
+        CommonUtil.validateContext();
+        return taskService.deleteTaskById(taskId);
+    }
+
+    /**
+     * update test case status.
+     *
+     * @param taskId taskId
+     * @param testCaseStatus testCaseStatus info.
+     * @return true
+     */
+    @PutMapping(value = "/tasks/{taskId}/testcase", produces = MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "update test case status", response = Boolean.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
+        @ApiResponse(code = 500, message = "resource grant error", response = String.class)
+    })
+    @PreAuthorize("hasRole('ATP_ADMIN')")
+    public ResponseEntity<Boolean> updateTestCaseStatus(
+        @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = Constant.REG_ID) String taskId,
+        @ApiParam(value = "modify test case status request body") @RequestBody List<TestCaseStatusReq> testCaseStatus) {
+        return taskService.modifyTestCaseStatus(testCaseStatus, taskId);
+    }
+
+    /**
+     * upload self-test report.
+     *
+     * @param taskId taskId
+     * @param file self-test report file
+     * @return self-test report file path
+     */
+    @PostMapping(value = "/tasks/{taskId}/action/upload-report")
+    @ApiOperation(value = "upload self-test report.", response = String.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
+        @ApiResponse(code = 500, message = "resource grant error", response = String.class)
+    })
+    @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
+    public ResponseEntity<ResponseObject<Map<String, String>>> uploadReport(
+        @ApiParam(value = "task id") @PathVariable("taskId") @Pattern(regexp = Constant.REG_ID) String taskId,
+        @ApiParam(value = "application files", required = true) @RequestPart("file") MultipartFile file)
+        throws FileNotExistsException {
+        Map<String, String> path = new HashMap<>();
+        path.put("path", taskService.uploadReport(taskId, file));
+        ResponseObject<Map<String, String>> result = new ResponseObject<Map<String, String>>(path,
+            ErrorCode.RET_CODE_SUCCESS, null, "upload self-test report successfully.");
+        return ResponseEntity.ok(result);
     }
 }
