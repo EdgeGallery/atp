@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Huawei Technologies Co., Ltd.
+ * Copyright 2021 Huawei Technologies Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -18,6 +18,7 @@ import static org.junit.Assert.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,6 +34,7 @@ import org.apache.ibatis.io.Resources;
 import org.edgegallery.atp.ATPApplicationTest;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
+import org.edgegallery.atp.model.ResponseObject;
 import org.edgegallery.atp.model.task.IdList;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.task.TestCaseStatusReq;
@@ -56,7 +58,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ATPApplicationTest.class)
 @AutoConfigureMockMvc
-public class TaskTest {
+public class TaskTestV2 {
 
     @Autowired
     private MockMvc mvc;
@@ -78,52 +80,55 @@ public class TaskTest {
 
     @WithMockUser(roles = "ATP_ADMIN")
     @Test
-    public void TasksTest() throws Exception {
+    public void TasksTestV2() throws Exception {
         new MockUp<FileChecker>() {
             @Mock
             private boolean isAllowedFileName(String originalFilename) {
                 return true;
             }
         };
+
         File csar = Resources.getResourceAsFile("testfile/AR.csar");
         InputStream csarInputStream = new FileInputStream(csar);
         MultipartFile csarMultiFile = new MockMultipartFile("AR.csar", "AR.csar",
-                ContentType.APPLICATION_OCTET_STREAM.toString(), csarInputStream);
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/tasks")
-                .file("file", csarMultiFile.getBytes()).with(csrf())).andReturn();
+            ContentType.APPLICATION_OCTET_STREAM.toString(), csarInputStream);
+        MvcResult mvcResult = mvc.perform(
+            MockMvcRequestBuilders.multipart("/edgegallery/atp/v2/tasks").file("file", csarMultiFile.getBytes())
+                .with(csrf())).andReturn();
         int result = mvcResult.getResponse().getStatus();
         assertEquals(200, result);
 
         String content = mvcResult.getResponse().getContentAsString();
-        TaskRequest task = gson.fromJson(content, TaskRequest.class);
+        ResponseObject responseObject = JSONObject.parseObject(content, ResponseObject.class);
+        String data = JSONObject.toJSONString(responseObject.getData());
+        TaskRequest task = JSONObject.parseObject(data, TaskRequest.class);
         String id = task.getId();
 
         // run task
         AccessTokenFilter.CONTEXT.set(setContext());
-        MvcResult mvcResultRunTasks =
-                mvc.perform(MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/tasks/" + id + "/action/run")
-                        .with(csrf()).param("scenarioIdList", "e71718a5-864a-49e5-855a-5805a5e9f97d")).andReturn();
+        MvcResult mvcResultRunTasks = mvc.perform(
+            MockMvcRequestBuilders.multipart("/edgegallery/atp/v2/tasks/" + id + "/action/run").with(csrf())
+                .param("scenarioIdList", "e71718a5-864a-49e5-855a-5805a5e9f97d")).andReturn();
         int resultRunTasks = mvcResultRunTasks.getResponse().getStatus();
         assertEquals(200, resultRunTasks);
 
-        // query all tasks
-        MvcResult mvcResultQuery = mvc.perform(MockMvcRequestBuilders.get("/edgegallery/atp/v1/tasks")
-                .contentType(MediaType.APPLICATION_JSON_VALUE).with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
-        int resultQuery = mvcResultQuery.getResponse().getStatus();
-        assertEquals(200, resultQuery);
-
         // query one taks
-        MvcResult mvcResultQueryOne = mvc.perform(MockMvcRequestBuilders.get("/edgegallery/atp/v1/tasks/" + id)
-                .contentType(MediaType.APPLICATION_JSON_VALUE).with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+        MvcResult mvcResultQueryOne = mvc.perform(
+            MockMvcRequestBuilders.get("/edgegallery/atp/v2/tasks/" + id).contentType(MediaType.APPLICATION_JSON_VALUE)
+                .with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
         int resultQueryOne = mvcResultQueryOne.getResponse().getStatus();
         assertEquals(200, resultQueryOne);
 
+        // query all tasks
+        MvcResult mvcResultQuery = mvc.perform(MockMvcRequestBuilders.get("/edgegallery/atp/v2/tasks?limit=10&offset=0")
+            .contentType(MediaType.APPLICATION_JSON_VALUE).with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
+            .andReturn();
+        int resultQuery = mvcResultQuery.getResponse().getStatus();
+        assertEquals(200, resultQuery);
+
         // analysis
-        MvcResult mvcResultAnalysis =
-                mvc.perform(MockMvcRequestBuilders.get("/edgegallery/atp/v1/tasks/action/analysize").with(csrf()))
-                        .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+        MvcResult mvcResultAnalysis = mvc
+            .perform(MockMvcRequestBuilders.get("/edgegallery/atp/v2/tasks/action/analysize").with(csrf())).andReturn();
         int resultAnalysis = mvcResultAnalysis.getResponse().getStatus();
         assertEquals(200, resultAnalysis);
 
@@ -136,9 +141,9 @@ public class TaskTest {
         req.setReason("");
         List<TestCaseStatusReq> reqList = new ArrayList<TestCaseStatusReq>();
         reqList.add(req);
-        mvc.perform(MockMvcRequestBuilders.put("/edgegallery/atp/v1/tasks/" + id + "/testcase").with(csrf())
-                .content(gson.toJson(reqList)).contentType(MediaType.APPLICATION_JSON_UTF8)
-                .accept(MediaType.APPLICATION_JSON_UTF8)).andExpect(MockMvcResultMatchers.status().isOk());
+        mvc.perform(MockMvcRequestBuilders.put("/edgegallery/atp/v2/tasks/" + id + "/testcase").with(csrf())
+            .content(gson.toJson(reqList)).contentType(MediaType.APPLICATION_JSON_UTF8)
+            .accept(MediaType.APPLICATION_JSON_UTF8)).andExpect(MockMvcResultMatchers.status().isOk());
 
         // batch delete
         IdList list = new IdList();
@@ -146,34 +151,10 @@ public class TaskTest {
         taskIds.add(id);
         list.setIds(taskIds);
         MvcResult mvcResultDelete = mvc.perform(
-                MockMvcRequestBuilders.post("/edgegallery/atp/v1/tasks/batch_delete").content(gson.toJson(list))
-                        .with(csrf()).contentType(MediaType.APPLICATION_JSON_UTF8)
-                        .accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+            MockMvcRequestBuilders.post("/edgegallery/atp/v2/tasks/batch_delete").content(gson.toJson(list))
+                .with(csrf()).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
         int resultDelete = mvcResultDelete.getResponse().getStatus();
         assertEquals(200, resultDelete);
-    }
-
-    @WithMockUser(roles = "ATP_ADMIN")
-    @Test
-    public void getTaskByIdFileNotExists() throws Exception {
-        MvcResult mvcResultQueryOne = mvc
-                .perform(MockMvcRequestBuilders.get("/edgegallery/atp/v1/tasks/33333111-1111-4f62-aabb-8ebcec357f87")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE).with(csrf())
-                        .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andReturn();
-        int resultQueryOne = mvcResultQueryOne.getResponse().getStatus();
-        assertEquals(404, resultQueryOne);
-    }
-
-    @WithMockUser(roles = "ATP_ADMIN")
-    @Test
-    public void runTaskIllegalRequestionException() throws Exception {
-        // run task
-        MvcResult mvcResultRunTasks = mvc.perform(MockMvcRequestBuilders
-                .multipart("/edgegallery/atp/v1/tasks/33333111-1111-4f62-aabb-8ebcec357f87/action/run").with(csrf())
-                .param("scenarioIdList", "e71718a5-864a-49e5-855a-5805a5e9f97d")).andReturn();
-        int resultRunTasks = mvcResultRunTasks.getResponse().getStatus();
-        assertEquals(404, resultRunTasks);
     }
 }
