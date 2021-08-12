@@ -18,6 +18,7 @@ import static org.junit.Assert.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,6 +26,8 @@ import java.io.InputStream;
 import org.apache.http.entity.ContentType;
 import org.apache.ibatis.io.Resources;
 import org.edgegallery.atp.ATPApplicationTest;
+import org.edgegallery.atp.model.ResponseObject;
+import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.utils.FileChecker;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -102,14 +105,16 @@ public class TestCaseTestV2 {
                 .param("configIdList", "")).andReturn();
         int result = mvcResult.getResponse().getStatus();
         assertEquals(200, result);
-    }
 
-    @WithMockUser(roles = "ATP_ADMIN")
-    @Test
-    public void downloadTestCase() throws Exception {
-        MvcResult mvcResultReport = mvc.perform(MockMvcRequestBuilders
-            .get("/edgegallery/atp/v2/testcases/4d203173-2222-4f62-aabb-8ebcec357f87/action/download")
-            .contentType(MediaType.APPLICATION_JSON_VALUE).with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
+        String content = mvcResult.getResponse().getContentAsString();
+        ResponseObject responseObject = JSONObject.parseObject(content, ResponseObject.class);
+        String data = JSONObject.toJSONString(responseObject.getData());
+        TestCase task = JSONObject.parseObject(data, TestCase.class);
+        String id = task.getId();
+
+        MvcResult mvcResultReport = mvc.perform(
+            MockMvcRequestBuilders.get("/edgegallery/atp/v2/testcases/" + id + "/action/download")
+                .contentType(MediaType.APPLICATION_JSON_VALUE).with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
         int resultReport = mvcResultReport.getResponse().getStatus();
         assertEquals(200, resultReport);
