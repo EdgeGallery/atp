@@ -94,7 +94,8 @@ public class SignatureValidation {
      */
     private static Boolean validateSignature(ZipFile zipFile, ZipEntry entry) throws CMSException {
         StringBuffer signData = new StringBuffer();
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
+        try (BufferedReader br = new BufferedReader(
+            new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
             String line = "";
             boolean flag = false;
             while ((line = br.readLine()) != null) {
