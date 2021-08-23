@@ -44,6 +44,13 @@ public class SignatureValidation {
         }
     }
 
+    /**
+     * execute test case.
+     *
+     * @param filePath csar file path
+     * @param context context info
+     * @return execute result
+     */
     public static String execute(String filePath, Map<String, String> context) {
         try (ZipFile zipFile = new ZipFile(filePath)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
