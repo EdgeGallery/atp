@@ -1,3 +1,17 @@
+/*
+ * Copyright 2021 Huawei Technologies Co., Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
 package org.edgegallery.atp.utils;
 
 import java.io.BufferedReader;
@@ -51,7 +65,7 @@ public class SignatureValidation {
      * @param context context info
      * @return execute result
      */
-    public static String execute(String filePath, Map<String, String> context) {
+    public static String verify(String filePath, Map<String, String> context) {
         try (ZipFile zipFile = new ZipFile(filePath)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
@@ -80,8 +94,7 @@ public class SignatureValidation {
      */
     private static Boolean validateSignature(ZipFile zipFile, ZipEntry entry) throws CMSException {
         StringBuffer signData = new StringBuffer();
-        try (BufferedReader br = new BufferedReader(
-            new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
             String line = "";
             boolean flag = false;
             while ((line = br.readLine()) != null) {

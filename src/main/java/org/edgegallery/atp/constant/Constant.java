@@ -166,4 +166,6 @@ public interface Constant {
     String EQUAL_MARK = "=";
 
     String CONFIG_PARAM_LIST = "configParamList";
+
+    String SIGNATURE_RESULT = "signatureResult";
 }
