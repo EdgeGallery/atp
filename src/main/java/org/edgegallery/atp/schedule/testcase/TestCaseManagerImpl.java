@@ -34,16 +34,12 @@ import org.edgegallery.atp.utils.JarCallUtil;
 import org.edgegallery.atp.utils.JavaCompileUtil;
 import org.edgegallery.atp.utils.PythonCallUtil;
 import org.edgegallery.atp.utils.SignatureValidation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TestCaseManagerImpl implements TestCaseManager {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseManagerImpl.class);
-
     ExecutorService taskTreadPool = Executors.newFixedThreadPool(Constant.MAX_TASK_THREAD_NUM);
 
     @Autowired
@@ -102,9 +98,8 @@ public class TestCaseManagerImpl implements TestCaseManager {
             context.put(Constant.APPO_SERVER_ADDRESS, appoServerAddress);
             context.put(Constant.INVENTORY_SERVER_ADDRESS, inventoryServerAddress);
             context.put(Constant.APPSTORE_SERSVER_ADDRESS, appstoreServerAddress);
-            //signature
-            context.put("signatureResult", SignatureValidation.execute(filePath, context));
-            LOGGER.info("signatureResult: {}", context.get("signatureResult"));
+            //signature verify
+            context.put(Constant.SIGNATURE_RESULT, SignatureValidation.verify(filePath, context));
 
             task.getTestScenarios().forEach(testScenario -> {
                 parseTestCase(testScenario, context);
