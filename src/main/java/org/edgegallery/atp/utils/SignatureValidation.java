@@ -127,16 +127,16 @@ public class SignatureValidation {
      * @throws CMSException CMSException
      */
     public static boolean signedDataVerify(byte[] signedData) throws CMSException {
-        CMSSignedData cms = new CMSSignedData(Base64.decode(signedData));
-        Store store = cms.getCertificates();
-        SignerInformationStore signers = cms.getSignerInfos();
-        Collection c = signers.getSigners();
-        Iterator it = c.iterator();
-        while (it.hasNext()) {
-            SignerInformation signer = (SignerInformation) it.next();
-            Collection certCollection = store.getMatches(signer.getSID());
-            Iterator certIt = certCollection.iterator();
-            X509CertificateHolder certHolder = (X509CertificateHolder) certIt.next();
+        CMSSignedData cmsData = new CMSSignedData(Base64.decode(signedData));
+        Store store = cmsData.getCertificates();
+        SignerInformationStore signerInfo = cmsData.getSignerInfos();
+        Collection signers = signerInfo.getSigners();
+        Iterator iterator = signers.iterator();
+        while (iterator.hasNext()) {
+            SignerInformation signer = (SignerInformation) iterator.next();
+            Collection certs = store.getMatches(signer.getSID());
+            Iterator certIterator = certs.iterator();
+            X509CertificateHolder certHolder = (X509CertificateHolder) certIterator.next();
             X509Certificate cert = null;
             try {
                 cert = new JcaX509CertificateConverter().setProvider("BC").getCertificate(certHolder);
