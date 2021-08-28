@@ -36,7 +36,7 @@ public class SignatureValidation {
      */
     private void addDelay() {
         try {
-            Thread.sleep(300);
+            Thread.sleep(800);
         } catch (InterruptedException e) {
         }
     }
