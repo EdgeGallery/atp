@@ -11,9 +11,9 @@
        ON CONFLICT(id) do nothing;
 
   INSERT INTO public.test_suite_table(id, nameCh,nameEn, descriptionCh,descriptionEn,scenarioIdList,createTime)
-       VALUES ('522684bd-d6df-4b47-aab8-b43f1b4c19c0','通用遵从性测试','Common Compliance Test','遵从社区APPD标准、ETSI标准对应用包结构进行校验','Validate app package structure according to commnunity and ETSI standard','4d203111-1111-4f62-aabb-8ebcec357f87', now()::timestamp without time zone),
+       VALUES ('743abd93-57a3-499d-9591-fa7db86a4778','通用安全性测试','Common Security Test','应用包安全测试','App package security test','4d203111-1111-4f62-aabb-8ebcec357f87', now()::timestamp without time zone),
+          ('522684bd-d6df-4b47-aab8-b43f1b4c19c0','通用遵从性测试','Common Compliance Test','遵从社区APPD标准、ETSI标准对应用包结构进行校验','Validate app package structure according to commnunity and ETSI standard','4d203111-1111-4f62-aabb-8ebcec357f87', now()::timestamp without time zone),
           ('6d04da1b-1f36-4295-920a-8074f7f9d942','通用沙箱测试','Common Sandbox Test','应用包部署测试','App package deployment test','4d203111-1111-4f62-aabb-8ebcec357f87', now()::timestamp without time zone),
-          ('743abd93-57a3-499d-9591-fa7db86a4778','通用安全性测试','Common Security Test','应用包安全测试','App package security test','4d203111-1111-4f62-aabb-8ebcec357f87', now()::timestamp without time zone),
           ('222684bd-d6df-4b47-aab8-b43f1b4c19c0','A运营商遵从性测试','A Operator Compliance Test','遵从A运营商标准对应用包结构进行校验','Validate app package structure according to A Operator standard','e71718a5-864a-49e5-855a-5805a5e9f97d', now()::timestamp without time zone),
           ('2224da1b-1f36-4295-920a-8074f7f9d942','A运营商安全性测试','A Operator Security Test','安全性测试A运营商版','App package security test A Operator version','e71718a5-864a-49e5-855a-5805a5e9f97d', now()::timestamp without time zone),
           ('111684bd-d6df-4b47-aab8-b43f1b4c19c0','B运营商遵从性测试','B Operator Compliance Test','遵从B运营商标准对应用包结构进行校验','Validate app package structure according to B Operator standard','6fe8581c-b83f-40c2-8f5b-505478f9e30b', now()::timestamp without time zone),

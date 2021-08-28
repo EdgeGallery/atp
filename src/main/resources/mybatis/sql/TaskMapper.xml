@@ -70,7 +70,7 @@
     </select>
 
     <select id="countTotal" resultType="java.lang.Integer">
-        select count(*) FROM task_table where
+        select count(*) FROM task_table where 1=1
         <if test="userId != null and userId !=''">
             userId = #{userId}
         </if>
@@ -86,12 +86,11 @@
         <if test="appVersion != null and appVersion !=''">
             and appVersion = #{appVersion}
         </if>
-        1=1
     </select>
 
     <select id="getAllWithPagination"
             resultType="org.edgegallery.atp.model.task.TaskPO">
-        select * from task_table where
+        select * from task_table where 1=1
         <if test="userId != null and userId !=''">
             userId = #{userId}
         </if>
@@ -107,7 +106,6 @@
         <if test="appVersion != null and appVersion !=''">
             and appVersion = #{appVersion}
         </if>
-        1=1
         ORDER BY createTime DESC limit #{limit} offset #{offset}
     </select>
 
