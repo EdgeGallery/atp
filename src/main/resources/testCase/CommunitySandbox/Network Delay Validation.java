@@ -21,11 +21,11 @@ import java.io.PrintWriter;
 import java.util.Map;
 
 /**
- * mec host available validation
+ * mec host netowrk delay validation.
  */
-public class MecHostAccessValidation {
+public class NetworkDelayValidation {
 
-    private static final String MEC_HOST_NOT_ACCESS = "mec host ip: %s can not be accessed by ping.";
+    private static final String NETWORK_DELAY_LONG = "network delay to %s is: %s, more than 50ms.";
 
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
 
@@ -39,43 +39,42 @@ public class MecHostAccessValidation {
      * @return execute result
      */
     public String execute(String filePath, Map<String, String> context) throws Exception {
-        String[] mecHostArray = getMecHostAppInstantiated(context);
-        if (0 == mecHostArray.length) {
+        String mecHost = getMecHostAppInstantiated(context);
+        if (null == mecHost) {
             return SUCCESS;
         }
         try {
             Process proc = Runtime.getRuntime().exec("/bin/bash", null, new File("/bin"));
             if (null != proc) {
-                for (String mecHost : mecHostArray) {
-                    try (BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-                         PrintWriter out = new PrintWriter(
-                             new BufferedWriter(new OutputStreamWriter(proc.getOutputStream())), true)) {
-                        out.println("nping ".concat(mecHost));
-                        String line = "";
-                        while ((line = in.readLine()) != null) {
-                            if (line.startsWith("TCP connection")) {
-                                String[] field = line.split("\\|");
-                                if (field.length > 1) {
-                                    String result = field[field.length - 1].trim();
-                                    String[] failedResult = result.split(":");
-                                    if (failedResult.length > 1 && failedResult[1].trim().startsWith("0")) {
-                                        break;
-                                    } else {
-                                        return String.format(MEC_HOST_NOT_ACCESS, mecHost);
-                                    }
-                                }
-                            }
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+                     PrintWriter out = new PrintWriter(
+                         new BufferedWriter(new OutputStreamWriter(proc.getOutputStream())), true)) {
+                    out.println("nping ".concat(mecHost));
+                    String line = "";
+                    double sendTime = 0;
+                    double receiveTime = 0;
+                    while ((line = in.readLine()) != null) {
+                        if (line.startsWith("SENT")) {
+                            //time end with s, example: 0.0013s
+                            sendTime = Double.valueOf(line.substring(line.indexOf("(") + 1, line.indexOf(")") - 1));
+                            continue;
                         }
-                    } finally {
-                        proc.destroy();
+                        if (line.startsWith("RCVD")) {
+                            receiveTime = Double.valueOf(line.substring(line.indexOf("(") + 1, line.indexOf(")") - 1));
+                            //network delay more than 50ms is a little slower
+                            double delayTime = receiveTime - sendTime;
+                            return delayTime > 0.05 ? String
+                                .format(NETWORK_DELAY_LONG, mecHost, String.valueOf(delayTime)) : SUCCESS;
+                        }
                     }
+                } finally {
+                    proc.destroy();
                 }
             }
         } catch (Exception e) {
-            return INNER_EXCEPTION;
         }
 
-        return SUCCESS;
+        return INNER_EXCEPTION;
     }
 
     /**
@@ -84,13 +83,12 @@ public class MecHostAccessValidation {
      * @param context context info
      * @return instantiate mec host
      */
-    private String[] getMecHostAppInstantiated(Map<String, String> context) {
+    private String getMecHostAppInstantiated(Map<String, String> context) {
         String mecHostIpList = context.get("mecHostIpList");
         if (null == mecHostIpList) {
             return null;
         }
         String[] hostArray = mecHostIpList.split(",");
-        return hostArray;
+        return hostArray[0];
     }
-
 }
