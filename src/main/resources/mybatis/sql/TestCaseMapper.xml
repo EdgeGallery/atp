@@ -61,7 +61,7 @@
                 and testSuiteIdList ~* #{testSuiteId}
             </if>
         </where>
-        ORDER BY testSuiteIdList ASC, nameEn ASC
+        ORDER BY testSuiteIdList ASC, createTime ASC
     </select>
 
     <select id="countTotal" resultType="java.lang.Integer">
@@ -99,7 +99,7 @@
                 and testSuiteIdList ~* #{testSuiteId}
             </if>
         </where>
-        ORDER BY testSuiteIdList ASC, nameEn ASC limit #{limit} offset #{offset}
+        ORDER BY testSuiteIdList ASC, createTime ASC limit #{limit} offset #{offset}
     </select>
 
     <insert id="insert"
