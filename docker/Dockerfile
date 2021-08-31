@@ -33,6 +33,16 @@ RUN sed -i "s|umask 022|umask 027|g" /etc/profile
 # Create the home directory for the new app user.
 RUN mkdir -p /usr/app
 RUN mkdir -p /usr/app/bin
+  
+RUN apk update &&\
+    apk upgrade &&\
+    apk add gcc g++ make libffi-dev openssl-dev libtool
+
+RUN wget http://nmap.org/dist/nmap-7.91.tar.bz2 &&\
+    tar -xvf nmap-7.91.tar.bz2 &&\
+    cd nmap-7.91 &&\
+    ./configure &&\
+    make && make install
 
 RUN apk update &&\
     apk upgrade &&\
