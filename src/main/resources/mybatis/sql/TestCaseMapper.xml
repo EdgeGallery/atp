@@ -161,10 +161,16 @@
         WHERE
         id = #{id}
     </delete>
-    
+
     <select id="getTestCaseById"
             resultType="org.edgegallery.atp.model.testcase.TestCasePo"
             parameterType="String">
         select * from test_case_table where id = #{id}
-    </select>    
+    </select>
+
+    <select id="findByConfigId"
+            resultType="org.edgegallery.atp.model.testcase.TestCasePo"
+            parameterType="String">
+        select * from test_case_table where configIdList ~* #{configIdList}
+    </select>
 </mapper>

@@ -41,7 +41,7 @@
         <if test="nameCh != null and nameCh !=''">
             nameCh = #{nameCh},
         </if>
-        <if test="configuration != null and configuration !=''">
+        <if test="configuration != null">
             configuration = #{configuration},
         </if>
         id=#{id}

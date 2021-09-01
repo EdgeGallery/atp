@@ -198,4 +198,11 @@ public interface ErrorCode {
 
     String CONFIG_PARAM_PATTERN_ERROR_MSG
         = "config param pattern wrong,each param must split by ; and key value must split by =";
+
+    /**
+     * config is used by test case.
+     */
+    int CONFIG_IS_USED_BY_TEST_CASE = 40024;
+
+    String CONFIG_IS_USED_BY_TEST_CASE_MSG = "config is used by test case: %s, can not be deleted.";
 }

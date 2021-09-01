@@ -40,7 +40,8 @@ public class MecHostAccessValidation {
      */
     public String execute(String filePath, Map<String, String> context) throws Exception {
         String[] mecHostArray = getMecHostAppInstantiated(context);
-        if (0 == mecHostArray.length) {
+        if ((null != context.get("configParamList") && context.get("configParamList").contains("false"))
+            || 0 == mecHostArray.length) {
             return SUCCESS;
         }
         try {

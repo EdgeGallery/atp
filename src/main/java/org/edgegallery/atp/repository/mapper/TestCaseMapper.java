@@ -28,7 +28,7 @@ public interface TestCaseMapper {
 
     /**
      * get test case by test case name and type.
-     * 
+     *
      * @param name name
      * @param type virusScanningTest,complianceTest or sandboxTest
      * @return test case info.
@@ -37,7 +37,7 @@ public interface TestCaseMapper {
 
     /**
      * get test case by test case name.
-     * 
+     *
      * @param nameCh chinese name
      * @param nameEn english name
      * @return test case info.
@@ -89,7 +89,7 @@ public interface TestCaseMapper {
 
     /**
      * find test cases by type.
-     * 
+     *
      * @param type test case type
      * @return test case info list.
      */
@@ -97,14 +97,14 @@ public interface TestCaseMapper {
 
     /**
      * insert into test case table.
-     * 
+     *
      * @param testCase test case info.
      */
     void insert(TestCasePo testCase);
 
     /**
      * find one test case by id.
-     * 
+     *
      * @param id id
      * @return test case info
      */
@@ -112,14 +112,14 @@ public interface TestCaseMapper {
 
     /**
      * update test case.
-     * 
+     *
      * @param testCase test case info
      */
     void update(TestCasePo testCase);
 
     /**
      * delete test case by test case id.
-     * 
+     *
      * @param id test case id
      * @return operation complete
      */
@@ -127,9 +127,17 @@ public interface TestCaseMapper {
 
     /**
      * get specific test case by test case id.
-     * 
+     *
      * @param id test case id
      * @return test case info
      */
     TestCasePo getTestCaseById(String id);
+
+    /**
+     * find by config id.
+     *
+     * @param configIdList configIdList
+     * @return TestCasePo
+     */
+    List<TestCasePo> findByConfigId(String configIdList);
 }

@@ -16,14 +16,18 @@ package org.edgegallery.atp.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ErrorCode;
 import org.edgegallery.atp.model.PageResult;
 import org.edgegallery.atp.model.config.Config;
 import org.edgegallery.atp.model.config.ConfigBase;
+import org.edgegallery.atp.model.testcase.TestCasePo;
 import org.edgegallery.atp.repository.config.ConfigRepository;
 import org.edgegallery.atp.repository.task.TaskRepository;
+import org.edgegallery.atp.repository.testcase.TestCaseRepository;
 import org.edgegallery.atp.utils.CommonUtil;
 import org.edgegallery.atp.utils.exception.FileNotExistsException;
 import org.edgegallery.atp.utils.exception.IllegalRequestException;
@@ -39,6 +43,9 @@ public class ConfigServiceImpl implements ConfigService {
 
     @Autowired
     TaskRepository taskRepository;
+
+    @Autowired
+    TestCaseRepository testCaseRepository;
 
     @Autowired
     ConfigRepository configRepository;
@@ -91,6 +98,13 @@ public class ConfigServiceImpl implements ConfigService {
 
     @Override
     public Boolean deleteConfig(String id) {
+        List<TestCasePo> testCasePo = testCaseRepository.findByConfigId(id);
+        if (null != testCasePo) {
+            List<String> nameList = testCasePo.stream().map(TestCasePo::getNameEn).collect(Collectors.toList());
+            throw new IllegalRequestException(
+                String.format(ErrorCode.CONFIG_IS_USED_BY_TEST_CASE_MSG, nameList.toString()),
+                ErrorCode.CONFIG_IS_USED_BY_TEST_CASE, new ArrayList<String>(Arrays.asList(nameList.toString())));
+        }
         configRepository.deleteConfig(id);
         LOGGER.info("delete config successfully.");
         return true;

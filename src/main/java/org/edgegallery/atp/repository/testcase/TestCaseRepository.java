@@ -16,6 +16,7 @@ package org.edgegallery.atp.repository.testcase;
 
 import java.util.List;
 import org.edgegallery.atp.model.testcase.TestCase;
+import org.edgegallery.atp.model.testcase.TestCasePo;
 
 public interface TestCaseRepository {
 
@@ -66,7 +67,7 @@ public interface TestCaseRepository {
 
     /**
      * find test case by test case className.
-     * 
+     *
      * @param className test case className
      * @return testCase info
      */
@@ -74,21 +75,21 @@ public interface TestCaseRepository {
 
     /**
      * insert into test case table.
-     * 
+     *
      * @param testCase test case info.
      */
     void insert(TestCase testCase);
 
     /**
      * update test case.
-     * 
+     *
      * @param testCase test case info.
      */
     void update(TestCase testCase);
 
     /**
      * delete test case by test case id.
-     * 
+     *
      * @param id test case id
      * @return operation complete
      */
@@ -96,19 +97,26 @@ public interface TestCaseRepository {
 
     /**
      * get specific test case by test case id.
-     * 
+     *
      * @param id test case id
      * @return test case info
      */
     TestCase getTestCaseById(String id);
-    
+
     /**
      * get test case by test case name.
-     * 
+     *
      * @param nameCh chinese name
      * @param nameEn english name
      * @return test case info.
      */
     TestCase findByName(String nameCh, String nameEn);
 
+    /**
+     * find by config id.
+     *
+     * @param configId configId
+     * @return TestCasePo
+     */
+    List<TestCasePo> findByConfigId(String configId);
 }
