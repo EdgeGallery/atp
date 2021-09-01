@@ -167,4 +167,15 @@ public class TestCaseRepositoryImpl implements TestCaseRepository {
                 ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("test case findByClassName failed")));
         }
     }
+
+    @Override
+    public List<TestCasePo> findByConfigId(String configId) {
+        try {
+            return testCaseMapper.findByConfigId(configId);
+        } catch (Exception e) {
+            LOGGER.error("findByConfigId failed. {}", e);
+            throw new IllegalRequestException(String.format(ErrorCode.DB_ERROR_MSG, "test case findByConfigId failed"),
+                ErrorCode.DB_ERROR, new ArrayList<String>(Arrays.asList("test case findByConfigId failed")));
+        }
+    }
 }
