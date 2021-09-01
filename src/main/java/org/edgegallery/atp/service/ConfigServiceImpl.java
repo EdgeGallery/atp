@@ -99,7 +99,7 @@ public class ConfigServiceImpl implements ConfigService {
     @Override
     public Boolean deleteConfig(String id) {
         List<TestCasePo> testCasePo = testCaseRepository.findByConfigId(id);
-        if (null != testCasePo) {
+        if (0 != testCasePo.size()) {
             List<String> nameList = testCasePo.stream().map(TestCasePo::getNameEn).collect(Collectors.toList());
             throw new IllegalRequestException(
                 String.format(ErrorCode.CONFIG_IS_USED_BY_TEST_CASE_MSG, nameList.toString()),

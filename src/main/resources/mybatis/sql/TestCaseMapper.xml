@@ -148,7 +148,7 @@
         <if test="testSuiteIdList != null and testSuiteIdList !=''">
             testSuiteIdList = #{testSuiteIdList},
         </if>
-        <if test="configIdList != null and configIdList !=''">
+        <if test="configIdList != null">
             configIdList = #{configIdList},
         </if>
         id=#{id}
