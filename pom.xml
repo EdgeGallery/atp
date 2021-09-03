@@ -435,7 +435,7 @@
                 <configuration>
                       <excludes>
                           <exclude>testCase/CommunitySandbox/*</exclude>
-                          <exclude>testCase/CommunitySecurity/*</exclude>
+                          <exclude>testCase/CommunityPerformance/*</exclude>
                           <exclude>testCase/CommunityCompliance/*</exclude>
                           <exclude>testCase/AOperatorSecurity/*</exclude>
                       </excludes>
