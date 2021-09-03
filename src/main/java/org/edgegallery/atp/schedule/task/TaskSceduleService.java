@@ -56,15 +56,15 @@ public class TaskSceduleService {
     public void handleData() {
         // put inner testCases and scenario icons in storage
         try {
-            String basePath = System.getProperty("os.name").toLowerCase().contains("windows")
-                    ? PropertiesUtil.getProperties("workspace_base_dir_windows")
-                    : PropertiesUtil.getProperties("workspace_base_dir_linux");
+            String basePath = System.getProperty("os.name").toLowerCase().contains("windows") ? PropertiesUtil
+                .getProperties("workspace_base_dir_windows") : PropertiesUtil.getProperties("workspace_base_dir_linux");
 
             // handle test case
             String baseTestCasePath = basePath.concat(Constant.SLASH).concat(Constant.TEST_CASE_DIR);
             handleTestCase(new File(baseTestCasePath.concat(File.separator).concat("CommunitySecurity")));
             handleTestCase(new File(baseTestCasePath.concat(File.separator).concat("CommunitySandbox")));
             handleTestCase(new File(baseTestCasePath.concat(File.separator).concat("CommunityCompliance")));
+            handleTestCase(new File(baseTestCasePath.concat(File.separator).concat("CommunityPerformance")));
             handleTestCase(new File(baseTestCasePath.concat(File.separator).concat("AOperatorSecurity")));
             handleTestCase(new File(baseTestCasePath.concat(File.separator).concat("AOperatorCompliance")));
 
@@ -81,13 +81,13 @@ public class TaskSceduleService {
 
                         // insert to db
                         String name = icon.getName();
-                        String scenarioId =
-                                name.substring(name.indexOf(Constant.UNDER_LINE) + 1, name.indexOf(Constant.DOT));
+                        String scenarioId = name
+                            .substring(name.indexOf(Constant.UNDER_LINE) + 1, name.indexOf(Constant.DOT));
 
                         AtpFile fileFromDb = fileRepository.getFileContent(scenarioId, Constant.FILE_TYPE_SCENARIO);
                         if (null == fileFromDb) {
                             AtpFile atpFile = new AtpFile(scenarioId, Constant.FILE_TYPE_SCENARIO,
-                                    taskRepository.getCurrentDate(), iconPath);
+                                taskRepository.getCurrentDate(), iconPath);
                             fileRepository.insertFile(atpFile);
                         }
                     }
@@ -103,7 +103,7 @@ public class TaskSceduleService {
 
     /**
      * save test case to env path.
-     * 
+     *
      * @param fileDir src dir
      */
     private void handleTestCase(File fileDir) {
@@ -112,11 +112,11 @@ public class TaskSceduleService {
                 File[] fileArray = fileDir.listFiles();
                 if (null != fileArray) {
                     for (File file : fileArray) {
-                        TestCase testCase = testCaseRepository.findByName(null,
-                                file.getName().substring(0, file.getName().indexOf(Constant.DOT)));
+                        TestCase testCase = testCaseRepository
+                            .findByName(null, file.getName().substring(0, file.getName().indexOf(Constant.DOT)));
                         if (null != testCase) {
                             String filePath = Constant.BASIC_TEST_CASE_PATH + testCase.getNameEn() + Constant.UNDER_LINE
-                                    + testCase.getId();
+                                + testCase.getId();
                             FileChecker.createFile(filePath);
                             File result = new File(filePath);
                             FileCopyUtils.copy(file, result);

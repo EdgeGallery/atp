@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.slf4j.Logger;
@@ -256,6 +257,7 @@ public class InstantiateAppTestCaseInner {
             return null;
         }
 
+        context.put("mecHostIpList", mecHostIpList.stream().collect(Collectors.joining(",")));
         return mecHostIpList.size() == 0 ? null : mecHostIpList.get(0);
     }
 
