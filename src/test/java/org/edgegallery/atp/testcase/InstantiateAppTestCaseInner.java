@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.slf4j.Logger;
@@ -92,6 +91,8 @@ public class InstantiateAppTestCaseInner {
 
     private static final String APPO_GET_INSTANCE = "/appo/v1/tenants/%s/app_instance_infos/%s";
 
+    private static final String APPO_GET_KPI_INSTANCE = "/appo/v1/tenants/%s/hosts/%s/kpi";
+
     private static final String PROVIDER_ID = "app_provider_id";
 
     private static final String INSTANTIATED = "instantiated";
@@ -111,6 +112,7 @@ public class InstantiateAppTestCaseInner {
             LOGGER.error("host ip is empty.");
             return "host ip is empty";
         }
+        setPerformanceInfo(hostIp, context);
 
         ResponseEntity<String> response = uploadFileToAPM(filePath, context, hostIp, packageInfo);
         if (null == response || !(HttpStatus.OK.equals(response.getStatusCode()) || HttpStatus.ACCEPTED
@@ -253,7 +255,7 @@ public class InstantiateAppTestCaseInner {
             LOGGER.error("Failed to get hosts from inventory, exception {}", e.getMessage());
             return null;
         }
-        context.put("mecHostIpList", mecHostIpList.stream().collect(Collectors.joining(",")));
+
         return mecHostIpList.size() == 0 ? null : mecHostIpList.get(0);
     }
 
@@ -533,13 +535,44 @@ public class InstantiateAppTestCaseInner {
      * @param fileName fileName
      * @return
      */
-    public static boolean fileSuffixValidate(String pattern, String fileName) {
+    private boolean fileSuffixValidate(String pattern, String fileName) {
         String suffix = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
         if (null != suffix && "" != suffix && suffix.equals(pattern)) {
             return true;
         }
         return false;
     }
+
+    /**
+     * get performance info from appo.
+     *
+     * @param hostIp hostIp
+     * @param context context
+     */
+    private void setPerformanceInfo(String hostIp, Map<String, String> context) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(ACCESS_TOKEN, context.get(ACCESS_TOKEN));
+        HttpEntity<String> request = new HttpEntity<>(headers);
+        String url = context.get("appoServerAddress")
+            .concat(String.format(APPO_GET_KPI_INSTANCE, context.get(TENANT_ID), hostIp));
+        LOGGER.warn("get kpi URL: {}", url);
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, request, String.class);
+            if (!HttpStatus.OK.equals(response.getStatusCode())) {
+                LOGGER.error("get kpi from appo failed, status is: {}", response.getStatusCode());
+                return;
+            }
+            JsonObject jsonObject = new JsonParser().parse(response.getBody()).getAsJsonObject();
+            LOGGER.info("response: {}", jsonObject.toString());
+            JsonObject cpuUsage = jsonObject.get("cpuusage").getAsJsonObject();
+            int cpuuUsed = cpuUsage.get("used").getAsInt();
+            context.put("cpuUsedBeforeDeploy", String.valueOf(cpuuUsed));
+            JsonObject memUsage = jsonObject.get("memusage").getAsJsonObject();
+            int memUsed = memUsage.get("used").getAsInt();
+            context.put("memUsedBeforeDeploy", String.valueOf(memUsed));
+            LOGGER.warn("cpuUsedBeforeDeploy: {}, memUsedBeforeDeploy: {}", cpuuUsed, memUsed);
+        } catch (Exception e) {
+            LOGGER.error("get kpi from appo failed, exception {}", e);
+        }
+    }
 }
-
-
