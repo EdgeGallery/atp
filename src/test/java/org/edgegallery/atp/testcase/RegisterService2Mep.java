@@ -148,7 +148,6 @@ public class RegisterService2Mep {
             //sign data
             SecretKeySpec secretKeySpec = new SecretKeySpec(SECRETE_KEY.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
             String algothim = secretKeySpec.getAlgorithm();
-            System.out.println(algothim);
             Mac mac = Mac.getInstance(secretKeySpec.getAlgorithm());
             mac.init(secretKeySpec);
             byte[] array = mac.doFinal(signData.toString().getBytes(StandardCharsets.UTF_8));
@@ -162,7 +161,6 @@ public class RegisterService2Mep {
             auth.append(
                 "SDK-HMAC-SHA256 Access=QVUJMSUMgS0VZLS0tLS0, SignedHeaders=content-type;host;x-sdk-date, Signature=")
                 .append(signValue.toString());
-            System.out.println(auth);
             return auth.toString();
         } catch (Exception e) {
             LOGGER.error("get sign value failed. {}", e);
