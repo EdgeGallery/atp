@@ -28,6 +28,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -49,6 +50,8 @@ public class RegisterService2Mep {
 
     private static final String REGISTER_SERVICE_FAILED = "register service to mep failed.";
 
+    private static final String MEP_HOST_IP_IS_NULL = "mep host ip is empty.";
+
     private static RestTemplate restTemplate = new RestTemplate();
 
     /**
@@ -59,24 +62,29 @@ public class RegisterService2Mep {
      * @return execute result
      */
     public String execute(String filePath, Map<String, String> context) {
-        String hostIp = getMecHostAppInstantiated(context).concat(":30443");
+        String ip = context.get("mepHostIp");
+        if (StringUtils.isEmpty(ip)) {
+            LOGGER.error(MEP_HOST_IP_IS_NULL);
+            return MEP_HOST_IP_IS_NULL;
+        }
+        String hostIp = ip.concat(":30443");
         String token = getMepToken(hostIp);
         if (null == token) {
             return GET_MEP_TOKEN_FAILED;
         }
-        return registerService(token, hostIp, context) ? SUCCESS : REGISTER_SERVICE_FAILED;
+        context.put("authoration", token);
+        return registerService(hostIp, context) ? SUCCESS : REGISTER_SERVICE_FAILED;
     }
 
     /**
      * register service.
      *
-     * @param token token
      * @param hostIp hostIp
      * @return call successful
      */
-    private boolean registerService(String token, String hostIp, Map<String, String> context) {
+    private boolean registerService(String hostIp, Map<String, String> context) {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer ".concat(token));
+        headers.set("Authorization", "Bearer ".concat(context.get("authoration")));
         String body = mockMepRegisterReq();
         HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);
         context.put("mepInstanceId", "5abe4782-2c70-4e47-9a4e-0ee3a1a0fd1f");
@@ -186,21 +194,6 @@ public class RegisterService2Mep {
             signBody.append(String.format("%02x", b));
         }
         return signBody.toString();
-    }
-
-    /**
-     * get app instantiate ip from context.
-     *
-     * @param context context info
-     * @return instantiate mec host
-     */
-    private String getMecHostAppInstantiated(Map<String, String> context) {
-        String mecHostIpList = context.get("mecHostIpList");
-        if (null == mecHostIpList) {
-            return null;
-        }
-        String[] hostArray = mecHostIpList.split(",");
-        return hostArray[0];
     }
 
     /**

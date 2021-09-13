@@ -22,6 +22,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -39,6 +40,8 @@ public class SecondaryRegisterService2Mep {
 
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
 
+    private static final String MEP_HOST_IP_IS_NULL = "mep host ip is empty.";
+
     private static RestTemplate restTemplate = new RestTemplate();
 
     /**
@@ -49,7 +52,12 @@ public class SecondaryRegisterService2Mep {
      * @return execute result
      */
     public String execute(String filePath, Map<String, String> context) {
-        String hostIp = getMecHostAppInstantiated(context).concat(":30443");
+        String ip = context.get("mepHostIp");
+        if (StringUtils.isEmpty(ip)) {
+            LOGGER.error(MEP_HOST_IP_IS_NULL);
+            return MEP_HOST_IP_IS_NULL;
+        }
+        String hostIp = ip.concat(":30443");
         String token = context.get("authoration");
         if (null == token) {
             return GET_MEP_TOKEN_FAILED;
@@ -95,9 +103,12 @@ public class SecondaryRegisterService2Mep {
      * @return request body
      */
     private String mockMepRegisterReq() {
-        String req = "{\n" + "  \"serName\": \"testService\",\n" + "  \"serCategory\": {\n" + "    \"href\": \"/what/is/href\",\n" + "\t\"id\": \"id9998\",\n" + "\t\"name\": \"test_service\",\n"
-            + "\t\"version\": \"1.0.1\"\n" + "  },\n" + "  \"version\": \"1.0.0\",\n" + "  \"state\": \"ACTIVE\",\n" + "  \"transportId\": \"Rest1\",\n" + "\t\"transportInfo\": {\n"
-            + "\t\t\"id\": \"dc96e9d5-6dd3-4d0e-8a24-462956cd1a7f\",\n" + "\t\t\"name\": \"dc96e9d5-6dd3-4d0e-8a24-462956cd1a7f\",\n"
+        String req = "{\n" + "  \"serName\": \"testService\",\n" + "  \"serCategory\": {\n"
+            + "    \"href\": \"/what/is/href\",\n" + "\t\"id\": \"id9998\",\n" + "\t\"name\": \"test_service\",\n"
+            + "\t\"version\": \"1.0.1\"\n" + "  },\n" + "  \"version\": \"1.0.0\",\n" + "  \"state\": \"ACTIVE\",\n"
+            + "  \"transportId\": \"Rest1\",\n" + "\t\"transportInfo\": {\n"
+            + "\t\t\"id\": \"dc96e9d5-6dd3-4d0e-8a24-462956cd1a7f\",\n"
+            + "\t\t\"name\": \"dc96e9d5-6dd3-4d0e-8a24-462956cd1a7f\",\n"
             + "\t\t\"description\": \"it is transportInfo\",\n" + "\t\t\"type\": \"REST_HTTP\",\n"
             + "\t\t\"protocol\": \"HTTP\",\n" + "\t\t\"version\": \"1.1\",\n" + "\t\t\"endpoint\": {\n"
             + "\t\t\t\"uris\": [\n"
@@ -108,20 +119,5 @@ public class SecondaryRegisterService2Mep {
             + "\t},\n" + "  \"serializer\": \"JSON\",\n" + "  \"scopeOfLocality\": \"MEC_SYSTEM\",\n"
             + "  \"consumedLocalOnly\": false,\n" + "  \"livenessInterval\": 60,\n" + "  \"isLocal\": true\n" + "}";
         return req;
-    }
-
-    /**
-     * get app instantiate ip from context.
-     *
-     * @param context context info
-     * @return instantiate mec host
-     */
-    private String getMecHostAppInstantiated(Map<String, String> context) {
-        String mecHostIpList = context.get("mecHostIpList");
-        if (null == mecHostIpList) {
-            return null;
-        }
-        String[] hostArray = mecHostIpList.split(",");
-        return hostArray[0];
     }
 }

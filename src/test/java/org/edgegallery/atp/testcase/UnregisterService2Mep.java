@@ -12,7 +12,7 @@
  * the License.
  */
 
-package org.edgegallery.atp.testcase;
+package com.example.demo.sandbox;
 
 import java.util.Map;
 import org.slf4j.Logger;
@@ -36,6 +36,8 @@ public class UnregisterService2Mep {
 
     private static final String UNREGISTER_SERVICE_FAILED = "unregister service to mep failed.";
 
+    private static final String MEP_HOST_IP_IS_NULL = "mep host ip is empty.";
+
     private static RestTemplate restTemplate = new RestTemplate();
 
     /**
@@ -50,7 +52,12 @@ public class UnregisterService2Mep {
             LOGGER.warn("register service failed, and serInstanceId not exists,return success.");
             return SUCCESS;
         }
-        String hostIp = getMecHostAppInstantiated(context).concat(":30443");
+        String ip = context.get("mepHostIp");
+        if (StringUtils.isEmpty(ip)) {
+            LOGGER.error(MEP_HOST_IP_IS_NULL);
+            return MEP_HOST_IP_IS_NULL;
+        }
+        String hostIp = ip.concat(":30443");
         return unregisterService(hostIp, context) ? SUCCESS : UNREGISTER_SERVICE_FAILED;
     }
 
@@ -79,20 +86,5 @@ public class UnregisterService2Mep {
             LOGGER.error("unregister service failed,exception {}", e);
         }
         return false;
-    }
-
-    /**
-     * get app instantiate ip from context.
-     *
-     * @param context context info
-     * @return instantiate mec host
-     */
-    private String getMecHostAppInstantiated(Map<String, String> context) {
-        String mecHostIpList = context.get("mecHostIpList");
-        if (null == mecHostIpList) {
-            return null;
-        }
-        String[] hostArray = mecHostIpList.split(",");
-        return hostArray[0];
     }
 }
