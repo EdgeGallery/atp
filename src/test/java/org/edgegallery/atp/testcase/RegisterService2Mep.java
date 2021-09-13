@@ -64,7 +64,7 @@ public class RegisterService2Mep {
         if (null == token) {
             return GET_MEP_TOKEN_FAILED;
         }
-        return registerService(token, hostIp) ? SUCCESS : REGISTER_SERVICE_FAILED;
+        return registerService(token, hostIp, context) ? SUCCESS : REGISTER_SERVICE_FAILED;
     }
 
     /**
@@ -74,16 +74,19 @@ public class RegisterService2Mep {
      * @param hostIp hostIp
      * @return call successful
      */
-    private boolean registerService(String token, String hostIp) {
+    private boolean registerService(String token, String hostIp, Map<String, String> context) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer ".concat(token));
         String body = mockMepRegisterReq();
         HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);
-        String url = "https://".concat(hostIp)
-            .concat("/mep/mec_service_mgmt/v1/applications/5abe4782-2c70-4e47-9a4e-0ee3a1a0fd1f/services");
+        context.put("mepInstanceId", "5abe4782-2c70-4e47-9a4e-0ee3a1a0fd1f");
+        String url = "https://".concat(hostIp).concat("/mep/mec_service_mgmt/v1/applications/")
+            .concat(context.get("mepInstanceId")).concat("/services");
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
             if (HttpStatus.CREATED.equals(response.getStatusCode())) {
+                JsonObject jsonObject = new JsonParser().parse(response.getBody()).getAsJsonObject();
+                context.put("serInstanceId", jsonObject.get("serInstanceId").getAsString());
                 return true;
             }
             LOGGER.info("register service failed status: {}", response.getStatusCode());
