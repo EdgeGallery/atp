@@ -250,13 +250,18 @@ public class InstantiateAppTestCaseInner {
                         .equalsIgnoreCase(vimStr)) {
                         mecHostIpList.add(mecHostIp.getAsString());
                     }
+                    //use for mep register test case
+                    if ("container".equals(vimStr)) {
+                        context.putIfAbsent("mepHostIp", mecHostIp.getAsString());
+                        LOGGER.info("mepHostIp: {}", mecHostIp.getAsString());
+                    }
                 }
+
             });
         } catch (RestClientException e) {
             LOGGER.error("Failed to get hosts from inventory, exception {}", e.getMessage());
             return null;
         }
-
         context.put("mecHostIpList", mecHostIpList.stream().collect(Collectors.joining(",")));
         return mecHostIpList.size() == 0 ? null : mecHostIpList.get(0);
     }
