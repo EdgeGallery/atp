@@ -12,7 +12,7 @@
  * the License.
  */
 
-package com.example.demo;
+package org.edgegallery.atp.testcase;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
