@@ -66,7 +66,7 @@ public class ContainerHelmTgzFileValidation {
      */
     private void delay() {
         try {
-            Thread.sleep(200);
+            Thread.sleep(400);
         } catch (InterruptedException e) {
         }
     }

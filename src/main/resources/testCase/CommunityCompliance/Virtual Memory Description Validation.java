@@ -78,7 +78,7 @@ public class VirtualMemoryDescriptionValidation {
      */
     private void delay() {
         try {
-            Thread.sleep(600);
+            Thread.sleep(400);
         } catch (InterruptedException e1) {
         }
     }

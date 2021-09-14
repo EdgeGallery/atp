@@ -76,7 +76,7 @@ public class YamlDescriptionFileValidation {
      */
     private void delay() {
         try {
-            Thread.sleep(900);
+            Thread.sleep(400);
         } catch (InterruptedException e1) {
         }
     }
