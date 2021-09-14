@@ -54,7 +54,7 @@ public class CpuUsageValidation {
     public String execute(String filePath, Map<String, String> context) {
         delay();
         String cpuUsedBeforeDeploy = context.get("cpuUsedBeforeDeploy");
-        if (StringUtils.isEmpty(cpuUsedBeforeDeploy)) {
+        if (StringUtils.isEmpty(cpuUsedBeforeDeploy) || "0".equals(cpuUsedBeforeDeploy)) {
             //mecm to get kpi is not stable, if can not get kpi, return success tentatively.
             return SUCCESS;
         }

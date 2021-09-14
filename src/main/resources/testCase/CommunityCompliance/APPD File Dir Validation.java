@@ -55,7 +55,7 @@ public class APPDValidation {
      */
     private void delay() {
         try {
-            Thread.sleep(800);
+            Thread.sleep(300);
         } catch (InterruptedException e) {
         }
     }

@@ -104,6 +104,13 @@ public class InstantiateAppTestCaseInner {
 
     private RestTemplate restTemplate = new RestTemplate();
 
+    /**
+     * execute test case.
+     *
+     * @param filePath csar file path
+     * @param context context info
+     * @return execute result
+     */
     public String execute(String filePath, Map<String, String> context) {
         Map<String, String> packageInfo = getPackageInfo(filePath);
         context.put(APP_CLASS, packageInfo.get(APP_CLASS));
@@ -125,21 +132,19 @@ public class InstantiateAppTestCaseInner {
         }
 
         JsonObject jsonObject = new JsonParser().parse(response.getBody()).getAsJsonObject();
-        Map<String, String> appInfo = new HashMap<String, String>() {
-            {
-                put(APP_NAME, packageInfo.get(APP_NAME));
-                put(APP_ID, jsonObject.get("appId").getAsString());
-                put(PACKAGE_ID, jsonObject.get("appPackageId").getAsString());
-            }
-        };
+        String appName = packageInfo.get(APP_NAME);
+
+        //used for delete app
+        context.put(APP_ID, jsonObject.get("appId").getAsString());
+        context.put(PACKAGE_ID, jsonObject.get("appPackageId").getAsString());
 
         // get distribution status from apm
-        if (!getApmPackage(context, appInfo.get(PACKAGE_ID), hostIp)) {
+        if (!getApmPackage(context, context.get(PACKAGE_ID), hostIp)) {
             return "get distribution status from apm failed.";
         }
 
         // instantiate original app
-        String appInstanceId = createInstanceFromAppo(context, appInfo, hostIp);
+        String appInstanceId = createInstanceFromAppo(context, appName, hostIp);
         context.put(APP_INSTANCE_ID, appInstanceId);
 
         LOGGER.info("original appInstanceId: {}", appInstanceId);
@@ -274,16 +279,16 @@ public class InstantiateAppTestCaseInner {
      * create app instance from appo.
      *
      * @param context context info
-     * @param appInfo contains appName,appId,appPackageId
+     * @param appName appName
      * @param hostIp mec host ip
      * @return create app instance sucess or not.s
      */
-    private String createInstanceFromAppo(Map<String, String> context, Map<String, String> appInfo, String hostIp) {
+    private String createInstanceFromAppo(Map<String, String> context, String appName, String hostIp) {
         Map<String, Object> body = new HashMap<>();
         body.put("appInstanceDescription", UUID.randomUUID().toString());
-        body.put("appName", appInfo.get(APP_NAME));
-        body.put("appPackageId", appInfo.get(PACKAGE_ID));
-        body.put("appId", appInfo.get(APP_ID));
+        body.put("appName", appName);
+        body.put("appPackageId", context.get(PACKAGE_ID));
+        body.put("appId", context.get(APP_ID));
         body.put("mecHost", hostIp);
 
         HttpHeaders headers = new HttpHeaders();
@@ -314,7 +319,7 @@ public class InstantiateAppTestCaseInner {
                 }
             }
         } catch (RestClientException e) {
-            LOGGER.error("Failed to create app instance from appo which appId is {} exception {}", appInfo.get(APP_ID),
+            LOGGER.error("Failed to create app instance from appo which appId is {} exception {}", context.get(APP_ID),
                 e.getMessage());
         }
         return null;

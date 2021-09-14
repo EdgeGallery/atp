@@ -54,7 +54,7 @@ public class MemUsageValidation {
     public String execute(String filePath, Map<String, String> context) {
         delay();
         String memUsedBeforeDeploy = context.get("memUsedBeforeDeploy");
-        if (StringUtils.isEmpty(memUsedBeforeDeploy)) {
+        if (StringUtils.isEmpty(memUsedBeforeDeploy) || "0".equals(memUsedBeforeDeploy)) {
             //mecm to get kpi is not stable, if can not get kpi, return success tentatively.
             return SUCCESS;
         }

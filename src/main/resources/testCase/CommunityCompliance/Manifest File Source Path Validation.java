@@ -156,7 +156,7 @@ public class SourcePathTestCaseInner {
      */
     private void delay() {
         try {
-            Thread.sleep(500);
+            Thread.sleep(300);
         } catch (InterruptedException e) {
         }
     }
