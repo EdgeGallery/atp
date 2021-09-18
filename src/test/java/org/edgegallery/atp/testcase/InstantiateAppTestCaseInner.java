@@ -193,7 +193,7 @@ public class InstantiateAppTestCaseInner {
                     String hostIpReq = mecHostObject.get("hostIp").getAsString();
                     if (hostIp.equals(hostIpReq)) {
                         LOGGER.info("status: {}", status);
-                        if ("Distributed".equalsIgnoreCase(status)) {
+                        if ("Distributed".equalsIgnoreCase(status) || "uploaded".equalsIgnoreCase(status)) {
                             return true;
                         } else {
                             if ("Error".equalsIgnoreCase(status)) {
