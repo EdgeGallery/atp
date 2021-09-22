@@ -173,7 +173,7 @@ public class InstantiateAppTestCaseInner {
         while (true) {
             try {
                 // time out limit
-                if ((System.currentTimeMillis() - startTime) > 240000) {
+                if ((System.currentTimeMillis() - startTime) > 180000) {
                     LOGGER.error("get package {} from apm time out", packageId);
                     return false;
                 }
@@ -204,7 +204,7 @@ public class InstantiateAppTestCaseInner {
                         }
                     }
                 }
-                Thread.sleep(12000);
+                Thread.sleep(9000);
             } catch (RestClientException e) {
                 LOGGER.error("Failed to get package from apm which packageId is {} exception {}", packageId,
                     e.getMessage());
