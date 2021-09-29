@@ -24,7 +24,6 @@ import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.bouncycastle.cert.X509CertificateHolder;
@@ -40,15 +39,20 @@ import org.bouncycastle.util.Store;
 import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 public class SignatureValidation {
     private static final Logger LOGGER = LoggerFactory.getLogger(SignatureValidation.class);
 
-    private static String SIGNATURE_VERIFY_FAILED = "signature verify failed.";
+    private static final String SIGNATURE_VERIFY_FAILED = "signature verify failed.";
 
-    private static String INNER_ERROR = "inner error.";
+    private static final String INNER_ERROR = "inner error.";
 
-    private static String SUCCESS = "success";
+    private static final String SUCCESS = "success";
+
+    private SignatureValidation() {
+
+    }
 
     static {
         try {
@@ -59,13 +63,12 @@ public class SignatureValidation {
     }
 
     /**
-     * execute test case.
+     * verify signature.
      *
      * @param filePath csar file path
-     * @param context context info
      * @return execute result
      */
-    public static String verify(String filePath, Map<String, String> context) {
+    public static String verify(String filePath) {
         try (ZipFile zipFile = new ZipFile(filePath)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
@@ -112,7 +115,7 @@ public class SignatureValidation {
         }
 
         String signStr = new String(signData).trim();
-        if (null == signStr || "" == signStr) {
+        if (StringUtils.isEmpty(signStr)) {
             LOGGER.error("signature value is null.");
             return false;
         }

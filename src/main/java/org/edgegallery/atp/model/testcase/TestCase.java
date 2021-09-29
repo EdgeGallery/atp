@@ -46,7 +46,7 @@ public class TestCase extends TestCaseBase {
      * @return testCasePo
      */
     public TestCasePo of() {
-        TestCasePo testCasePo = TestCasePo.builder().setClassName(this.getClassName())
+        TestCasePo testCasePo = new TestCasePo().builder().setClassName(this.getClassName())
             .setCodeLanguage(this.getCodeLanguage()).setDescriptionCh(this.getDescriptionCh())
             .setDescriptionEn(this.getDescriptionEn()).setExpectResultCh(this.getExpectResultCh())
             .setExpectResultEn(this.getExpectResultEn()).setFilePath(this.getFilePath()).setHashCode(this.getHashCode())

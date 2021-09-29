@@ -190,8 +190,8 @@ public class TestCaseServiceImpl implements TestCaseService {
         TestCase dbData = testCaseRepository.getTestCaseById(testCase.getId());
         if (null == dbData) {
             LOGGER.error("this test case {} not exists.", testCase.getId());
-            throw new FileNotExistsException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, "test case id"),
-                ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList("test case id")));
+            throw new FileNotExistsException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, Constant.TEST_CASE_ID),
+                ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList(Constant.TEST_CASE_ID)));
         }
 
         try {
@@ -230,8 +230,8 @@ public class TestCaseServiceImpl implements TestCaseService {
         TestCase response = testCaseRepository.getTestCaseById(id);
         if (null == response) {
             LOGGER.error("test case id does not exists: {}", id);
-            throw new FileNotExistsException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, "test case id"),
-                ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList("test case id")));
+            throw new FileNotExistsException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, Constant.TEST_CASE_ID),
+                ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList(Constant.TEST_CASE_ID)));
         }
         LOGGER.info("get test case successfully.");
         return response;
