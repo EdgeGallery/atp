@@ -99,7 +99,7 @@ public class TestCaseManagerImpl implements TestCaseManager {
             context.put(Constant.INVENTORY_SERVER_ADDRESS, inventoryServerAddress);
             context.put(Constant.APPSTORE_SERSVER_ADDRESS, appstoreServerAddress);
             //signature verify
-            context.put(Constant.SIGNATURE_RESULT, SignatureValidation.verify(filePath, context));
+            context.put(Constant.SIGNATURE_RESULT, SignatureValidation.verify(filePath));
 
             task.getTestScenarios().forEach(testScenario -> {
                 parseTestCase(testScenario, context);

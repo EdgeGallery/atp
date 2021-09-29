@@ -112,7 +112,7 @@ public interface Constant {
     String BASIC_TEST_CASE_PATH = FileChecker.getDir() + "/file/testCase/";
 
     String BASIC_ICON_PATH = FileChecker.getDir() + "/file/icon/";
-    
+
     String BASIC_CONTRIBUTION_PATH = FileChecker.getDir() + "/file/contribution/";
 
     String TEMP_FILE_PATH = FileChecker.getDir() + "/temp/";
@@ -168,4 +168,8 @@ public interface Constant {
     String CONFIG_PARAM_LIST = "configParamList";
 
     String SIGNATURE_RESULT = "signatureResult";
+
+    String CONFIG_ID = "config id";
+
+    String TEST_CASE_ID = "test case id";
 }

@@ -70,20 +70,22 @@ public class TestCaseController {
      */
     @GetMapping(value = "/testcases", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "get all test cases.", response = TestCase.class)
-    @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
-            @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
+    @ApiResponses(value = {
+        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
+        @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)
+    })
     @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<List<TestCase>> getAllTestCases(
-            @QueryParam("type") @Length(max = Constant.LENGTH_64) String type,
-            @QueryParam("locale") @Length(max = Constant.LENGTH_64) String locale,
-            @QueryParam("name") @Length(max = Constant.LENGTH_64) String name,
-            @QueryParam("testSuiteIdList") TestSuiteIdList testSuiteIds) {
+        @QueryParam("type") @Length(max = Constant.LENGTH_64) String type,
+        @QueryParam("locale") @Length(max = Constant.LENGTH_64) String locale,
+        @QueryParam("name") @Length(max = Constant.LENGTH_64) String name,
+        @QueryParam("testSuiteIdList") TestSuiteIdList testSuiteIds) {
         return testCaseService.getAllTestCases(type, locale, name, testSuiteIds.getTestSuiteIdList());
     }
 
     /**
      * create test cases.
-     * 
+     *
      * @param file file
      * @param nameCh nameCh
      * @param nameEn nameEn
@@ -142,7 +144,7 @@ public class TestCaseController {
 
     /**
      * update Test Case.
-     * 
+     *
      * @param id id
      * @param file file
      * @param descriptionCh descriptionCh
@@ -157,8 +159,10 @@ public class TestCaseController {
      */
     @PutMapping(value = "/testcases", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "modify test case.", response = TestCase.class)
-    @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
-            @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
+    @ApiResponses(value = {
+        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
+        @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)
+    })
     @PreAuthorize("hasRole('ATP_ADMIN')")
     public ResponseEntity<TestCase> updateTestCase(
         @ApiParam(value = "test case id", required = true) @RequestParam("id") String id,
@@ -181,9 +185,9 @@ public class TestCaseController {
         @RequestParam("testSuiteIdList") List<String> testSuiteIds,
         @ApiParam(value = "config list the test case connected to", required = false) @Size(max = Constant.LENGTH_255)
         @RequestParam("configIdList") List<String> configIds) throws FileNotExistsException {
-        TestCase testCase = TestCase.builder().setId(id).setCodeLanguage(codeLanguage).setDescriptionCh(descriptionCh)
-            .setDescriptionEn(descriptionEn).setExpectResultCh(expectResultCh).setExpectResultEn(expectResultEn)
-            .setTestStepCh(testStepCh).setTestStepEn(testStepEn).build().toTestCase();
+        TestCase testCase = new TestCase().builder().setId(id).setCodeLanguage(codeLanguage)
+            .setDescriptionCh(descriptionCh).setDescriptionEn(descriptionEn).setExpectResultCh(expectResultCh)
+            .setExpectResultEn(expectResultEn).setTestStepCh(testStepCh).setTestStepEn(testStepEn).build().toTestCase();
         testCase.setTestSuiteIdList(testSuiteIds);
         testCase.setConfigIdList(configIds);
         return ResponseEntity.ok(testCaseService.updateTestCase(file, testCase));
@@ -191,35 +195,39 @@ public class TestCaseController {
 
     /**
      * delete test case.
-     * 
+     *
      * @param id id
      * @return true
      */
     @DeleteMapping(value = "/testcases/{id}", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "delete test case.", response = Boolean.class)
-    @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
-            @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
+    @ApiResponses(value = {
+        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
+        @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)
+    })
     @PreAuthorize("hasRole('ATP_ADMIN')")
     public ResponseEntity<Boolean> deleteTestCase(
-            @ApiParam(value = "test case id") @PathVariable("id") @Pattern(regexp = Constant.REG_ID) String id) {
+        @ApiParam(value = "test case id") @PathVariable("id") @Pattern(regexp = Constant.REG_ID) String id) {
         return ResponseEntity.ok(testCaseService.deleteTestCase(id));
     }
 
     /**
      * query test case.
-     * 
+     *
      * @param id id
      * @return test case
      * @throws FileNotFoundException FileNotFoundException
      */
     @GetMapping(value = "/testcases/{id}", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "get one test case.", response = TestCase.class)
-    @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
-            @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
+    @ApiResponses(value = {
+        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
+        @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)
+    })
     @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<TestCase> queryTestCase(
-            @ApiParam(value = "test case id") @PathVariable("id") @Pattern(regexp = Constant.REG_ID) String id)
-            throws FileNotFoundException {
+        @ApiParam(value = "test case id") @PathVariable("id") @Pattern(regexp = Constant.REG_ID) String id)
+        throws FileNotFoundException {
         return ResponseEntity.ok(testCaseService.getTestCase(id));
     }
 

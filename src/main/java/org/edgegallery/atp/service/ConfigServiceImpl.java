@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 @Service("ConfigService")
 public class ConfigServiceImpl implements ConfigService {
@@ -84,8 +85,8 @@ public class ConfigServiceImpl implements ConfigService {
         Config configDB = configRepository.queryConfigById(id);
         if (null == configDB) {
             LOGGER.error("this config {} not exists.", id);
-            throw new FileNotExistsException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, "config id"),
-                ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList("config id")));
+            throw new FileNotExistsException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, Constant.CONFIG_ID),
+                ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList(Constant.CONFIG_ID)));
         }
 
         Config config = new Config();
@@ -99,7 +100,7 @@ public class ConfigServiceImpl implements ConfigService {
     @Override
     public Boolean deleteConfig(String id) {
         List<TestCasePo> testCasePo = testCaseRepository.findByConfigId(id);
-        if (0 != testCasePo.size()) {
+        if (!CollectionUtils.isEmpty(testCasePo)) {
             List<String> nameList = testCasePo.stream().map(TestCasePo::getNameEn).collect(Collectors.toList());
             throw new IllegalRequestException(
                 String.format(ErrorCode.CONFIG_IS_USED_BY_TEST_CASE_MSG, nameList.toString()),
@@ -115,8 +116,8 @@ public class ConfigServiceImpl implements ConfigService {
         Config config = configRepository.queryConfigById(id);
         if (null == config) {
             LOGGER.error("config id does not exists: {}", id);
-            throw new FileNotExistsException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, "config id"),
-                ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList("config id")));
+            throw new FileNotExistsException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, Constant.CONFIG_ID),
+                ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList(Constant.CONFIG_ID)));
         }
         LOGGER.info("query config by id successfully.");
         return config;

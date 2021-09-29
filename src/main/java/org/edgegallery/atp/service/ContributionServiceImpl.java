@@ -100,7 +100,7 @@ public class ContributionServiceImpl implements ContributionService {
             LOGGER.info("query all contributions by pagination successfully.");
             return pageResult;
         } catch (Exception e) {
-            System.out.println("a" + e);
+            LOGGER.error("query all contributions by pagination failed. {}", e);
             return null;
         }
     }
