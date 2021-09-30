@@ -185,9 +185,9 @@ public class TestCaseController {
         @RequestParam("testSuiteIdList") List<String> testSuiteIds,
         @ApiParam(value = "config list the test case connected to", required = false) @Size(max = Constant.LENGTH_255)
         @RequestParam("configIdList") List<String> configIds) throws FileNotExistsException {
-        TestCase testCase = new TestCase().builder().setId(id).setCodeLanguage(codeLanguage)
-            .setDescriptionCh(descriptionCh).setDescriptionEn(descriptionEn).setExpectResultCh(expectResultCh)
-            .setExpectResultEn(expectResultEn).setTestStepCh(testStepCh).setTestStepEn(testStepEn).build().toTestCase();
+        TestCase testCase = TestCase.builder().setId(id).setCodeLanguage(codeLanguage).setDescriptionCh(descriptionCh)
+            .setDescriptionEn(descriptionEn).setExpectResultCh(expectResultCh).setExpectResultEn(expectResultEn)
+            .setTestStepCh(testStepCh).setTestStepEn(testStepEn).build().toTestCase();
         testCase.setTestSuiteIdList(testSuiteIds);
         testCase.setConfigIdList(configIds);
         return ResponseEntity.ok(testCaseService.updateTestCase(file, testCase));

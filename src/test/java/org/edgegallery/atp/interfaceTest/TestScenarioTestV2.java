@@ -25,6 +25,8 @@ import java.io.InputStream;
 import org.apache.http.entity.ContentType;
 import org.apache.ibatis.io.Resources;
 import org.edgegallery.atp.ATPApplicationTest;
+import org.edgegallery.atp.model.testscenario.TestScenario;
+import org.edgegallery.atp.service.TestScenarioService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +49,9 @@ public class TestScenarioTestV2 {
     @Autowired
     private MockMvc mvc;
 
+    @Autowired
+    TestScenarioService testScenarioService;
+
     private Gson gson = new Gson();
 
     @WithMockUser(roles = "ATP_ADMIN")
@@ -63,6 +68,42 @@ public class TestScenarioTestV2 {
                 .param("descriptionEn", "").param("label", "EdgeGallery")).andReturn();
         int result = mvcResult.getResponse().getStatus();
         assertEquals(200, result);
+    }
+
+    @WithMockUser(roles = "ATP_ADMIN")
+    @Test
+    public void updateScenarioTest() throws Exception {
+        File file = Resources.getResourceAsFile("testfile/icon.png");
+        InputStream iconInputStream = new FileInputStream(file);
+        MultipartFile iconMultiFile = new MockMultipartFile(file.getName(), file.getName(),
+            ContentType.APPLICATION_OCTET_STREAM.toString(), iconInputStream);
+        TestScenario testScenario = TestScenario.builder().setId("96a82e85-d40d-4ce5-beec-2dd1c9a3d41d")
+            .setNameEn("C Operator").setNameCh("C运营商").build();
+        testScenarioService.updateTestScenario(testScenario, null);
+    }
+
+    @WithMockUser(roles = "ATP_ADMIN")
+    @Test(expected = Exception.class)
+    public void updateScenarioNameChExistsTest() throws Exception {
+        File file = Resources.getResourceAsFile("testfile/icon.png");
+        InputStream iconInputStream = new FileInputStream(file);
+        MultipartFile iconMultiFile = new MockMultipartFile(file.getName(), file.getName(),
+            ContentType.APPLICATION_OCTET_STREAM.toString(), iconInputStream);
+        TestScenario testScenario = TestScenario.builder().setId("96a82e85-d40d-4ce5-beec-2dd1c9a3d41d")
+            .setNameEn("C Operator").setNameCh("社区场景").build();
+        testScenarioService.updateTestScenario(testScenario, null);
+    }
+
+    @WithMockUser(roles = "ATP_ADMIN")
+    @Test(expected = Exception.class)
+    public void updateScenarioNameEnExistsTest() throws Exception {
+        File file = Resources.getResourceAsFile("testfile/icon.png");
+        InputStream iconInputStream = new FileInputStream(file);
+        MultipartFile iconMultiFile = new MockMultipartFile(file.getName(), file.getName(),
+            ContentType.APPLICATION_OCTET_STREAM.toString(), iconInputStream);
+        TestScenario testScenario = TestScenario.builder().setId("96a82e85-d40d-4ce5-beec-2dd1c9a3d41d")
+            .setNameEn("EdgeGallery Community Scenario").setNameCh("C运营商").build();
+        testScenarioService.updateTestScenario(testScenario, null);
     }
 
     @WithMockUser(roles = "ATP_ADMIN")
