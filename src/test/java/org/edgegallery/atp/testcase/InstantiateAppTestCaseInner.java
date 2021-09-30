@@ -295,6 +295,7 @@ public class InstantiateAppTestCaseInner {
         headers.set(ACCESS_TOKEN, context.get(ACCESS_TOKEN));
         headers.set(CONTENT_TYPE, APPLICATION_JSON);
 
+        LOGGER.info("create body: {}", body.toString());
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
         String url = context.get("appoServerAddress")
             .concat(String.format(APPO_CREATE_APPINSTANCE, context.get(TENANT_ID)));

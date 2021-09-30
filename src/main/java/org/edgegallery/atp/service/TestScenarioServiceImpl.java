@@ -139,7 +139,7 @@ public class TestScenarioServiceImpl implements TestScenarioService {
         }
         if (!dbData.getNameEn().equalsIgnoreCase(testScenario.getNameEn()) && null != testScenarioRepository
             .getTestScenarioByName(null, testScenario.getNameEn())) {
-            LOGGER.error("english name of test suite already exist.");
+            LOGGER.error("english name of test scenario already exist.");
             throw new IllegalRequestException(String.format(ErrorCode.NAME_EXISTS_MSG, testScenario.getNameEn()),
                 ErrorCode.NAME_EXISTS, new ArrayList<String>(Arrays.asList(testScenario.getNameEn())));
         }
