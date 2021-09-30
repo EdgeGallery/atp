@@ -17,27 +17,19 @@ package org.edgegallery.atp.utils;
 import com.google.common.io.Files;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.edgegallery.atp.constant.Constant;
@@ -123,110 +115,6 @@ public class FileChecker {
     }
 
     /**
-     * dependency application check.
-     * 
-     * @param filePath filePath
-     * @return dependency application info list, contains appName,appId and appPackageId.
-     */
-    public static List<Map<String, String>> dependencyCheck(String filePath) {
-        List<Map<String, String>> result = new ArrayList<Map<String, String>>();
-        try (ZipFile zipFile = new ZipFile(filePath)) {
-            Enumeration<? extends ZipEntry> entries = zipFile.entries();
-            while (entries.hasMoreElements()) {
-                ZipEntry entry = entries.nextElement();
-                String[] pathSplit = entry.getName().split(Constant.SLASH);
-
-                // APPD/Definition/MainServiceTemplate.yaml
-                if (pathSplit.length == 3 && Constant.DEFINITIONS.equals(pathSplit[1].trim())
-                        && pathSplit[2].trim().endsWith(Constant.PACKAGE_YAML_FORMAT)) {
-                    analysisDependency(result, zipFile, entry);
-                    break;
-                }
-            }
-            LOGGER.info("dependencyCheck end.");
-        } catch (Exception e) {
-            LOGGER.error("dependency Check failed. {}", e);
-        }
-        return result;
-    }
-
-    private static void analysisDependency(List<Map<String, String>> result, ZipFile zipFile, ZipEntry entry) {
-        try (BufferedReader br =
-                new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
-            String line = positionDependencyService(br);
-            if (StringUtils.isEmpty(line)) {
-                LOGGER.warn("can not find the dependency path, the dependency path must "
-                        + "be in node_templates.app_configuration.properties.appServiceRequired");
-                return;
-            }
-            // -serName
-            while (line != null && line.trim().startsWith(Constant.STRIKE)) {
-                LOGGER.info("app_name: {}", line.split(Constant.COLON)[1].trim());
-                Map<String, String> map = new HashMap<String, String>();
-                String appName = line.split(Constant.COLON)[1].trim();
-                while ((line = br.readLine()) != null && !isEnd(line) && !line.trim().startsWith(Constant.STRIKE)) {
-                    line = line.trim();
-                    if (line.startsWith(Constant.APP_ID)) {
-                        LOGGER.info("appId: {}", line.split(Constant.COLON)[1].trim());
-                        map.put(Constant.APP_ID, line.split(Constant.COLON)[1].trim());
-                    } else if (line.startsWith(Constant.PACKAGE_ID)) {
-                        LOGGER.info("packageid: {}", line.split(Constant.COLON)[1].trim());
-                        map.put(Constant.PACKAGE_ID, line.split(Constant.COLON)[1].trim());
-                        map.put(Constant.APP_NAME, appName);
-                    }
-                }
-                if (MapUtils.isNotEmpty(map)) {
-                    LOGGER.info("map is not empty.");
-                    result.add(map);
-                }
-            }
-
-        } catch (IOException e) {
-            LOGGER.error("analysis dependency failed. {}", e.getMessage());
-        }
-    }
-
-    /**
-     * if depedency service define end.
-     * 
-     * @param str yaml line
-     * @return is depedency service define end.
-     */
-    private static boolean isEnd(String str) {
-        return str.split(Constant.COLON).length <= 1;
-    }
-
-    /**
-     * position to dependency service field.
-     * 
-     * @param br bufferReader
-     * @return line
-     * @throws IOException IOException
-     */
-    private static String positionDependencyService(BufferedReader br) throws IOException {
-        String line = "";
-        while ((line = br.readLine()) != null) {
-            if (line.trim().startsWith(Constant.NODE_TEMPLATES)) {
-                while ((line = br.readLine()) != null) {
-                    if (line.trim().startsWith(Constant.APP_CONFIGURATION)) {
-                        while ((line = br.readLine()) != null) {
-                            if (line.trim().startsWith(Constant.PROPERTIES)) {
-                                while ((line = br.readLine()) != null) {
-                                    if (line.trim().startsWith(Constant.APP_SERVICE_REQUIRED)) {
-                                        line = br.readLine();
-                                        return null == line ? line : line.trim();
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return line;
-    }
-
-    /**
      * Prevent bomb attacks.
      *
      * @param fileName file name.
@@ -282,12 +170,10 @@ public class FileChecker {
         }
     }
 
-
     private static boolean isAllowedFileName(String originalFilename) {
         return isValid(originalFilename)
                 && getFileExtensions().contains(Files.getFileExtension(originalFilename.toLowerCase()));
     }
-
 
     /**
      * check if file name if it's invalid.
