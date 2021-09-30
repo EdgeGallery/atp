@@ -93,16 +93,11 @@ public class ContributionServiceImpl implements ContributionService {
 
     @Override
     public PageResult<Contribution> getAllByPagination(String name, int limit, int offset) {
-        try {
-            PageResult<Contribution> pageResult = new PageResult<Contribution>(offset, limit);
-            pageResult.setTotal(contributionRepository.countTotal(name));
-            pageResult.setResults(contributionRepository.getAllWithPagination(limit, offset, name));
-            LOGGER.info("query all contributions by pagination successfully.");
-            return pageResult;
-        } catch (Exception e) {
-            LOGGER.error("query all contributions by pagination failed. {}", e);
-            return null;
-        }
+        PageResult<Contribution> pageResult = new PageResult<Contribution>(offset, limit);
+        pageResult.setTotal(contributionRepository.countTotal(name));
+        pageResult.setResults(contributionRepository.getAllWithPagination(limit, offset, name));
+        LOGGER.info("query all contributions by pagination successfully.");
+        return pageResult;
     }
 
     @Override

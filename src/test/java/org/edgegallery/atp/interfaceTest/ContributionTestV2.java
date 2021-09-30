@@ -69,6 +69,19 @@ public class ContributionTestV2 {
 
     @WithMockUser(roles = "ATP_ADMIN")
     @Test
+    public void createContributionNameExistsTest() throws Exception {
+        // create contribution
+        File csar = Resources.getResourceAsFile("testfile/AR.csar");
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.multipart("/edgegallery/atp/v2/contributions").file(
+            new MockMultipartFile("file", "contribution.zip", MediaType.TEXT_PLAIN_VALUE,
+                FileUtils.openInputStream(csar))).with(csrf()).param("name", "test").param("objective", "test")
+            .param("step", "automatic").param("expectResult", "test").param("type", "script")).andReturn();
+        int result = mvcResult.getResponse().getStatus();
+        assertEquals(400, result);
+    }
+
+    @WithMockUser(roles = "ATP_ADMIN")
+    @Test
     public void getAllContributionsTest() throws Exception {
         MvcResult mvcResultQueryAll = mvc.perform(
             MockMvcRequestBuilders.get("/edgegallery/atp/v2/contributions?limit=10&offset=0")
@@ -93,6 +106,23 @@ public class ContributionTestV2 {
             .andReturn();
         int resultDownload = mvcResultDownload.getResponse().getStatus();
         assertEquals(500, resultDownload);
+    }
+
+    @WithMockUser(roles = "ATP_ADMIN")
+    @Test
+    public void downloadContributionIdNotExists() throws Exception {
+        Contribution contribution = new Contribution();
+        contribution.setId("522684bd-1111-7890-aab8-b43f1b4c19c0");
+        contribution.setName("testInit");
+        contribution.setType("text");
+        contributionRepository.insert(contribution);
+
+        MvcResult mvcResultDownload = mvc.perform(MockMvcRequestBuilders
+            .get("/edgegallery/atp/v2/contributions/522684bd-d6df-7890-aab8-b43f1b4c19c0/action/download")
+            .contentType(MediaType.APPLICATION_JSON_VALUE).with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
+            .andReturn();
+        int resultDownload = mvcResultDownload.getResponse().getStatus();
+        assertEquals(400, resultDownload);
     }
 
     @WithMockUser(roles = "ATP_ADMIN")
