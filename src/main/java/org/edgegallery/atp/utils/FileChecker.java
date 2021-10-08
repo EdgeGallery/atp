@@ -49,7 +49,7 @@ public class FileChecker {
 
     /**
      * check file if is invalid.
-     * 
+     *
      * @param file object.
      */
     public static File check(MultipartFile file, String taskId) {
@@ -58,13 +58,13 @@ public class FileChecker {
         if (file.getSize() > getMaxFileSize()) {
             LOGGER.error("fileSize is too big");
             throw new IllegalRequestException(String.format(ErrorCode.SIZE_OUT_OF_LIMIT_MSG, "file", "5G"),
-                    ErrorCode.SIZE_OUT_OF_LIMIT, new ArrayList<String>(Arrays.asList("file", "5G")));
+                ErrorCode.SIZE_OUT_OF_LIMIT, new ArrayList<String>(Arrays.asList("file", "5G")));
         }
 
         File result = null;
         // temp/taskId_fileName
         String tempFileAddress = new StringBuilder().append(Constant.WORK_TEMP_DIR).append(File.separator)
-                .append(taskId).append(Constant.UNDER_LINE).append(file.getOriginalFilename()).toString();
+            .append(taskId).append(Constant.UNDER_LINE).append(file.getOriginalFilename()).toString();
         try {
             createFile(tempFileAddress);
             try (FileOutputStream fos = new FileOutputStream(tempFileAddress)) {
@@ -86,7 +86,7 @@ public class FileChecker {
 
     /**
      * copy file to target path.
-     * 
+     *
      * @param file source file
      * @param path target path
      */
@@ -103,7 +103,7 @@ public class FileChecker {
 
     /**
      * get directory of different system.
-     * 
+     *
      * @return path
      */
     public static String getDir() {
@@ -128,7 +128,7 @@ public class FileChecker {
         String tempDir = Constant.WORK_TEMP_DIR + File.separator + CommonUtil.generateId();
 
         try (FileInputStream fis = FileUtils.openInputStream(new File(fileName));
-                ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));) {
+             ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));) {
             while ((entry = zis.getNextEntry()) != null) {
                 int count;
                 // Write the files to the disk, but ensure that the entryName is valid,
@@ -140,7 +140,7 @@ public class FileChecker {
                 }
 
                 try (FileOutputStream fos = FileUtils.openOutputStream(f);
-                        BufferedOutputStream dest = new BufferedOutputStream(fos, Constant.BUFFER)) {
+                     BufferedOutputStream dest = new BufferedOutputStream(fos, Constant.BUFFER)) {
                     while (total <= Constant.TOO_BIG && (count = zis.read(data, 0, Constant.BUFFER)) != -1) {
                         dest.write(data, 0, count);
                         total += count;
@@ -151,14 +151,14 @@ public class FileChecker {
                 if (entries > Constant.TOO_MANY) {
                     LOGGER.error("Too many files to unzip.");
                     throw new IllegalRequestException(
-                            String.format(ErrorCode.NUMBER_OUT_OF_LIMIT_MSG, "unzip files", "1024"),
-                            ErrorCode.NUMBER_OUT_OF_LIMIT, new ArrayList<String>(Arrays.asList("unzip files", "1024")));
+                        String.format(ErrorCode.NUMBER_OUT_OF_LIMIT_MSG, "unzip files", "1024"),
+                        ErrorCode.NUMBER_OUT_OF_LIMIT, new ArrayList<String>(Arrays.asList("unzip files", "1024")));
                 }
                 if (total > Constant.TOO_BIG) {
                     LOGGER.error("File being unzipped is too big.");
                     throw new IllegalRequestException(
-                            String.format(ErrorCode.SIZE_OUT_OF_LIMIT_MSG, "unzip file", "10G"),
-                            ErrorCode.SIZE_OUT_OF_LIMIT, new ArrayList<String>(Arrays.asList("unzip file", "10G")));
+                        String.format(ErrorCode.SIZE_OUT_OF_LIMIT_MSG, "unzip file", "10G"),
+                        ErrorCode.SIZE_OUT_OF_LIMIT, new ArrayList<String>(Arrays.asList("unzip file", "10G")));
                 }
             }
         } catch (IOException e) {
@@ -171,17 +171,17 @@ public class FileChecker {
     }
 
     private static boolean isAllowedFileName(String originalFilename) {
-        return isValid(originalFilename)
-                && getFileExtensions().contains(Files.getFileExtension(originalFilename.toLowerCase()));
+        return isValid(originalFilename) && getFileExtensions()
+            .contains(Files.getFileExtension(originalFilename.toLowerCase()));
     }
 
     /**
      * check if file name if it's invalid.
-     * 
+     *
      * @param fileName file name
      * @return
      */
-    private static boolean isValid(String fileName) {
+    public static boolean isValid(String fileName) {
         if (StringUtils.isEmpty(fileName) || fileName.length() > Constant.MAX_LENGTH_FILE_NAME) {
             return false;
         }
@@ -192,7 +192,7 @@ public class FileChecker {
 
     /**
      * create file.
-     * 
+     *
      * @param filePath filePath
      * @throws IOException IOException
      */
@@ -221,7 +221,7 @@ public class FileChecker {
 
     /**
      * check if entry is directory, if then create dir.
-     * 
+     *
      * @param entry entry of next element.
      * @param f File
      * @return
@@ -255,21 +255,21 @@ public class FileChecker {
 
     /**
      * file name check.
-     * 
+     *
      * @param originalFileName originalFileName
      */
-    private static void fileNameCheck(String originalFileName) {
+    public static void fileNameCheck(String originalFileName) {
         if (originalFileName == null) {
             LOGGER.error("Package File name is null.");
             throw new IllegalRequestException(String.format(ErrorCode.PARAM_IS_NULL_MSG, "package file name"),
-                    ErrorCode.PARAM_IS_NULL, new ArrayList<String>(Arrays.asList("package file name")));
+                ErrorCode.PARAM_IS_NULL, new ArrayList<String>(Arrays.asList("package file name")));
         }
 
         // file name should not contains blank.
         if (originalFileName.split("\\s").length > 1) {
             LOGGER.error("fileName contain blank");
             throw new IllegalRequestException(ErrorCode.FILE_NAME_CONTAIN_BLANK_MSG, ErrorCode.FILE_NAME_CONTAIN_BLANK,
-                    null);
+                null);
         }
 
         if (!isAllowedFileName(originalFileName)) {
