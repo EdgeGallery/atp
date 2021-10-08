@@ -18,8 +18,11 @@ import static org.junit.Assert.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import org.edgegallery.atp.ATPApplicationTest;
+import org.edgegallery.atp.model.ResponseObject;
+import org.edgegallery.atp.model.testsuite.TestSuite;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +55,19 @@ public class TestSuiteTestV2 {
                 .param("scenarioIdList", "4d203111-1111-4f62-aabb-8ebcec357f87")).andReturn();
         int result = mvcResult.getResponse().getStatus();
         assertEquals(200, result);
+
+        String content = mvcResult.getResponse().getContentAsString();
+        ResponseObject responseObject = JSONObject.parseObject(content, ResponseObject.class);
+        String data = JSONObject.toJSONString(responseObject.getData());
+        TestSuite testSuite = JSONObject.parseObject(data, TestSuite.class);
+        String id = testSuite.getId();
+
+        //delete test suite
+        MvcResult mvcResultDelete = mvc.perform(
+            MockMvcRequestBuilders.delete("/edgegallery/atp/v2/testsuites/" + id).with(csrf())
+                .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
+        int resultDelete = mvcResultDelete.getResponse().getStatus();
+        assertEquals(200, resultDelete);
     }
 
     @WithMockUser(roles = "ATP_ADMIN")
