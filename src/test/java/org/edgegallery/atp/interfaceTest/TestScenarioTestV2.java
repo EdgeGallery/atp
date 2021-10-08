@@ -71,7 +71,7 @@ public class TestScenarioTestV2 {
             MockMvcRequestBuilders.multipart("/edgegallery/atp/v2/testmodels/action/import")
                 .file("file", zipMultiFile.getBytes()).with(csrf())).andReturn();
         int result = mvcResult.getResponse().getStatus();
-        assertEquals(500, result);
+        assertEquals(206, result);
     }
 
     @WithMockUser(roles = "ATP_ADMIN")
