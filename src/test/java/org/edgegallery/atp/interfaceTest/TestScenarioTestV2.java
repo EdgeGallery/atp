@@ -25,7 +25,10 @@ import java.io.InputStream;
 import org.apache.http.entity.ContentType;
 import org.apache.ibatis.io.Resources;
 import org.edgegallery.atp.ATPApplicationTest;
+import org.edgegallery.atp.constant.Constant;
+import org.edgegallery.atp.model.file.AtpFile;
 import org.edgegallery.atp.model.testscenario.TestScenario;
+import org.edgegallery.atp.repository.file.FileRepository;
 import org.edgegallery.atp.service.TestScenarioService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,7 +55,24 @@ public class TestScenarioTestV2 {
     @Autowired
     TestScenarioService testScenarioService;
 
+    @Autowired
+    FileRepository fileRepository;
+
     private Gson gson = new Gson();
+
+    @WithMockUser(roles = "ATP_ADMIN")
+    @Test
+    public void testModelImportTest() throws Exception {
+        File file = Resources.getResourceAsFile("testfile/batch_import.zip");
+        InputStream zipInputStream = new FileInputStream(file);
+        MultipartFile zipMultiFile = new MockMultipartFile("batch_import.zip", "batch_import.zip",
+            ContentType.APPLICATION_OCTET_STREAM.toString(), zipInputStream);
+        MvcResult mvcResult = mvc.perform(
+            MockMvcRequestBuilders.multipart("/edgegallery/atp/v2/testmodels/action/import")
+                .file("file", zipMultiFile.getBytes()).with(csrf())).andReturn();
+        int result = mvcResult.getResponse().getStatus();
+        assertEquals(500, result);
+    }
 
     @WithMockUser(roles = "ATP_ADMIN")
     @Test
@@ -77,9 +97,11 @@ public class TestScenarioTestV2 {
         InputStream iconInputStream = new FileInputStream(file);
         MultipartFile iconMultiFile = new MockMultipartFile(file.getName(), file.getName(),
             ContentType.APPLICATION_OCTET_STREAM.toString(), iconInputStream);
-        TestScenario testScenario = TestScenario.builder().setId("96a82e85-d40d-4ce5-beec-2dd1c9a3d41d")
-            .setNameEn("C Operator").setNameCh("C运营商").build();
-        testScenarioService.updateTestScenario(testScenario, null);
+        String id = "96a82e85-d40d-4ce5-beec-2dd1c9a3d41d";
+        TestScenario testScenario = TestScenario.builder().setId(id).setNameEn("C Operator").setNameCh("C运营商").build();
+        AtpFile atpFile = new AtpFile(id, Constant.FILE_TYPE_SCENARIO, null, getDir(id));
+        fileRepository.insertFile(atpFile);
+        testScenarioService.updateTestScenario(testScenario, iconMultiFile);
     }
 
     @WithMockUser(roles = "ATP_ADMIN")
@@ -89,8 +111,8 @@ public class TestScenarioTestV2 {
         InputStream iconInputStream = new FileInputStream(file);
         MultipartFile iconMultiFile = new MockMultipartFile(file.getName(), file.getName(),
             ContentType.APPLICATION_OCTET_STREAM.toString(), iconInputStream);
-        TestScenario testScenario = TestScenario.builder().setId("96a82e85-d40d-4ce5-beec-2dd1c9a3d41d")
-            .setNameEn("C Operator").setNameCh("社区场景").build();
+        TestScenario testScenario = TestScenario.builder().setId("6fe8581c-b83f-40c2-8f5b-505478f9e30b")
+            .setNameEn("B Operator").setNameCh("社区场景").build();
         testScenarioService.updateTestScenario(testScenario, null);
     }
 
@@ -110,7 +132,7 @@ public class TestScenarioTestV2 {
     @Test
     public void getIconFileTestNotFound() throws Exception {
         MvcResult mvcResultIconFile = mvc.perform(
-            MockMvcRequestBuilders.get("/edgegallery/atp/v2/files/96a82e85-d40d-4ce5-beec-2dd1c9a3d41d?type =scenario")
+            MockMvcRequestBuilders.get("/edgegallery/atp/v2/files/96a82e85-1111-4ce5-beec-2dd1c9a3d41d?type =scenario")
                 .with(csrf())).andReturn();
         int resultIconFile = mvcResultIconFile.getResponse().getStatus();
         assertEquals(404, resultIconFile);
@@ -125,6 +147,17 @@ public class TestScenarioTestV2 {
                 .param("scenarioIds", "4d203111-1111-4f62-aabb-8ebcec357f87")).andReturn();
         int resultQueryTestCases = mvcResultQueryTestCases.getResponse().getStatus();
         assertEquals(200, resultQueryTestCases);
+    }
+
+    @WithMockUser(roles = "ATP_ADMIN")
+    @Test
+    public void getTestCaseExceptionTest() throws Exception {
+        // get all test case under one test scenario
+        MvcResult mvcResultQueryTestCases = mvc.perform(
+            MockMvcRequestBuilders.multipart("/edgegallery/atp/v2/testscenarios/testcases").with(csrf())
+                .param("scenarioIds", "4d203111-2222-4f62-aabb-8ebcec357f87")).andReturn();
+        int resultQueryTestCases = mvcResultQueryTestCases.getResponse().getStatus();
+        assertEquals(400, resultQueryTestCases);
     }
 
     @WithMockUser(roles = "ATP_ADMIN")
@@ -161,17 +194,11 @@ public class TestScenarioTestV2 {
         assertEquals(400, resultDelete);
     }
 
-    @WithMockUser(roles = "ATP_ADMIN")
-    @Test
-    public void testModelImportTest() throws Exception {
-        File file = Resources.getResourceAsFile("testfile/batch_import.zip");
-        InputStream zipInputStream = new FileInputStream(file);
-        MultipartFile zipMultiFile = new MockMultipartFile("batch_import.zip", "batch_import.zip",
-            ContentType.APPLICATION_OCTET_STREAM.toString(), zipInputStream);
-        MvcResult mvcResult = mvc.perform(
-            MockMvcRequestBuilders.multipart("/edgegallery/atp/v2/testmodels/action/import")
-                .file("file", zipMultiFile.getBytes()).with(csrf())).andReturn();
-        int result = mvcResult.getResponse().getStatus();
-        assertEquals(206, result);
+    private String getDir(String id) {
+        if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+            return "C:\\atp\\file/icon/scenario_" + id + ".jpg";
+        } else {
+            return "/usr/atp/file/icon/scenario_" + id + ".jpg";
+        }
     }
 }
