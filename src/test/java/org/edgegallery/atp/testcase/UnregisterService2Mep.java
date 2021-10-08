@@ -12,7 +12,7 @@
  * the License.
  */
 
-package com.example.demo.sandbox;
+package org.edgegallery.atp.testcase;
 
 import java.util.Map;
 import org.slf4j.Logger;
@@ -58,7 +58,8 @@ public class UnregisterService2Mep {
             return MEP_HOST_IP_IS_NULL;
         }
         String hostIp = ip.concat(":30443");
-        return unregisterService(hostIp, context) ? SUCCESS : UNREGISTER_SERVICE_FAILED;
+        return (unregisterService(hostIp, context, context.get("serInstanceId")) && unregisterService(hostIp, context,
+            context.get("serInstanceId2th"))) ? SUCCESS : UNREGISTER_SERVICE_FAILED;
     }
 
     /**
@@ -67,13 +68,13 @@ public class UnregisterService2Mep {
      * @param hostIp hostIp
      * @return unregister successful
      */
-    private boolean unregisterService(String hostIp, Map<String, String> context) {
+    private boolean unregisterService(String hostIp, Map<String, String> context, String serInstanceId) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer ".concat(context.get("authoration")));
         headers.set("X-AppinstanceID", context.get("mepInstanceId"));
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
         String url = "https://".concat(hostIp).concat("/mep/mec_service_mgmt/v1/applications/")
-            .concat(context.get("mepInstanceId")).concat("/services/".concat(context.get("serInstanceId")));
+            .concat(context.get("mepInstanceId")).concat("/services/".concat(serInstanceId));
         try {
             ResponseEntity<String> response = restTemplate
                 .exchange(url, HttpMethod.DELETE, requestEntity, String.class);

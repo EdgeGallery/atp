@@ -14,6 +14,8 @@
 
 package org.edgegallery.atp.testcase;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +60,7 @@ public class SecondaryRegisterService2Mep {
             return MEP_HOST_IP_IS_NULL;
         }
         String hostIp = ip.concat(":30443");
+
         String token = context.get("authoration");
         if (null == token) {
             return GET_MEP_TOKEN_FAILED;
@@ -88,6 +91,8 @@ public class SecondaryRegisterService2Mep {
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
             if (HttpStatus.CREATED.equals(response.getStatusCode())) {
+                JsonObject jsonObject = new JsonParser().parse(response.getBody()).getAsJsonObject();
+                context.put("serInstanceId2th", jsonObject.get("serInstanceId").getAsString());
                 return true;
             }
             LOGGER.info("register service failed status: {}", response.getStatusCode());
