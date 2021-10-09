@@ -59,7 +59,8 @@ public class TestCaseTestV2 {
     @WithMockUser(roles = "ATP_TENANT")
     @Test
     public void getAllTestCases() throws Exception {
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get("/edgegallery/atp/v2/testcases?limit=10&offset=0")
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders
+            .get("/edgegallery/atp/v2/testcases?limit=10&offset=0&locale='en'&name='Virus Scanning'")
             .contentType(MediaType.APPLICATION_JSON_VALUE).with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
         int result = mvcResult.getResponse().getStatus();
@@ -69,7 +70,8 @@ public class TestCaseTestV2 {
     @WithMockUser(roles = "ATP_TENANT")
     @Test
     public void getAllTestCaesWithParameters() throws Exception {
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get("/edgegallery/atp/v2/testcases?limit=10&offset=0")
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders
+            .get("/edgegallery/atp/v2/testcases?limit=10&offset=0&locale='en'&name='Virus Scanning'")
             .param("testSuiteIdList", "522684bd-d6df-4b47-aab8-b43f1b4c19c0")
             .param("configIdList", "4353982a-abb0-4cf6-9cae-a468a5318c67'")
             .contentType(MediaType.APPLICATION_JSON_VALUE).with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
