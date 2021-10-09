@@ -16,6 +16,8 @@ package org.edgegallery.atp.interfaceTest;
 
 import static org.junit.Assert.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+
+
 import com.google.gson.Gson;
 import java.io.File;
 import java.io.FileInputStream;
@@ -55,11 +57,11 @@ public class TestScenarioTest {
         File file = Resources.getResourceAsFile("testfile/icon.png");
         InputStream iconInputStream = new FileInputStream(file);
         MultipartFile iconMultiFile = new MockMultipartFile(file.getName(), file.getName(),
-                ContentType.APPLICATION_OCTET_STREAM.toString(), iconInputStream);
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/testscenarios")
-                .file("icon", iconMultiFile.getBytes()).with(csrf()).param("nameEn", "testScenario")
-                .param("nameCh", "").param("descriptionCh", "testScenario").param("descriptionEn", "")
-                .param("label", "EdgeGallery")).andReturn();
+            ContentType.APPLICATION_OCTET_STREAM.toString(), iconInputStream);
+        MvcResult mvcResult = mvc.perform(
+            MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/testscenarios").file("icon", iconMultiFile.getBytes())
+                .with(csrf()).param("nameEn", "testScenario").param("nameCh", "").param("descriptionCh", "testScenario")
+                .param("descriptionEn", "").param("label", "EdgeGallery")).andReturn();
         int result = mvcResult.getResponse().getStatus();
         assertEquals(200, result);
 
@@ -68,37 +70,38 @@ public class TestScenarioTest {
         String id = testScenario.getId();
 
         // get icon file
-        MvcResult mvcResultIconFile = mvc.perform(MockMvcRequestBuilders
-                .get("/edgegallery/atp/v1/files/" + id + "?type =scenario").with(csrf())).andReturn();
+        MvcResult mvcResultIconFile = mvc
+            .perform(MockMvcRequestBuilders.get("/edgegallery/atp/v1/files/" + id + "?type =scenario").with(csrf()))
+            .andReturn();
         int resultIconFile = mvcResultIconFile.getResponse().getStatus();
         assertEquals(200, resultIconFile);
 
         // get one test scenario
         MvcResult mvcResultQueryOne = mvc.perform(MockMvcRequestBuilders.get("/edgegallery/atp/v1/testscenarios/" + id)
-                .contentType(MediaType.APPLICATION_JSON_VALUE).with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+            .contentType(MediaType.APPLICATION_JSON_VALUE).with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
         int resultQueryOne = mvcResultQueryOne.getResponse().getStatus();
         assertEquals(200, resultQueryOne);
 
         // get all test scenarios
-        MvcResult mvcResultQueryAll = mvc.perform(MockMvcRequestBuilders.get("/edgegallery/atp/v1/testscenarios")
+        MvcResult mvcResultQueryAll = mvc.perform(
+            MockMvcRequestBuilders.get("/edgegallery/atp/v1/testscenarios?locale='en'&name='A Operator'")
                 .contentType(MediaType.APPLICATION_JSON_VALUE).with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+            .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
         int resultQueryAll = mvcResultQueryAll.getResponse().getStatus();
         assertEquals(200, resultQueryAll);
 
         // get all test case under one test scenario
-        MvcResult mvcResultQueryTestCases =
-                mvc.perform(MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/testscenarios/testcases").with(csrf())
-                        .param("scenarioIds", "4d203111-1111-4f62-aabb-8ebcec357f87")).andReturn();
+        MvcResult mvcResultQueryTestCases = mvc.perform(
+            MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/testscenarios/testcases").with(csrf())
+                .param("scenarioIds", "4d203111-1111-4f62-aabb-8ebcec357f87")).andReturn();
         int resultQueryTestCases = mvcResultQueryTestCases.getResponse().getStatus();
         assertEquals(200, resultQueryTestCases);
 
         // delete
-        MvcResult mvcResultDelete = mvc
-                .perform(MockMvcRequestBuilders.delete("/edgegallery/atp/v1/testscenarios/" + id).with(csrf())
-                        .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+        MvcResult mvcResultDelete = mvc.perform(
+            MockMvcRequestBuilders.delete("/edgegallery/atp/v1/testscenarios/" + id).with(csrf())
+                .accept(MediaType.APPLICATION_JSON_VALUE)).andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
         int resultDelete = mvcResultDelete.getResponse().getStatus();
         assertEquals(200, resultDelete);
     }
@@ -109,10 +112,10 @@ public class TestScenarioTest {
         File file = Resources.getResourceAsFile("testfile/batch_import.zip");
         InputStream zipInputStream = new FileInputStream(file);
         MultipartFile zipMultiFile = new MockMultipartFile("batch_import.zip", "batch_import.zip",
-                ContentType.APPLICATION_OCTET_STREAM.toString(), zipInputStream);
-        MvcResult mvcResult =
-                mvc.perform(MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/testmodels/action/import")
-                        .file("file", zipMultiFile.getBytes()).with(csrf())).andReturn();
+            ContentType.APPLICATION_OCTET_STREAM.toString(), zipInputStream);
+        MvcResult mvcResult = mvc.perform(
+            MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/testmodels/action/import")
+                .file("file", zipMultiFile.getBytes()).with(csrf())).andReturn();
         int result = mvcResult.getResponse().getStatus();
         assertEquals(206, result);
     }
@@ -123,11 +126,12 @@ public class TestScenarioTest {
         File file = Resources.getResourceAsFile("testfile/icon.png");
         InputStream iconInputStream = new FileInputStream(file);
         MultipartFile iconMultiFile = new MockMultipartFile(file.getName(), file.getName(),
-                ContentType.APPLICATION_OCTET_STREAM.toString(), iconInputStream);
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/testscenarios")
-                .file("icon", iconMultiFile.getBytes()).with(csrf()).param("nameEn", "EdgeGallery Community Scenario")
-                .param("nameCh", "").param("descriptionCh", "testScenario").param("descriptionEn", "")
-                .param("label", "EdgeGallery")).andReturn();
+            ContentType.APPLICATION_OCTET_STREAM.toString(), iconInputStream);
+        MvcResult mvcResult = mvc.perform(
+            MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/testscenarios").file("icon", iconMultiFile.getBytes())
+                .with(csrf()).param("nameEn", "EdgeGallery Community Scenario").param("nameCh", "")
+                .param("descriptionCh", "testScenario").param("descriptionEn", "").param("label", "EdgeGallery"))
+            .andReturn();
         int result = mvcResult.getResponse().getStatus();
         assertEquals(400, result);
     }
@@ -138,11 +142,11 @@ public class TestScenarioTest {
         File file = Resources.getResourceAsFile("testfile/icon.png");
         InputStream iconInputStream = new FileInputStream(file);
         MultipartFile iconMultiFile = new MockMultipartFile(file.getName(), file.getName(),
-                ContentType.APPLICATION_OCTET_STREAM.toString(), iconInputStream);
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/testscenarios")
-                .file("icon", iconMultiFile.getBytes()).with(csrf()).param("nameEn", "")
-                .param("nameCh", "").param("descriptionCh", "testScenario").param("descriptionEn", "")
-                .param("label", "EdgeGallery")).andReturn();
+            ContentType.APPLICATION_OCTET_STREAM.toString(), iconInputStream);
+        MvcResult mvcResult = mvc.perform(
+            MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/testscenarios").file("icon", iconMultiFile.getBytes())
+                .with(csrf()).param("nameEn", "").param("nameCh", "").param("descriptionCh", "testScenario")
+                .param("descriptionEn", "").param("label", "EdgeGallery")).andReturn();
         int result = mvcResult.getResponse().getStatus();
         assertEquals(400, result);
     }
@@ -152,9 +156,8 @@ public class TestScenarioTest {
     public void deleteTestScenarioIllegalException() throws Exception {
         // delete
         MvcResult mvcResultDelete = mvc.perform(
-                MockMvcRequestBuilders.delete("/edgegallery/atp/v1/testscenarios/4d203111-1111-4f62-aabb-8ebcec357f87")
-                        .with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
-                .andReturn();
+            MockMvcRequestBuilders.delete("/edgegallery/atp/v1/testscenarios/4d203111-1111-4f62-aabb-8ebcec357f87")
+                .with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
         int resultDelete = mvcResultDelete.getResponse().getStatus();
         assertEquals(400, resultDelete);
     }
@@ -163,10 +166,10 @@ public class TestScenarioTest {
     @Test
     public void getTestScenarioIllegalException() throws Exception {
         // get one test suite
-        MvcResult mvcResultQueryOne = mvc.perform(MockMvcRequestBuilders
-                .get("/edgegallery/atp/v1/testscenarios/33333111-1111-4f62-aabb-8ebcec357f87")
+        MvcResult mvcResultQueryOne = mvc.perform(
+            MockMvcRequestBuilders.get("/edgegallery/atp/v1/testscenarios/33333111-1111-4f62-aabb-8ebcec357f87")
                 .contentType(MediaType.APPLICATION_JSON_VALUE).with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
-                .andReturn();
+            .andReturn();
         int resultQueryOne = mvcResultQueryOne.getResponse().getStatus();
         assertEquals(404, resultQueryOne);
     }

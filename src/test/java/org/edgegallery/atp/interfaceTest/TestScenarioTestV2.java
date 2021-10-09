@@ -175,9 +175,9 @@ public class TestScenarioTestV2 {
     @WithMockUser(roles = "ATP_ADMIN")
     @Test
     public void getAllTestScenariosTest() throws Exception {
-        MvcResult mvcResultQueryAll = mvc.perform(
-            MockMvcRequestBuilders.get("/edgegallery/atp/v2/testscenarios?limit=10&offset=0")
-                .contentType(MediaType.APPLICATION_JSON_VALUE).with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
+        MvcResult mvcResultQueryAll = mvc.perform(MockMvcRequestBuilders
+            .get("/edgegallery/atp/v2/testscenarios?limit=10&offset=0&locale='en'&name='A Operator'")
+            .contentType(MediaType.APPLICATION_JSON_VALUE).with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
         int resultQueryAll = mvcResultQueryAll.getResponse().getStatus();
         assertEquals(200, resultQueryAll);

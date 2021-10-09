@@ -149,7 +149,7 @@ public class ConfigServiceImpl implements ConfigService {
         for (String param : params) {
             String[] config = param.split(Constant.EQUAL_MARK);
             // param patter: key = value or value is null, key = ;
-            if ((!param.contains(Constant.EQUAL_MARK)) || (2 != config.length && 1 != config.length)) {
+            if (!param.contains(Constant.EQUAL_MARK) || (2 != config.length && 1 != config.length)) {
                 LOGGER.error("config param pattern error,not having =");
                 throw new IllegalRequestException(ErrorCode.CONFIG_PARAM_PATTERN_ERROR_MSG,
                     ErrorCode.CONFIG_PARAM_PATTERN_ERROR, null);

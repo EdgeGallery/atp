@@ -84,9 +84,9 @@ public class TestSuiteTestV2 {
     @WithMockUser(roles = "ATP_ADMIN")
     @Test
     public void getAllTestSuitesTest() throws Exception {
-        MvcResult mvcResultQueryAll = mvc.perform(
-            MockMvcRequestBuilders.get("/edgegallery/atp/v2/testsuites?limit=10&offset=0")
-                .contentType(MediaType.APPLICATION_JSON_VALUE).with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
+        MvcResult mvcResultQueryAll = mvc.perform(MockMvcRequestBuilders
+            .get("/edgegallery/atp/v2/testsuites?limit=10&offset=0&locale='en'&name='Common Sandbox Test'")
+            .contentType(MediaType.APPLICATION_JSON_VALUE).with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
             .andReturn();
         int resultQueryAll = mvcResultQueryAll.getResponse().getStatus();
         assertEquals(200, resultQueryAll);
