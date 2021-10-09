@@ -58,7 +58,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ATPApplicationTest.class)
 @AutoConfigureMockMvc
-public class TaskTestV2 {
+public class TaskV2InterfaceTest {
 
     @Autowired
     private MockMvc mvc;
