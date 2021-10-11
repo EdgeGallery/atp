@@ -44,7 +44,7 @@ public class VulnerableScanningValidation {
      */
     public String execute(String filePath, Map<String, String> context) {
         String mecHost = getMecHostAppInstantiated(context);
-        if (null == mecHost) {
+        if (null == mecHost || "".equals(mecHost)) {
             return MEC_HOST_IS_EMPTY;
         }
         try {

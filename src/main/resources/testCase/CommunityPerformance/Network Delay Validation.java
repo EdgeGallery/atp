@@ -40,7 +40,7 @@ public class NetworkDelayValidation {
      */
     public String execute(String filePath, Map<String, String> context) throws Exception {
         String mecHost = getMecHostAppInstantiated(context);
-        if (null == mecHost) {
+        if (null == mecHost || "".equals(mecHost)) {
             return SUCCESS;
         }
         try {
