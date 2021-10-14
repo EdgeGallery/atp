@@ -295,7 +295,6 @@ public class InstantiateAppTestCaseInner {
         headers.set(ACCESS_TOKEN, context.get(ACCESS_TOKEN));
         headers.set(CONTENT_TYPE, APPLICATION_JSON);
 
-        LOGGER.info("create body: {}", body.toString());
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
         String url = context.get("appoServerAddress")
             .concat(String.format(APPO_CREATE_APPINSTANCE, context.get(TENANT_ID)));
@@ -489,13 +488,17 @@ public class InstantiateAppTestCaseInner {
                     try (BufferedReader br = new BufferedReader(
                         new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
                         String line = "";
+                        StringBuffer fileContentFile = new StringBuffer();
                         while ((line = br.readLine()) != null) {
-                            // prefix: path
-                            if (line.trim().startsWith("\"architecture\"")) {
-                                String architecture = line.split(":")[1].trim();
-                                architecture = architecture.replaceAll("[\",]", "");
-                                packageInfo.put(ARCHITECTURE, architecture);
-                            }
+                            fileContentFile.append(line).append("\n");
+                        }
+                        JsonParser parser = new JsonParser();
+                        JsonArray fileContent = parser.parse(fileContentFile.toString()).getAsJsonArray();
+                        for (JsonElement element : fileContent) {
+                            String architecture = null == element.getAsJsonObject().get("architecture")
+                                ? null
+                                : element.getAsJsonObject().get("architecture").getAsString();
+                            packageInfo.put(ARCHITECTURE, architecture);
                         }
                     }
                 }
