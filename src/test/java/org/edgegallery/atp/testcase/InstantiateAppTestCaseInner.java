@@ -113,6 +113,7 @@ public class InstantiateAppTestCaseInner {
      */
     public String execute(String filePath, Map<String, String> context) {
         Map<String, String> packageInfo = getPackageInfo(filePath);
+        architectureAdapter(packageInfo);
         context.put(APP_CLASS, packageInfo.get(APP_CLASS));
 
         String hostIp = getMecHost(context, packageInfo);
@@ -228,6 +229,7 @@ public class InstantiateAppTestCaseInner {
             LOGGER.info("not contain architecture field, default is X86");
             packageInfo.put(ARCHITECTURE, "X86");
         }
+        LOGGER.info("package architectrue: {}", packageInfo.get(ARCHITECTURE));
 
         HttpHeaders headers = new HttpHeaders();
         headers.set(ACCESS_TOKEN, context.get(ACCESS_TOKEN));
@@ -251,8 +253,8 @@ public class InstantiateAppTestCaseInner {
                 if (null != mecHostIp && null != affinity && null != vim) {
                     String vimStr = vim.getAsString();
                     vimStr = "OpenStack".equalsIgnoreCase(vimStr) ? "vm" : "container";
-                    if (packageInfo.get(ARCHITECTURE).equals(affinity.getAsString()) && packageInfo.get(APP_CLASS)
-                        .equalsIgnoreCase(vimStr)) {
+                    if (packageInfo.get(ARCHITECTURE).equalsIgnoreCase(affinity.getAsString()) && packageInfo
+                        .get(APP_CLASS).equalsIgnoreCase(vimStr)) {
                         mecHostIpList.add(mecHostIp.getAsString());
                     }
                     //use for mep register test case
@@ -446,6 +448,31 @@ public class InstantiateAppTestCaseInner {
                 String[] configItem = param.split("=");
                 // param patter: key = value or key = ;
                 body.put(configItem[0].trim(), 1 == configItem.length ? "" : configItem[1].trim());
+            }
+        }
+    }
+
+    /**
+     * adpater architecture field from package to mecm response field for vm app.
+     *
+     * @param packageInfo
+     */
+    private void architectureAdapter(Map<String, String> packageInfo) {
+        if ("vm".equals(packageInfo.get(APP_CLASS))) {
+            String architecture = packageInfo.get(ARCHITECTURE);
+            LOGGER.info("original architecture.{}", architecture);
+            switch (architecture) {
+                case "x86_64":
+                    packageInfo.put(ARCHITECTURE, "X86");
+                    break;
+                case "aarch64":
+                    packageInfo.put(ARCHITECTURE, "ARM64");
+                    break;
+                case "aarch32":
+                    packageInfo.put(ARCHITECTURE, "ARM32");
+                    break;
+                default:
+                    packageInfo.put(ARCHITECTURE, "X86");
             }
         }
     }
