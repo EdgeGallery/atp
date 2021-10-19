@@ -25,17 +25,17 @@ import java.util.Map;
  */
 public class PortScanningValidation {
 
-    private static final String PORT_FILTERED = "there are some ports filter by IDS/IPS firewall. %s ";
+    private static final String PORT_NOT_SURE = "there are some ports status is not sure,open|filtered: %s ";
 
-    private static final String PORT_UNFILTERED = "there are some ports status is not sure. %s ";
+    private static final String PORT_UNFILTERED = "there are some ports status is not sure,unfiltered: %s ";
 
     private static final String MEC_HOST_IS_EMPTY = "app instantiate ip not found. ";
 
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
 
-    private static final String PORT_STATUS_FILTERED = "filtered";
-
     private static final String PORT_STATUS_UNFILTERED = "unfiltered";
+
+    private static final String PORT_STATUS_NOT_SURE = "open|filtered";
 
     private static final String SUCCESS = "success";
 
@@ -68,8 +68,8 @@ public class PortScanningValidation {
                         if (line.startsWith("Nmap done")) {
                             break;
                         }
-                        if (flag && line.contains(PORT_STATUS_FILTERED)) {
-                            return String.format(PORT_FILTERED, line);
+                        if (flag && line.contains(PORT_STATUS_NOT_SURE)) {
+                            return String.format(PORT_NOT_SURE, line);
                         }
                         if (flag && line.contains(PORT_STATUS_UNFILTERED)) {
                             return String.format(PORT_UNFILTERED, line);
