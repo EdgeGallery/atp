@@ -27,7 +27,7 @@ import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.repository.config.ConfigRepository;
 import org.edgegallery.atp.repository.task.TaskRepository;
 import org.edgegallery.atp.repository.testcase.TestCaseRepository;
-import org.edgegallery.atp.schedule.config.URLConfig;
+import org.edgegallery.atp.schedule.config.UrlConfig;
 import org.edgegallery.atp.schedule.testcase.executor.TestCaseExecutor;
 import org.edgegallery.atp.schedule.testcase.executor.TestCaseExecutorFactory;
 import org.edgegallery.atp.utils.SignatureValidation;
@@ -47,7 +47,7 @@ public class TestCaseManagerImpl {
     ConfigRepository configRepository;
 
     @Autowired
-    URLConfig urlConfig;
+    UrlConfig urlConfig;
 
     @Async("taskExecutor")
     public void executeTestCase(TaskRequest task, String filePath) {

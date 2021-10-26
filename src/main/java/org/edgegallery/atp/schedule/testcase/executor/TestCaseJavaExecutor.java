@@ -133,7 +133,7 @@ public class TestCaseJavaExecutor implements TestCaseExecutor {
         public JavaFileObject getJavaFileForOutput(JavaFileManager.Location location, String className,
             JavaFileObject.Kind kind, FileObject sibling) throws IOException {
             if (kind == JavaFileObject.Kind.CLASS) {
-                return new atpJavaFileObject(className, null);
+                return new AtpJavaFileObject(className, null);
             } else {
                 return super.getJavaFileForOutput(location, className, kind, sibling);
             }
@@ -161,18 +161,18 @@ public class TestCaseJavaExecutor implements TestCaseExecutor {
          * @return JavaFileObject
          */
         public JavaFileObject getSourceFromStr(String className, String srcCode) {
-            return new atpJavaFileObject(className, srcCode);
+            return new AtpJavaFileObject(className, srcCode);
         }
 
         /**
          * construction of source code file object.
          */
-        private class atpJavaFileObject extends SimpleJavaFileObject {
+        private class AtpJavaFileObject extends SimpleJavaFileObject {
             private String sourceCode;
 
             private String className;
 
-            atpJavaFileObject(String className, String sourceCode) {
+            AtpJavaFileObject(String className, String sourceCode) {
                 super(convertUri(className), Kind.SOURCE);
                 this.sourceCode = null == sourceCode ? this.sourceCode : sourceCode;
                 this.className = className;

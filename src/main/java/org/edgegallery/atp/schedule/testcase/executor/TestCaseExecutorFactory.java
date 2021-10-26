@@ -49,7 +49,8 @@ public class TestCaseExecutorFactory {
                 return new TestCasePyExecutor();
             case Constant.JAR:
                 return new TestCaseJarExecutor();
+            default:
+                return new TestCaseJavaExecutor();
         }
-        return new TestCaseJavaExecutor();
     }
 }
