@@ -30,6 +30,13 @@ servicecomb:
   uploads:
     directory: /usr/atp/file/
 
+task:
+  pool:
+    corePoolSize: 5
+    maxPoolSize: 20
+    keepAliveSeconds: 500
+    queueCapacity: 20
+
 ###mybtis####
 mybatis:
   mapper-locations: classpath:mybatis/sql/*.xml

@@ -34,10 +34,10 @@ import org.edgegallery.atp.ATPApplicationTest;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.model.task.testscenarios.TaskTestCase;
 import org.edgegallery.atp.model.testcase.TestCase;
+import org.edgegallery.atp.schedule.testcase.executor.TestCaseJarExecutor;
+import org.edgegallery.atp.schedule.testcase.executor.TestCaseJavaExecutor;
+import org.edgegallery.atp.schedule.testcase.executor.TestCasePyExecutor;
 import org.edgegallery.atp.utils.FileChecker;
-import org.edgegallery.atp.utils.JarCallUtil;
-import org.edgegallery.atp.utils.JavaCompileUtil;
-import org.edgegallery.atp.utils.PythonCallUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.python.util.PythonInterpreter;
@@ -70,9 +70,10 @@ public class TestCaseTest {
     @WithMockUser(roles = "ATP_TENANT")
     @Test
     public void getAllTestCases() throws Exception {
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get("/edgegallery/atp/v1/testcases")
-                .contentType(MediaType.APPLICATION_JSON_VALUE).with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+        MvcResult mvcResult = mvc.perform(
+            MockMvcRequestBuilders.get("/edgegallery/atp/v1/testcases").contentType(MediaType.APPLICATION_JSON_VALUE)
+                .with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE)).andExpect(MockMvcResultMatchers.status().isOk())
+            .andReturn();
         int result = mvcResult.getResponse().getStatus();
         assertEquals(200, result);
     }
@@ -81,9 +82,9 @@ public class TestCaseTest {
     @Test
     public void getAllTestCaesWithParameters() throws Exception {
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get("/edgegallery/atp/v1/testcases")
-                .param("testSuiteIdList", "522684bd-d6df-4b47-aab8-b43f1b4c19c0")
-                .contentType(MediaType.APPLICATION_JSON_VALUE).with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+            .param("testSuiteIdList", "522684bd-d6df-4b47-aab8-b43f1b4c19c0")
+            .contentType(MediaType.APPLICATION_JSON_VALUE).with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
         int result = mvcResult.getResponse().getStatus();
         assertEquals(200, result);
     }
@@ -91,11 +92,10 @@ public class TestCaseTest {
     @WithMockUser(roles = "ATP_TENANT")
     @Test
     public void getOneTestCaesWithParameters() throws Exception {
-        MvcResult mvcResult = mvc
-                .perform(
-                        MockMvcRequestBuilders.get("/edgegallery/atp/v1/testcases/4d203173-2222-4f62-aabb-8ebcec357f87")
-                                .with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+        MvcResult mvcResult = mvc.perform(
+            MockMvcRequestBuilders.get("/edgegallery/atp/v1/testcases/4d203173-2222-4f62-aabb-8ebcec357f87")
+                .with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE)).andExpect(MockMvcResultMatchers.status().isOk())
+            .andReturn();
         int result = mvcResult.getResponse().getStatus();
         assertEquals(200, result);
     }
@@ -106,15 +106,14 @@ public class TestCaseTest {
         File file = Resources.getResourceAsFile("testfile/Test.java");
         InputStream csarInputStream = new FileInputStream(file);
         MultipartFile csarMultiFile = new MockMultipartFile(file.getName(), file.getName(),
-                ContentType.APPLICATION_OCTET_STREAM.toString(), csarInputStream);
+            ContentType.APPLICATION_OCTET_STREAM.toString(), csarInputStream);
         MvcResult mvcResult = mvc.perform(
             MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/testcases").file("file", csarMultiFile.getBytes())
                 .with(csrf()).param("nameEn", "test").param("nameCh", "").param("type", "automatic")
                 .param("descriptionCh", "test").param("descriptionEn", "").param("codeLanguage", "java")
                 .param("expectResultCh", "test").param("expectResultEn", "").param("testStepEn", "test")
                 .param("testStepCh", "").param("testSuiteIdList", "522684bd-d6df-4b47-aab8-b43f1b4c19c0")
-                .param("configIdList", ""))
-                .andReturn();
+                .param("configIdList", "")).andReturn();
         int result = mvcResult.getResponse().getStatus();
         assertEquals(200, result);
 
@@ -136,12 +135,13 @@ public class TestCaseTest {
         taskTestCase.setNameEn(testCase.getNameEn());
         taskTestCase.setReason(Constant.EMPTY);
         taskTestCase.setResult(Constant.RUNNING);
-        JavaCompileUtil.executeJava(testCase, "testfile/AR.csar", taskTestCase, null);
+        new TestCaseJavaExecutor().executeTestCase(testCase, "testfile/AR.csar", taskTestCase, null);
 
         // python call
         new MockUp<PythonInterpreter>() {
             @Mock
-            public void initialize(Properties preProperties, Properties postProperties, String[] argv) {}
+            public void initialize(Properties preProperties, Properties postProperties, String[] argv) {
+            }
         };
         File filePython = Resources.getResourceAsFile("testfile/pythonExample.py");
         String filePathPython = BASIC_PATH + "python" + Constant.UNDER_LINE + testCase.getId();
@@ -150,7 +150,7 @@ public class TestCaseTest {
         FileCopyUtils.copy(filePython, targetPythonFile);
         Map<String, String> context = new HashMap<String, String>();
         testCase.setFilePath(filePathPython);
-        PythonCallUtil.callPython(testCase, "testfile/AR.csar", taskTestCase, context);
+        new TestCasePyExecutor().executeTestCase(testCase, "testfile/AR.csar", taskTestCase, context);
         targetPythonFile.delete();
 
         // jar call
@@ -160,23 +160,21 @@ public class TestCaseTest {
         File targetJarFile = new File(filePathJar);
         testCase.setFilePath(filePathJar);
         FileUtils.copyInputStreamToFile(stream, targetJarFile);
-        JarCallUtil.executeJar(testCase, "testfile/AR.csar", taskTestCase, context);
+        new TestCaseJarExecutor().executeTestCase(testCase, "testfile/AR.csar", taskTestCase, context);
         targetJarFile.delete();
 
         // dowload test case
-        MvcResult mvcResultReport = mvc
-                .perform(MockMvcRequestBuilders.get("/edgegallery/atp/v1/testcases/" + id + "/action/download")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE).with(csrf())
-                        .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+        MvcResult mvcResultReport = mvc.perform(
+            MockMvcRequestBuilders.get("/edgegallery/atp/v1/testcases/" + id + "/action/download")
+                .contentType(MediaType.APPLICATION_JSON_VALUE).with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
         int resultReport = mvcResultReport.getResponse().getStatus();
         assertEquals(200, resultReport);
 
         // delete
-        MvcResult mvcResultDelete = mvc
-                .perform(MockMvcRequestBuilders.delete("/edgegallery/atp/v1/testcases/" + id).with(csrf())
-                        .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+        MvcResult mvcResultDelete = mvc.perform(
+            MockMvcRequestBuilders.delete("/edgegallery/atp/v1/testcases/" + id).with(csrf())
+                .accept(MediaType.APPLICATION_JSON_VALUE)).andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
         int resultDelete = mvcResultDelete.getResponse().getStatus();
         assertEquals(200, resultDelete);
     }
@@ -187,15 +185,14 @@ public class TestCaseTest {
         File file = Resources.getResourceAsFile("testfile/Test.java");
         InputStream csarInputStream = new FileInputStream(file);
         MultipartFile csarMultiFile = new MockMultipartFile(file.getName(), file.getName(),
-                ContentType.APPLICATION_OCTET_STREAM.toString(), csarInputStream);
-        MvcResult mvcResult = mvc
-                .perform(MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/testcases")
-                        .file("file", csarMultiFile.getBytes()).with(csrf())
-                        .param("nameEn", "Manifest File Path Validation").param("nameCh", "").param("type", "automatic")
-                        .param("descriptionCh", "test").param("descriptionEn", "").param("codeLanguage", "java")
-                        .param("expectResultCh", "test").param("expectResultEn", "").param("testStepEn", "test")
-                        .param("testStepCh", "").param("testSuiteIdList", "522684bd-d6df-4b47-aab8-b43f1b4c19c0"))
-                .andReturn();
+            ContentType.APPLICATION_OCTET_STREAM.toString(), csarInputStream);
+        MvcResult mvcResult = mvc.perform(
+            MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/testcases").file("file", csarMultiFile.getBytes())
+                .with(csrf()).param("nameEn", "Manifest File Path Validation").param("nameCh", "")
+                .param("type", "automatic").param("descriptionCh", "test").param("descriptionEn", "")
+                .param("codeLanguage", "java").param("expectResultCh", "test").param("expectResultEn", "")
+                .param("testStepEn", "test").param("testStepCh", "")
+                .param("testSuiteIdList", "522684bd-d6df-4b47-aab8-b43f1b4c19c0")).andReturn();
         int result = mvcResult.getResponse().getStatus();
         assertEquals(400, result);
     }
@@ -206,14 +203,13 @@ public class TestCaseTest {
         File file = Resources.getResourceAsFile("testfile/Test.java");
         InputStream csarInputStream = new FileInputStream(file);
         MultipartFile csarMultiFile = new MockMultipartFile(file.getName(), file.getName(),
-                ContentType.APPLICATION_OCTET_STREAM.toString(), csarInputStream);
+            ContentType.APPLICATION_OCTET_STREAM.toString(), csarInputStream);
         MvcResult mvcResult = mvc.perform(
-                MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/testcases").file("file", csarMultiFile.getBytes())
-                        .with(csrf()).param("nameEn", "").param("nameCh", "").param("type", "automatic")
-                        .param("descriptionCh", "test").param("descriptionEn", "").param("codeLanguage", "java")
-                        .param("expectResultCh", "test").param("expectResultEn", "").param("testStepEn", "test")
-                        .param("testStepCh", "").param("testSuiteIdList", "522684bd-d6df-4b47-aab8-b43f1b4c19c0"))
-                .andReturn();
+            MockMvcRequestBuilders.multipart("/edgegallery/atp/v1/testcases").file("file", csarMultiFile.getBytes())
+                .with(csrf()).param("nameEn", "").param("nameCh", "").param("type", "automatic")
+                .param("descriptionCh", "test").param("descriptionEn", "").param("codeLanguage", "java")
+                .param("expectResultCh", "test").param("expectResultEn", "").param("testStepEn", "test")
+                .param("testStepCh", "").param("testSuiteIdList", "522684bd-d6df-4b47-aab8-b43f1b4c19c0")).andReturn();
         int result = mvcResult.getResponse().getStatus();
         assertEquals(400, result);
     }
@@ -222,9 +218,8 @@ public class TestCaseTest {
     @Test
     public void getTestCaseNameException() throws Exception {
         MvcResult mvcResult = mvc.perform(
-                MockMvcRequestBuilders.get("/edgegallery/atp/v1/testcases/55553173-2222-4f62-aabb-8ebcec357f87")
-                        .with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE))
-                .andReturn();
+            MockMvcRequestBuilders.get("/edgegallery/atp/v1/testcases/55553173-2222-4f62-aabb-8ebcec357f87")
+                .with(csrf()).accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
         int result = mvcResult.getResponse().getStatus();
         assertEquals(404, result);
     }

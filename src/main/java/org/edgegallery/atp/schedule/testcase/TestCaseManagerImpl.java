@@ -17,62 +17,48 @@ package org.edgegallery.atp.schedule.testcase;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.model.config.Config;
 import org.edgegallery.atp.model.task.TaskRequest;
 import org.edgegallery.atp.model.task.testscenarios.TaskTestCase;
-import org.edgegallery.atp.model.task.testscenarios.TaskTestScenario;
 import org.edgegallery.atp.model.task.testscenarios.TaskTestSuite;
 import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.repository.config.ConfigRepository;
-import org.edgegallery.atp.repository.task.TaskRepositoryImpl;
+import org.edgegallery.atp.repository.task.TaskRepository;
 import org.edgegallery.atp.repository.testcase.TestCaseRepository;
-import org.edgegallery.atp.utils.JarCallUtil;
-import org.edgegallery.atp.utils.JavaCompileUtil;
-import org.edgegallery.atp.utils.PythonCallUtil;
+import org.edgegallery.atp.schedule.config.URLConfig;
+import org.edgegallery.atp.schedule.testcase.executor.TestCaseExecutor;
+import org.edgegallery.atp.schedule.testcase.executor.TestCaseExecutorFactory;
 import org.edgegallery.atp.utils.SignatureValidation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TestCaseManagerImpl implements TestCaseManager {
-    ExecutorService taskTreadPool = Executors.newFixedThreadPool(Constant.MAX_TASK_THREAD_NUM);
-
+public class TestCaseManagerImpl {
     @Autowired
     TestCaseRepository testCaseRepository;
 
     @Autowired
-    TaskRepositoryImpl taskRepository;
+    TaskRepository taskRepository;
 
     @Autowired
     ConfigRepository configRepository;
 
-    @Value("${serveraddress.apm:}")
-    private String apmServerAddress;
+    @Autowired
+    URLConfig urlConfig;
 
-    @Value("${serveraddress.appo:}")
-    private String appoServerAddress;
-
-    @Value("${serveraddress.inventory:}")
-    private String inventoryServerAddress;
-
-    @Value("${serveraddress.appstore:}")
-    private String appstoreServerAddress;
-
-    @Override
+    @Async("taskExecutor")
     public void executeTestCase(TaskRequest task, String filePath) {
-        taskTreadPool.execute(new TaskProcessor(task, filePath));
+        TaskProcessor taskProcessor = new TaskProcessor(task, filePath);
+        taskProcessor.doTask();
     }
 
     /**
      * process test task and schedule test cases.
-     *
      */
-    private class TaskProcessor implements Runnable {
+    private class TaskProcessor {
 
         TaskRequest task;
 
@@ -86,23 +72,23 @@ public class TestCaseManagerImpl implements TestCaseManager {
             this.resultStatus = Constant.SUCCESS;
         }
 
-        @Override
-        public void run() {
+        public void doTask() {
             task.setStatus(Constant.RUNNING);
             taskRepository.update(task);
 
             Map<String, String> context = new HashMap<String, String>();
-            context.put(Constant.ACCESS_TOKEN, task.getAccessToken());
-            context.put(Constant.TENANT_ID, task.getUser().getUserId());
-            context.put(Constant.APM_SERVER_ADDRESS, apmServerAddress);
-            context.put(Constant.APPO_SERVER_ADDRESS, appoServerAddress);
-            context.put(Constant.INVENTORY_SERVER_ADDRESS, inventoryServerAddress);
-            context.put(Constant.APPSTORE_SERSVER_ADDRESS, appstoreServerAddress);
-            //signature verify
-            context.put(Constant.SIGNATURE_RESULT, SignatureValidation.verify(filePath));
+            initContext(context, task);
 
             task.getTestScenarios().forEach(testScenario -> {
-                parseTestCase(testScenario, context);
+                List<TaskTestSuite> taskTestSuiteList = testScenario.getTestSuites();
+                if (CollectionUtils.isNotEmpty(taskTestSuiteList)) {
+                    taskTestSuiteList.forEach(taskTestSuite -> {
+                        List<TaskTestCase> taskTestCaseList = taskTestSuite.getTestCases();
+                        if (CollectionUtils.isNotEmpty(taskTestCaseList)) {
+                            executeTestCase(taskTestCaseList, context);
+                        }
+                    });
+                }
             });
 
             task.setEndTime(taskRepository.getCurrentDate());
@@ -111,21 +97,20 @@ public class TestCaseManagerImpl implements TestCaseManager {
         }
 
         /**
-         * parse test case.
+         * init context info.
          *
-         * @param taskTestScenario test scenario info
-         * @param context context info
+         * @param context context
+         * @param task task
          */
-        private void parseTestCase(TaskTestScenario taskTestScenario, Map<String, String> context) {
-            List<TaskTestSuite> taskTestSuiteList = taskTestScenario.getTestSuites();
-            if (CollectionUtils.isNotEmpty(taskTestSuiteList)) {
-                taskTestSuiteList.forEach(taskTestSuite -> {
-                    List<TaskTestCase> taskTestCaseList = taskTestSuite.getTestCases();
-                    if (CollectionUtils.isNotEmpty(taskTestCaseList)) {
-                        executeTestCase(taskTestCaseList, context);
-                    }
-                });
-            }
+        private void initContext(Map<String, String> context, TaskRequest task) {
+            context.put(Constant.ACCESS_TOKEN, task.getAccessToken());
+            context.put(Constant.TENANT_ID, task.getUser().getUserId());
+            context.put(Constant.APM_SERVER_ADDRESS, urlConfig.getApm());
+            context.put(Constant.APPO_SERVER_ADDRESS, urlConfig.getAppo());
+            context.put(Constant.INVENTORY_SERVER_ADDRESS, urlConfig.getInventory());
+            context.put(Constant.APPSTORE_SERSVER_ADDRESS, urlConfig.getAppstore());
+            //signature verify
+            context.put(Constant.SIGNATURE_RESULT, SignatureValidation.verify(filePath));
         }
 
         /**
@@ -144,19 +129,10 @@ public class TestCaseManagerImpl implements TestCaseManager {
                         .findByName(taskTestCase.getNameCh(), taskTestCase.getNameEn());
                     setConfigParam(testCase, context);
 
-                    switch (testCase.getCodeLanguage()) {
-                        case Constant.PYTHON:
-                            PythonCallUtil.callPython(testCase, filePath, taskTestCase, context);
-                            break;
-                        case Constant.JAVA:
-                            JavaCompileUtil.executeJava(testCase, filePath, taskTestCase, context);
-                            break;
-                        case Constant.JAR:
-                            JarCallUtil.executeJar(testCase, filePath, taskTestCase, context);
-                            break;
-                        default:
-                            break;
-                    }
+                    TestCaseExecutor executor = TestCaseExecutorFactory.getInstance()
+                        .generateExecutor(testCase.getCodeLanguage());
+                    executor.executeTestCase(testCase, filePath, taskTestCase, context);
+
                     if (!Constant.RUNNING.equals(resultStatus)) {
                         resultStatus = Constant.FAILED.equals(taskTestCase.getResult())
                             ? Constant.FAILED

@@ -24,7 +24,6 @@ import org.edgegallery.atp.model.testcase.TestCase;
 import org.edgegallery.atp.repository.file.FileRepository;
 import org.edgegallery.atp.repository.task.TaskRepository;
 import org.edgegallery.atp.repository.testcase.TestCaseRepository;
-import org.edgegallery.atp.schedule.testcase.TestCaseManagerImpl;
 import org.edgegallery.atp.utils.FileChecker;
 import org.edgegallery.atp.utils.PropertiesUtil;
 import org.slf4j.Logger;
@@ -39,9 +38,6 @@ public class TaskSceduleService {
 
     @Autowired
     TaskRepository taskRepository;
-
-    @Autowired
-    TestCaseManagerImpl testCaseManager;
 
     @Autowired
     TestCaseRepository testCaseRepository;

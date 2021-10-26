@@ -25,13 +25,17 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @SpringBootApplication(scanBasePackages = "org.edgegallery.atp", exclude = {SecurityAutoConfiguration.class})
 @MapperScan(basePackages = {"org.edgegallery.atp.repository.mapper"})
 @EnableScheduling
 @EnableServiceComb
+@EnableAsync
+@EnableTransactionManagement(proxyTargetClass = true)
 public class ATPApplicationTest {
 
     public static void main(String[] args) {
