@@ -458,7 +458,7 @@ public class InstantiateAppTestCaseInner {
      * @param packageInfo
      */
     private void architectureAdapter(Map<String, String> packageInfo) {
-        if ("vm".equals(packageInfo.get(APP_CLASS))) {
+        if ("vm".equalsIgnoreCase(packageInfo.get(APP_CLASS))) {
             String architecture = packageInfo.get(ARCHITECTURE);
             LOGGER.info("original architecture.{}", architecture);
             switch (architecture) {

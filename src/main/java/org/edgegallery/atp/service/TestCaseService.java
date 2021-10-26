@@ -32,7 +32,7 @@ public interface TestCaseService {
      * @param testSuiteIds test suite id list the test case belong to
      * @return test case info list
      */
-    ResponseEntity<List<TestCase>> getAllTestCases(String type, String locale, String name, List<String> testSuiteIds);
+    List<TestCase> getAllTestCases(String type, String locale, String name, List<String> testSuiteIds);
 
     /**
      * query all test cases by pagination.
@@ -45,7 +45,7 @@ public interface TestCaseService {
      * @param offset offset
      * @return test case info list
      */
-    ResponseEntity<PageResult<TestCase>> getAllTestCasesByPagination(String type, String locale, String name,
+    PageResult<TestCase> getAllTestCasesByPagination(String type, String locale, String name,
         List<String> testSuiteIds, int limit, int offset);
 
     /**

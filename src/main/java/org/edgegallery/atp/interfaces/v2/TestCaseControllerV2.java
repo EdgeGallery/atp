@@ -223,8 +223,8 @@ public class TestCaseControllerV2 {
         @QueryParam("name") @Length(max = Constant.LENGTH_64) String name,
         @QueryParam("testSuiteIdList") TestSuiteIdList testSuiteIds, @QueryParam("limit") @NotNull int limit,
         @QueryParam("offset") @NotNull int offset) {
-        return testCaseService
-            .getAllTestCasesByPagination(type, locale, name, testSuiteIds.getTestSuiteIdList(), limit, offset);
+        return ResponseEntity.ok(testCaseService
+            .getAllTestCasesByPagination(type, locale, name, testSuiteIds.getTestSuiteIdList(), limit, offset));
     }
 
     /**

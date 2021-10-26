@@ -80,7 +80,7 @@ public class TestCaseController {
         @QueryParam("locale") @Length(max = Constant.LENGTH_64) String locale,
         @QueryParam("name") @Length(max = Constant.LENGTH_64) String name,
         @QueryParam("testSuiteIdList") TestSuiteIdList testSuiteIds) {
-        return testCaseService.getAllTestCases(type, locale, name, testSuiteIds.getTestSuiteIdList());
+        return ResponseEntity.ok(testCaseService.getAllTestCases(type, locale, name, testSuiteIds.getTestSuiteIdList()));
     }
 
     /**
