@@ -12,7 +12,7 @@
  * the License.
  */
 
-package org.edgegallery.atp.utils;
+package org.edgegallery.atp.schedule.testcase.executor;
 
 import java.io.File;
 import java.net.URL;
@@ -25,31 +25,22 @@ import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.model.task.testscenarios.TaskTestCase;
 import org.edgegallery.atp.model.testcase.TestCase;
+import org.edgegallery.atp.utils.CommonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JarCallUtil {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JarCallUtil.class);
-    
-    private JarCallUtil() {
-        
-    }
+/**
+ * dynamic execute jar file.
+ */
+public class TestCaseJarExecutor implements TestCaseExecutor {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseJarExecutor.class);
 
-    private static final String TEST_CASE_CLASS = "TestCase.class";
-
-    /**
-     * execute Jar.
-     * 
-     * @param testCase testCase
-     * @param csarFilePath csarFilePath
-     * @param taskTestCase taskTestCase
-     * @param context context
-     */
-    public static void executeJar(TestCase testCase, String csarFilePath, TaskTestCase taskTestCase,
-            Map<String, String> context) {
+    @Override
+    public void executeTestCase(TestCase testCase, String csarFilePath, TaskTestCase taskTestCase,
+        Map<String, String> context) {
         try (JarFile jarFile = new JarFile(new File(testCase.getFilePath()));
-                URLClassLoader classLoader = new URLClassLoader(new URL[] {new URL("file:" + testCase.getFilePath())},
-                        Thread.currentThread().getContextClassLoader());) {
+             URLClassLoader classLoader = new URLClassLoader(new URL[] {new URL("file:" + testCase.getFilePath())},
+                 Thread.currentThread().getContextClassLoader());) {
             Enumeration<JarEntry> entries = jarFile.entries();
 
             while (entries.hasMoreElements()) {
@@ -57,9 +48,9 @@ public class JarCallUtil {
                 String name = jarEntry.getName();
                 if (StringUtils.isNotEmpty(name) && name.endsWith(TEST_CASE_CLASS)) {
                     Class<?> clazz = classLoader
-                            .loadClass(name.replace(Constant.SLASH, Constant.DOT).substring(0, name.length() - 6));
-                    Object response = clazz.getMethod("execute", String.class, Map.class).invoke(clazz.newInstance(),
-                            csarFilePath, context);
+                        .loadClass(name.replace(Constant.SLASH, Constant.DOT).substring(0, name.length() - 6));
+                    Object response = clazz.getMethod(EXECUTE, String.class, Map.class)
+                        .invoke(clazz.newInstance(), csarFilePath, context);
                     CommonUtil.setResult(response, taskTestCase);
                 }
             }

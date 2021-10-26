@@ -27,27 +27,35 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication(scanBasePackages = "org.edgegallery.atp", exclude = {SecurityAutoConfiguration.class})
 @MapperScan(basePackages = {"org.edgegallery.atp.repository.mapper"})
 @EnableScheduling
 @EnableServiceComb
+@EnableAsync
+@EnableTransactionManagement(proxyTargetClass = true)
 public class MainServer {
     /**
      * Main.
      */
     public static void main(String[] args) throws NoSuchAlgorithmException, KeyManagementException {
         // do not check host name
-        TrustManager[] trustAllCerts = new TrustManager[] {new X509TrustManager() {
-            public X509Certificate[] getAcceptedIssuers() {
-                return null;
+        TrustManager[] trustAllCerts = new TrustManager[] {
+            new X509TrustManager() {
+                public X509Certificate[] getAcceptedIssuers() {
+                    return null;
+                }
+
+                public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                }
+
+                public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                }
             }
-
-            public void checkClientTrusted(X509Certificate[] certs, String authType) {}
-
-            public void checkServerTrusted(X509Certificate[] certs, String authType) {}
-        } };
+        };
         SSLContext sc = SSLContext.getInstance("TLSv1.2");
         sc.init(null, trustAllCerts, new java.security.SecureRandom());
         HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());

@@ -161,10 +161,9 @@ public class DependencyServiceExistenceValidation {
 
     /**
      * get dependency service appid and packageid.
-     * 
+     *
      * @param result result
-     * @param zipFile zipFile
-     * @param entry entry
+     * @param inputStream inputStream
      */
     private void analysisDependency(List<Map<String, String>> result, InputStream inputStream) {
         try (BufferedReader br =

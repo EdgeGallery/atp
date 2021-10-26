@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2021 Huawei Technologies Co., Ltd.
+ * Copyright 2021 Huawei Technologies Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -12,13 +12,14 @@
  * the License.
  */
 
-package org.edgegallery.atp.utils;
+package org.edgegallery.atp.schedule.testcase.executor;
 
 import java.util.Map;
 import java.util.Properties;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.model.task.testscenarios.TaskTestCase;
 import org.edgegallery.atp.model.testcase.TestCase;
+import org.edgegallery.atp.utils.CommonUtil;
 import org.python.core.PyFunction;
 import org.python.core.PyObject;
 import org.python.core.PyString;
@@ -26,23 +27,15 @@ import org.python.util.PythonInterpreter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PythonCallUtil {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PythonCallUtil.class);
+/**
+ * dynamic execute python file.
+ */
+public class TestCasePyExecutor implements TestCaseExecutor {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestCasePyExecutor.class);
 
-    private PythonCallUtil() {
-
-    }
-
-    /**
-     * execute python.
-     * 
-     * @param testCase testCase
-     * @param csarFilePath csarFilePath
-     * @param taskTestCase taskTestCase
-     * @param context context
-     */
-    public static void callPython(TestCase testCase, String csarFilePath, TaskTestCase taskTestCase,
-            Map<String, String> context) {
+    @Override
+    public void executeTestCase(TestCase testCase, String csarFilePath, TaskTestCase taskTestCase,
+        Map<String, String> context) {
         LOGGER.info("start call Python");
         try {
             Properties props = new Properties();
@@ -53,7 +46,7 @@ public class PythonCallUtil {
             PythonInterpreter interpreter = new PythonInterpreter();
             interpreter.execfile(testCase.getFilePath());
 
-            PyFunction pyFunction = interpreter.get("execute", PyFunction.class);
+            PyFunction pyFunction = interpreter.get(EXECUTE, PyFunction.class);
             PyObject pyobj = pyFunction.__call__(new PyString(csarFilePath), new PyString(context.toString()));
             CommonUtil.setResult(pyobj, taskTestCase);
         } catch (Exception e) {
@@ -61,7 +54,5 @@ public class PythonCallUtil {
             taskTestCase.setResult(Constant.FAILED);
             taskTestCase.setReason("call python failed.");
         }
-
     }
-
 }

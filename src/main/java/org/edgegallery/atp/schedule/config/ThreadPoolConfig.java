@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2021 Huawei Technologies Co., Ltd.
+ * Copyright 2021 Huawei Technologies Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -12,20 +12,26 @@
  * the License.
  */
 
-package org.edgegallery.atp.schedule.testcase;
+package org.edgegallery.atp.schedule.config;
 
-import org.edgegallery.atp.model.task.TaskRequest;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 /**
- * test case schedule class.
- *
+ * Thread pool param config.
  */
-public interface TestCaseManager {
-    /**
-     * execute test case asynchronously.
-     * 
-     * @param task test task
-     * @param filePath scar file path
-     */
-    void executeTestCase(TaskRequest task, String filePath);
+@Getter
+@Setter
+@Component
+@ConfigurationProperties(prefix = "task.pool")
+public class ThreadPoolConfig {
+    private int corePoolSize;
+
+    private int maxPoolSize;
+
+    private int keepAliveSeconds;
+
+    private int queueCapacity;
 }

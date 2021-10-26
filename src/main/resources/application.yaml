@@ -59,6 +59,12 @@ spring:
   resources:
     static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,file:${servicecomb.uploads.directory}
 
+task:
+  pool:
+    corePoolSize: 1
+    maxPoolSize: 20
+    keepAliveSeconds: 500
+    queueCapacity: 10
 ###mybtis####
 mybatis:
   mapper-locations: classpath:mybatis/sql/*.xml
