@@ -28,6 +28,11 @@ public class TaskThreadPool {
     @Autowired
     ThreadPoolConfig config;
 
+    /**
+     * thread pool constructor.
+     *
+     * @return ThreadPoolTaskExecutor
+     */
     @Bean("taskExecutor")
     public Executor taskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();

@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 @Setter
 @Component
 @ConfigurationProperties(prefix = "serveraddress")
-public class URLConfig {
+public class UrlConfig {
     private String apm;
 
     private String appo;
