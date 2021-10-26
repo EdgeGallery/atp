@@ -63,7 +63,7 @@ public class TestCaseServiceImpl implements TestCaseService {
     ConfigRepository configRepository;
 
     @Override
-    public ResponseEntity<List<TestCase>> getAllTestCases(String type, String locale, String name,
+    public List<TestCase> getAllTestCases(String type, String locale, String name,
         List<String> testSuiteIds) {
         List<TestCase> result = new LinkedList<TestCase>();
         if (null == testSuiteIds || CollectionUtils.isEmpty(testSuiteIds)) {
@@ -84,11 +84,11 @@ public class TestCaseServiceImpl implements TestCaseService {
             }
         }
         LOGGER.info("query all test cases successfully.");
-        return ResponseEntity.ok(result);
+        return result;
     }
 
     @Override
-    public ResponseEntity<PageResult<TestCase>> getAllTestCasesByPagination(String type, String locale, String name,
+    public PageResult<TestCase> getAllTestCasesByPagination(String type, String locale, String name,
         List<String> testSuiteIds, int limit, int offset) {
         List<TestCase> result = new LinkedList<TestCase>();
         PageResult<TestCase> pageResult = new PageResult<TestCase>(offset, limit);
@@ -97,6 +97,7 @@ public class TestCaseServiceImpl implements TestCaseService {
             pageResult.setTotal(testCaseRepository.countTotal(type, locale, name, null));
 
         } else {
+            pageResult.setTotal(getAllTestCases(type, locale, name, testSuiteIds).size());
             List<TestCase> testCaseList = testCaseRepository
                 .findAllTestCasesByPaginition(type, locale, name, testSuiteIds.get(0), limit, offset);
             for (TestCase testCase : testCaseList) {
@@ -115,7 +116,7 @@ public class TestCaseServiceImpl implements TestCaseService {
 
         pageResult.setResults(result);
         LOGGER.info("query all test cases by pagination successfully.");
-        return ResponseEntity.ok(pageResult);
+        return pageResult;
     }
 
     @Override
