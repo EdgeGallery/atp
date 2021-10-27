@@ -36,7 +36,13 @@ RUN mkdir -p /usr/app/bin
   
 RUN apk update &&\
     apk upgrade &&\
-    apk add nmap
+    apk add gcc g++ make libffi-dev openssl-dev libtool
+
+RUN wget http://nmap.org/dist/nmap-7.91.tar.bz2 &&\
+    tar -xvf nmap-7.91.tar.bz2 &&\
+    cd nmap-7.91 &&\
+    ./configure &&\
+    make && make install
 
 RUN apk update &&\
     apk upgrade &&\
