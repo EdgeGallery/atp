@@ -27,8 +27,6 @@ public class VulnerableScanningValidation {
 
     private static final String VULNERABLE_SCANNING_FAILED = "There has vulnerables in mec host.";
 
-    private static final String MEC_HOST_IS_EMPTY = "app instantiate ip not found. ";
-
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
 
     private static final String VULNERABLE = "VULNERABLE";
@@ -45,7 +43,7 @@ public class VulnerableScanningValidation {
     public String execute(String filePath, Map<String, String> context) {
         String mecHost = getMecHostAppInstantiated(context);
         if (null == mecHost || "".equals(mecHost)) {
-            return MEC_HOST_IS_EMPTY;
+            return SUCCESS;
         }
         try {
             Process proc = Runtime.getRuntime().exec("/bin/bash", null, new File("/bin"));

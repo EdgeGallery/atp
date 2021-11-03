@@ -216,7 +216,7 @@ public class FileChecker {
     }
 
     private static List<String> getFileExtensions() {
-        return Collections.singletonList("csar");
+        return Collections.singletonList("zip");
     }
 
     /**

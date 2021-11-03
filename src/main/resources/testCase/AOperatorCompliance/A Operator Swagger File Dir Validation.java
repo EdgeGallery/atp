@@ -29,7 +29,7 @@ public class SwaggerFileDirValidation {
     /**
      * execute test case.
      *
-     * @param filePath csar file path
+     * @param filePath file path
      * @param context context
      * @return result
      */
