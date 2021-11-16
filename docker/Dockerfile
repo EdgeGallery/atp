@@ -35,7 +35,7 @@ RUN mkdir -p /usr/app
 RUN mkdir -p /usr/app/bin
 
 RUN apk update && \
-    apk add nmap nmap-scripts bash shadow
+    apk add nmap nmap-scripts nmap-nping bash shadow
 
 # Create an app user so our program doesn't run as root.
 RUN groupadd -r -g $GID $GROUP_NAME &&\
