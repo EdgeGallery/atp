@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -212,11 +211,10 @@ public class FileChecker {
     private static long getMaxFileSize() {
         // 5G
         return 5 * 1024 * 1024 * 1024;
-
     }
 
     private static List<String> getFileExtensions() {
-        return Collections.singletonList("zip");
+        return Arrays.asList("zip", "csar");
     }
 
     /**
