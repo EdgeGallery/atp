@@ -13,7 +13,7 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 #
-FROM swr.cn-north-4.myhuaweicloud.com/eg-common/openjdk:8u201-jdk-alpine
+FROM swr.cn-north-4.myhuaweicloud.com/eg-common/openjdk:8u201-jre-alpine
 
 # Define all environment variable here
 #ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk
@@ -33,25 +33,12 @@ RUN sed -i "s|umask 022|umask 027|g" /etc/profile
 # Create the home directory for the new app user.
 RUN mkdir -p /usr/app
 RUN mkdir -p /usr/app/bin
-  
-RUN apk update &&\
-    apk upgrade &&\
-    apk add gcc g++ make libffi-dev openssl-dev libtool
 
-RUN wget http://nmap.org/dist/nmap-7.91.tar.bz2 &&\
-    tar -xvf nmap-7.91.tar.bz2 &&\
-    cd nmap-7.91 &&\
-    ./configure &&\
-    make && make install
-
-RUN apk update &&\
-    apk upgrade &&\
-    apk add bash
+RUN apk update && \
+    apk add nmap nmap-scripts bash shadow
 
 # Create an app user so our program doesn't run as root.
-RUN apk update &&\
-    apk add shadow &&\
-    groupadd -r -g $GID $GROUP_NAME &&\
+RUN groupadd -r -g $GID $GROUP_NAME &&\
     useradd -r -u $UID -g $GID -d $APP_HOME -s /sbin/nologin -c "Docker image user" $USER_NAME
 
 WORKDIR $APP_HOME
@@ -69,13 +56,10 @@ RUN mkdir -p -m 750 /usr/atp &&\
     chown -R $USER_NAME:$GROUP_NAME /usr/atp
 
 COPY --chown=$USER_NAME:$GROUP_NAME target/*.jar $APP_HOME/bin
-
-COPY --chown=$USER_NAME:$GROUP_NAME  target/classes/testCase/ $APP_HOME/testCases/
-COPY --chown=$USER_NAME:$GROUP_NAME  target/classes/icon/ $APP_HOME/icon/
-
+COPY --chown=$USER_NAME:$GROUP_NAME target/classes/testCase/ $APP_HOME/testCases/
+COPY --chown=$USER_NAME:$GROUP_NAME target/classes/icon/ $APP_HOME/icon/
 
 EXPOSE 8073
-
 
 # Change to the app user.
 USER $USER_NAME
