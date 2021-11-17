@@ -56,7 +56,7 @@ public class TestSuiteServiceImpl implements TestSuiteService {
     @Override
     public TestSuite createTestSuite(TestSuite testSuite) {
         // nameCh or nameEn must exist one
-        CommonUtil.nameExistenceValidation(testSuite.getNameCh(), testSuite.getNameEn());
+        CommonUtil.nameNotEmptyValidation(testSuite.getNameCh(), testSuite.getNameEn());
         testSuite
             .setNameCh(StringUtils.isNotBlank(testSuite.getNameCh()) ? testSuite.getNameCh() : testSuite.getNameEn());
         testSuite

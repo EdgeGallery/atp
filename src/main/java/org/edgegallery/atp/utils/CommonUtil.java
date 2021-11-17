@@ -18,6 +18,7 @@ import com.alibaba.fastjson.JSONObject;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -55,7 +56,7 @@ public class CommonUtil {
 
     /**
      * get time according to special format.
-     * 
+     *
      * @return time
      */
     public static String getFormatDate() {
@@ -65,7 +66,7 @@ public class CommonUtil {
 
     /**
      * generate uuid randomly.
-     * 
+     *
      * @return uuid
      */
     public static String generateId() {
@@ -74,18 +75,18 @@ public class CommonUtil {
 
     /**
      * delete temp file according to fileId and file.
-     * 
+     *
      * @param fileId taskId
      * @param file csar file
      */
     public static boolean deleteTempFile(String fileId, MultipartFile file) {
         return new File(new StringBuilder().append(Constant.WORK_TEMP_DIR).append(File.separator).append(fileId)
-                .append(Constant.UNDER_LINE).append(file.getOriginalFilename()).toString()).delete();
+            .append(Constant.UNDER_LINE).append(file.getOriginalFilename()).toString()).delete();
     }
 
     /**
      * delete file according to filepath.
-     * 
+     *
      * @param filePath file path
      */
     public static void deleteFile(String filePath) {
@@ -96,7 +97,7 @@ public class CommonUtil {
 
     /**
      * delete file.
-     * 
+     *
      * @param file file
      */
     public static void deleteFile(File file) {
@@ -107,7 +108,7 @@ public class CommonUtil {
 
     /**
      * get package info from csar file.
-     * 
+     *
      * @param filePath file path
      * @return package info
      */
@@ -117,9 +118,9 @@ public class CommonUtil {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
-                if (entry.getName().split(Constant.SLASH).length == 1 && fileSuffixValidate("mf", entry.getName())) {
+                if (entry.getName().split(Constant.SLASH).length == 1 && checkFileSuffix("mf", entry.getName())) {
                     try (BufferedReader br = new BufferedReader(
-                            new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
+                        new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
                         String line = "";
                         while ((line = br.readLine()) != null) {
                             // prefix: path
@@ -137,9 +138,9 @@ public class CommonUtil {
                 }
 
                 if (entry.getName().split(Constant.SLASH).length == 2 && "SwImageDesc.json"
-                        .equals(entry.getName().substring(entry.getName().lastIndexOf(Constant.SLASH) + 1))) {
+                    .equals(entry.getName().substring(entry.getName().lastIndexOf(Constant.SLASH) + 1))) {
                     try (BufferedReader br = new BufferedReader(
-                            new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
+                        new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
                         String line = "";
                         while ((line = br.readLine()) != null) {
                             // prefix: path
@@ -159,10 +160,9 @@ public class CommonUtil {
         return packageInfo;
     }
 
-
     /**
      * uuid validate.
-     * 
+     *
      * @param param parameter
      */
     public static void isUuidPattern(String param) {
@@ -185,7 +185,7 @@ public class CommonUtil {
 
     /**
      * set test case result according to response.
-     * 
+     *
      * @param response execute response result
      * @param taskTestCase taskTestCase
      */
@@ -204,23 +204,24 @@ public class CommonUtil {
 
     /**
      * validate fileName is .pattern
-     * 
+     *
      * @param pattern filePattern
      * @param fileName fileName
      * @return
      */
-    public static boolean fileSuffixValidate(String pattern, String fileName) {
+    public static boolean checkFileSuffix(String pattern, String fileName) {
         String suffix = fileName.substring(fileName.lastIndexOf(Constant.DOT) + 1, fileName.length());
         return StringUtils.isNotBlank(suffix) && suffix.equals(pattern);
     }
 
     /**
-     * param is not empty.
-     * 
+     * validate whether param is empty or not.
+     *
      * @param param param
      * @param msg error msg
+     * @param <T> param type
      */
-    public static void paramIsEmpty(Object param, String msg) {
+    public static <T> void checkParamEmpty(T param, String msg) {
         if (null == param) {
             LOGGER.error(msg);
             throw new IllegalArgumentException(msg);
@@ -228,15 +229,30 @@ public class CommonUtil {
     }
 
     /**
+     * validate entity is not found.
+     *
+     * @param param param
+     * @param msg error msg
+     * @param <T> param type
+     * @throws FileNotFoundException FileNotFoundException
+     */
+    public static <T> void checkEntityNotFound(T param, String msg) throws FileNotFoundException {
+        if (null == param) {
+            LOGGER.error(msg);
+            throw new FileNotFoundException(msg);
+        }
+    }
+
+    /**
      * get java class name.
-     * 
+     *
      * @param file java file
      * @return class name
      */
     public static String getClassPath(File file) {
         String className = Constant.EMPTY;
         try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(new FileInputStream(file.getCanonicalPath()), StandardCharsets.UTF_8))) {
+            new InputStreamReader(new FileInputStream(file.getCanonicalPath()), StandardCharsets.UTF_8))) {
             String line = "";
             while ((line = reader.readLine()) != null) {
                 if (line.startsWith("public class")) {
@@ -313,7 +329,7 @@ public class CommonUtil {
 
     /**
      * param length not bigger than length.
-     * 
+     *
      * @param param param
      * @param length standard length
      * @return param length not bigger than length
@@ -332,11 +348,12 @@ public class CommonUtil {
      * @param nameCh chinese name
      * @param nameEn english name
      */
-    public static void nameExistenceValidation(String nameCh, String nameEn) {
+    public static void nameNotEmptyValidation(String nameCh, String nameEn) {
         if (StringUtils.isEmpty(nameCh) && StringUtils.isEmpty(nameEn)) {
             LOGGER.error("nameCh and nameEn both not exist.");
             throw new IllegalRequestException(String.format(ErrorCode.PARAM_IS_NULL_MSG, "nameCh and nameEn both"),
                 ErrorCode.PARAM_IS_NULL, new ArrayList<String>(Arrays.asList("nameCh and nameEn both")));
         }
     }
+
 }

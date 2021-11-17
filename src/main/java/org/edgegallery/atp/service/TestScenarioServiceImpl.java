@@ -90,7 +90,7 @@ public class TestScenarioServiceImpl implements TestScenarioService {
     @Override
     public TestScenario createTestScenario(TestScenario testScenario, MultipartFile icon) {
         // nameCh or nameEn must exist one
-        CommonUtil.nameExistenceValidation(testScenario.getNameCh(), testScenario.getNameEn());
+        CommonUtil.nameNotEmptyValidation(testScenario.getNameCh(), testScenario.getNameEn());
         testScenario.setNameCh(
             StringUtils.isNotBlank(testScenario.getNameCh()) ? testScenario.getNameCh() : testScenario.getNameEn());
         testScenario.setNameEn(
