@@ -264,7 +264,7 @@ public class TaskServiceImpl implements TaskService {
             testScenarioList.forEach(testScenario -> {
                 if (testScenario.getId().equals(testCaseStatus.getTestScenarioId())) {
                     List<TaskTestSuite> testSuiteList = testScenario.getTestSuites();
-                    modifyTestCaseStatus(testSuiteList, testCaseStatus);
+                    updateStatus(testSuiteList, testCaseStatus);
                 }
             });
         });
@@ -354,7 +354,7 @@ public class TaskServiceImpl implements TaskService {
         return tempTestCase;
     }
 
-    private void modifyTestCaseStatus(List<TaskTestSuite> testSuiteList, TestCaseStatusReq testCaseStatus) {
+    private void updateStatus(List<TaskTestSuite> testSuiteList, TestCaseStatusReq testCaseStatus) {
         testSuiteList.forEach(testSuite -> {
             if (testSuite.getId().equals(testCaseStatus.getTestSuiteId())) {
                 List<TaskTestCase> testCaseList = testSuite.getTestCases();
