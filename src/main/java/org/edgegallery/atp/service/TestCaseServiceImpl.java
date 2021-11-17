@@ -63,25 +63,13 @@ public class TestCaseServiceImpl implements TestCaseService {
     ConfigRepository configRepository;
 
     @Override
-    public List<TestCase> getAllTestCases(String type, String locale, String name,
-        List<String> testSuiteIds) {
+    public List<TestCase> getAllTestCases(String type, String locale, String name, List<String> testSuiteIds) {
         List<TestCase> result = new LinkedList<TestCase>();
-        if (null == testSuiteIds || CollectionUtils.isEmpty(testSuiteIds)) {
+        if (CollectionUtils.isEmpty(testSuiteIds)) {
             result = testCaseRepository.findAllTestCases(type, locale, name, null);
         } else {
             List<TestCase> testCaseList = testCaseRepository.findAllTestCases(type, locale, name, testSuiteIds.get(0));
-            for (TestCase testCase : testCaseList) {
-                boolean isSatisfy = true;
-                for (String id : testSuiteIds) {
-                    if (!testCase.getTestSuiteIdList().contains(id)) {
-                        isSatisfy = false;
-                        break;
-                    }
-                }
-                if (isSatisfy) {
-                    result.add(testCase);
-                }
-            }
+            setQueryResult(testCaseList, testSuiteIds, result);
         }
         LOGGER.info("query all test cases successfully.");
         return result;
@@ -92,26 +80,14 @@ public class TestCaseServiceImpl implements TestCaseService {
         List<String> testSuiteIds, int limit, int offset) {
         List<TestCase> result = new LinkedList<TestCase>();
         PageResult<TestCase> pageResult = new PageResult<TestCase>(offset, limit);
-        if (null == testSuiteIds || CollectionUtils.isEmpty(testSuiteIds)) {
+        if (CollectionUtils.isEmpty(testSuiteIds)) {
             result = testCaseRepository.findAllTestCasesByPaginition(type, locale, name, null, limit, offset);
             pageResult.setTotal(testCaseRepository.countTotal(type, locale, name, null));
-
         } else {
             pageResult.setTotal(getAllTestCases(type, locale, name, testSuiteIds).size());
             List<TestCase> testCaseList = testCaseRepository
                 .findAllTestCasesByPaginition(type, locale, name, testSuiteIds.get(0), limit, offset);
-            for (TestCase testCase : testCaseList) {
-                boolean isSatisfy = true;
-                for (String id : testSuiteIds) {
-                    if (!testCase.getTestSuiteIdList().contains(id)) {
-                        isSatisfy = false;
-                        break;
-                    }
-                }
-                if (isSatisfy) {
-                    result.add(testCase);
-                }
-            }
+            setQueryResult(testCaseList, testSuiteIds, result);
         }
 
         pageResult.setResults(result);
@@ -121,54 +97,16 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     @Override
     public TestCase createTestCase(MultipartFile file, TestCase testCase) {
-        // nameCh or nameEn must exist one
-        CommonUtil.nameExistenceValidation(testCase.getNameCh(), testCase.getNameEn());
-        testCase.setNameCh(StringUtils.isNotBlank(testCase.getNameCh()) ? testCase.getNameCh() : testCase.getNameEn());
-        testCase.setNameEn(StringUtils.isNotBlank(testCase.getNameEn()) ? testCase.getNameEn() : testCase.getNameCh());
-
-        if (null != testCaseRepository.findByName(testCase.getNameCh(), null) || null != testCaseRepository
-            .findByName(null, testCase.getNameEn())) {
-            LOGGER.error("name of test case already exist.");
-            String param = testCase.getNameCh() + " or " + testCase.getNameEn();
-            throw new IllegalRequestException(String.format(ErrorCode.NAME_EXISTS_MSG, param), ErrorCode.NAME_EXISTS,
-                new ArrayList<String>(Arrays.asList(param)));
-        }
+        CommonUtil.nameNotEmptyValidation(testCase.getNameCh(), testCase.getNameEn());
+        constructTestCase(testCase);
+        checkNameExistence(testCase);
         checkTestSuiteIdsExist(testCase);
         checkConfigIdsExist(testCase.getConfigIdList());
-
-        testCase.setDescriptionCh(StringUtils.isNotBlank(testCase.getDescriptionCh())
-            ? testCase.getDescriptionCh()
-            : testCase.getDescriptionEn());
-        testCase.setDescriptionEn(StringUtils.isNotBlank(testCase.getDescriptionEn())
-            ? testCase.getDescriptionEn()
-            : testCase.getDescriptionCh());
-        testCase.setExpectResultCh(StringUtils.isNotBlank(testCase.getExpectResultCh())
-            ? testCase.getExpectResultCh()
-            : testCase.getExpectResultEn());
-        testCase.setExpectResultEn(StringUtils.isNotBlank(testCase.getExpectResultEn())
-            ? testCase.getExpectResultEn()
-            : testCase.getExpectResultCh());
-        testCase.setTestStepCh(
-            StringUtils.isNotBlank(testCase.getTestStepCh()) ? testCase.getTestStepCh() : testCase.getTestStepEn());
-        testCase.setTestStepEn(
-            StringUtils.isNotBlank(testCase.getTestStepEn()) ? testCase.getTestStepEn() : testCase.getTestStepCh());
-        testCase.setCreateTime(taskRepository.getCurrentDate());
-
         // check one test case type must same in one test suite
-        testCase.getTestSuiteIdList().forEach(testSuiteId -> {
-            List<TestCase> testCaseList = testCaseRepository.findAllTestCases(null, null, null, testSuiteId);
-            testCaseList.forEach(testCaseDb -> {
-                if (!testCaseDb.getType().equals(testCase.getType())) {
-                    LOGGER.error("test case type in testSuiteIds is not the same as others.");
-                    throw new IllegalRequestException(ErrorCode.TEST_CASE_TYPE_COMPATIBILITY_ERROR_MSG,
-                        ErrorCode.TEST_CASE_TYPE_COMPATIBILITY_ERROR, null);
-                }
-            });
-        });
-
-        String filePath = Constant.BASIC_TEST_CASE_PATH.concat(testCase.getNameEn()).concat(Constant.UNDER_LINE)
-            .concat(testCase.getId());
+        checkTestCaseTypeConsistence(testCase);
         try {
+            String filePath = Constant.BASIC_TEST_CASE_PATH.concat(testCase.getNameEn()).concat(Constant.UNDER_LINE)
+                .concat(testCase.getId());
             FileChecker.createFile(filePath);
             File result = new File(filePath);
             file.transferTo(result);
@@ -189,15 +127,9 @@ public class TestCaseServiceImpl implements TestCaseService {
     @Override
     public TestCase updateTestCase(MultipartFile file, TestCase testCase) throws FileNotExistsException {
         TestCase dbData = testCaseRepository.getTestCaseById(testCase.getId());
-        if (null == dbData) {
-            LOGGER.error("this test case {} not exists.", testCase.getId());
-            throw new FileNotExistsException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, Constant.TEST_CASE_ID),
-                ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList(Constant.TEST_CASE_ID)));
-        }
-
+        checkTestCaseExistence(dbData, testCase.getId());
         try {
-            if (null != file && StringUtils.isNotBlank(file.getOriginalFilename()) && StringUtils
-                .isNotBlank(file.getName()) && 0 != (int) file.getSize()) {
+            if (checkFileNotEmpty(file)) {
                 String filePath = dbData.getFilePath();
                 CommonUtil.deleteFile(filePath);
                 File result = new File(filePath);
@@ -206,7 +138,6 @@ public class TestCaseServiceImpl implements TestCaseService {
                     testCase.setClassName(CommonUtil.getClassPath(result));
                 }
             }
-
             testCaseRepository.update(testCase);
         } catch (IOException e) {
             LOGGER.error("transfer file content failed.{}", e.getMessage());
@@ -228,26 +159,18 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     @Override
     public TestCase getTestCase(String id) throws FileNotExistsException {
-        TestCase response = testCaseRepository.getTestCaseById(id);
-        if (null == response) {
-            LOGGER.error("test case id does not exists: {}", id);
-            throw new FileNotExistsException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, Constant.TEST_CASE_ID),
-                ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList(Constant.TEST_CASE_ID)));
-        }
+        TestCase testCase = testCaseRepository.getTestCaseById(id);
+        checkTestCaseExistence(testCase, id);
         LOGGER.info("get test case successfully.");
-        return response;
+        return testCase;
     }
 
     @Override
     public ResponseEntity<byte[]> downloadTestCase(String id) {
         TestCase testCase = testCaseRepository.getTestCaseById(id);
-        if (null == testCase) {
-            String msg = "test case not exists.";
-            LOGGER.error(msg);
-            throw new IllegalArgumentException(msg);
-        }
-        File file = new File(testCase.getFilePath());
+        CommonUtil.checkParamEmpty(testCase, "test case not exists.");
         try {
+            File file = new File(testCase.getFilePath());
             HttpHeaders headers = new HttpHeaders();
             headers.add("Content-Type", "application/octet-stream");
             headers.add("Content-Disposition", "attachment; filename=" + testCase.getNameEn());
@@ -261,11 +184,6 @@ public class TestCaseServiceImpl implements TestCaseService {
         }
     }
 
-    /**
-     * check test suite ids is right.
-     *
-     * @param testCase test suite info
-     */
     private void checkTestSuiteIdsExist(TestCase testCase) {
         List<TestSuite> testSuiteList = testSuiteRepository.batchQueryTestSuites(testCase.getTestSuiteIdList());
         if (testSuiteList.size() != testCase.getTestSuiteIdList().size()) {
@@ -275,11 +193,6 @@ public class TestCaseServiceImpl implements TestCaseService {
         }
     }
 
-    /**
-     * check existence of config id.
-     *
-     * @param configIds configIds
-     */
     private void checkConfigIdsExist(List<String> configIds) {
         if (!CollectionUtils.isEmpty(configIds)) {
             configIds.forEach(id -> {
@@ -291,6 +204,79 @@ public class TestCaseServiceImpl implements TestCaseService {
                         ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList("config id: ".concat(id))));
                 }
             });
+        }
+    }
+
+    private void setQueryResult(List<TestCase> testCaseList, List<String> testSuiteIds, List<TestCase> result) {
+        testCaseList.forEach(testCase -> {
+            boolean isSatisfy = true;
+            for (String id : testSuiteIds) {
+                if (!testCase.getTestSuiteIdList().contains(id)) {
+                    isSatisfy = false;
+                    break;
+                }
+            }
+            if (isSatisfy) {
+                result.add(testCase);
+            }
+        });
+    }
+
+    private void checkTestCaseTypeConsistence(TestCase testCase) {
+        testCase.getTestSuiteIdList().forEach(testSuiteId -> {
+            List<TestCase> testCaseList = testCaseRepository.findAllTestCases(null, null, null, testSuiteId);
+            testCaseList.forEach(testCaseDb -> {
+                if (!testCaseDb.getType().equals(testCase.getType())) {
+                    LOGGER.error("test case type in testSuiteIds is not the same as others.");
+                    throw new IllegalRequestException(ErrorCode.TEST_CASE_TYPE_COMPATIBILITY_ERROR_MSG,
+                        ErrorCode.TEST_CASE_TYPE_COMPATIBILITY_ERROR, null);
+                }
+            });
+        });
+    }
+
+    private void checkNameExistence(TestCase testCase) {
+        if (null != testCaseRepository.findByName(testCase.getNameCh(), null) || null != testCaseRepository
+            .findByName(null, testCase.getNameEn())) {
+            LOGGER.error("name of test case already exist.");
+            String param = testCase.getNameCh() + " or " + testCase.getNameEn();
+            throw new IllegalRequestException(String.format(ErrorCode.NAME_EXISTS_MSG, param), ErrorCode.NAME_EXISTS,
+                new ArrayList<String>(Arrays.asList(param)));
+        }
+    }
+
+    private void constructTestCase(TestCase testCase) {
+        testCase.setNameCh(StringUtils.isNotBlank(testCase.getNameCh()) ? testCase.getNameCh() : testCase.getNameEn());
+        testCase.setNameEn(StringUtils.isNotBlank(testCase.getNameEn()) ? testCase.getNameEn() : testCase.getNameCh());
+        testCase.setDescriptionCh(StringUtils.isNotBlank(testCase.getDescriptionCh())
+            ? testCase.getDescriptionCh()
+            : testCase.getDescriptionEn());
+        testCase.setDescriptionEn(StringUtils.isNotBlank(testCase.getDescriptionEn())
+            ? testCase.getDescriptionEn()
+            : testCase.getDescriptionCh());
+        testCase.setExpectResultCh(StringUtils.isNotBlank(testCase.getExpectResultCh())
+            ? testCase.getExpectResultCh()
+            : testCase.getExpectResultEn());
+        testCase.setExpectResultEn(StringUtils.isNotBlank(testCase.getExpectResultEn())
+            ? testCase.getExpectResultEn()
+            : testCase.getExpectResultCh());
+        testCase.setTestStepCh(
+            StringUtils.isNotBlank(testCase.getTestStepCh()) ? testCase.getTestStepCh() : testCase.getTestStepEn());
+        testCase.setTestStepEn(
+            StringUtils.isNotBlank(testCase.getTestStepEn()) ? testCase.getTestStepEn() : testCase.getTestStepCh());
+        testCase.setCreateTime(taskRepository.getCurrentDate());
+    }
+
+    private boolean checkFileNotEmpty(MultipartFile file) {
+        return null != file && StringUtils.isNotBlank(file.getOriginalFilename()) && StringUtils
+            .isNotBlank(file.getName()) && 0 != (int) file.getSize();
+    }
+
+    private void checkTestCaseExistence(TestCase testCase, String testCaseId) throws FileNotExistsException {
+        if (null == testCase) {
+            LOGGER.error("this test case {} not exists in db.", testCaseId);
+            throw new FileNotExistsException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, Constant.TEST_CASE_ID),
+                ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList(Constant.TEST_CASE_ID)));
         }
     }
 }

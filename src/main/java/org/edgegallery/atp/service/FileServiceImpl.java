@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.model.file.AtpFile;
 import org.edgegallery.atp.repository.file.FileRepository;
+import org.edgegallery.atp.utils.CommonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,17 +41,12 @@ public class FileServiceImpl implements FileService {
     public ResponseEntity<byte[]> getFileContent(String fileId, String type) throws FileNotFoundException {
         type = StringUtils.isEmpty(type) ? Constant.FILE_TYPE_SCENARIO : type;
         AtpFile fileInfo = fileRepository.getFileContent(fileId, type);
-        if (null == fileInfo) {
-            LOGGER.error("fileId does not exists: {}", fileId);
-            throw new FileNotFoundException("fileId does not exists");
-        }
-
-        File file = new File(fileInfo.getFilePath());
+        CommonUtil.checkEntityNotFound(fileInfo, String.format("fileId does not exists: %s", fileId));
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.add("Content-Type", "application/octet-stream");
             headers.add("Content-Disposition", "attachment; filename=" + fileInfo.getFileId());
-            byte[] fileData = FileUtils.readFileToByteArray(file);
+            byte[] fileData = FileUtils.readFileToByteArray(new File(fileInfo.getFilePath()));
             LOGGER.info("get file content successfully.");
             return ResponseEntity.ok().headers(headers).body(fileData);
         } catch (IOException e) {
@@ -59,5 +55,4 @@ public class FileServiceImpl implements FileService {
             throw new IllegalArgumentException(msg);
         }
     }
-
 }

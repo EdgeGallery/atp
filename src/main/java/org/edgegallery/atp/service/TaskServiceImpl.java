@@ -15,7 +15,6 @@
 package org.edgegallery.atp.service;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -86,23 +85,16 @@ public class TaskServiceImpl implements TaskService {
     public TaskRequest createTask(MultipartFile file) {
         String taskId = CommonUtil.generateId();
         File tempFile = FileChecker.check(file, taskId);
-
-        TaskRequest task = new TaskRequest();
-        task.setId(taskId);
-
         try {
             String filePath = tempFile.getCanonicalPath();
-            // init task
-            Map<String, String> context = AccessTokenFilter.CONTEXT.get();
-            task.setCreateTime(taskRepository.getCurrentDate());
-            task.setStatus(Constant.ATP_CREATED);
-            task.setUser(new User(context.get(Constant.USER_ID), context.get(Constant.USER_NAME)));
-            task.setPackagePath(filePath);
             Map<String, String> packageInfo = CommonUtil.getPackageInfo(filePath);
-            task.setAppName(packageInfo.get(Constant.APP_NAME));
-            task.setAppVersion(packageInfo.get(Constant.APP_VERSION));
-            task.setProviderId(packageInfo.get(Constant.PROVIDER_ID));
-
+            Map<String, String> context = AccessTokenFilter.CONTEXT.get();
+            TaskRequest task = TaskRequest.builder().setId(taskId).setStatus(Constant.ATP_CREATED)
+                .setUser(new User(context.get(Constant.USER_ID), context.get(Constant.USER_NAME)))
+                .setPackagePath(filePath).setAppName(packageInfo.get(Constant.APP_NAME))
+                .setAppVersion(packageInfo.get(Constant.APP_VERSION))
+                .setProviderId(packageInfo.get(Constant.PROVIDER_ID)).build();
+            task.setCreateTime(taskRepository.getCurrentDate());
             taskRepository.insert(task);
             LOGGER.info("create task successfully.");
             return task;
@@ -116,24 +108,11 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public TaskRequest runTask(String taskId, List<String> scenarioIdList) throws FileNotExistsException {
-        if (CollectionUtils.isEmpty(scenarioIdList)) {
-            LOGGER.error("scenarioIdList is empty.");
-            throw new IllegalRequestException(String.format(ErrorCode.PARAM_IS_NULL_MSG, "scenarioIdList"),
-                ErrorCode.PARAM_IS_NULL, new ArrayList<String>(Arrays.asList("scenarioIdList")));
-        }
-
+        scenarioIdsEmptyValidation(scenarioIdList);
         initTestScenarios(scenarioIdList);
         TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, null);
-        if (null == task) {
-            LOGGER.error("get task from db is null.taskId: {}", taskId);
-            throw new FileNotExistsException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, Constant.TASK_ID),
-                ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList(Constant.TASK_ID)));
-        }
-
-        if (Constant.RUNNING.equals(task.getStatus())) {
-            LOGGER.error("this task already in running.");
-            throw new IllegalRequestException(ErrorCode.TASK_IS_RUNNING_MSG, ErrorCode.TASK_IS_RUNNING, null);
-        }
+        taskEmptyValidation(task, taskId);
+        taskStatusValidation(task);
 
         Map<String, String> context = AccessTokenFilter.CONTEXT.get();
         task.setTestScenarios(initTestScenarios(scenarioIdList));
@@ -153,7 +132,6 @@ public class TaskServiceImpl implements TaskService {
     public ResponseEntity<Boolean> deleteTaskById(String taskId) {
         Map<String, String> context = AccessTokenFilter.CONTEXT.get();
         String userId = context.get(Constant.USER_ID);
-
         TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, userId);
         if (null != task) {
             taskRepository.deleteTaskById(taskId, userId);
@@ -161,8 +139,6 @@ public class TaskServiceImpl implements TaskService {
             if (StringUtils.isNotEmpty(task.getReportPath())) {
                 CommonUtil.deleteFile(uploadPath.concat(task.getReportPath()));
             }
-        } else {
-            LOGGER.warn("task with id: {}, userId: {} not exists in db.", taskId, userId);
         }
         AccessTokenFilter.deleteContext();
         return ResponseEntity.ok(Boolean.TRUE);
@@ -171,18 +147,14 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public String uploadReport(String taskId, MultipartFile file) throws FileNotExistsException {
         TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, null);
-        if (null == task) {
-            LOGGER.error("taskId {} not exists in db.", taskId);
-            throw new FileNotExistsException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, Constant.TASK_ID),
-                ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList(Constant.TASK_ID)));
-        }
+        taskEmptyValidation(task, taskId);
+
         String path = BASE_PATH.concat(taskId).concat(".pdf");
         String filePath = uploadPath.concat(path);
         try {
             FileChecker.createFile(filePath);
             File result = new File(filePath);
             file.transferTo(result);
-            //save to db.
             task.setReportPath(path);
             taskRepository.update(task);
             return path;
@@ -190,56 +162,6 @@ public class TaskServiceImpl implements TaskService {
             LOGGER.error("upload report failed.");
             throw new IllegalRequestException(ErrorCode.FILE_IO_EXCEPTION_MSG, ErrorCode.FILE_IO_EXCEPTION, null);
         }
-    }
-
-    private List<TaskTestScenario> initTestScenarios(List<String> scenarioIdList) {
-        List<TaskTestScenario> result = new ArrayList<TaskTestScenario>();
-        scenarioIdList.forEach(scenarioId -> {
-            TestScenario testScenario = testScenarioRepository.getTestScenarioById(scenarioId);
-            if (null == testScenario) {
-                LOGGER.error("scenarioId {} not exists", scenarioId);
-                throw new IllegalRequestException(
-                    String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, "scenarioId: ".concat(scenarioId)),
-                    ErrorCode.NOT_FOUND_EXCEPTION,
-                    new ArrayList<String>(Arrays.asList("scenarioId: ".concat(scenarioId))));
-            }
-
-            TaskTestScenario scenario = new TaskTestScenario();
-            scenario.setId(scenarioId);
-            scenario.setNameCh(testScenario.getNameCh());
-            scenario.setNameEn(testScenario.getNameEn());
-            scenario.setLabel(testScenario.getLabel());
-
-            List<TestSuite> testSuiteList = testSuiteRepository.getAllTestSuites(null, null, scenarioId);
-            List<TaskTestSuite> testSuites = new ArrayList<TaskTestSuite>();
-            testSuiteList.forEach(testSuite -> {
-                TaskTestSuite tempTestSuite = new TaskTestSuite();
-                tempTestSuite.setId(testSuite.getId());
-                tempTestSuite.setNameCh(testSuite.getNameCh());
-                tempTestSuite.setNameEn(testSuite.getNameEn());
-
-                List<TestCase> testCaseList = testCaseRepository.findAllTestCases(null, null, null, testSuite.getId());
-                List<TaskTestCase> testCases = new ArrayList<TaskTestCase>();
-                testCaseList.forEach(testCase -> {
-                    TaskTestCase tempTestCase = new TaskTestCase();
-                    tempTestCase.setId(testCase.getId());
-                    tempTestCase.setNameCh(testCase.getNameCh());
-                    tempTestCase.setNameEn(testCase.getNameEn());
-                    tempTestCase.setDescriptionCh(testCase.getDescriptionCh());
-                    tempTestCase.setDescriptionEn(testCase.getDescriptionEn());
-                    tempTestCase.setType(testCase.getType());
-                    tempTestCase.setResult(Constant.WAITING);
-                    tempTestCase.setReason(Constant.EMPTY);
-                    testCases.add(tempTestCase);
-                });
-                tempTestSuite.setTestCases(testCases);
-
-                testSuites.add(tempTestSuite);
-            });
-            scenario.setTestSuites(testSuites);
-            result.add(scenario);
-        });
-        return result;
     }
 
     @Override
@@ -262,15 +184,11 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public TaskRequest getTaskById(String taskId) throws FileNotFoundException {
-        TaskRequest response = taskRepository.findByTaskIdAndUserId(taskId, null);
-        if (null == response) {
-            LOGGER.error("taskId does not exists: {}", taskId);
-            throw new FileNotExistsException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, Constant.TASK_ID),
-                ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList(Constant.TASK_ID)));
-        }
+    public TaskRequest getTaskById(String taskId) throws FileNotExistsException {
+        TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, null);
+        taskEmptyValidation(task, taskId);
         LOGGER.info("get task by id successfully.");
-        return response;
+        return task;
     }
 
     @Override
@@ -346,17 +264,7 @@ public class TaskServiceImpl implements TaskService {
             testScenarioList.forEach(testScenario -> {
                 if (testScenario.getId().equals(testCaseStatus.getTestScenarioId())) {
                     List<TaskTestSuite> testSuiteList = testScenario.getTestSuites();
-                    testSuiteList.forEach(testSuite -> {
-                        if (testSuite.getId().equals(testCaseStatus.getTestSuiteId())) {
-                            List<TaskTestCase> testCaseList = testSuite.getTestCases();
-                            testCaseList.forEach(testCase -> {
-                                if (testCase.getId().equals(testCaseStatus.getTestCaseId())) {
-                                    testCase.setResult(testCaseStatus.getResult());
-                                    testCase.setReason(testCaseStatus.getReason());
-                                }
-                            });
-                        }
-                    });
+                    modifyTestCaseStatus(testSuiteList, testCaseStatus);
                 }
             });
         });
@@ -378,20 +286,117 @@ public class TaskServiceImpl implements TaskService {
             if (CollectionUtils.isNotEmpty(testSuiteList)) {
                 for (TaskTestSuite testSuite : testSuiteList) {
                     List<TaskTestCase> testCases = testSuite.getTestCases();
-                    if (CollectionUtils.isNotEmpty(testCases)) {
-                        for (TaskTestCase testCase : testCases) {
-                            if (Constant.RUNNING.equals(testCase.getResult())) {
-                                status = Constant.RUNNING;
-                            } else {
-                                if (!Constant.RUNNING.equals(status)) {
-                                    status = Constant.FAILED.equals(testCase.getResult()) ? Constant.FAILED : status;
-                                }
-                            }
-                        }
-                    }
+                    status = setStatus(testCases);
                 }
             }
         }
         task.setStatus(status);
+    }
+
+    private String setStatus(List<TaskTestCase> testCases) {
+        String status = Constant.SUCCESS;
+        if (CollectionUtils.isNotEmpty(testCases)) {
+            for (TaskTestCase testCase : testCases) {
+                if (Constant.RUNNING.equals(testCase.getResult())) {
+                    status = Constant.RUNNING;
+                } else {
+                    if (!Constant.RUNNING.equals(status)) {
+                        status = Constant.FAILED.equals(testCase.getResult()) ? Constant.FAILED : status;
+                    }
+                }
+            }
+        }
+        return status;
+    }
+
+    private List<TaskTestScenario> initTestScenarios(List<String> scenarioIdList) {
+        List<TaskTestScenario> result = new ArrayList<TaskTestScenario>();
+        scenarioIdList.forEach(scenarioId -> {
+            TestScenario testScenario = testScenarioRepository.getTestScenarioById(scenarioId);
+            scenarioEmptyValidation(testScenario, scenarioId);
+
+            TaskTestScenario scenario = new TaskTestScenario();
+            scenario.setId(scenarioId);
+            scenario.setNameCh(testScenario.getNameCh());
+            scenario.setNameEn(testScenario.getNameEn());
+            scenario.setLabel(testScenario.getLabel());
+
+            List<TestSuite> testSuiteList = testSuiteRepository.getAllTestSuites(null, null, scenarioId);
+            List<TaskTestSuite> testSuites = new ArrayList<TaskTestSuite>();
+            testSuiteList.forEach(testSuite -> {
+                TaskTestSuite tempTestSuite = new TaskTestSuite();
+                tempTestSuite.setId(testSuite.getId());
+                tempTestSuite.setNameCh(testSuite.getNameCh());
+                tempTestSuite.setNameEn(testSuite.getNameEn());
+
+                List<TestCase> testCaseList = testCaseRepository.findAllTestCases(null, null, null, testSuite.getId());
+                List<TaskTestCase> testCases = new ArrayList<TaskTestCase>();
+                testCaseList.stream().forEach(testCase -> testCases.add(constructTaskTestCase(testCase)));
+                tempTestSuite.setTestCases(testCases);
+                testSuites.add(tempTestSuite);
+            });
+            scenario.setTestSuites(testSuites);
+            result.add(scenario);
+        });
+        return result;
+    }
+
+    private TaskTestCase constructTaskTestCase(TestCase testCase) {
+        TaskTestCase tempTestCase = new TaskTestCase();
+        tempTestCase.setId(testCase.getId());
+        tempTestCase.setNameCh(testCase.getNameCh());
+        tempTestCase.setNameEn(testCase.getNameEn());
+        tempTestCase.setDescriptionCh(testCase.getDescriptionCh());
+        tempTestCase.setDescriptionEn(testCase.getDescriptionEn());
+        tempTestCase.setType(testCase.getType());
+        tempTestCase.setResult(Constant.WAITING);
+        tempTestCase.setReason(Constant.EMPTY);
+        return tempTestCase;
+    }
+
+    private void modifyTestCaseStatus(List<TaskTestSuite> testSuiteList, TestCaseStatusReq testCaseStatus) {
+        testSuiteList.forEach(testSuite -> {
+            if (testSuite.getId().equals(testCaseStatus.getTestSuiteId())) {
+                List<TaskTestCase> testCaseList = testSuite.getTestCases();
+                testCaseList.forEach(testCase -> {
+                    if (testCase.getId().equals(testCaseStatus.getTestCaseId())) {
+                        testCase.setResult(testCaseStatus.getResult());
+                        testCase.setReason(testCaseStatus.getReason());
+                    }
+                });
+            }
+        });
+    }
+
+    private void taskStatusValidation(TaskRequest task) {
+        if (Constant.RUNNING.equals(task.getStatus())) {
+            LOGGER.error("this task already in running.");
+            throw new IllegalRequestException(ErrorCode.TASK_IS_RUNNING_MSG, ErrorCode.TASK_IS_RUNNING, null);
+        }
+    }
+
+    private void scenarioIdsEmptyValidation(List<String> scenarioIdList) throws FileNotExistsException {
+        if (CollectionUtils.isEmpty(scenarioIdList)) {
+            LOGGER.error("scenarioIdList is empty.");
+            throw new IllegalRequestException(String.format(ErrorCode.PARAM_IS_NULL_MSG, "scenarioIdList"),
+                ErrorCode.PARAM_IS_NULL, new ArrayList<String>(Arrays.asList("scenarioIdList")));
+        }
+    }
+
+    private void scenarioEmptyValidation(TestScenario testScenario, String scenarioId) {
+        if (null == testScenario) {
+            LOGGER.error("scenarioId {} not exists", scenarioId);
+            throw new IllegalRequestException(
+                String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, "scenarioId: ".concat(scenarioId)),
+                ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList("scenarioId: ".concat(scenarioId))));
+        }
+    }
+
+    private void taskEmptyValidation(TaskRequest task, String taskId) throws FileNotExistsException {
+        if (null == task) {
+            LOGGER.error("get task from db is null.taskId: {}", taskId);
+            throw new FileNotExistsException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, Constant.TASK_ID),
+                ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList(Constant.TASK_ID)));
+        }
     }
 }

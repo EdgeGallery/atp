@@ -58,7 +58,7 @@ public class ConfigServiceImpl implements ConfigService {
             throw new IllegalRequestException(String.format(ErrorCode.PARAM_IS_NULL_MSG, "configuration"),
                 ErrorCode.PARAM_IS_NULL, new ArrayList<String>(Arrays.asList("configuration")));
         }
-        CommonUtil.nameExistenceValidation(configBase.getNameCh(), configBase.getNameEn());
+        CommonUtil.nameNotEmptyValidation(configBase.getNameCh(), configBase.getNameEn());
         checkParamPattern(configBase.getConfiguration());
 
         Config config = new Config();

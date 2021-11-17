@@ -50,22 +50,11 @@ public class ContributionServiceImpl implements ContributionService {
 
     @Override
     public Contribution createContribution(Contribution contribution, MultipartFile file) {
-        if (null != contributionRepository.getContributionByName(contribution.getName())) {
-            LOGGER.error("contribution name alreay exists.");
-            throw new IllegalRequestException(String.format(ErrorCode.NAME_EXISTS_MSG, contribution.getName()),
-                ErrorCode.NAME_EXISTS, new ArrayList<String>(Arrays.asList(contribution.getName())));
-        }
-
+        checkContributionNameExistence(contribution);
         contribution.setId(CommonUtil.generateId());
         contribution.setCreateTime(taskRepository.getCurrentDate());
-        if (Constant.CONTRIBUTION_TYPE_SCRIPT.equals(contribution.getType()) && null != file && 0 != (int) file
-            .getSize()) {
-            String fileName = file.getOriginalFilename();
-            if (null != fileName && !fileName.endsWith(Constant.ZIP)) {
-                LOGGER.error("file pattern is wrong, must zip pattern.");
-                throw new IllegalRequestException(String.format(ErrorCode.PATTERN_CHECK_FAILED_MSG, Constant.ZIP),
-                    ErrorCode.PATTERN_CHECK_FAILED, new ArrayList<String>(Arrays.asList(Constant.ZIP)));
-            }
+        if (scriptFileNotEmpty(contribution, file)) {
+            fileNameValidation(file.getOriginalFilename());
             // save script file
             String filePath = Constant.BASIC_CONTRIBUTION_PATH.concat(contribution.getId());
             try {
@@ -78,7 +67,6 @@ public class ContributionServiceImpl implements ContributionService {
                 throw new IllegalRequestException(ErrorCode.FILE_IO_EXCEPTION_MSG, ErrorCode.FILE_IO_EXCEPTION, null);
             }
         }
-
         contributionRepository.insert(contribution);
         LOGGER.info("create contribution successfully.");
         return contribution;
@@ -110,11 +98,7 @@ public class ContributionServiceImpl implements ContributionService {
     @Override
     public ResponseEntity<byte[]> downloadContributions(String id) {
         Contribution contribution = contributionRepository.getContributionById(id);
-        if (null == contribution) {
-            String msg = "contribution not exists.";
-            LOGGER.error(msg);
-            throw new IllegalArgumentException(msg);
-        }
+        CommonUtil.checkParamEmpty(contribution, "contribution not exists.");
         File file = new File(contribution.getFilePath());
         try {
             HttpHeaders headers = new HttpHeaders();
@@ -128,5 +112,26 @@ public class ContributionServiceImpl implements ContributionService {
             LOGGER.error(msg);
             throw new IllegalArgumentException(msg);
         }
+    }
+
+    private void fileNameValidation(String fileName) {
+        if (null != fileName && !fileName.endsWith(Constant.ZIP)) {
+            LOGGER.error("file pattern is wrong, must zip pattern.");
+            throw new IllegalRequestException(String.format(ErrorCode.PATTERN_CHECK_FAILED_MSG, Constant.ZIP),
+                ErrorCode.PATTERN_CHECK_FAILED, new ArrayList<String>(Arrays.asList(Constant.ZIP)));
+        }
+    }
+
+    private void checkContributionNameExistence(Contribution contribution) {
+        if (null != contributionRepository.getContributionByName(contribution.getName())) {
+            LOGGER.error("contribution name alreay exists.");
+            throw new IllegalRequestException(String.format(ErrorCode.NAME_EXISTS_MSG, contribution.getName()),
+                ErrorCode.NAME_EXISTS, new ArrayList<String>(Arrays.asList(contribution.getName())));
+        }
+    }
+
+    private boolean scriptFileNotEmpty(Contribution contribution, MultipartFile file) {
+        return Constant.CONTRIBUTION_TYPE_SCRIPT.equals(contribution.getType()) && null != file && 0 != (int) file
+            .getSize();
     }
 }
