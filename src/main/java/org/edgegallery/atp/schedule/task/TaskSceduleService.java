@@ -46,16 +46,14 @@ public class TaskSceduleService {
     FileRepository fileRepository;
 
     /**
-     * handle exception running task when the atp service start.
+     * put inner testCases and scenario icons in storage.
      */
     @PostConstruct
     public void handleData() {
-        // put inner testCases and scenario icons in storage
         try {
             String basePath = System.getProperty("os.name").toLowerCase().contains("windows") ? PropertiesUtil
                 .getProperties("workspace_base_dir_windows") : PropertiesUtil.getProperties("workspace_base_dir_linux");
 
-            // handle test case
             String baseTestCasePath = basePath.concat(Constant.SLASH).concat(Constant.TEST_CASE_DIR);
             handleTestCase(new File(baseTestCasePath.concat(File.separator).concat("CommunitySecurity")));
             handleTestCase(new File(baseTestCasePath.concat(File.separator).concat("CommunitySandbox")));
@@ -64,36 +62,39 @@ public class TaskSceduleService {
             handleTestCase(new File(baseTestCasePath.concat(File.separator).concat("AOperatorSecurity")));
             handleTestCase(new File(baseTestCasePath.concat(File.separator).concat("AOperatorCompliance")));
 
-            // handle scenario icon
             File iconDir = new File(basePath.concat(Constant.SLASH).concat(Constant.ICON));
-            if (iconDir.exists()) {
-                File[] iconArray = iconDir.listFiles();
-                if (null != iconArray) {
-                    for (File icon : iconArray) {
-                        String iconPath = Constant.BASIC_ICON_PATH + icon.getName();
-                        FileChecker.createFile(iconPath);
-                        File result = new File(iconPath);
-                        FileCopyUtils.copy(icon, result);
-
-                        // insert to db
-                        String name = icon.getName();
-                        String scenarioId = name
-                            .substring(name.indexOf(Constant.UNDER_LINE) + 1, name.indexOf(Constant.DOT));
-
-                        AtpFile fileFromDb = fileRepository.getFileContent(scenarioId, Constant.FILE_TYPE_SCENARIO);
-                        if (null == fileFromDb) {
-                            AtpFile atpFile = new AtpFile(scenarioId, Constant.FILE_TYPE_SCENARIO,
-                                taskRepository.getCurrentDate(), iconPath);
-                            fileRepository.insertFile(atpFile);
-                        }
-                    }
-                }
-            }
-
+            handleIconFile(iconDir);
         } catch (FileNotFoundException e) {
             LOGGER.error("resource testCase file can not be found");
         } catch (IOException e) {
-            LOGGER.error("copy test case to path failed.");
+            LOGGER.error("copy test case or icon to path failed.");
+        }
+    }
+
+    /**
+     * save icon file.
+     *
+     * @param iconDir iconDir
+     * @throws IOException IOException
+     */
+    private void handleIconFile(File iconDir) throws IOException {
+        if (!iconDir.exists() || null == iconDir.listFiles()) {
+            return;
+        }
+        for (File icon : iconDir.listFiles()) {
+            String iconPath = Constant.BASIC_ICON_PATH + icon.getName();
+            FileChecker.createFile(iconPath);
+            File result = new File(iconPath);
+            FileCopyUtils.copy(icon, result);
+
+            String name = icon.getName();
+            String scenarioId = name.substring(name.indexOf(Constant.UNDER_LINE) + 1, name.indexOf(Constant.DOT));
+            AtpFile fileFromDb = fileRepository.getFileContent(scenarioId, Constant.FILE_TYPE_SCENARIO);
+            if (null == fileFromDb) {
+                AtpFile atpFile = new AtpFile(scenarioId, Constant.FILE_TYPE_SCENARIO, taskRepository.getCurrentDate(),
+                    iconPath);
+                fileRepository.insertFile(atpFile);
+            }
         }
     }
 
@@ -101,32 +102,38 @@ public class TaskSceduleService {
      * save test case to env path.
      *
      * @param fileDir src dir
+     * @throws IOException IOException
      */
-    private void handleTestCase(File fileDir) {
-        try {
-            if (fileDir.exists()) {
-                File[] fileArray = fileDir.listFiles();
-                if (null != fileArray) {
-                    for (File file : fileArray) {
-                        TestCase testCase = testCaseRepository
-                            .findByName(null, file.getName().substring(0, file.getName().indexOf(Constant.DOT)));
-                        if (null != testCase) {
-                            String filePath = Constant.BASIC_TEST_CASE_PATH + testCase.getNameEn() + Constant.UNDER_LINE
-                                + testCase.getId();
-                            FileChecker.createFile(filePath);
-                            File result = new File(filePath);
-                            FileCopyUtils.copy(file, result);
+    private void handleTestCase(File fileDir) throws IOException {
+        if (!fileDir.exists() || null == fileDir.listFiles()) {
+            return;
+        }
+        for (File file : fileDir.listFiles()) {
+            TestCase testCase = testCaseRepository
+                .findByName(null, file.getName().substring(0, file.getName().indexOf(Constant.DOT)));
+            saveTestCaseFile(testCase, file);
+        }
+    }
 
-                            testCase.setFilePath(filePath);
-                            testCaseRepository.update(testCase);
-                        } else {
-                            LOGGER.error("init test case failed, find by name from db is null.");
-                        }
-                    }
-                }
-            }
-        } catch (IOException e) {
-            LOGGER.error("copy test case to path failed.");
+    /**
+     * save test case to path.
+     *
+     * @param testCase testCase
+     * @param file file
+     * @throws IOException IOException
+     */
+    private void saveTestCaseFile(TestCase testCase, File file) throws IOException {
+        if (null != testCase) {
+            String filePath = Constant.BASIC_TEST_CASE_PATH + testCase.getNameEn() + Constant.UNDER_LINE + testCase
+                .getId();
+            FileChecker.createFile(filePath);
+            File result = new File(filePath);
+            FileCopyUtils.copy(file, result);
+
+            testCase.setFilePath(filePath);
+            testCaseRepository.update(testCase);
+        } else {
+            LOGGER.error("init test case failed, find by name from db is null.");
         }
     }
 }

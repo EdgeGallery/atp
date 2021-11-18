@@ -41,6 +41,7 @@ import org.edgegallery.atp.constant.ExceptionConstant;
 import org.edgegallery.atp.interfaces.filter.AccessTokenFilter;
 import org.edgegallery.atp.model.BatchOpsRes;
 import org.edgegallery.atp.model.task.testscenarios.TaskTestCase;
+import org.edgegallery.atp.utils.exception.FileNotExistsException;
 import org.edgegallery.atp.utils.exception.IllegalRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -215,35 +216,6 @@ public class CommonUtil {
     }
 
     /**
-     * validate whether param is empty or not.
-     *
-     * @param param param
-     * @param msg error msg
-     * @param <T> param type
-     */
-    public static <T> void checkParamEmpty(T param, String msg) {
-        if (null == param) {
-            LOGGER.error(msg);
-            throw new IllegalArgumentException(msg);
-        }
-    }
-
-    /**
-     * validate entity is not found.
-     *
-     * @param param param
-     * @param msg error msg
-     * @param <T> param type
-     * @throws FileNotFoundException FileNotFoundException
-     */
-    public static <T> void checkEntityNotFound(T param, String msg) throws FileNotFoundException {
-        if (null == param) {
-            LOGGER.error(msg);
-            throw new FileNotFoundException(msg);
-        }
-    }
-
-    /**
      * get java class name.
      *
      * @param file java file
@@ -356,4 +328,77 @@ public class CommonUtil {
         }
     }
 
+    /**
+     * check file is not empty.
+     *
+     * @param file file
+     * @return file is not empty
+     */
+    public static boolean checkFileNotEmpty(MultipartFile file) {
+        return null != file && StringUtils.isNotBlank(file.getOriginalFilename()) && StringUtils
+            .isNotBlank(file.getName()) && 0 != (int) file.getSize();
+    }
+
+    /**
+     * validate whether param is empty or not.
+     *
+     * @param param param
+     * @param msg error msg
+     * @param <T> param type
+     */
+    public static <T> void checkParamEmpty(T param, String msg) {
+        if (null == param) {
+            LOGGER.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+    }
+
+    /**
+     * validate whether param is empty or not in new error code pattern.
+     *
+     * @param param param
+     * @param errorMsg errorMsg
+     * @param errorParam errorParam
+     * @param <T> param type
+     */
+    public static <T> void checkParamEmpty(T param, String errorMsg, String errorParam) {
+        if (null == param) {
+            LOGGER.error(errorMsg);
+            throw new IllegalRequestException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, errorParam),
+                ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList(errorParam)));
+        }
+    }
+
+    /**
+     * validate entity is not found.
+     *
+     * @param param param
+     * @param msg error msg
+     * @param <T> param type
+     * @throws FileNotFoundException FileNotFoundException
+     */
+    public static <T> void checkEntityNotFound(T param, String msg) throws FileNotFoundException {
+        if (null == param) {
+            LOGGER.error(msg);
+            throw new FileNotFoundException(msg);
+        }
+    }
+
+    /**
+     * validate entity is not found in new error code pattern.
+     *
+     * @param object object
+     * @param errorParam errorParam
+     * @param errorMsg errorMsg
+     * @param <T> object type
+     * @throws FileNotExistsException FileNotExistsException
+     */
+    public static <T> void checkEntityNotFound(T object, String errorMsg, String errorParam)
+        throws FileNotExistsException {
+        if (null == object) {
+            LOGGER.error(errorMsg);
+            throw new FileNotExistsException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, errorParam),
+                ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList(errorParam)));
+        }
+    }
 }

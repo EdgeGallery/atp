@@ -131,11 +131,7 @@ public class TaskRepositoryImpl implements TaskRepository {
         try {
             List<TaskPO> taskPoList = taskMapper.findTaskByUserId(userId, appName, status, providerId, appVersion);
             List<TaskRequest> taskRequest = new ArrayList<TaskRequest>();
-            taskPoList.forEach(taskPo -> {
-                if (null != taskPo) {
-                    taskRequest.add(toDomain(taskPo));
-                }
-            });
+            taskPoList.stream().filter(taskPo -> null != taskPo).forEach(taskPo -> taskRequest.add(toDomain(taskPo)));
             return taskRequest;
         } catch (Exception e) {
             LOGGER.error("findTaskByUserId failed. {}", e);
@@ -162,11 +158,7 @@ public class TaskRepositoryImpl implements TaskRepository {
             List<TaskPO> taskPoList = taskMapper
                 .getAllWithPagination(limit, offset, userId, appName, status, providerId, appVersion);
             List<TaskRequest> taskRequest = new ArrayList<TaskRequest>();
-            taskPoList.forEach(taskPo -> {
-                if (null != taskPo) {
-                    taskRequest.add(toDomain(taskPo));
-                }
-            });
+            taskPoList.stream().filter(taskPo -> null != taskPo).forEach(taskPo -> taskRequest.add(toDomain(taskPo)));
             return taskRequest;
         } catch (Exception e) {
             LOGGER.error("get all tasks with pagination failed. {}", e);
@@ -181,7 +173,7 @@ public class TaskRepositoryImpl implements TaskRepository {
         Map<String, List<String>> result = new HashMap<String, List<String>>();
         List<String> failIds = new ArrayList<String>();
         if (CollectionUtils.isNotEmpty(ids)) {
-            for (String id : ids) {
+            ids.forEach(id -> {
                 try {
                     TaskPO task = taskMapper.findByTaskIdAndUserId(id, null);
                     taskMapper.deleteTaskById(id, null);
@@ -195,7 +187,7 @@ public class TaskRepositoryImpl implements TaskRepository {
                     LOGGER.error("delete task by id {} failed. {}", id, e);
                     failIds.add(id);
                 }
-            }
+            });
         } else {
             LOGGER.warn("ids is empty.");
         }
@@ -230,11 +222,7 @@ public class TaskRepositoryImpl implements TaskRepository {
                     LOGGER.warn("scenarioId {} not exists", scenarioId);
                     continue;
                 }
-                TaskTestScenario scenario = new TaskTestScenario(taskTestScenarioPo);
-                scenario.setNameCh(testScenario.getNameCh());
-                scenario.setNameEn(testScenario.getNameEn());
-                scenario.setLabel(testScenario.getLabel());
-
+                TaskTestScenario scenario = setTaskTestScenario(taskTestScenarioPo, testScenario);
                 List<TaskTestSuite> testSuites = new ArrayList<TaskTestSuite>();
                 if (CollectionUtils.isNotEmpty(taskTestScenarioPo.getTestSuites())) {
                     for (TaskTestSuitePo testSuitePo : taskTestScenarioPo.getTestSuites()) {
@@ -256,12 +244,7 @@ public class TaskRepositoryImpl implements TaskRepository {
                                     LOGGER.warn("testCaseId {} not exists", testCasePo.getId());
                                     continue;
                                 }
-                                TaskTestCase taskTestCase = new TaskTestCase(testCasePo);
-                                taskTestCase.setDescriptionCh(testCaseDb.getDescriptionCh());
-                                taskTestCase.setDescriptionEn(testCaseDb.getDescriptionEn());
-                                taskTestCase.setNameCh(testCaseDb.getNameCh());
-                                taskTestCase.setNameEn(testCaseDb.getNameEn());
-                                taskTestCase.setType(testCaseDb.getType());
+                                TaskTestCase taskTestCase = setTaskTestCase(testCasePo, testCaseDb);
                                 status = calStatus(status, testCasePo);
                                 testCases.add(taskTestCase);
                             }
@@ -280,7 +263,33 @@ public class TaskRepositoryImpl implements TaskRepository {
                 taskMapper.update(taskRequsetPo);
             }
         }
+        TaskRequest result = setTaskRequest(taskRequsetPo, testScenarios);
+        // some test scenario or test suite or test case is changed, need to update
+        if (isChanged) {
+            update(result);
+        }
+        return result;
+    }
 
+    private TaskTestScenario setTaskTestScenario(TaskTestScenarioPo taskTestScenarioPo, TestScenario testScenario) {
+        TaskTestScenario scenario = new TaskTestScenario(taskTestScenarioPo);
+        scenario.setNameCh(testScenario.getNameCh());
+        scenario.setNameEn(testScenario.getNameEn());
+        scenario.setLabel(testScenario.getLabel());
+        return scenario;
+    }
+
+    private TaskTestCase setTaskTestCase(TaskTestCasePo testCasePo, TestCase testCaseDb) {
+        TaskTestCase taskTestCase = new TaskTestCase(testCasePo);
+        taskTestCase.setDescriptionCh(testCaseDb.getDescriptionCh());
+        taskTestCase.setDescriptionEn(testCaseDb.getDescriptionEn());
+        taskTestCase.setNameCh(testCaseDb.getNameCh());
+        taskTestCase.setNameEn(testCaseDb.getNameEn());
+        taskTestCase.setType(testCaseDb.getType());
+        return taskTestCase;
+    }
+
+    private TaskRequest setTaskRequest(TaskPO taskRequsetPo, List<TaskTestScenario> testScenarios) {
         TaskRequest result = TaskRequest.builder().setAppName(taskRequsetPo.getAppName())
             .setAppVersion(taskRequsetPo.getAppVersion()).setPackagePath(taskRequsetPo.getPackagePath())
             .setProviderId(taskRequsetPo.getProviderId()).setId(taskRequsetPo.getId())
@@ -289,10 +298,6 @@ public class TaskRepositoryImpl implements TaskRepository {
             .setReportPath(taskRequsetPo.getReportPath()).build();
         result.setCreateTime(taskRequsetPo.getCreateTime());
         result.setEndTime(taskRequsetPo.getEndTime());
-        // some test scenario or test suite or test case is changed, need to update
-        if (isChanged) {
-            update(result);
-        }
         return result;
     }
 

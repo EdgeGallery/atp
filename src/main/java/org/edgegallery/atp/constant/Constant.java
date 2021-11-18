@@ -25,8 +25,6 @@ public interface Constant {
 
     String UNDER_LINE = "_";
 
-    int MAX_TASK_THREAD_NUM = 10;
-
     String PROVIDER_ID = "app_provider_id";
 
     String APP_NAME = "app_product_name";
@@ -51,14 +49,6 @@ public interface Constant {
 
     String COMMA = ",";
 
-    String STRIKE = "-";
-
-    String DEFINITIONS = "Definition";
-
-    String APP_ID = "appId";
-
-    String PACKAGE_ID = "packageId";
-
     String SUCCESS = "success";
 
     String RUNNING = "running";
@@ -75,21 +65,11 @@ public interface Constant {
 
     int MAX_LENGTH_FILE_NAME = 255;
 
-    String PACKAGE_YAML_FORMAT = ".yaml";
-
     int BUFFER = 512;
 
     long TOO_BIG = 0x280000000L; // max size of unzipped data, 10GB
 
     int TOO_MANY = 1024; // max number of files
-
-    String NODE_TEMPLATES = "node_templates";
-
-    String APP_CONFIGURATION = "app_configuration";
-
-    String PROPERTIES = "properties";
-
-    String APP_SERVICE_REQUIRED = "appServiceRequired";
 
     String APPLICATION_JSON = "application/json";
 
@@ -98,8 +78,6 @@ public interface Constant {
     String PYTHON = "python";
 
     String JAR = "jar";
-
-    String JAVA_FILE = ".java";
 
     String TEST_CASE_DIR = "testCases";
 

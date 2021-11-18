@@ -83,11 +83,7 @@ public class ConfigServiceImpl implements ConfigService {
             checkParamPattern(configBase.getConfiguration());
         }
         Config configDB = configRepository.queryConfigById(id);
-        if (null == configDB) {
-            LOGGER.error("this config {} not exists.", id);
-            throw new FileNotExistsException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, Constant.CONFIG_ID),
-                ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList(Constant.CONFIG_ID)));
-        }
+        CommonUtil.checkEntityNotFound(configDB, String.format("this config %s not exists.", id), Constant.CONFIG_ID);
 
         Config config = new Config();
         BeanUtils.copyProperties(configBase, config);
@@ -114,11 +110,7 @@ public class ConfigServiceImpl implements ConfigService {
     @Override
     public Config queryConfig(String id) throws FileNotExistsException {
         Config config = configRepository.queryConfigById(id);
-        if (null == config) {
-            LOGGER.error("config id does not exists: {}", id);
-            throw new FileNotExistsException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, Constant.CONFIG_ID),
-                ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList(Constant.CONFIG_ID)));
-        }
+        CommonUtil.checkEntityNotFound(config, String.format("this config %s not exists.", id), Constant.CONFIG_ID);
         LOGGER.info("query config by id successfully.");
         return config;
     }

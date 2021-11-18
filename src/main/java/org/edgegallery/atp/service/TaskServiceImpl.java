@@ -111,7 +111,8 @@ public class TaskServiceImpl implements TaskService {
         scenarioIdsEmptyValidation(scenarioIdList);
         initTestScenarios(scenarioIdList);
         TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, null);
-        taskEmptyValidation(task, taskId);
+        CommonUtil
+            .checkEntityNotFound(task, String.format("get task from db is null.taskId: %s", taskId), Constant.TASK_ID);
         taskStatusValidation(task);
 
         Map<String, String> context = AccessTokenFilter.CONTEXT.get();
@@ -147,7 +148,8 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public String uploadReport(String taskId, MultipartFile file) throws FileNotExistsException {
         TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, null);
-        taskEmptyValidation(task, taskId);
+        CommonUtil
+            .checkEntityNotFound(task, String.format("get task from db is null.taskId: %s", taskId), Constant.TASK_ID);
 
         String path = BASE_PATH.concat(taskId).concat(".pdf");
         String filePath = uploadPath.concat(path);
@@ -186,7 +188,8 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public TaskRequest getTaskById(String taskId) throws FileNotExistsException {
         TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, null);
-        taskEmptyValidation(task, taskId);
+        CommonUtil
+            .checkEntityNotFound(task, String.format("get task from db is null.taskId: %s", taskId), Constant.TASK_ID);
         LOGGER.info("get task by id successfully.");
         return task;
     }
@@ -293,6 +296,12 @@ public class TaskServiceImpl implements TaskService {
         task.setStatus(status);
     }
 
+    /**
+     * set test case total status.
+     *
+     * @param testCases task test case list
+     * @return test case status
+     */
     private String setStatus(List<TaskTestCase> testCases) {
         String status = Constant.SUCCESS;
         if (CollectionUtils.isNotEmpty(testCases)) {
@@ -309,11 +318,18 @@ public class TaskServiceImpl implements TaskService {
         return status;
     }
 
+    /**
+     * init test scenario info list.
+     *
+     * @param scenarioIdList scenarioIdList
+     * @return task test scenario list
+     */
     private List<TaskTestScenario> initTestScenarios(List<String> scenarioIdList) {
         List<TaskTestScenario> result = new ArrayList<TaskTestScenario>();
         scenarioIdList.forEach(scenarioId -> {
             TestScenario testScenario = testScenarioRepository.getTestScenarioById(scenarioId);
-            scenarioEmptyValidation(testScenario, scenarioId);
+            CommonUtil.checkParamEmpty(testScenario, String.format("scenarioId %s not exists", scenarioId),
+                "scenarioId: ".concat(scenarioId));
 
             TaskTestScenario scenario = new TaskTestScenario();
             scenario.setId(scenarioId);
@@ -341,6 +357,12 @@ public class TaskServiceImpl implements TaskService {
         return result;
     }
 
+    /**
+     * construct task test case.
+     *
+     * @param testCase test case
+     * @return task test case info
+     */
     private TaskTestCase constructTaskTestCase(TestCase testCase) {
         TaskTestCase tempTestCase = new TaskTestCase();
         tempTestCase.setId(testCase.getId());
@@ -354,6 +376,12 @@ public class TaskServiceImpl implements TaskService {
         return tempTestCase;
     }
 
+    /**
+     * update test case status.
+     *
+     * @param testSuiteList test suite list
+     * @param testCaseStatus test case status
+     */
     private void updateStatus(List<TaskTestSuite> testSuiteList, TestCaseStatusReq testCaseStatus) {
         testSuiteList.forEach(testSuite -> {
             if (testSuite.getId().equals(testCaseStatus.getTestSuiteId())) {
@@ -368,6 +396,11 @@ public class TaskServiceImpl implements TaskService {
         });
     }
 
+    /**
+     * task status validation, can not be running.
+     *
+     * @param task task info
+     */
     private void taskStatusValidation(TaskRequest task) {
         if (Constant.RUNNING.equals(task.getStatus())) {
             LOGGER.error("this task already in running.");
@@ -375,28 +408,17 @@ public class TaskServiceImpl implements TaskService {
         }
     }
 
+    /**
+     * check scenarioIdList not empty.
+     *
+     * @param scenarioIdList scenarioIdList
+     * @throws FileNotExistsException FileNotExistsException
+     */
     private void scenarioIdsEmptyValidation(List<String> scenarioIdList) throws FileNotExistsException {
         if (CollectionUtils.isEmpty(scenarioIdList)) {
             LOGGER.error("scenarioIdList is empty.");
             throw new IllegalRequestException(String.format(ErrorCode.PARAM_IS_NULL_MSG, "scenarioIdList"),
                 ErrorCode.PARAM_IS_NULL, new ArrayList<String>(Arrays.asList("scenarioIdList")));
-        }
-    }
-
-    private void scenarioEmptyValidation(TestScenario testScenario, String scenarioId) {
-        if (null == testScenario) {
-            LOGGER.error("scenarioId {} not exists", scenarioId);
-            throw new IllegalRequestException(
-                String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, "scenarioId: ".concat(scenarioId)),
-                ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList("scenarioId: ".concat(scenarioId))));
-        }
-    }
-
-    private void taskEmptyValidation(TaskRequest task, String taskId) throws FileNotExistsException {
-        if (null == task) {
-            LOGGER.error("get task from db is null.taskId: {}", taskId);
-            throw new FileNotExistsException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, Constant.TASK_ID),
-                ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList(Constant.TASK_ID)));
         }
     }
 }
