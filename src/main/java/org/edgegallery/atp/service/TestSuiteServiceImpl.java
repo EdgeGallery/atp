@@ -57,27 +57,10 @@ public class TestSuiteServiceImpl implements TestSuiteService {
     public TestSuite createTestSuite(TestSuite testSuite) {
         // nameCh or nameEn must exist one
         CommonUtil.nameNotEmptyValidation(testSuite.getNameCh(), testSuite.getNameEn());
-        testSuite
-            .setNameCh(StringUtils.isNotBlank(testSuite.getNameCh()) ? testSuite.getNameCh() : testSuite.getNameEn());
-        testSuite
-            .setNameEn(StringUtils.isNotBlank(testSuite.getNameEn()) ? testSuite.getNameEn() : testSuite.getNameCh());
-
-        testSuite.setDescriptionCh(StringUtils.isNotBlank(testSuite.getDescriptionCh())
-            ? testSuite.getDescriptionCh()
-            : testSuite.getDescriptionEn());
-        testSuite.setDescriptionEn(StringUtils.isNotBlank(testSuite.getDescriptionEn())
-            ? testSuite.getDescriptionEn()
-            : testSuite.getDescriptionCh());
-        testSuite.setCreateTime(taskRepository.getCurrentDate());
-
-        if (null != testSuiteRepository.getTestSuiteByName(testSuite.getNameCh(), null) || null != testSuiteRepository
-            .getTestSuiteByName(null, testSuite.getNameEn())) {
-            LOGGER.error("name of test suite already exist.");
-            String param = testSuite.getNameCh() + " or " + testSuite.getNameEn();
-            throw new IllegalRequestException(String.format(ErrorCode.NAME_EXISTS_MSG, param), ErrorCode.NAME_EXISTS,
-                new ArrayList<String>(Arrays.asList(param)));
-        }
+        constructTestSuite(testSuite);
+        checkNameExistence(testSuite);
         checkTestScenarioIdsExist(testSuite);
+
         testSuiteRepository.createTestSuite(testSuite);
         LOGGER.info("create test suite successfully.");
         return testSuite;
@@ -86,19 +69,10 @@ public class TestSuiteServiceImpl implements TestSuiteService {
     @Override
     public TestSuite updateTestSuite(TestSuite testSuite) {
         TestSuite dbData = testSuiteRepository.getTestSuiteById(testSuite.getId());
-        if (!dbData.getNameCh().equalsIgnoreCase(testSuite.getNameCh()) && null != testSuiteRepository
-            .getTestSuiteByName(testSuite.getNameCh(), null)) {
-            LOGGER.error("chinese name of test suite already exist.");
-            throw new IllegalRequestException(String.format(ErrorCode.NAME_EXISTS_MSG, testSuite.getNameCh()),
-                ErrorCode.NAME_EXISTS, new ArrayList<String>(Arrays.asList(testSuite.getNameCh())));
-        }
-        if (!dbData.getNameEn().equalsIgnoreCase(testSuite.getNameEn()) && null != testSuiteRepository
-            .getTestSuiteByName(null, testSuite.getNameEn())) {
-            LOGGER.error("english name of test suite already exist.");
-            throw new IllegalRequestException(String.format(ErrorCode.NAME_EXISTS_MSG, testSuite.getNameEn()),
-                ErrorCode.NAME_EXISTS, new ArrayList<String>(Arrays.asList(testSuite.getNameEn())));
-        }
+        checkNameChExistence(testSuite, dbData);
+        checkNameEnExitence(testSuite, dbData);
         checkTestScenarioIdsExist(testSuite);
+
         testSuiteRepository.updateTestSuite(testSuite);
         LOGGER.info("update test suite successfully.");
         return testSuiteRepository.getTestSuiteById(testSuite.getId());
@@ -119,11 +93,8 @@ public class TestSuiteServiceImpl implements TestSuiteService {
     @Override
     public TestSuite getTestSuite(String id) throws FileNotExistsException {
         TestSuite testSuite = testSuiteRepository.getTestSuiteById(id);
-        if (null == testSuite) {
-            LOGGER.error("test suite id does not exists: {}", id);
-            throw new FileNotExistsException(String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, "test suite id"),
-                ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList("test suite id")));
-        }
+        CommonUtil
+            .checkEntityNotFound(testSuite, String.format("test suite id does not exists: %s", id), "test suite id");
         LOGGER.info("get test suite successfully.");
         return testSuite;
     }
@@ -135,18 +106,7 @@ public class TestSuiteServiceImpl implements TestSuiteService {
             result = testSuiteRepository.getAllTestSuites(locale, name, null);
         } else {
             List<TestSuite> testSuiteList = testSuiteRepository.getAllTestSuites(locale, name, scenarioIdList.get(0));
-            for (TestSuite testSuite : testSuiteList) {
-                boolean isSatisfy = true;
-                for (String id : scenarioIdList) {
-                    if (!testSuite.getScenarioIdList().contains(id)) {
-                        isSatisfy = false;
-                        break;
-                    }
-                }
-                if (isSatisfy) {
-                    result.add(testSuite);
-                }
-            }
+            setQueryResult(testSuiteList, scenarioIdList, result);
         }
         LOGGER.info("query all test suites successfully.");
         return result;
@@ -164,18 +124,7 @@ public class TestSuiteServiceImpl implements TestSuiteService {
             pageResult.setTotal(queryAllTestSuite(locale, name, scenarioIdList).size());
             List<TestSuite> testSuiteList = testSuiteRepository
                 .getAllTestSuitesByPagination(locale, name, scenarioIdList.get(0), limit, offset);
-            for (TestSuite testSuite : testSuiteList) {
-                boolean isSatisfy = true;
-                for (String id : scenarioIdList) {
-                    if (!testSuite.getScenarioIdList().contains(id)) {
-                        isSatisfy = false;
-                        break;
-                    }
-                }
-                if (isSatisfy) {
-                    result.add(testSuite);
-                }
-            }
+            setQueryResult(testSuiteList, scenarioIdList, result);
         }
         pageResult.setResults(result);
         LOGGER.info("query all test suites by pagination successfully.");
@@ -196,5 +145,91 @@ public class TestSuiteServiceImpl implements TestSuiteService {
                 String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, "some test scenario ids."),
                 ErrorCode.NOT_FOUND_EXCEPTION, new ArrayList<String>(Arrays.asList("some test scenario ids.")));
         }
+    }
+
+    /**
+     * check name existence.
+     *
+     * @param testSuite testSuite
+     */
+    private void checkNameExistence(TestSuite testSuite) {
+        if (null != testSuiteRepository.getTestSuiteByName(testSuite.getNameCh(), null) || null != testSuiteRepository
+            .getTestSuiteByName(null, testSuite.getNameEn())) {
+            LOGGER.error("name of test suite already exist.");
+            String param = testSuite.getNameCh() + " or " + testSuite.getNameEn();
+            throw new IllegalRequestException(String.format(ErrorCode.NAME_EXISTS_MSG, param), ErrorCode.NAME_EXISTS,
+                new ArrayList<String>(Arrays.asList(param)));
+        }
+    }
+
+    /**
+     * construct test suite.
+     *
+     * @param testSuite test suite info
+     */
+    private void constructTestSuite(TestSuite testSuite) {
+        testSuite
+            .setNameCh(StringUtils.isNotBlank(testSuite.getNameCh()) ? testSuite.getNameCh() : testSuite.getNameEn());
+        testSuite
+            .setNameEn(StringUtils.isNotBlank(testSuite.getNameEn()) ? testSuite.getNameEn() : testSuite.getNameCh());
+        testSuite.setDescriptionCh(StringUtils.isNotBlank(testSuite.getDescriptionCh())
+            ? testSuite.getDescriptionCh()
+            : testSuite.getDescriptionEn());
+        testSuite.setDescriptionEn(StringUtils.isNotBlank(testSuite.getDescriptionEn())
+            ? testSuite.getDescriptionEn()
+            : testSuite.getDescriptionCh());
+        testSuite.setCreateTime(taskRepository.getCurrentDate());
+    }
+
+    /**
+     * check nameEn existence.
+     *
+     * @param testSuite test suite
+     * @param dbData test suite data in db
+     */
+    private void checkNameEnExitence(TestSuite testSuite, TestSuite dbData) {
+        if (!dbData.getNameEn().equalsIgnoreCase(testSuite.getNameEn()) && null != testSuiteRepository
+            .getTestSuiteByName(null, testSuite.getNameEn())) {
+            LOGGER.error("english name of test suite already exist.");
+            throw new IllegalRequestException(String.format(ErrorCode.NAME_EXISTS_MSG, testSuite.getNameEn()),
+                ErrorCode.NAME_EXISTS, new ArrayList<String>(Arrays.asList(testSuite.getNameEn())));
+        }
+    }
+
+    /**
+     * check nameCh existence.
+     *
+     * @param testSuite test suite
+     * @param dbData test suite data in db
+     */
+    private void checkNameChExistence(TestSuite testSuite, TestSuite dbData) {
+        if (!dbData.getNameCh().equalsIgnoreCase(testSuite.getNameCh()) && null != testSuiteRepository
+            .getTestSuiteByName(testSuite.getNameCh(), null)) {
+            LOGGER.error("chinese name of test suite already exist.");
+            throw new IllegalRequestException(String.format(ErrorCode.NAME_EXISTS_MSG, testSuite.getNameCh()),
+                ErrorCode.NAME_EXISTS, new ArrayList<String>(Arrays.asList(testSuite.getNameCh())));
+        }
+    }
+
+    /**
+     * set satisfied test suite in result.
+     *
+     * @param testSuiteList testSuiteList
+     * @param scenarioIdList scenarioIdList
+     * @param result result
+     */
+    private void setQueryResult(List<TestSuite> testSuiteList, List<String> scenarioIdList, List<TestSuite> result) {
+        testSuiteList.forEach(testSuite -> {
+            boolean isSatisfy = true;
+            for (String id : scenarioIdList) {
+                if (!testSuite.getScenarioIdList().contains(id)) {
+                    isSatisfy = false;
+                    break;
+                }
+            }
+            if (isSatisfy) {
+                result.add(testSuite);
+            }
+        });
     }
 }

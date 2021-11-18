@@ -27,6 +27,7 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "task.pool")
 public class ThreadPoolConfig {
+    
     private int corePoolSize;
 
     private int maxPoolSize;

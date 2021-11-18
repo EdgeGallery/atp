@@ -114,6 +114,11 @@ public class ContributionServiceImpl implements ContributionService {
         }
     }
 
+    /**
+     * file type validation.
+     *
+     * @param fileName file name
+     */
     private void fileNameValidation(String fileName) {
         if (null != fileName && !fileName.endsWith(Constant.ZIP)) {
             LOGGER.error("file pattern is wrong, must zip pattern.");
@@ -122,6 +127,11 @@ public class ContributionServiceImpl implements ContributionService {
         }
     }
 
+    /**
+     * contribution name existence validation.
+     *
+     * @param contribution contribution
+     */
     private void checkContributionNameExistence(Contribution contribution) {
         if (null != contributionRepository.getContributionByName(contribution.getName())) {
             LOGGER.error("contribution name alreay exists.");
@@ -130,6 +140,13 @@ public class ContributionServiceImpl implements ContributionService {
         }
     }
 
+    /**
+     * script file is not empty.
+     *
+     * @param contribution contribution info
+     * @param file script file
+     * @return script file is not empty
+     */
     private boolean scriptFileNotEmpty(Contribution contribution, MultipartFile file) {
         return Constant.CONTRIBUTION_TYPE_SCRIPT.equals(contribution.getType()) && null != file && 0 != (int) file
             .getSize();
