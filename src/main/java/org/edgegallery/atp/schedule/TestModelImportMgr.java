@@ -69,7 +69,7 @@ public class TestModelImportMgr {
 
     /**
      * sheet data number check.
-     * 
+     *
      * @param wb workbook
      */
     public void dataNumCheck(Workbook wb) {
@@ -78,22 +78,22 @@ public class TestModelImportMgr {
         Sheet testCaseSheet = wb.getSheet(Constant.TEST_CASE);
 
         if (testScenarioSheet.getPhysicalNumberOfRows() > MAX_DATA_NUM
-                || testSuiteSheet.getPhysicalNumberOfRows() > MAX_DATA_NUM
-                || testCaseSheet.getPhysicalNumberOfRows() > MAX_DATA_NUM) {
+            || testSuiteSheet.getPhysicalNumberOfRows() > MAX_DATA_NUM
+            || testCaseSheet.getPhysicalNumberOfRows() > MAX_DATA_NUM) {
             LOGGER.error("data number of each sheet can not more than 1000.");
             throw new IllegalRequestException(ErrorCode.MAX_IMPORT_NUMBER_ERROR_MSG, ErrorCode.MAX_IMPORT_NUMBER_ERROR,
-                    null);
+                null);
         }
     }
 
     /**
      * analysize test scenario info from sheet of excel.
-     * 
+     *
      * @param wb Workbook
      * @return test scenario info list
      */
     public List<TestScenario> analysizeTestScenarioSheet(Workbook wb, List<JSONObject> failures,
-            Set<String> failureIds) {
+        Set<String> failureIds) {
         Sheet testScenarioSheet = wb.getSheet(Constant.TEST_SCENARIO);
         Iterator<Row> iter = testScenarioSheet.rowIterator();
         List<TestScenario> testScenarioImportList = new ArrayList<TestScenario>();
@@ -101,48 +101,21 @@ public class TestModelImportMgr {
         if (iter.hasNext()) {
             iter.next();
         }
-
         while (iter.hasNext()) {
             Row row = iter.next();
-            String nameCh = CommonUtil.setParamOrDefault(getCellValue(row, 0), getCellValue(row, 1));
-            String nameEn = CommonUtil.setParamOrDefault(getCellValue(row, 1), getCellValue(row, 0));
-            String descriptionCh = getCellValue(row, 2);
-            String descriptionEn = getCellValue(row, 3);
-            TestScenario testScenario = TestScenario.builder().setId(CommonUtil.generateId()).setNameCh(nameCh)
-                    .setNameEn(nameEn).setDescriptionCh(CommonUtil.setParamOrDefault(descriptionCh, descriptionEn))
-                    .setDescriptionEn(CommonUtil.setParamOrDefault(descriptionEn, descriptionCh)).build();
-            testScenario.setCreateTime(taskRepository.getCurrentDate());
-
+            TestScenario testScenario = constructTestScenario(row);
             if (!checkTestScenarioField(testScenario, failures, failureIds, testScenarioImportList)) {
                 continue;
             }
-
-            try {
-                if (null != testScenarioRepository.getTestScenarioByName(nameCh, null)
-                        || null != testScenarioRepository.getTestScenarioByName(null, nameEn)) {
-                    LOGGER.error("name of test scenario {} or {} already exist.", nameCh, nameEn);
-                    failures.add(CommonUtil.setFailureRes(testScenario.getId(), nameEn, Constant.TEST_SCENARIO,
-                            ErrorCode.NAME_EXISTS, String.format(ErrorCode.NAME_EXISTS_MSG, nameEn),
-                            new ArrayList<String>(Arrays.asList(nameEn))));
-                    failureIds.add(testScenario.getId());
-                }
-            } catch (IllegalRequestException e) {
-                // db operate failed
-                failures.add(CommonUtil.setFailureRes(testScenario.getId(), nameEn, Constant.TEST_SCENARIO,
-                        ErrorCode.DB_ERROR, String.format(ErrorCode.DB_ERROR_MSG, GET_TEST_SCENARIO_BY_NAME_FAILED),
-                        new ArrayList<String>(Arrays.asList(GET_TEST_SCENARIO_BY_NAME_FAILED))));
-                failureIds.add(testScenario.getId());
-            }
-
+            checkTestScenarioNameExistence(testScenario, failures, failureIds);
             testScenarioImportList.add(testScenario);
         }
-
         return testScenarioImportList;
     }
 
     /**
      * analysize test suite info from sheet of excel.
-     * 
+     *
      * @param wb workbook
      * @return test suite info list
      */
@@ -154,49 +127,21 @@ public class TestModelImportMgr {
             iter.next();
         }
         List<TestSuite> testSuiteImportList = new ArrayList<TestSuite>();
-
         while (iter.hasNext()) {
             Row row = iter.next();
-            String nameCh = CommonUtil.setParamOrDefault(getCellValue(row, 0), getCellValue(row, 1));
-            String nameEn = CommonUtil.setParamOrDefault(getCellValue(row, 1), getCellValue(row, 0));
-
-            String descriptionCh = getCellValue(row, 2);
-            String descriptionEn = getCellValue(row, 3);
-            TestSuite testSuite = TestSuite.builder().setId(CommonUtil.generateId()).setNameCh(nameCh).setNameEn(nameEn)
-                    .setDescriptionCh(CommonUtil.setParamOrDefault(descriptionCh, descriptionEn))
-                    .setDescriptionEn(CommonUtil.setParamOrDefault(descriptionEn, descriptionCh)).build();
-            testSuite.setCreateTime(taskRepository.getCurrentDate());
-            List<String> scenarioIdList = new ArrayList<String>();
+            TestSuite testSuite = constructTestSuite(row);
             String scenarioNameList = getCellValue(row, 4);
-
             if (!checkTestSuiteField(testSuite, failures, failureIds, testSuiteImportList, scenarioNameList)
-                    || !testSuiteNameCheck(testSuite, failures, failureIds, testSuiteImportList)) {
+                || !testSuiteNameCheck(testSuite, failures, failureIds, testSuiteImportList)) {
                 continue;
             }
 
+            List<String> scenarioIdList = new ArrayList<String>();
             if (StringUtils.isNotBlank(scenarioNameList)) {
                 String[] nameArray = scenarioNameList.split(Constant.COMMA);
-                for (String scenarioName : nameArray) {
-                    try {
-                        TestScenario testScenario = testScenarioRepository.getTestScenarioByName(null, scenarioName);
-                        if (null == testScenario) {
-                            LOGGER.error("test scenario name {} not exists.", scenarioName);
-                            failures.add(CommonUtil.setFailureRes(testSuite.getId(), nameEn, Constant.TEST_SUITE,
-                                    ErrorCode.TEST_SUITE_SCENARIO_NAME_NOT_EXISTS,
-                                    ErrorCode.TEST_SUITE_SCENARIO_NAME_NOT_EXISTS_MSG, null));
-                            failureIds.add(testSuite.getId());
-                        } else {
-                            scenarioIdList.add(testScenario.getId());
-                        }
-                    } catch (IllegalRequestException e) {
-                        // db error
-                        failures.add(CommonUtil.setFailureRes(testSuite.getId(), nameEn, Constant.TEST_SUITE,
-                                ErrorCode.DB_ERROR,
-                                String.format(ErrorCode.DB_ERROR_MSG, GET_TEST_SCENARIO_BY_NAME_FAILED),
-                                new ArrayList<String>(Arrays.asList(GET_TEST_SCENARIO_BY_NAME_FAILED))));
-                        failureIds.add(testSuite.getId());
-                    }
-                }
+                Arrays.asList(nameArray).stream().forEach(
+                    scenarioName -> checkTestSuiteNameExistence(testSuite, scenarioName, scenarioIdList, failures,
+                        failureIds));
             }
             testSuite.setScenarioIdList(scenarioIdList);
             testSuiteImportList.add(testSuite);
@@ -206,7 +151,7 @@ public class TestModelImportMgr {
 
     /**
      * analysize test case info from sheet of excel.
-     * 
+     *
      * @param wb workbook
      * @return test case info list
      */
@@ -218,67 +163,30 @@ public class TestModelImportMgr {
             iter.next();
         }
         List<TestCase> testCaseImportList = new ArrayList<TestCase>();
-
         while (iter.hasNext()) {
             Row row = iter.next();
-            String nameCh = CommonUtil.setParamOrDefault(getCellValue(row, 0), getCellValue(row, 1));
-            String nameEn = CommonUtil.setParamOrDefault(getCellValue(row, 1), getCellValue(row, 0));
-            String descriptionCh = getCellValue(row, 2);
-            String descriptionEn = getCellValue(row, 3);
-            String expectResultCh = getCellValue(row, 6);
-            String expectResultEn = getCellValue(row, 7);
-            String testStepCh = getCellValue(row, 8);
-            String testSepEn = getCellValue(row, 9);
-            TestCase testCase = TestCase.builder().setId(CommonUtil.generateId()).setNameCh(nameCh).setNameEn(nameEn)
-                    .setDescriptionCh(CommonUtil.setParamOrDefault(descriptionCh, descriptionEn))
-                    .setDescriptionEn(CommonUtil.setParamOrDefault(descriptionEn, descriptionCh))
-                    .setType(getCellValue(row, 4)).setCodeLanguage(getCellValue(row, 5))
-                    .setExpectResultCh(CommonUtil.setParamOrDefault(expectResultCh, expectResultEn))
-                    .setExpectResultEn(CommonUtil.setParamOrDefault(expectResultEn, expectResultCh))
-                    .setTestStepCh(CommonUtil.setParamOrDefault(testStepCh, testSepEn))
-                    .setTestStepEn(CommonUtil.setParamOrDefault(testSepEn, testStepCh)).build().toTestCase();
-            testCase.setCreateTime(taskRepository.getCurrentDate());
-            List<String> suiteIdList = new ArrayList<String>();
+            TestCase testCase = constructTestCase(row);
             String suiteNameList = getCellValue(row, 10);
-
             if (!checkTestCaseField(testCase, failures, failureIds, testCaseImportList, suiteNameList)
-                    || !testCaseNameCheck(testCase, failures, failureIds, testCaseImportList)) {
+                || !testCaseNameCheck(testCase, failures, failureIds, testCaseImportList)) {
                 continue;
             }
 
+            List<String> suiteIdList = new ArrayList<String>();
             if (StringUtils.isNotBlank(suiteNameList)) {
                 String[] nameArray = suiteNameList.split(Constant.COMMA);
-                for (String suiteName : nameArray) {
-                    try {
-                        TestSuite testSuite = testSuiteRepository.getTestSuiteByName(null, suiteName);
-                        if (null == testSuite) {
-                            LOGGER.error("test suite name {} not exists.", suiteName);
-                            failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(),
-                                    Constant.TEST_CASE, ErrorCode.TEST_CASE_TEST_SUITE_NAME_NOT_EXISTS,
-                                    ErrorCode.TEST_CASE_TEST_SUITE_NAME_NOT_EXISTS_MSG, null));
-                            failureIds.add(testCase.getId());
-                        } else {
-                            suiteIdList.add(testSuite.getId());
-                        }
-                    } catch (IllegalRequestException e) {
-                        failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(),
-                                Constant.TEST_CASE, ErrorCode.DB_ERROR,
-                                String.format(ErrorCode.DB_ERROR_MSG, "get testSuite by name failed"),
-                                new ArrayList<String>(Arrays.asList("get testSuite by name failed"))));
-                        failureIds.add(testCase.getId());
-                    }
-                }
+                Arrays.asList(nameArray).stream().forEach(
+                    suiteName -> checkTestCaseNameExistence(testCase, suiteName, suiteIdList, failures, failureIds));
             }
             testCase.setTestSuiteIdList(suiteIdList);
             testCaseImportList.add(testCase);
         }
-
         return testCaseImportList;
     }
 
     /**
      * get index th value in excel.
-     * 
+     *
      * @param row row
      * @param index index
      * @return value
@@ -289,7 +197,7 @@ public class TestModelImportMgr {
 
     /**
      * check test scenario filed.
-     * 
+     *
      * @param testScenario testScenario
      * @param failures failures
      * @param failureIds failureIds
@@ -297,13 +205,11 @@ public class TestModelImportMgr {
      * @return check passed
      */
     private boolean checkTestScenarioField(TestScenario testScenario, List<JSONObject> failures, Set<String> failureIds,
-            List<TestScenario> testScenarioImportList) {
-        if (!CommonUtil.isLengthOk(testScenario.getNameCh(), Constant.LENGTH_64)
-                || !CommonUtil.isLengthOk(testScenario.getNameEn(), Constant.LENGTH_64)
-                || !CommonUtil.isLengthOk(testScenario.getDescriptionCh(), Constant.LENGTH_255)
-                || !CommonUtil.isLengthOk(testScenario.getDescriptionEn(), Constant.LENGTH_255)) {
-            failures.add(CommonUtil.setFailureRes(testScenario.getId(), testScenario.getNameEn(),
-                    Constant.TEST_SCENARIO, ErrorCode.LENGTH_CHECK_FAILED, ErrorCode.LENGTH_CHECK_FAILED_MSG, null));
+        List<TestScenario> testScenarioImportList) {
+        if (isTestScenarioFieldLengthException(testScenario)) {
+            failures.add(CommonUtil
+                .setFailureRes(testScenario.getId(), testScenario.getNameEn(), Constant.TEST_SCENARIO,
+                    ErrorCode.LENGTH_CHECK_FAILED, ErrorCode.LENGTH_CHECK_FAILED_MSG, null));
             failureIds.add(testScenario.getId());
             testScenarioImportList.add(testScenario);
             return false;
@@ -313,7 +219,7 @@ public class TestModelImportMgr {
 
     /**
      * check test suite field.
-     * 
+     *
      * @param testSuite testSuite
      * @param failures failures
      * @param failureIds failureIds
@@ -322,13 +228,10 @@ public class TestModelImportMgr {
      * @return check test suite passed
      */
     private boolean checkTestSuiteField(TestSuite testSuite, List<JSONObject> failures, Set<String> failureIds,
-            List<TestSuite> testSuiteImportList, String scenarioNameList) {
-        if (!CommonUtil.isLengthOk(testSuite.getNameCh(), Constant.LENGTH_64)
-                || !CommonUtil.isLengthOk(testSuite.getNameEn(), Constant.LENGTH_64)
-                || !CommonUtil.isLengthOk(testSuite.getDescriptionCh(), Constant.LENGTH_255)
-                || !CommonUtil.isLengthOk(testSuite.getDescriptionEn(), Constant.LENGTH_255)) {
+        List<TestSuite> testSuiteImportList, String scenarioNameList) {
+        if (isTestSuiteFieldLengthException(testSuite)) {
             failures.add(CommonUtil.setFailureRes(testSuite.getId(), testSuite.getNameEn(), Constant.TEST_SUITE,
-                    ErrorCode.LENGTH_CHECK_FAILED, ErrorCode.LENGTH_CHECK_FAILED_MSG, null));
+                ErrorCode.LENGTH_CHECK_FAILED, ErrorCode.LENGTH_CHECK_FAILED_MSG, null));
             failureIds.add(testSuite.getId());
             testSuiteImportList.add(testSuite);
             return false;
@@ -338,8 +241,8 @@ public class TestModelImportMgr {
         for (String scenarioName : scenarioNameArray) {
             if (!CommonUtil.isLengthOk(scenarioName, Constant.LENGTH_64)) {
                 failures.add(CommonUtil.setFailureRes(testSuite.getId(), testSuite.getNameEn(), Constant.TEST_SUITE,
-                        ErrorCode.LENGTH_CHECK_FAILED, ErrorCode.LENGTH_CHECK_FAILED_MSG,
-                        new ArrayList<String>(Arrays.asList(Constant.TEST_SCENARIO))));
+                    ErrorCode.LENGTH_CHECK_FAILED, ErrorCode.LENGTH_CHECK_FAILED_MSG,
+                    new ArrayList<String>(Arrays.asList(Constant.TEST_SCENARIO))));
                 failureIds.add(testSuite.getId());
                 testSuiteImportList.add(testSuite);
                 return false;
@@ -351,7 +254,7 @@ public class TestModelImportMgr {
 
     /**
      * check test case field.
-     * 
+     *
      * @param testCase testCase
      * @param failures failures
      * @param failureIds failureIds
@@ -360,17 +263,10 @@ public class TestModelImportMgr {
      * @return test case field checking passed
      */
     private boolean checkTestCaseField(TestCase testCase, List<JSONObject> failures, Set<String> failureIds,
-            List<TestCase> testCaseImportList, String testSuiteNameList) {
-        if (!CommonUtil.isLengthOk(testCase.getNameCh(), Constant.LENGTH_64)
-                || !CommonUtil.isLengthOk(testCase.getNameEn(), Constant.LENGTH_64)
-                || !CommonUtil.isLengthOk(testCase.getDescriptionCh(), Constant.LENGTH_255)
-                || !CommonUtil.isLengthOk(testCase.getDescriptionEn(), Constant.LENGTH_255)
-                || !CommonUtil.isLengthOk(testCase.getExpectResultCh(), Constant.LENGTH_255)
-                || !CommonUtil.isLengthOk(testCase.getExpectResultEn(), Constant.LENGTH_255)
-                || !CommonUtil.isLengthOk(testCase.getTestStepCh(), Constant.LENGTH_255)
-                || !CommonUtil.isLengthOk(testCase.getTestStepEn(), Constant.LENGTH_255)) {
+        List<TestCase> testCaseImportList, String testSuiteNameList) {
+        if (isTestCaseFieldLengthException(testCase)) {
             failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(), Constant.TEST_CASE,
-                    ErrorCode.LENGTH_CHECK_FAILED, ErrorCode.LENGTH_CHECK_FAILED_MSG, null));
+                ErrorCode.LENGTH_CHECK_FAILED, ErrorCode.LENGTH_CHECK_FAILED_MSG, null));
             failureIds.add(testCase.getId());
             testCaseImportList.add(testCase);
             return false;
@@ -381,8 +277,8 @@ public class TestModelImportMgr {
         for (String testSuiteName : testSuiteNameArray) {
             if (!CommonUtil.isLengthOk(testSuiteName, Constant.LENGTH_64)) {
                 failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(), Constant.TEST_CASE,
-                        ErrorCode.LENGTH_CHECK_FAILED, ErrorCode.LENGTH_CHECK_FAILED_MSG,
-                        new ArrayList<String>(Arrays.asList(Constant.TEST_SUITE))));
+                    ErrorCode.LENGTH_CHECK_FAILED, ErrorCode.LENGTH_CHECK_FAILED_MSG,
+                    new ArrayList<String>(Arrays.asList(Constant.TEST_SUITE))));
                 failureIds.add(testCase.getId());
                 testCaseImportList.add(testCase);
                 return false;
@@ -390,21 +286,21 @@ public class TestModelImportMgr {
         }
 
         // test case type check
-        if (!Constant.TASK_TYPE_AUTOMATIC.equalsIgnoreCase(testCase.getType())
-                && !Constant.TASK_TYPE_MANUAL.equalsIgnoreCase(testCase.getType())) {
+        if (!Constant.TASK_TYPE_AUTOMATIC.equalsIgnoreCase(testCase.getType()) && !Constant.TASK_TYPE_MANUAL
+            .equalsIgnoreCase(testCase.getType())) {
             failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(), Constant.TEST_CASE,
-                    ErrorCode.TEST_CASE_TYPE_ERROR, ErrorCode.TEST_CASE_TYPE_ERROR_MSG, null));
+                ErrorCode.TEST_CASE_TYPE_ERROR, ErrorCode.TEST_CASE_TYPE_ERROR_MSG, null));
             failureIds.add(testCase.getId());
             testCaseImportList.add(testCase);
             return false;
         }
 
         // test case language check
-        if (!Constant.JAR.equalsIgnoreCase(testCase.getCodeLanguage())
-                && !Constant.PYTHON.equalsIgnoreCase(testCase.getCodeLanguage())
-                && !Constant.JAVA.equalsIgnoreCase(testCase.getCodeLanguage())) {
+        if (!Constant.JAR.equalsIgnoreCase(testCase.getCodeLanguage()) && !Constant.PYTHON
+            .equalsIgnoreCase(testCase.getCodeLanguage()) && !Constant.JAVA
+            .equalsIgnoreCase(testCase.getCodeLanguage())) {
             failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(), Constant.TEST_CASE,
-                    ErrorCode.TEST_CASE_LANGUAGE_ERROR, ErrorCode.TEST_CASE_LANGUAGE_ERROR_MSG, null));
+                ErrorCode.TEST_CASE_LANGUAGE_ERROR, ErrorCode.TEST_CASE_LANGUAGE_ERROR_MSG, null));
             failureIds.add(testCase.getId());
             testCaseImportList.add(testCase);
             return false;
@@ -415,7 +311,7 @@ public class TestModelImportMgr {
 
     /**
      * test suite name exists check successfully.
-     * 
+     *
      * @param testSuite testSuite
      * @param failures failures
      * @param failureIds failureIds
@@ -423,22 +319,24 @@ public class TestModelImportMgr {
      * @return is checking successfully.
      */
     private boolean testSuiteNameCheck(TestSuite testSuite, List<JSONObject> failures, Set<String> failureIds,
-            List<TestSuite> testSuiteImportList) {
+        List<TestSuite> testSuiteImportList) {
         try {
             if (null != testSuiteRepository.getTestSuiteByName(testSuite.getNameCh(), null)
-                    || null != testSuiteRepository.getTestSuiteByName(null, testSuite.getNameEn())) {
-                LOGGER.error("name of test suite {} or {} already exist.", testSuite.getNameCh(),
-                        testSuite.getNameEn());
-                failures.add(CommonUtil.setFailureRes(testSuite.getId(), testSuite.getNameEn(), Constant.TEST_SUITE,
-                        ErrorCode.NAME_EXISTS, String.format(ErrorCode.NAME_EXISTS_MSG, testSuite.getNameEn()),
+                || null != testSuiteRepository.getTestSuiteByName(null, testSuite.getNameEn())) {
+                LOGGER
+                    .error("name of test suite {} or {} already exist.", testSuite.getNameCh(), testSuite.getNameEn());
+                failures.add(CommonUtil
+                    .setFailureRes(testSuite.getId(), testSuite.getNameEn(), Constant.TEST_SUITE, ErrorCode.NAME_EXISTS,
+                        String.format(ErrorCode.NAME_EXISTS_MSG, testSuite.getNameEn()),
                         new ArrayList<String>(Arrays.asList(testSuite.getNameEn()))));
                 failureIds.add(testSuite.getId());
                 testSuiteImportList.add(testSuite);
                 return false;
             }
         } catch (IllegalRequestException e) {
-            failures.add(CommonUtil.setFailureRes(testSuite.getId(), testSuite.getNameEn(), Constant.TEST_SUITE,
-                    ErrorCode.DB_ERROR, String.format(ErrorCode.DB_ERROR_MSG, "get test suite by name failed"),
+            failures.add(CommonUtil
+                .setFailureRes(testSuite.getId(), testSuite.getNameEn(), Constant.TEST_SUITE, ErrorCode.DB_ERROR,
+                    String.format(ErrorCode.DB_ERROR_MSG, "get test suite by name failed"),
                     new ArrayList<String>(Arrays.asList("get test suite by name failed"))));
             failureIds.add(testSuite.getId());
             testSuiteImportList.add(testSuite);
@@ -449,7 +347,7 @@ public class TestModelImportMgr {
 
     /**
      * test case name exists check successfully.
-     * 
+     *
      * @param testCase testCase
      * @param failures failures
      * @param failureIds failureIds
@@ -457,26 +355,167 @@ public class TestModelImportMgr {
      * @return is checking successfully.
      */
     private boolean testCaseNameCheck(TestCase testCase, List<JSONObject> failures, Set<String> failureIds,
-            List<TestCase> testCaseImportList) {
+        List<TestCase> testCaseImportList) {
         try {
-            if (null != testCaseRepository.findByName(testCase.getNameCh(), null)
-                    || null != testCaseRepository.findByName(null, testCase.getNameEn())) {
+            if (null != testCaseRepository.findByName(testCase.getNameCh(), null) || null != testCaseRepository
+                .findByName(null, testCase.getNameEn())) {
                 LOGGER.error("name of test case {} or {} already exist.", testCase.getNameCh(), testCase.getNameEn());
-                failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(), Constant.TEST_CASE,
-                        ErrorCode.NAME_EXISTS, String.format(ErrorCode.NAME_EXISTS_MSG, testCase.getNameEn()),
+                failures.add(CommonUtil
+                    .setFailureRes(testCase.getId(), testCase.getNameEn(), Constant.TEST_CASE, ErrorCode.NAME_EXISTS,
+                        String.format(ErrorCode.NAME_EXISTS_MSG, testCase.getNameEn()),
                         new ArrayList<String>(Arrays.asList(testCase.getNameEn()))));
                 failureIds.add(testCase.getId());
                 testCaseImportList.add(testCase);
                 return false;
             }
         } catch (IllegalRequestException e) {
-            failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(), Constant.TEST_CASE,
-                    ErrorCode.DB_ERROR, String.format(ErrorCode.DB_ERROR_MSG, "test case find by name failed"),
+            failures.add(CommonUtil
+                .setFailureRes(testCase.getId(), testCase.getNameEn(), Constant.TEST_CASE, ErrorCode.DB_ERROR,
+                    String.format(ErrorCode.DB_ERROR_MSG, "test case find by name failed"),
                     new ArrayList<String>(Arrays.asList("test case find by name failed"))));
             failureIds.add(testCase.getId());
             testCaseImportList.add(testCase);
             return false;
         }
         return true;
+    }
+
+    private void checkTestScenarioNameExistence(TestScenario testScenario, List<JSONObject> failures,
+        Set<String> failureIds) {
+        String nameCh = testScenario.getNameCh();
+        String nameEn = testScenario.getNameEn();
+        try {
+            if (null != testScenarioRepository.getTestScenarioByName(nameCh, null) || null != testScenarioRepository
+                .getTestScenarioByName(null, nameEn)) {
+                LOGGER.error("name of test scenario {} or {} already exist.", nameCh, nameEn);
+                failures.add(CommonUtil
+                    .setFailureRes(testScenario.getId(), nameEn, Constant.TEST_SCENARIO, ErrorCode.NAME_EXISTS,
+                        String.format(ErrorCode.NAME_EXISTS_MSG, nameEn),
+                        new ArrayList<String>(Arrays.asList(nameEn))));
+                failureIds.add(testScenario.getId());
+            }
+        } catch (IllegalRequestException e) {
+            // db operate failed
+            failures.add(CommonUtil
+                .setFailureRes(testScenario.getId(), nameEn, Constant.TEST_SCENARIO, ErrorCode.DB_ERROR,
+                    String.format(ErrorCode.DB_ERROR_MSG, GET_TEST_SCENARIO_BY_NAME_FAILED),
+                    new ArrayList<String>(Arrays.asList(GET_TEST_SCENARIO_BY_NAME_FAILED))));
+            failureIds.add(testScenario.getId());
+        }
+    }
+
+    private TestScenario constructTestScenario(Row row) {
+        String nameCh = CommonUtil.setParamOrDefault(getCellValue(row, 0), getCellValue(row, 1));
+        String nameEn = CommonUtil.setParamOrDefault(getCellValue(row, 1), getCellValue(row, 0));
+        String descriptionCh = getCellValue(row, 2);
+        String descriptionEn = getCellValue(row, 3);
+        TestScenario testScenario = TestScenario.builder().setId(CommonUtil.generateId()).setNameCh(nameCh)
+            .setNameEn(nameEn).setDescriptionCh(CommonUtil.setParamOrDefault(descriptionCh, descriptionEn))
+            .setDescriptionEn(CommonUtil.setParamOrDefault(descriptionEn, descriptionCh)).build();
+        testScenario.setCreateTime(taskRepository.getCurrentDate());
+        return testScenario;
+    }
+
+    private void checkTestSuiteNameExistence(TestSuite testSuite, String scenarioName, List<String> scenarioIdList,
+        List<JSONObject> failures, Set<String> failureIds) {
+        try {
+            TestScenario testScenario = testScenarioRepository.getTestScenarioByName(null, scenarioName);
+            if (null == testScenario) {
+                LOGGER.error("test scenario name {} not exists.", scenarioName);
+                failures.add(CommonUtil.setFailureRes(testSuite.getId(), testSuite.getNameEn(), Constant.TEST_SUITE,
+                    ErrorCode.TEST_SUITE_SCENARIO_NAME_NOT_EXISTS, ErrorCode.TEST_SUITE_SCENARIO_NAME_NOT_EXISTS_MSG,
+                    null));
+                failureIds.add(testSuite.getId());
+            } else {
+                scenarioIdList.add(testScenario.getId());
+            }
+        } catch (IllegalRequestException e) {
+            // db error
+            failures.add(CommonUtil
+                .setFailureRes(testSuite.getId(), testSuite.getNameEn(), Constant.TEST_SUITE, ErrorCode.DB_ERROR,
+                    String.format(ErrorCode.DB_ERROR_MSG, GET_TEST_SCENARIO_BY_NAME_FAILED),
+                    new ArrayList<String>(Arrays.asList(GET_TEST_SCENARIO_BY_NAME_FAILED))));
+            failureIds.add(testSuite.getId());
+        }
+    }
+
+    private TestSuite constructTestSuite(Row row) {
+        String nameCh = CommonUtil.setParamOrDefault(getCellValue(row, 0), getCellValue(row, 1));
+        String nameEn = CommonUtil.setParamOrDefault(getCellValue(row, 1), getCellValue(row, 0));
+        String descriptionCh = getCellValue(row, 2);
+        String descriptionEn = getCellValue(row, 3);
+        TestSuite testSuite = TestSuite.builder().setId(CommonUtil.generateId()).setNameCh(nameCh).setNameEn(nameEn)
+            .setDescriptionCh(CommonUtil.setParamOrDefault(descriptionCh, descriptionEn))
+            .setDescriptionEn(CommonUtil.setParamOrDefault(descriptionEn, descriptionCh)).build();
+        testSuite.setCreateTime(taskRepository.getCurrentDate());
+        return testSuite;
+    }
+
+    private void checkTestCaseNameExistence(TestCase testCase, String suiteName, List<String> suiteIdList,
+        List<JSONObject> failures, Set<String> failureIds) {
+        try {
+            TestSuite testSuite = testSuiteRepository.getTestSuiteByName(null, suiteName);
+            if (null == testSuite) {
+                LOGGER.error("test suite name {} not exists.", suiteName);
+                failures.add(CommonUtil.setFailureRes(testCase.getId(), testCase.getNameEn(), Constant.TEST_CASE,
+                    ErrorCode.TEST_CASE_TEST_SUITE_NAME_NOT_EXISTS, ErrorCode.TEST_CASE_TEST_SUITE_NAME_NOT_EXISTS_MSG,
+                    null));
+                failureIds.add(testCase.getId());
+            } else {
+                suiteIdList.add(testSuite.getId());
+            }
+        } catch (IllegalRequestException e) {
+            failures.add(CommonUtil
+                .setFailureRes(testCase.getId(), testCase.getNameEn(), Constant.TEST_CASE, ErrorCode.DB_ERROR,
+                    String.format(ErrorCode.DB_ERROR_MSG, "get testSuite by name failed"),
+                    new ArrayList<String>(Arrays.asList("get testSuite by name failed"))));
+            failureIds.add(testCase.getId());
+        }
+    }
+
+    private TestCase constructTestCase(Row row) {
+        String nameCh = CommonUtil.setParamOrDefault(getCellValue(row, 0), getCellValue(row, 1));
+        String nameEn = CommonUtil.setParamOrDefault(getCellValue(row, 1), getCellValue(row, 0));
+        String descriptionCh = getCellValue(row, 2);
+        String descriptionEn = getCellValue(row, 3);
+        String expectResultCh = getCellValue(row, 6);
+        String expectResultEn = getCellValue(row, 7);
+        String testStepCh = getCellValue(row, 8);
+        String testSepEn = getCellValue(row, 9);
+        TestCase testCase = TestCase.builder().setId(CommonUtil.generateId()).setNameCh(nameCh).setNameEn(nameEn)
+            .setDescriptionCh(CommonUtil.setParamOrDefault(descriptionCh, descriptionEn))
+            .setDescriptionEn(CommonUtil.setParamOrDefault(descriptionEn, descriptionCh)).setType(getCellValue(row, 4))
+            .setCodeLanguage(getCellValue(row, 5))
+            .setExpectResultCh(CommonUtil.setParamOrDefault(expectResultCh, expectResultEn))
+            .setExpectResultEn(CommonUtil.setParamOrDefault(expectResultEn, expectResultCh))
+            .setTestStepCh(CommonUtil.setParamOrDefault(testStepCh, testSepEn))
+            .setTestStepEn(CommonUtil.setParamOrDefault(testSepEn, testStepCh)).build().toTestCase();
+        testCase.setCreateTime(taskRepository.getCurrentDate());
+        return testCase;
+    }
+
+    private boolean isTestSuiteFieldLengthException(TestSuite testSuite) {
+        return !CommonUtil.isLengthOk(testSuite.getNameCh(), Constant.LENGTH_64) || !CommonUtil
+            .isLengthOk(testSuite.getNameEn(), Constant.LENGTH_64) || !CommonUtil
+            .isLengthOk(testSuite.getDescriptionCh(), Constant.LENGTH_255) || !CommonUtil
+            .isLengthOk(testSuite.getDescriptionEn(), Constant.LENGTH_255);
+    }
+
+    private boolean isTestScenarioFieldLengthException(TestScenario testScenario) {
+        return !CommonUtil.isLengthOk(testScenario.getNameCh(), Constant.LENGTH_64) || !CommonUtil
+            .isLengthOk(testScenario.getNameEn(), Constant.LENGTH_64) || !CommonUtil
+            .isLengthOk(testScenario.getDescriptionCh(), Constant.LENGTH_255) || !CommonUtil
+            .isLengthOk(testScenario.getDescriptionEn(), Constant.LENGTH_255);
+    }
+
+    private boolean isTestCaseFieldLengthException(TestCase testCase) {
+        return !CommonUtil.isLengthOk(testCase.getNameCh(), Constant.LENGTH_64) || !CommonUtil
+            .isLengthOk(testCase.getNameEn(), Constant.LENGTH_64) || !CommonUtil
+            .isLengthOk(testCase.getDescriptionCh(), Constant.LENGTH_255) || !CommonUtil
+            .isLengthOk(testCase.getDescriptionEn(), Constant.LENGTH_255) || !CommonUtil
+            .isLengthOk(testCase.getExpectResultCh(), Constant.LENGTH_255) || !CommonUtil
+            .isLengthOk(testCase.getExpectResultEn(), Constant.LENGTH_255) || !CommonUtil
+            .isLengthOk(testCase.getTestStepCh(), Constant.LENGTH_255) || !CommonUtil
+            .isLengthOk(testCase.getTestStepEn(), Constant.LENGTH_255);
     }
 }

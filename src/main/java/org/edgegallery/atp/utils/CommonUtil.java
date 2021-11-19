@@ -120,45 +120,69 @@ public class CommonUtil {
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
                 if (entry.getName().split(Constant.SLASH).length == 1 && checkFileSuffix("mf", entry.getName())) {
-                    try (BufferedReader br = new BufferedReader(
-                        new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
-                        String line = "";
-                        while ((line = br.readLine()) != null) {
-                            // prefix: path
-                            if (line.trim().startsWith(Constant.APP_NAME)) {
-                                packageInfo.put(Constant.APP_NAME, line.split(Constant.COLON)[1].trim());
-                            }
-                            if (line.trim().startsWith(Constant.APP_VERSION)) {
-                                packageInfo.put(Constant.APP_VERSION, line.split(Constant.COLON)[1].trim());
-                            }
-                            if (line.trim().startsWith(Constant.PROVIDER_ID)) {
-                                packageInfo.put(Constant.PROVIDER_ID, line.split(Constant.COLON)[1].trim());
-                            }
-                        }
-                    }
+                    analysizeMfFile(packageInfo, zipFile, entry);
                 }
-
                 if (entry.getName().split(Constant.SLASH).length == 2 && "SwImageDesc.json"
                     .equals(entry.getName().substring(entry.getName().lastIndexOf(Constant.SLASH) + 1))) {
-                    try (BufferedReader br = new BufferedReader(
-                        new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
-                        String line = "";
-                        while ((line = br.readLine()) != null) {
-                            // prefix: path
-                            if (line.trim().startsWith("\"architecture\"")) {
-                                String architecture = line.split(Constant.COLON)[1].trim();
-                                architecture = architecture.replaceAll("[\",]", "");
-                                packageInfo.put(Constant.ARCHITECTURE, architecture);
-                            }
-                        }
-                    }
+                    analysizeImageJsonFile(packageInfo, zipFile, entry);
                 }
             }
         } catch (IOException e) {
             LOGGER.error("getPackageInfo failed. {}", e.getMessage());
         }
-
         return packageInfo;
+    }
+
+    /**
+     * analusize SwImageDesc.json file and set architecture to packageinfo.
+     *
+     * @param packageInfo packageinfo
+     * @param zipFile zipFile
+     * @param entry entry
+     * @throws IOException IOException
+     */
+    private static void analysizeImageJsonFile(Map<String, String> packageInfo, ZipFile zipFile, ZipEntry entry)
+        throws IOException {
+        try (BufferedReader br = new BufferedReader(
+            new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
+            String line = "";
+            while ((line = br.readLine()) != null) {
+                // prefix: path
+                if (line.trim().startsWith("\"architecture\"")) {
+                    String architecture = line.split(Constant.COLON)[1].trim();
+                    architecture = architecture.replaceAll("[\",]", "");
+                    packageInfo.put(Constant.ARCHITECTURE, architecture);
+                }
+            }
+        }
+    }
+
+    /**
+     * analusize mf file and set app base info to packageinfo.
+     *
+     * @param packageInfo packageInfo
+     * @param zipFile zipFile
+     * @param entry entry
+     * @throws IOException IOException
+     */
+    private static void analysizeMfFile(Map<String, String> packageInfo, ZipFile zipFile, ZipEntry entry)
+        throws IOException {
+        try (BufferedReader br = new BufferedReader(
+            new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
+            String line = "";
+            while ((line = br.readLine()) != null) {
+                // prefix: path
+                if (line.trim().startsWith(Constant.APP_NAME)) {
+                    packageInfo.put(Constant.APP_NAME, line.split(Constant.COLON)[1].trim());
+                }
+                if (line.trim().startsWith(Constant.APP_VERSION)) {
+                    packageInfo.put(Constant.APP_VERSION, line.split(Constant.COLON)[1].trim());
+                }
+                if (line.trim().startsWith(Constant.PROVIDER_ID)) {
+                    packageInfo.put(Constant.PROVIDER_ID, line.split(Constant.COLON)[1].trim());
+                }
+            }
+        }
     }
 
     /**
