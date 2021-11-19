@@ -122,7 +122,8 @@ public class FileChecker {
              ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));) {
             while ((entry = zis.getNextEntry()) != null) {
                 int count;
-                // Write the files to the disk, but ensure that the entryName is valid and that the file is not insanely big
+                // Write the files to the disk, but ensure that the entryName is valid
+                // and that the file is not insanely big
                 String name = sanitizeFileName(entry.getName(), tempDir);
                 File file = new File(name);
                 if (isDir(entry, file)) {
