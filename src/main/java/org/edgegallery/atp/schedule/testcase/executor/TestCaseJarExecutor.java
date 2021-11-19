@@ -42,7 +42,6 @@ public class TestCaseJarExecutor implements TestCaseExecutor {
              URLClassLoader classLoader = new URLClassLoader(new URL[] {new URL("file:" + testCase.getFilePath())},
                  Thread.currentThread().getContextClassLoader());) {
             Enumeration<JarEntry> entries = jarFile.entries();
-
             while (entries.hasMoreElements()) {
                 JarEntry jarEntry = entries.nextElement();
                 String name = jarEntry.getName();
@@ -54,7 +53,6 @@ public class TestCaseJarExecutor implements TestCaseExecutor {
                     CommonUtil.setResult(response, taskTestCase);
                 }
             }
-
         } catch (Exception e) {
             LOGGER.error("call jar failed.", e);
             taskTestCase.setResult(Constant.FAILED);

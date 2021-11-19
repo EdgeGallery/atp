@@ -42,8 +42,11 @@ public class FileChecker {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileChecker.class);
 
-    private FileChecker() {
+    private static final String WINDOWS_BASE_PATH = "C:\\atp";
 
+    private static final String LINUX_BASE_PATH = "/usr/atp";
+
+    private FileChecker() {
     }
 
     /**
@@ -53,12 +56,7 @@ public class FileChecker {
      */
     public static File check(MultipartFile file, String taskId) {
         fileNameCheck(file.getOriginalFilename());
-
-        if (file.getSize() > getMaxFileSize()) {
-            LOGGER.error("fileSize is too big");
-            throw new IllegalRequestException(String.format(ErrorCode.SIZE_OUT_OF_LIMIT_MSG, "file", "5G"),
-                ErrorCode.SIZE_OUT_OF_LIMIT, new ArrayList<String>(Arrays.asList("file", "5G")));
-        }
+        checkZipFileSize(file);
 
         File result = null;
         // temp/taskId_fileName
@@ -79,7 +77,6 @@ public class FileChecker {
             LOGGER.error("create temp file with IOException. {}", e.getMessage());
             throw new IllegalRequestException(ErrorCode.FILE_IO_EXCEPTION_MSG, ErrorCode.FILE_IO_EXCEPTION, null);
         }
-
         return result;
     }
 
@@ -106,11 +103,7 @@ public class FileChecker {
      * @return path
      */
     public static String getDir() {
-        if (System.getProperty("os.name").toLowerCase().contains("windows")) {
-            return "C:\\atp";
-        } else {
-            return "/usr/atp";
-        }
+        return System.getProperty("os.name").toLowerCase().contains("windows") ? WINDOWS_BASE_PATH : LINUX_BASE_PATH;
     }
 
     /**
@@ -125,20 +118,18 @@ public class FileChecker {
         long total = 0;
         byte[] data = new byte[Constant.BUFFER];
         String tempDir = Constant.WORK_TEMP_DIR + File.separator + CommonUtil.generateId();
-
         try (FileInputStream fis = FileUtils.openInputStream(new File(fileName));
              ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));) {
             while ((entry = zis.getNextEntry()) != null) {
                 int count;
-                // Write the files to the disk, but ensure that the entryName is valid,
+                // Write the files to the disk, but ensure that the entryName is valid
                 // and that the file is not insanely big
                 String name = sanitizeFileName(entry.getName(), tempDir);
-                File f = new File(name);
-                if (isDir(entry, f)) {
+                File file = new File(name);
+                if (isDir(entry, file)) {
                     continue;
                 }
-
-                try (FileOutputStream fos = FileUtils.openOutputStream(f);
+                try (FileOutputStream fos = FileUtils.openOutputStream(file);
                      BufferedOutputStream dest = new BufferedOutputStream(fos, Constant.BUFFER)) {
                     while (total <= Constant.TOO_BIG && (count = zis.read(data, 0, Constant.BUFFER)) != -1) {
                         dest.write(data, 0, count);
@@ -147,18 +138,8 @@ public class FileChecker {
                     dest.flush();
                 }
                 entries++;
-                if (entries > Constant.TOO_MANY) {
-                    LOGGER.error("Too many files to unzip.");
-                    throw new IllegalRequestException(
-                        String.format(ErrorCode.NUMBER_OUT_OF_LIMIT_MSG, "unzip files", "1024"),
-                        ErrorCode.NUMBER_OUT_OF_LIMIT, new ArrayList<String>(Arrays.asList("unzip files", "1024")));
-                }
-                if (total > Constant.TOO_BIG) {
-                    LOGGER.error("File being unzipped is too big.");
-                    throw new IllegalRequestException(
-                        String.format(ErrorCode.SIZE_OUT_OF_LIMIT_MSG, "unzip file", "10G"),
-                        ErrorCode.SIZE_OUT_OF_LIMIT, new ArrayList<String>(Arrays.asList("unzip file", "10G")));
-                }
+                checkUnzipFileCount(entries);
+                checkUnzipFileSize(total);
             }
         } catch (IOException e) {
             LOGGER.error("unzip csar with exception. {}", e.getMessage());
@@ -167,11 +148,6 @@ public class FileChecker {
             FileUtils.cleanDirectory(new File(tempDir));
             CommonUtil.deleteFile(tempDir);
         }
-    }
-
-    private static boolean isAllowedFileName(String originalFilename) {
-        return isValid(originalFilename) && getFileExtensions()
-            .contains(Files.getFileExtension(originalFilename.toLowerCase()));
     }
 
     /**
@@ -208,6 +184,29 @@ public class FileChecker {
         }
     }
 
+    /**
+     * file name check.
+     *
+     * @param originalFileName originalFileName
+     */
+    public static void fileNameCheck(String originalFileName) {
+        if (originalFileName == null) {
+            LOGGER.error("Package File name is null.");
+            throw new IllegalRequestException(String.format(ErrorCode.PARAM_IS_NULL_MSG, "package file name"),
+                ErrorCode.PARAM_IS_NULL, new ArrayList<String>(Arrays.asList("package file name")));
+        }
+        // file name should not contains blank.
+        if (originalFileName.split("\\s").length > 1) {
+            LOGGER.error("fileName contain blank");
+            throw new IllegalRequestException(ErrorCode.FILE_NAME_CONTAIN_BLANK_MSG, ErrorCode.FILE_NAME_CONTAIN_BLANK,
+                null);
+        }
+        if (!isAllowedFileName(originalFileName)) {
+            LOGGER.error("fileName is Illegal");
+            throw new IllegalRequestException(ErrorCode.FILE_NAME_ILLEGAL_MSG, ErrorCode.FILE_NAME_ILLEGAL, null);
+        }
+    }
+
     private static long getMaxFileSize() {
         // 5G
         return 5 * 1024 * 1024 * 1024;
@@ -217,21 +216,10 @@ public class FileChecker {
         return Arrays.asList("zip", "csar");
     }
 
-    /**
-     * check if entry is directory, if then create dir.
-     *
-     * @param entry entry of next element.
-     * @param f File
-     * @return
-     */
     private static boolean isDir(ZipEntry entry, File f) {
         if (entry.isDirectory()) {
             boolean isSuccess = f.mkdirs();
-            if (isSuccess) {
-                return true;
-            } else {
-                return f.exists();
-            }
+            return isSuccess ? true : f.exists();
         }
         return false;
     }
@@ -251,29 +239,33 @@ public class FileChecker {
         }
     }
 
-    /**
-     * file name check.
-     *
-     * @param originalFileName originalFileName
-     */
-    public static void fileNameCheck(String originalFileName) {
-        if (originalFileName == null) {
-            LOGGER.error("Package File name is null.");
-            throw new IllegalRequestException(String.format(ErrorCode.PARAM_IS_NULL_MSG, "package file name"),
-                ErrorCode.PARAM_IS_NULL, new ArrayList<String>(Arrays.asList("package file name")));
+    private static void checkUnzipFileSize(long total) {
+        if (total > Constant.TOO_BIG) {
+            LOGGER.error("File being unzipped is too big.");
+            throw new IllegalRequestException(String.format(ErrorCode.SIZE_OUT_OF_LIMIT_MSG, "unzip file", "10G"),
+                ErrorCode.SIZE_OUT_OF_LIMIT, new ArrayList<String>(Arrays.asList("unzip file", "10G")));
         }
+    }
 
-        // file name should not contains blank.
-        if (originalFileName.split("\\s").length > 1) {
-            LOGGER.error("fileName contain blank");
-            throw new IllegalRequestException(ErrorCode.FILE_NAME_CONTAIN_BLANK_MSG, ErrorCode.FILE_NAME_CONTAIN_BLANK,
-                null);
+    private static void checkUnzipFileCount(int entries) {
+        if (entries > Constant.TOO_MANY) {
+            LOGGER.error("Too many files to unzip.");
+            throw new IllegalRequestException(String.format(ErrorCode.NUMBER_OUT_OF_LIMIT_MSG, "unzip files", "1024"),
+                ErrorCode.NUMBER_OUT_OF_LIMIT, new ArrayList<String>(Arrays.asList("unzip files", "1024")));
         }
+    }
 
-        if (!isAllowedFileName(originalFileName)) {
-            LOGGER.error("fileName is Illegal");
-            throw new IllegalRequestException(ErrorCode.FILE_NAME_ILLEGAL_MSG, ErrorCode.FILE_NAME_ILLEGAL, null);
+    private static void checkZipFileSize(MultipartFile file) {
+        if (file.getSize() > getMaxFileSize()) {
+            LOGGER.error("fileSize is too big");
+            throw new IllegalRequestException(String.format(ErrorCode.SIZE_OUT_OF_LIMIT_MSG, "file", "5G"),
+                ErrorCode.SIZE_OUT_OF_LIMIT, new ArrayList<String>(Arrays.asList("file", "5G")));
         }
+    }
+
+    private static boolean isAllowedFileName(String originalFilename) {
+        return isValid(originalFilename) && getFileExtensions()
+            .contains(Files.getFileExtension(originalFilename.toLowerCase()));
     }
 
 }

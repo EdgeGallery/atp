@@ -133,11 +133,7 @@ public class TestCaseManagerImpl {
                         .generateExecutor(testCase.getCodeLanguage());
                     executor.executeTestCase(testCase, filePath, taskTestCase, context);
 
-                    if (!Constant.RUNNING.equals(resultStatus)) {
-                        resultStatus = Constant.FAILED.equals(taskTestCase.getResult())
-                            ? Constant.FAILED
-                            : resultStatus;
-                    }
+                    resultStatus = setResultStatus(resultStatus, taskTestCase);
                     taskRepository.update(task);
                 } else {
                     // have manual test case, the total status is running
@@ -163,6 +159,20 @@ public class TestCaseManagerImpl {
                 });
             }
             context.put(Constant.CONFIG_PARAM_LIST, configParam.toString());
+        }
+
+        /**
+         * set result status.
+         *
+         * @param resultStatus result status
+         * @param taskTestCase task test case execute result info
+         * @return total result status
+         */
+        private String setResultStatus(String resultStatus, TaskTestCase taskTestCase) {
+            if (!Constant.RUNNING.equals(resultStatus)) {
+                resultStatus = Constant.FAILED.equals(taskTestCase.getResult()) ? Constant.FAILED : resultStatus;
+            }
+            return resultStatus;
         }
     }
 }

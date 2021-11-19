@@ -151,7 +151,6 @@ public class SignatureValidation {
             } catch (OperatorCreationException e) {
                 LOGGER.error("operator create exception, {}", e);
             }
-
         }
         return false;
     }
