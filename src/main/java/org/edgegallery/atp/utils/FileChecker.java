@@ -33,6 +33,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.edgegallery.atp.constant.Constant;
 import org.edgegallery.atp.constant.ErrorCode;
+import org.edgegallery.atp.model.testscenario.TestModelBatchImport;
 import org.edgegallery.atp.utils.exception.IllegalRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -264,6 +265,7 @@ public class FileChecker {
     }
 
     private static boolean isAllowedFileName(String originalFilename) {
+        LOGGER.info("file name: {}", originalFilename);
         return isValid(originalFilename) && getFileExtensions()
             .contains(Files.getFileExtension(originalFilename.toLowerCase()));
     }
