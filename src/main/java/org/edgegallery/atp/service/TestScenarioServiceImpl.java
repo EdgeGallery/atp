@@ -308,9 +308,10 @@ public class TestScenarioServiceImpl implements TestScenarioService {
         testScenarioList.forEach(testScenario -> {
             if (StringUtils.isNotEmpty(testScenario.getNameEn()) && !failureIds.contains(testScenario.getId())) {
                 File orgFile = testModelBatchImport.getScenarioIconFile().get(testScenario.getNameEn());
-                String iconFilePath = Constant.BASIC_ICON_PATH.concat(Constant.FILE_TYPE_SCENARIO)
-                    .concat(Constant.UNDER_LINE).concat(testScenario.getId()).concat(Constant.DOT).concat("png");
                 try {
+                    CommonUtil.checkParamEmpty(orgFile, "test scenario icon name not match.", null);
+                    String iconFilePath = Constant.BASIC_ICON_PATH.concat(Constant.FILE_TYPE_SCENARIO)
+                        .concat(Constant.UNDER_LINE).concat(testScenario.getId()).concat(Constant.DOT).concat("png");
                     FileUtils.copyFile(orgFile, new File(iconFilePath));
                     AtpFile atpFile = new AtpFile(testScenario.getId(), Constant.FILE_TYPE_SCENARIO,
                         taskRepository.getCurrentDate(), iconFilePath);
