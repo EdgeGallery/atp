@@ -308,36 +308,60 @@ public class TestScenarioServiceImpl implements TestScenarioService {
         testScenarioList.forEach(testScenario -> {
             if (StringUtils.isNotEmpty(testScenario.getNameEn()) && !failureIds.contains(testScenario.getId())) {
                 File orgFile = testModelBatchImport.getScenarioIconFile().get(testScenario.getNameEn());
-                try {
-                    CommonUtil.checkParamEmpty(orgFile, "test scenario icon name not match.", null);
-                    String iconFilePath = Constant.BASIC_ICON_PATH.concat(Constant.FILE_TYPE_SCENARIO)
-                        .concat(Constant.UNDER_LINE).concat(testScenario.getId()).concat(Constant.DOT).concat("png");
-                    FileUtils.copyFile(orgFile, new File(iconFilePath));
-                    AtpFile atpFile = new AtpFile(testScenario.getId(), Constant.FILE_TYPE_SCENARIO,
-                        taskRepository.getCurrentDate(), iconFilePath);
-                    fileRepository.insertFile(atpFile);
-                } catch (IOException e) {
-                    LOGGER.error("copy input stream to file failed. {}", e);
+                if (null != orgFile) {
+                    updateScenarioAndIconFile(testScenario, orgFile, failureIds, failures);
+                } else {
+                    LOGGER.error("test scenario icon in file dir and excel are not match or not exists.");
                     failures.add(CommonUtil
                         .setFailureRes(testScenario.getId(), testScenario.getNameEn(), Constant.TEST_SCENARIO,
-                            ErrorCode.FILE_IO_EXCEPTION, ErrorCode.FILE_IO_EXCEPTION_MSG, null));
+                            ErrorCode.NOT_FOUND_EXCEPTION,
+                            String.format(ErrorCode.NOT_FOUND_EXCEPTION_MSG, "test scenario icon"),
+                            Arrays.asList("test scenario icon")));
                     failureIds.add(testScenario.getId());
                     // roll back insert
                     testScenarioRepository.deleteTestScenario(testScenario.getId());
-                } catch (IllegalRequestException e) {
-                    LOGGER.error("update repository failed. ");
-                    failures.add(CommonUtil
-                        .setFailureRes(testScenario.getId(), testScenario.getId(), Constant.TEST_SCENARIO,
-                            ErrorCode.DB_ERROR, String.format(ErrorCode.DB_ERROR_MSG, "update repository failed"),
-                            new ArrayList<String>(Arrays.asList("update repository failed"))));
-                    failureIds.add(testScenario.getId());
-                    // roll back insert
-                    testScenarioRepository.deleteTestScenario(testScenario.getId());
-                } finally {
-                    CommonUtil.deleteFile(orgFile);
                 }
             }
         });
+    }
+
+    /**
+     * update test scenario icon file.
+     *
+     * @param testScenario testScenario
+     * @param orgFile orgFile
+     * @param failureIds failureIds
+     * @param failures failures
+     */
+    private void updateScenarioAndIconFile(TestScenario testScenario, File orgFile, Set<String> failureIds,
+        List<JSONObject> failures) {
+        try {
+            String iconFilePath = Constant.BASIC_ICON_PATH.concat(Constant.FILE_TYPE_SCENARIO)
+                .concat(Constant.UNDER_LINE).concat(testScenario.getId()).concat(Constant.DOT).concat("png");
+            FileUtils.copyFile(orgFile, new File(iconFilePath));
+            AtpFile atpFile = new AtpFile(testScenario.getId(), Constant.FILE_TYPE_SCENARIO,
+                taskRepository.getCurrentDate(), iconFilePath);
+            fileRepository.insertFile(atpFile);
+        } catch (IOException e) {
+            LOGGER.error("copy input stream to file failed. {}", e);
+            failures.add(CommonUtil
+                .setFailureRes(testScenario.getId(), testScenario.getNameEn(), Constant.TEST_SCENARIO,
+                    ErrorCode.FILE_IO_EXCEPTION, ErrorCode.FILE_IO_EXCEPTION_MSG, null));
+            failureIds.add(testScenario.getId());
+            // roll back insert
+            testScenarioRepository.deleteTestScenario(testScenario.getId());
+        } catch (IllegalRequestException e) {
+            LOGGER.error("update repository failed. ");
+            failures.add(CommonUtil
+                .setFailureRes(testScenario.getId(), testScenario.getId(), Constant.TEST_SCENARIO, ErrorCode.DB_ERROR,
+                    String.format(ErrorCode.DB_ERROR_MSG, "update repository failed"),
+                    new ArrayList<String>(Arrays.asList("update repository failed"))));
+            failureIds.add(testScenario.getId());
+            // roll back insert
+            testScenarioRepository.deleteTestScenario(testScenario.getId());
+        } finally {
+            CommonUtil.deleteFile(orgFile);
+        }
     }
 
     /**
