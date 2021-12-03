@@ -34,7 +34,8 @@ Upload、managementApp
     postgres.username=postgres
     postgres.password=root
     ```
-    - 2 ConfigurationService Center，Local installationIPYes127.0.0.1，Default port30100，servicecomb.nameYes注册到servicecenterService name on，Can be modified，默认Yesmec-developer，Configuration如下：
+    - 2 ConfigurationService Center，Local installationIPYes127.0.0.1，Default
+      port30100，servicecomb.nameYes注册到servicecenterService name on，Can be modified，默认Yesmec-atp，Configuration如下：
     ```
     #### Service Center config ####
     # ip or service name in k8s

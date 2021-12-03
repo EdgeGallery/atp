@@ -34,7 +34,7 @@ ATP (Application test platform)是应用测试认证的平台，通过构建统�
     postgres.username=postgres
     postgres.password=root
     ```
-    - 2 配置Service Center，本地安装IP是127.0.0.1，默认端口30100，servicecomb.name是注册到servicecenter上的服务名，可修改，默认是mec-developer，配置如下：
+    - 2 配置Service Center，本地安装IP是127.0.0.1，默认端口30100，servicecomb.name是注册到servicecenter上的服务名，可修改，默认是mec-atp，配置如下：
     ```
     #### Service Center config ####
     # ip or service name in k8s
