@@ -34,7 +34,8 @@ Upload、managementApp
     postgres.username=postgres
     postgres.password=root
     ```
-    - 2 ConfigurationService Center，Local installationIPYes127.0.0.1，Default port30100，servicecomb.nameYes注册到servicecenterService name on，Can be modified，默认Yesmec-developer，Configuration如下：
+    - 2 ConfigurationService Center，local installation ip is 127.0.0.1，default
+      port 30100，servicecomb.name is the service name registered to servicecenter，and it can be modified，the default value is mec-atp, as follows：
     ```
     #### Service Center config ####
     # ip or service name in k8s

@@ -76,7 +76,7 @@ public class InstantiateAppTestCaseInner {
 
     private static final String APM_GET_PACKAGE = "/apm/v1/tenants/%s/packages/%s";
 
-    private static final String INVENTORY_GET_MECHOSTS_URL = "/inventory/v1/mechosts";
+    private static final String INVENTORY_GET_MECHOSTS_URL = "/inventory/v1/tenants/%s/mechosts";
 
     private static final String TENANT_ID = "tenantId";
 
@@ -235,7 +235,8 @@ public class InstantiateAppTestCaseInner {
         headers.set(ACCESS_TOKEN, context.get(ACCESS_TOKEN));
         HttpEntity<String> request = new HttpEntity<>(headers);
 
-        String url = context.get("inventoryServerAddress").concat(INVENTORY_GET_MECHOSTS_URL);
+        String url = context.get("inventoryServerAddress")
+            .concat(String.format(INVENTORY_GET_MECHOSTS_URL, context.get(TENANT_ID)));
         LOGGER.warn("get mechostb url: " + url);
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, request, String.class);
