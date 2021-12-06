@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.edgegallery.atp.constant.Constant;
@@ -131,7 +132,7 @@ public class TaskRepositoryImpl implements TaskRepository {
         try {
             List<TaskPO> taskPoList = taskMapper.findTaskByUserId(userId, appName, status, providerId, appVersion);
             List<TaskRequest> taskRequest = new ArrayList<TaskRequest>();
-            taskPoList.stream().filter(taskPo -> null != taskPo).forEach(taskPo -> taskRequest.add(toDomain(taskPo)));
+            taskPoList.stream().filter(Objects::nonNull).forEach(taskPo -> taskRequest.add(toDomain(taskPo)));
             return taskRequest;
         } catch (Exception e) {
             LOGGER.error("findTaskByUserId failed. {}", e);
@@ -158,7 +159,7 @@ public class TaskRepositoryImpl implements TaskRepository {
             List<TaskPO> taskPoList = taskMapper
                 .getAllWithPagination(limit, offset, userId, appName, status, providerId, appVersion);
             List<TaskRequest> taskRequest = new ArrayList<TaskRequest>();
-            taskPoList.stream().filter(taskPo -> null != taskPo).forEach(taskPo -> taskRequest.add(toDomain(taskPo)));
+            taskPoList.stream().filter(Objects::nonNull).forEach(taskPo -> taskRequest.add(toDomain(taskPo)));
             return taskRequest;
         } catch (Exception e) {
             LOGGER.error("get all tasks with pagination failed. {}", e);

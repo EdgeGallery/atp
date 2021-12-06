@@ -63,6 +63,8 @@ public class TaskServiceImpl implements TaskService {
 
     private static final String BASE_PATH = "/report/";
 
+    private static final String TASK_FROM_DB_NULL = "get task from db is null, taskId: %s";
+
     @Autowired
     TaskRepository taskRepository;
 
@@ -111,8 +113,7 @@ public class TaskServiceImpl implements TaskService {
         scenarioIdsEmptyValidation(scenarioIdList);
         initTestScenarios(scenarioIdList);
         TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, null);
-        CommonUtil
-            .checkEntityNotFound(task, String.format("get task from db is null.taskId: %s", taskId), Constant.TASK_ID);
+        CommonUtil.checkEntityNotFound(task, String.format(TASK_FROM_DB_NULL, taskId), Constant.TASK_ID);
         taskStatusValidation(task);
 
         Map<String, String> context = AccessTokenFilter.CONTEXT.get();
@@ -148,8 +149,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public String uploadReport(String taskId, MultipartFile file) throws FileNotExistsException {
         TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, null);
-        CommonUtil
-            .checkEntityNotFound(task, String.format("get task from db is null.taskId: %s", taskId), Constant.TASK_ID);
+        CommonUtil.checkEntityNotFound(task, String.format(TASK_FROM_DB_NULL, taskId), Constant.TASK_ID);
 
         String path = BASE_PATH.concat(taskId).concat(".pdf");
         String filePath = uploadPath.concat(path);
@@ -188,8 +188,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public TaskRequest getTaskById(String taskId) throws FileNotExistsException {
         TaskRequest task = taskRepository.findByTaskIdAndUserId(taskId, null);
-        CommonUtil
-            .checkEntityNotFound(task, String.format("get task from db is null.taskId: %s", taskId), Constant.TASK_ID);
+        CommonUtil.checkEntityNotFound(task, String.format(TASK_FROM_DB_NULL, taskId), Constant.TASK_ID);
         LOGGER.info("get task by id successfully.");
         return task;
     }
@@ -306,13 +305,18 @@ public class TaskServiceImpl implements TaskService {
         String status = Constant.SUCCESS;
         if (CollectionUtils.isNotEmpty(testCases)) {
             for (TaskTestCase testCase : testCases) {
-                if (Constant.RUNNING.equals(testCase.getResult())) {
-                    status = Constant.RUNNING;
-                } else {
-                    if (!Constant.RUNNING.equals(status)) {
-                        status = Constant.FAILED.equals(testCase.getResult()) ? Constant.FAILED : status;
-                    }
-                }
+                status = setStatus(testCase, status);
+            }
+        }
+        return status;
+    }
+
+    private String setStatus(TaskTestCase testCase, String status) {
+        if (Constant.RUNNING.equals(testCase.getResult())) {
+            status = Constant.RUNNING;
+        } else {
+            if (!Constant.RUNNING.equals(status)) {
+                status = Constant.FAILED.equals(testCase.getResult()) ? Constant.FAILED : status;
             }
         }
         return status;
