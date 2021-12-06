@@ -42,10 +42,6 @@ public class FileChecker {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileChecker.class);
 
-    private static final String WINDOWS_BASE_PATH = "C:\\atp";
-
-    private static final String LINUX_BASE_PATH = "/usr/atp";
-
     private FileChecker() {
     }
 
@@ -103,7 +99,8 @@ public class FileChecker {
      * @return path
      */
     public static String getDir() {
-        return System.getProperty("os.name").toLowerCase().contains("windows") ? WINDOWS_BASE_PATH : LINUX_BASE_PATH;
+        return System.getProperty("os.name").toLowerCase().contains("windows") ? PropertiesUtil
+            .getProperties("task_base_dir_windows") : PropertiesUtil.getProperties("task_base_dir_linux");
     }
 
     /**
@@ -218,8 +215,7 @@ public class FileChecker {
 
     private static boolean isDir(ZipEntry entry, File f) {
         if (entry.isDirectory()) {
-            boolean isSuccess = f.mkdirs();
-            return isSuccess ? true : f.exists();
+            return f.mkdirs();
         }
         return false;
     }
