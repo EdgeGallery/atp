@@ -113,7 +113,7 @@ public class MFContentTestCaseInner {
      */
     private void delay() {
         try {
-            Thread.sleep(400);
+            Thread.sleep(200);
         } catch (InterruptedException e) {
         }
     }

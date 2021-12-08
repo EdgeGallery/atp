@@ -45,7 +45,7 @@ public class FileSizeValidation {
      */
     private void delay() {
         try {
-            Thread.sleep(600);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
         }
     }

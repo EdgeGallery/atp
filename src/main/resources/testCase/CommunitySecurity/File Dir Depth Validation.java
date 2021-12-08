@@ -55,7 +55,7 @@ public class FileDirDepthValidation {
      */
     private void delay() {
         try {
-            Thread.sleep(800);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
         }
     }
