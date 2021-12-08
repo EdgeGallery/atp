@@ -23,16 +23,11 @@ import java.util.zip.ZipFile;
  */
 public class SuffixTestCaseInner {
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
+
     private static final String FILE_NOT_EXIST = ".mf file may not exist or it do not in the root directory.";
+
     private static final String MF_FILE_NUMBER_TOO_MUCH = "there can be only one mf file in the root directory.";
 
-    /**
-     * execute test case.
-     * 
-     * @param filePath csar file path
-     * @param context context
-     * @return result
-     */
     public String execute(String filePath, Map<String, String> context) {
         int num = 0;
         try (ZipFile zipFile = new ZipFile(filePath)) {
@@ -42,13 +37,22 @@ public class SuffixTestCaseInner {
                 // root directory and file is end of mf
                 if (entry.getName().split("/").length == 1 && fileSuffixValidate("mf", entry.getName())) {
                     num++;
-                    return "success";
                 }
             }
         } catch (IOException e) {
             return INNER_EXCEPTION;
         }
 
+        return computeResult(num);
+    }
+
+    /**
+     * compute result according to num.
+     *
+     * @param num num
+     * @return result
+     */
+    private String computeResult(int num) {
         switch (num) {
             case 0:
                 return FILE_NOT_EXIST;
@@ -60,13 +64,13 @@ public class SuffixTestCaseInner {
     }
 
     /**
-     * if file suffix is in pattern.
-     * 
-     * @param pattern pattern
-     * @param fileName fileName
-     * @return file suffix is in pattern
+     * file pattern validation.
+     *
+     * @param pattern file pattern
+     * @param fileName file name
+     * @return file suffix is right
      */
-    public static boolean fileSuffixValidate(String pattern, String fileName) {
+    private boolean fileSuffixValidate(String pattern, String fileName) {
         String suffix = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
         if (null != suffix && "" != suffix && suffix.equals(pattern)) {
             return true;

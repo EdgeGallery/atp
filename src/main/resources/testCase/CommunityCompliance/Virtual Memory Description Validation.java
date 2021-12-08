@@ -59,28 +59,15 @@ public class VirtualMemoryDescriptionValidation {
                 // find zip package in APPD file path.
                 if (nameArray.length == 2 && "APPD".equalsIgnoreCase(nameArray[0]) && nameArray[1].endsWith(".zip")) {
                     String yamlPath = getYamlPath(zipFile, entry);
-                    if (null != yamlPath) {
-                        return analysizeAppdZip(zipFile, entry, yamlPath) ? SUCCESS : VIRTUAL_MEMORY_NOT_EXISTS;
-                    } else {
-                        return ENTRY_DEFINITIONS_NOT_EXISTS;
-                    }
+                    return null != yamlPath ? analysizeAppdZip(zipFile, entry, yamlPath)
+                        ? SUCCESS
+                        : VIRTUAL_MEMORY_NOT_EXISTS : ENTRY_DEFINITIONS_NOT_EXISTS;
                 }
             }
         } catch (IOException e) {
-            return INNER_EXCEPTION;
         }
 
         return INNER_EXCEPTION;
-    }
-
-    /**
-     * delay some time.
-     */
-    private void delay() {
-        try {
-            Thread.sleep(400);
-        } catch (InterruptedException e1) {
-        }
     }
 
     /**
@@ -96,20 +83,30 @@ public class VirtualMemoryDescriptionValidation {
             while ((appdEntry = appdZis.getNextEntry()) != null) {
                 // find .meta file and get main yaml file path
                 if (appdEntry.getName().endsWith(".meta")) {
-                    byte[] data = getByte(appdZis);
-                    InputStream inputStream = new ByteArrayInputStream(data);
-                    try (BufferedReader br = new BufferedReader(
-                        new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
-                        String line = "";
-                        while ((line = br.readLine()) != null) {
-                            // prefix: path
-                            String[] splitByColon = line.split(":");
-                            if (splitByColon.length > 1 && "Entry-Definitions"
-                                .equalsIgnoreCase(splitByColon[0].trim())) {
-                                return splitByColon[1].trim();
-                            }
-                        }
-                    }
+                    return analysizeMetaAndGetYamlPath(appdZis);
+                }
+            }
+        } catch (IOException e) {
+        }
+        return null;
+    }
+
+    /**
+     * analysize meta file and get yaml file path.
+     *
+     * @param appdZis appZis
+     * @return yaml file path
+     */
+    private String analysizeMetaAndGetYamlPath(ZipInputStream appdZis) {
+        byte[] data = getByte(appdZis);
+        try (InputStream inputStream = new ByteArrayInputStream(data);
+             BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+            String line = "";
+            while ((line = br.readLine()) != null) {
+                // prefix: path
+                String[] splitByColon = line.split(":");
+                if (splitByColon.length > 1 && "Entry-Definitions".equalsIgnoreCase(splitByColon[0].trim())) {
+                    return splitByColon[1].trim();
                 }
             }
         } catch (IOException e) {
@@ -180,7 +177,16 @@ public class VirtualMemoryDescriptionValidation {
             }
         } catch (IOException e) {
         }
-
         return false;
+    }
+
+    /**
+     * delay some time.
+     */
+    private void delay() {
+        try {
+            Thread.sleep(400);
+        } catch (InterruptedException e) {
+        }
     }
 }

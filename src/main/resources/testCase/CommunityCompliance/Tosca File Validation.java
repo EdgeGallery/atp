@@ -63,7 +63,6 @@ public class TOSCAFileTestCaseInner {
                 ZipEntry entry = entries.nextElement();
                 String entryName = entry.getName();
                 pathSet.add(removeLastSlash(entry.getName()));
-
                 if (TOSCA_META.equals(entryName.substring(entryName.lastIndexOf("/") + 1).trim())) {
                     isExistTosca = true;
                     // some fields not exist in tosca.meta file
@@ -74,7 +73,6 @@ public class TOSCAFileTestCaseInner {
                 }
             }
         } catch (IOException e) {
-
             return INNER_EXCEPTION;
         }
 
