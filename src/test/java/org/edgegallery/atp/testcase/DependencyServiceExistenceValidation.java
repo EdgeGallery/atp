@@ -48,27 +48,43 @@ import org.springframework.web.client.RestTemplate;
 
 public class DependencyServiceExistenceValidation {
     private static final Logger LOGGER = LoggerFactory.getLogger(DependencyServiceExistenceValidation.class);
+
     private static RestTemplate restTemplate = new RestTemplate();
+
     private static final String SUCCESS = "success";
+
     private static final String NODE_TEMPLATES = "node_templates";
+
     private static final String APP_CONFIGURATION = "app_configuration";
+
     private static final String PROPERTIES = "properties";
+
     private static final String APP_SERVICE_REQUIRED = "appServiceRequired";
+
     private static final String COLON = ":";
+
     private static final String SLASH = "/";
+
     private static final String STRIKE = "-";
+
     private static final String UNDER_LINE = "_";
+
     private static final String APP_ID = "appId";
+
     private static final String PACKAGE_ID = "packageId";
+
     private static final String APP_NAME = "app_product_name";
+
     private static final String APP_STORE_DOWNLOAD_CSAR = "/mec/appstore/v1/apps/%s/packages/%s/action/download";
+
     private static final String ACCESS_TOKEN = "access_token";
-    private static final String DEPENDENCY_CHECK_FAILED =
-            "dependency check failed, pls check appId and packageId exists in appstore.";
+
+    private static final String DEPENDENCY_CHECK_FAILED
+        = "dependency check failed, pls check appId and packageId exists in appstore.";
 
     /**
      * execute test case.
-     * 
+     *
      * @param filePath csar file path
      * @param context context
      * @return result
@@ -78,22 +94,22 @@ public class DependencyServiceExistenceValidation {
         Stack<Map<String, String>> dependencyAppList = new Stack<Map<String, String>>();
         try {
             dependencyCheckSchdule(filePath, dependencyAppList, context);
-        }catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             return DEPENDENCY_CHECK_FAILED;
         }
-       
+
         return SUCCESS;
     }
 
     /**
      * dependency check schdule.
-     * 
+     *
      * @param filePath filePath
      * @param dependencyStack dependencyStack
      * @param context context
      */
     public void dependencyCheckSchdule(String filePath, Stack<Map<String, String>> dependencyStack,
-            Map<String, String> context) {
+        Map<String, String> context) {
         List<Map<String, String>> dependencyList = dependencyCheck(filePath);
         if (CollectionUtils.isEmpty(dependencyList)) {
             LOGGER.warn("dependencyCheckSchdule dependencyList is empty.");
@@ -109,10 +125,9 @@ public class DependencyServiceExistenceValidation {
             }
 
             // analysis response and get csar file, get csar file path
-            String dependencyFilePath =
-                    new StringBuilder().append(getDir()).append(File.separator).append("temp").append(File.separator)
-                            .append("dependencyCheck").append(File.separator)
-                            .append(map.get(APP_ID)).append(UNDER_LINE).append(map.get(PACKAGE_ID)).toString();
+            String dependencyFilePath = new StringBuilder().append(getDir()).append(File.separator).append("temp")
+                .append(File.separator).append("dependencyCheck").append(File.separator).append(map.get(APP_ID))
+                .append(UNDER_LINE).append(map.get(PACKAGE_ID)).toString();
             File file = new File(dependencyFilePath);
             try {
                 FileUtils.copyInputStreamToFile(inputStream, file);
@@ -131,7 +146,7 @@ public class DependencyServiceExistenceValidation {
 
     /**
      * dependency application check.
-     * 
+     *
      * @param filePath filePath
      * @return dependency application info list, contains appName,appId and appPackageId.
      */
@@ -142,7 +157,6 @@ public class DependencyServiceExistenceValidation {
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
                 String[] pathSplit = entry.getName().split(SLASH);
-
                 // find zip package in APPD file path.
                 if (pathSplit.length == 2 && "APPD".equalsIgnoreCase(pathSplit[0]) && pathSplit[1].endsWith(".zip")) {
                     String yamlPath = getYamlPath(zipFile, entry);
@@ -152,7 +166,6 @@ public class DependencyServiceExistenceValidation {
                     }
                 }
             }
-            LOGGER.info("dependencyCheck end.");
         } catch (Exception e) {
             LOGGER.error("dependency Check failed. {}", e);
         }
@@ -166,12 +179,11 @@ public class DependencyServiceExistenceValidation {
      * @param inputStream inputStream
      */
     private void analysisDependency(List<Map<String, String>> result, InputStream inputStream) {
-        try (BufferedReader br =
-                new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
             String line = positionDependencyService(br);
             if (StringUtils.isEmpty(line)) {
                 LOGGER.warn("can not find the dependency path, the dependency path must "
-                        + "be in node_templates.app_configuration.properties.appServiceRequired");
+                    + "be in node_templates.app_configuration.properties.appServiceRequired");
                 return;
             }
             // -serName
@@ -180,30 +192,39 @@ public class DependencyServiceExistenceValidation {
                 Map<String, String> map = new HashMap<String, String>();
                 String appName = line.split(COLON)[1].trim();
                 while ((line = br.readLine()) != null && !isEnd(line) && !line.trim().startsWith(STRIKE)) {
-                    line = line.trim();
-                    if (line.startsWith(APP_ID)) {
-                        LOGGER.info("appId: {}", line.split(COLON)[1].trim());
-                        map.put(APP_ID, line.split(COLON)[1].trim());
-                    } else if (line.startsWith(PACKAGE_ID)) {
-                        LOGGER.info("packageid: {}", line.split(COLON)[1].trim());
-                        map.put(PACKAGE_ID, line.split(COLON)[1].trim());
-                        map.put(APP_NAME, appName);
-                    }
+                    getPackageIdAndAppName(line.trim(), appName, map);
                 }
                 if (map.size() != 0) {
                     LOGGER.info("map is not empty.");
                     result.add(map);
                 }
             }
-
         } catch (IOException e) {
             LOGGER.error("analysis dependency failed. {}", e.getMessage());
         }
     }
 
     /**
+     * get package id and app name.
+     *
+     * @param line line
+     * @param appName app name
+     * @param map map
+     */
+    private void getPackageIdAndAppName(String line, String appName, Map<String, String> map) {
+        if (line.startsWith(APP_ID)) {
+            LOGGER.info("appId: {}", line.split(COLON)[1].trim());
+            map.put(APP_ID, line.split(COLON)[1].trim());
+        } else if (line.startsWith(PACKAGE_ID)) {
+            LOGGER.info("packageid: {}", line.split(COLON)[1].trim());
+            map.put(PACKAGE_ID, line.split(COLON)[1].trim());
+            map.put(APP_NAME, appName);
+        }
+    }
+
+    /**
      * position to dependency service field.
-     * 
+     *
      * @param br bufferReader
      * @return line
      * @throws IOException IOException
@@ -214,16 +235,7 @@ public class DependencyServiceExistenceValidation {
             if (line.trim().startsWith(NODE_TEMPLATES)) {
                 while ((line = br.readLine()) != null) {
                     if (line.trim().startsWith(APP_CONFIGURATION)) {
-                        while ((line = br.readLine()) != null) {
-                            if (line.trim().startsWith(PROPERTIES)) {
-                                while ((line = br.readLine()) != null) {
-                                    if (line.trim().startsWith(APP_SERVICE_REQUIRED)) {
-                                        line = br.readLine();
-                                        return null == line ? line : line.trim();
-                                    }
-                                }
-                            }
-                        }
+                        return positionDependencyService(br, line);
                     }
                 }
             }
@@ -231,9 +243,23 @@ public class DependencyServiceExistenceValidation {
         return line;
     }
 
+    private String positionDependencyService(BufferedReader br, String line) throws IOException {
+        while ((line = br.readLine()) != null) {
+            if (line.trim().startsWith(PROPERTIES)) {
+                while ((line = br.readLine()) != null) {
+                    if (line.trim().startsWith(APP_SERVICE_REQUIRED)) {
+                        line = br.readLine();
+                        return null == line ? line : line.trim();
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * get root dir.
-     * 
+     *
      * @return root dir
      */
     public static String getDir() {
@@ -246,7 +272,7 @@ public class DependencyServiceExistenceValidation {
 
     /**
      * download app from appstore.
-     * 
+     *
      * @param appId appId
      * @param packageId packageId
      * @param context context
@@ -260,14 +286,13 @@ public class DependencyServiceExistenceValidation {
         String url = String.format(APP_STORE_DOWNLOAD_CSAR, appId, packageId);
         LOGGER.info("downloadAppFromAppStore url: {}", url);
         try {
-            ResponseEntity<Resource> response =
-                    restTemplate.exchange(context.get("appstoreServerAddress").concat(url), HttpMethod.GET, request,
-                            Resource.class);
+            ResponseEntity<Resource> response = restTemplate
+                .exchange(context.get("appstoreServerAddress").concat(url), HttpMethod.GET, request, Resource.class);
             Resource responseBody = response.getBody();
 
             if (!HttpStatus.OK.equals(response.getStatusCode()) || responseBody == null) {
                 LOGGER.error("download csar file from appstore reponse failed. The status code is {}",
-                        response.getStatusCode());
+                    response.getStatusCode());
                 return null;
             }
 
@@ -282,7 +307,7 @@ public class DependencyServiceExistenceValidation {
 
     /**
      * if depedency service define end.
-     * 
+     *
      * @param str yaml line
      * @return is depedency service define end.
      */
@@ -295,14 +320,14 @@ public class DependencyServiceExistenceValidation {
      */
     private void delay() {
         try {
-            Thread.sleep(1000);
+            Thread.sleep(500);
         } catch (InterruptedException e1) {
         }
     }
 
     /**
      * get main yaml file path.
-     * 
+     *
      * @param zipFile zipFile
      * @param entry entry
      * @return main yaml file path
@@ -313,20 +338,30 @@ public class DependencyServiceExistenceValidation {
             while ((appdEntry = appdZis.getNextEntry()) != null) {
                 // find .meta file and get main yaml file path
                 if (appdEntry.getName().endsWith(".meta")) {
-                    byte[] data = getByte(appdZis);
-                    InputStream inputStream = new ByteArrayInputStream(data);
-                    try (BufferedReader br =
-                            new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
-                        String line = "";
-                        while ((line = br.readLine()) != null) {
-                            // prefix: path
-                            String[] splitByColon = line.split(":");
-                            if (splitByColon.length > 1
-                                    && "Entry-Definitions".equalsIgnoreCase(splitByColon[0].trim())) {
-                                return splitByColon[1].trim();
-                            }
-                        }
-                    }
+                    return analysizeMetaAndGetYamlPath(appdZis);
+                }
+            }
+        } catch (IOException e) {
+        }
+        return null;
+    }
+
+    /**
+     * analysize meta file and get yaml file path.
+     *
+     * @param appdZis appZis
+     * @return yaml file path
+     */
+    private String analysizeMetaAndGetYamlPath(ZipInputStream appdZis) {
+        byte[] data = getByte(appdZis);
+        try (InputStream inputStream = new ByteArrayInputStream(data);
+             BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+            String line = "";
+            while ((line = br.readLine()) != null) {
+                // prefix: path
+                String[] splitByColon = line.split(":");
+                if (splitByColon.length > 1 && "Entry-Definitions".equalsIgnoreCase(splitByColon[0].trim())) {
+                    return splitByColon[1].trim();
                 }
             }
         } catch (IOException e) {
@@ -336,7 +371,7 @@ public class DependencyServiceExistenceValidation {
 
     /**
      * analysize zip file and get main yaml file content.
-     * 
+     *
      * @param zipFile zipFile
      * @param entry entry
      * @param yamlPath yamlPath
@@ -360,7 +395,7 @@ public class DependencyServiceExistenceValidation {
 
     /**
      * get bytes from inputStream.
-     * 
+     *
      * @param zis inputStream
      * @return file bytes
      */
