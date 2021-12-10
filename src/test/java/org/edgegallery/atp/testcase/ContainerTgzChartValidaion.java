@@ -93,16 +93,6 @@ public class ContainerTgzChartValidaion {
     }
 
     /**
-     * add delay.
-     */
-    private void delay() {
-        try {
-            Thread.sleep(800);
-        } catch (InterruptedException e) {
-        }
-    }
-
-    /**
      * get app_type.
      *
      * @param filePath filePath
@@ -114,20 +104,43 @@ public class ContainerTgzChartValidaion {
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
                 if (entry.getName().split("/").length == 1 && entry.getName().endsWith(".mf")) {
-                    try (BufferedReader br = new BufferedReader(
-                        new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
-                        String line = "";
-                        while ((line = br.readLine()) != null) {
-                            // prefix: path
-                            if (line.trim().startsWith("app_class")) {
-                                return line.split(":")[1].trim();
-                            }
-                        }
-                    }
+                    return analysizeMfAndGetAppClass(zipFile, entry);
                 }
             }
         } catch (IOException e) {
         }
         return null;
+    }
+
+    /**
+     * analysize mf file and get app class value.
+     *
+     * @param zipFile zipFile
+     * @param entry entry
+     * @return file type
+     */
+    private String analysizeMfAndGetAppClass(ZipFile zipFile, ZipEntry entry) {
+        try (BufferedReader br = new BufferedReader(
+            new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
+            String line = "";
+            while ((line = br.readLine()) != null) {
+                // prefix: path
+                if (line.trim().startsWith("app_class")) {
+                    return line.split(":")[1].trim();
+                }
+            }
+        } catch (IOException e) {
+        }
+        return null;
+    }
+
+    /**
+     * add delay.
+     */
+    private void delay() {
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+        }
     }
 }

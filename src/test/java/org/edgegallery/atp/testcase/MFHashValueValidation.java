@@ -36,12 +36,14 @@ import org.slf4j.LoggerFactory;
 
 /**
  * mf file hash value validation.
- *
  */
 public class MFHashValueValidation {
     private static final Logger LOGGER = LoggerFactory.getLogger(MFHashValueValidation.class);
+
     private static final String HASH_VALUE_NOT_RIGHT = "hash value in mf file not right.";
+
     private static final String INNER_EXCEPTION = "inner exception, please check the log.";
+
     private static final String SOURCE = "Source";
 
     public String execute(String filePath, Map<String, String> context) {
@@ -53,22 +55,22 @@ public class MFHashValueValidation {
         } catch (InterruptedException e1) {
         }
 
-        Map<String,String> file2Hash = new HashMap<String,String>();
+        Map<String, String> file2Hash = new HashMap<String, String>();
         try (ZipFile zipFile = new ZipFile(filePath)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
-                if (entry.getName().split("/").length == 1 &&  entry.getName().endsWith(".mf")) {
+                if (entry.getName().split("/").length == 1 && entry.getName().endsWith(".mf")) {
                     getFileHash(zipFile, entry, file2Hash);
                 }
             }
         } catch (IOException e) {
             return INNER_EXCEPTION;
         }
-        
+
         ZipEntry entry;
         try (FileInputStream fis = new FileInputStream(filePath);
-                ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis))) {
+             ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis))) {
             while ((entry = zis.getNextEntry()) != null) {
                 if (null != file2Hash.get(entry.getName())) {
                     byte[] data = getByte(zis);
@@ -88,7 +90,7 @@ public class MFHashValueValidation {
 
     /**
      * get bytes from inputStream.
-     * 
+     *
      * @param zis inputStream
      * @return file bytes
      */
@@ -107,14 +109,14 @@ public class MFHashValueValidation {
 
     /**
      * get source file path and its hash value.
-     * 
+     *
      * @param zipFile zipFile
      * @param entry entry
      * @param file2Hash key:filePath value:hashValue
      */
     private void getFileHash(ZipFile zipFile, ZipEntry entry, Map<String, String> file2Hash) {
-        try (BufferedReader br =
-                new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
+        try (BufferedReader br = new BufferedReader(
+            new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
             String line = "";
             while ((line = br.readLine()) != null) {
                 String[] splitByColon = line.split(":");
@@ -146,9 +148,9 @@ public class MFHashValueValidation {
 
     /**
      * get app_type.
-     * 
+     *
      * @param filePath filePath
-     * @return appType
+     * @return appType appType
      */
     private String getAppType(String filePath) {
         try (ZipFile zipFile = new ZipFile(filePath)) {
@@ -156,16 +158,29 @@ public class MFHashValueValidation {
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
                 if (entry.getName().split("/").length == 1 && entry.getName().endsWith(".mf")) {
-                    try (BufferedReader br = new BufferedReader(
-                            new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
-                        String line = "";
-                        while ((line = br.readLine()) != null) {
-                            // prefix: path
-                            if (line.trim().startsWith("app_class")) {
-                                return line.split(":")[1].trim();
-                            }
-                        }
-                    }
+                    return analysizeMfAndGetAppClass(zipFile, entry);
+                }
+            }
+        } catch (IOException e) {
+        }
+        return null;
+    }
+
+    /**
+     * analysize mf file and get app class value.
+     *
+     * @param zipFile zipFile
+     * @param entry entry
+     * @return file type
+     */
+    private String analysizeMfAndGetAppClass(ZipFile zipFile, ZipEntry entry) {
+        try (BufferedReader br = new BufferedReader(
+            new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
+            String line = "";
+            while ((line = br.readLine()) != null) {
+                // prefix: path
+                if (line.trim().startsWith("app_class")) {
+                    return line.split(":")[1].trim();
                 }
             }
         } catch (IOException e) {

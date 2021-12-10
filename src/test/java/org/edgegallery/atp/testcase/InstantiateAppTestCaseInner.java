@@ -245,7 +245,6 @@ public class InstantiateAppTestCaseInner {
                     response.getStatusCode());
                 return null;
             }
-
             JsonArray jsonArray = new JsonParser().parse(response.getBody()).getAsJsonArray();
             jsonArray.forEach(mecHost -> {
                 JsonElement mecHostIp = mecHost.getAsJsonObject().get("mechostIp");
@@ -340,10 +339,8 @@ public class InstantiateAppTestCaseInner {
         HttpHeaders headers = new HttpHeaders();
         headers.set(ACCESS_TOKEN, context.get(ACCESS_TOKEN));
         HttpEntity<String> request = new HttpEntity<>(headers);
-
         String url = context.get("appoServerAddress")
             .concat(String.format(APPO_GET_INSTANCE, context.get(TENANT_ID), appInstanceId));
-
         LOGGER.warn("getApplicationInstance URL: " + url);
 
         long startTime = System.currentTimeMillis();
@@ -491,51 +488,75 @@ public class InstantiateAppTestCaseInner {
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
                 if (entry.getName().split("/").length == 1 && fileSuffixValidate("mf", entry.getName())) {
-                    try (BufferedReader br = new BufferedReader(
-                        new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
-                        String line = "";
-                        while ((line = br.readLine()) != null) {
-                            // prefix: path
-                            if (line.trim().startsWith(APP_NAME)) {
-                                packageInfo.put(APP_NAME, line.split(":")[1].trim());
-                            }
-                            if (line.trim().startsWith(APP_VERSION)) {
-                                packageInfo.put(APP_VERSION, line.split(":")[1].trim());
-                            }
-                            if (line.trim().startsWith(PROVIDER_ID)) {
-                                packageInfo.put(PROVIDER_ID, line.split(":")[1].trim());
-                            }
-                            if (line.trim().startsWith(APP_CLASS)) {
-                                packageInfo.put(APP_CLASS, line.split(":")[1].trim());
-                            }
-                        }
-                    }
+                    analysizeMfFile(zipFile, entry, packageInfo);
                 }
                 if (2 == entry.getName().split("/").length && "SwImageDesc.json"
                     .equals(entry.getName().substring(entry.getName().lastIndexOf("/") + 1))) {
-                    try (BufferedReader br = new BufferedReader(
-                        new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
-                        String line = "";
-                        StringBuffer fileContentFile = new StringBuffer();
-                        while ((line = br.readLine()) != null) {
-                            fileContentFile.append(line).append("\n");
-                        }
-                        JsonParser parser = new JsonParser();
-                        JsonArray fileContent = parser.parse(fileContentFile.toString()).getAsJsonArray();
-                        for (JsonElement element : fileContent) {
-                            String architecture = null == element.getAsJsonObject().get("architecture")
-                                ? null
-                                : element.getAsJsonObject().get("architecture").getAsString();
-                            packageInfo.put(ARCHITECTURE, architecture);
-                        }
-                    }
+                    analysizeSwImageDescFile(zipFile, entry, packageInfo);
                 }
             }
         } catch (IOException e) {
             LOGGER.error("getPackageInfo failed. {}", e.getMessage());
         }
-
         return packageInfo;
+    }
+
+    /**
+     * analysize mf file and get app info.
+     *
+     * @param zipFile zipFile
+     * @param entry entry
+     * @param packageInfo packageInfo
+     * @throws IOException IOException
+     */
+    private void analysizeMfFile(ZipFile zipFile, ZipEntry entry, Map<String, String> packageInfo) throws IOException {
+        try (BufferedReader br = new BufferedReader(
+            new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
+            String line = "";
+            while ((line = br.readLine()) != null) {
+                // prefix: path
+                if (line.trim().startsWith(APP_NAME)) {
+                    packageInfo.put(APP_NAME, line.split(":")[1].trim());
+                }
+                if (line.trim().startsWith(APP_VERSION)) {
+                    packageInfo.put(APP_VERSION, line.split(":")[1].trim());
+                }
+                if (line.trim().startsWith(PROVIDER_ID)) {
+                    packageInfo.put(PROVIDER_ID, line.split(":")[1].trim());
+                }
+                if (line.trim().startsWith(APP_CLASS)) {
+                    packageInfo.put(APP_CLASS, line.split(":")[1].trim());
+                }
+            }
+        }
+    }
+
+    /**
+     * analysize SwImageDesc.json and get app info.
+     *
+     * @param zipFile zipFile
+     * @param entry entry
+     * @param packageInfo packageInfo
+     * @throws IOException IOException
+     */
+    private void analysizeSwImageDescFile(ZipFile zipFile, ZipEntry entry, Map<String, String> packageInfo)
+        throws IOException {
+        try (BufferedReader br = new BufferedReader(
+            new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
+            String line = "";
+            StringBuffer fileContentFile = new StringBuffer();
+            while ((line = br.readLine()) != null) {
+                fileContentFile.append(line).append("\n");
+            }
+            JsonParser parser = new JsonParser();
+            JsonArray fileContent = parser.parse(fileContentFile.toString()).getAsJsonArray();
+            for (JsonElement element : fileContent) {
+                String architecture = null == element.getAsJsonObject().get("architecture")
+                    ? null
+                    : element.getAsJsonObject().get("architecture").getAsString();
+                packageInfo.put(ARCHITECTURE, architecture);
+            }
+        }
     }
 
     /**
@@ -581,10 +602,7 @@ public class InstantiateAppTestCaseInner {
      */
     private boolean fileSuffixValidate(String pattern, String fileName) {
         String suffix = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
-        if (null != suffix && "" != suffix && suffix.equals(pattern)) {
-            return true;
-        }
-        return false;
+        return null != suffix && "" != suffix && suffix.equals(pattern);
     }
 
     /**
