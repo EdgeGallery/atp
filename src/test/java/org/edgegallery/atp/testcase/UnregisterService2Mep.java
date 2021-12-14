@@ -55,7 +55,8 @@ public class UnregisterService2Mep {
         String ip = context.get("mepHostIp");
         if (StringUtils.isEmpty(ip)) {
             LOGGER.error(MEP_HOST_IP_IS_NULL);
-            return MEP_HOST_IP_IS_NULL;
+            //ignore
+            return SUCCESS;
         }
         String hostIp = ip.concat(":30443");
         return (unregisterService(hostIp, context, context.get("serInstanceId")) && unregisterService(hostIp, context,
