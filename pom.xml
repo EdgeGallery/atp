@@ -71,17 +71,35 @@
                 </exclusion>
                 <exclusion>
                 	<groupId>com.fasterxml.jackson.core</groupId>
-                	<artifactId>jackson-databind</artifactId>
+                    <artifactId>jackson-databind</artifactId>
                 </exclusion>
                 <exclusion>
-                	<groupId>org.apache.tomcat.embed</groupId>
-                	<artifactId>tomcat-embed-el</artifactId>
+                    <groupId>org.apache.tomcat.embed</groupId>
+                    <artifactId>tomcat-embed-el</artifactId>
                 </exclusion>
                 <exclusion>
-                	<groupId>org.apache.tomcat.embed</groupId>
-                	<artifactId>tomcat-embed-websocket</artifactId>
+                    <groupId>org.apache.tomcat.embed</groupId>
+                    <artifactId>tomcat-embed-websocket</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.vertx</groupId>
+                    <artifactId>vertx-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.netflix.servo</groupId>
+                    <artifactId>servo-core</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-core</artifactId>
+            <version>3.9.12</version>
+        </dependency>
+        <dependency>
+            <groupId>com.netflix.servo</groupId>
+            <artifactId>servo-core</artifactId>
+            <version>0.13.2</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security.oauth.boot</groupId>
