@@ -100,16 +100,7 @@
                     <groupId>com.fasterxml.jackson.core</groupId>
                     <artifactId>jackson-databind</artifactId>
                 </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-web</artifactId>
-                </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-            <version>5.2.19.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.reactivestreams</groupId>
@@ -473,10 +464,10 @@
                     </execution>
                 </executions>
             </plugin>
-           
+
         </plugins>
     </build>
-   
+
     <reporting>
         <plugins>
             <plugin>
