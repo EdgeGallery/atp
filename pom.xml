@@ -318,12 +318,12 @@
         <dependency>
             <artifactId>spring-security-web</artifactId>
             <groupId>org.springframework.security</groupId>
-            <version>5.1.13.RELEASE</version>
+            <version>5.3.13.RELEASE</version>
         </dependency>
         <dependency>
             <artifactId>spring-security-core</artifactId>
             <groupId>org.springframework.security</groupId>
-            <version>5.1.13.RELEASE</version>
+            <version>5.3.13.RELEASE</version>
         </dependency>
         <dependency>
             <artifactId>json-smart</artifactId>
