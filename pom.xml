@@ -28,7 +28,11 @@
         <java.version>1.8</java.version>
         <maven.test.skip>false</maven.test.skip>
         <maven.test.failure.ignore>false</maven.test.failure.ignore>
-        <lombok.version>1.18.10</lombok.version>
+        <netty.version>4.1.72.Final</netty.version>
+        <org.springframework.version>5.2.19.RELEASE</org.springframework.version>
+        <org.springframework.security>5.3.13.RELEASE</org.springframework.security>
+        <org.springframework.boot>2.3.3.RELEASE</org.springframework.boot>
+        <org.apache.logging.log4j>2.17.1</org.apache.logging.log4j>
         <spring-security-oauth2-autoconfigure.version>2.2.2.RELEASE</spring-security-oauth2-autoconfigure.version>
     </properties>
     <dependencyManagement>
@@ -150,52 +154,52 @@
         <dependency>
             <artifactId>netty-common</artifactId>
             <groupId>io.netty</groupId>
-            <version>4.1.72.Final</version>
+            <version>${netty.version}</version>
         </dependency>
         <dependency>
             <artifactId>netty-buffer</artifactId>
             <groupId>io.netty</groupId>
-            <version>4.1.72.Final</version>
+            <version>${netty.version}</version>
         </dependency>
         <dependency>
             <artifactId>netty-resolver</artifactId>
             <groupId>io.netty</groupId>
-            <version>4.1.72.Final</version>
+            <version>${netty.version}</version>
         </dependency>
         <dependency>
             <artifactId>netty-transport</artifactId>
             <groupId>io.netty</groupId>
-            <version>4.1.72.Final</version>
+            <version>${netty.version}</version>
         </dependency>
         <dependency>
             <artifactId>netty-codec</artifactId>
             <groupId>io.netty</groupId>
-            <version>4.1.72.Final</version>
+            <version>${netty.version}</version>
         </dependency>
         <dependency>
             <artifactId>netty-codec-dns</artifactId>
             <groupId>io.netty</groupId>
-            <version>4.1.72.Final</version>
+            <version>${netty.version}</version>
         </dependency>
         <dependency>
             <artifactId>netty-codec-http</artifactId>
             <groupId>io.netty</groupId>
-            <version>4.1.72.Final</version>
+            <version>${netty.version}</version>
         </dependency>
         <dependency>
             <artifactId>netty-codec-http2</artifactId>
             <groupId>io.netty</groupId>
-            <version>4.1.72.Final</version>
+            <version>${netty.version}</version>
         </dependency>
         <dependency>
             <artifactId>netty-codec-socks</artifactId>
             <groupId>io.netty</groupId>
-            <version>4.1.72.Final</version>
+            <version>${netty.version}</version>
         </dependency>
         <dependency>
             <artifactId>netty-handler</artifactId>
             <groupId>io.netty</groupId>
-            <version>4.1.72.Final</version>
+            <version>${netty.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>io.netty</groupId>
@@ -206,18 +210,14 @@
         <dependency>
             <artifactId>netty-handler-proxy</artifactId>
             <groupId>io.netty</groupId>
-            <version>4.1.72.Final</version>
+            <version>${netty.version}</version>
         </dependency>
         <dependency>
             <artifactId>netty-resolver-dns</artifactId>
             <groupId>io.netty</groupId>
-            <version>4.1.72.Final</version>
+            <version>${netty.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-            <version>5.2.19.RELEASE</version>
-        </dependency>
+
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-core</artifactId>
@@ -260,11 +260,6 @@
             </exclusions>
         </dependency>
         <dependency>
-            <artifactId>spring-aop</artifactId>
-            <groupId>org.springframework</groupId>
-            <version>5.2.19.RELEASE</version>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-websocket</artifactId>
             <version>2.1.18.RELEASE</version>
@@ -278,11 +273,6 @@
                     <groupId>org.springframework</groupId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-websocket</artifactId>
-            <version>5.2.19.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security.oauth</groupId>
@@ -313,22 +303,59 @@
                     <artifactId>spring-security-web</artifactId>
                     <groupId>org.springframework.security</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>spring-webmvc</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!--org.springframework.version-->
+        <dependency>
+            <artifactId>spring-aop</artifactId>
+            <groupId>org.springframework</groupId>
+            <version>${org.springframework.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-websocket</artifactId>
+            <version>${org.springframework.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${org.springframework.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
-            <artifactId>spring-security-web</artifactId>
-            <groupId>org.springframework.security</groupId>
-            <version>5.3.13.RELEASE</version>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>${org.springframework.version}</version>
         </dependency>
         <dependency>
-            <artifactId>spring-security-core</artifactId>
-            <groupId>org.springframework.security</groupId>
-            <version>5.3.13.RELEASE</version>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${org.springframework.version}</version>
         </dependency>
         <dependency>
-            <artifactId>json-smart</artifactId>
-            <groupId>net.minidev</groupId>
-            <version>2.4.7</version>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-expression</artifactId>
+            <version>${org.springframework.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${org.springframework.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>spring-jdbc</artifactId>
+            <groupId>org.springframework</groupId>
+            <version>${org.springframework.version}</version>
         </dependency>
         <dependency>
             <artifactId>spring-core</artifactId>
@@ -339,27 +366,50 @@
                 </exclusion>
             </exclusions>
             <groupId>org.springframework</groupId>
-            <version>5.2.19.RELEASE</version>
+            <version>${org.springframework.version}</version>
         </dependency>
         <dependency>
             <artifactId>spring-jcl</artifactId>
             <groupId>org.springframework</groupId>
-            <version>5.2.19.RELEASE</version>
+            <version>${org.springframework.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.reactivestreams</groupId>
-            <artifactId>reactive-streams</artifactId>
-            <version>1.0.0</version>
+            <artifactId>spring-tx</artifactId>
+            <groupId>org.springframework</groupId>
+            <version>${org.springframework.version}</version>
+        </dependency>
+
+        <!--org.springframework.boot-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot</artifactId>
+            <version>${org.springframework.boot}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-            <optional>true</optional>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+            <version>${org.springframework.boot}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <version>${org.springframework.boot}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-core</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-test</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
-            <version>2.3.3.RELEASE</version>
+            <version>${org.springframework.boot}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>spring-boot-starter-logging</artifactId>
@@ -383,16 +433,47 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <!--org.springframework.security-->
         <dependency>
-            <artifactId>spring-jdbc</artifactId>
-            <groupId>org.springframework</groupId>
-            <version>5.2.19.RELEASE</version>
+            <artifactId>spring-security-web</artifactId>
+            <groupId>org.springframework.security</groupId>
+            <version>${org.springframework.security}</version>
         </dependency>
         <dependency>
-            <artifactId>spring-tx</artifactId>
-            <groupId>org.springframework</groupId>
-            <version>5.2.19.RELEASE</version>
+            <artifactId>spring-security-core</artifactId>
+            <groupId>org.springframework.security</groupId>
+            <version>${org.springframework.security}</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <version>${org.springframework.security}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-core</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <artifactId>json-smart</artifactId>
+            <groupId>net.minidev</groupId>
+            <version>2.4.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.reactivestreams</groupId>
+            <artifactId>reactive-streams</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
@@ -434,33 +515,14 @@
             <artifactId>mybatis-spring-boot-starter</artifactId>
             <version>2.2.1</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-            <version>2.3.3.RELEASE</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>spring-core</artifactId>
-                    <groupId>org.springframework</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>spring-test</artifactId>
-                    <groupId>org.springframework</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+
         <!-- lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
+            <version>1.18.10</version>
         </dependency>
-        <dependency>
-            <groupId>io.lettuce</groupId>
-            <artifactId>lettuce-core</artifactId>
-            <version>5.1.8.RELEASE</version>
-        </dependency>
+
         <dependency>
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-core</artifactId>
@@ -475,22 +537,22 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>2.17.1</version>
+            <version>${org.apache.logging.log4j}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
-            <version>2.17.1</version>
+            <version>${org.apache.logging.log4j}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>${org.apache.logging.log4j}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.7.30</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <version>2.17.1</version>
         </dependency>
         <!-- gson -->
         <dependency>
@@ -551,18 +613,7 @@
             <version>1.8.2</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-test</artifactId>
-            <version>5.3.13.RELEASE</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <artifactId>spring-core</artifactId>
-                    <groupId>org.springframework</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-io</artifactId>
