@@ -40,6 +40,8 @@ public class UpdateRegisteredService2Mep {
 
     private static final String MEP_HOST_IP_IS_NULL = "mep host ip is empty.";
 
+    private static String protocol;
+
     private static RestTemplate restTemplate = new RestTemplate();
 
     /**
@@ -57,7 +59,7 @@ public class UpdateRegisteredService2Mep {
             return SUCCESS;
         }
         String hostIp = ip.concat(":30443");
-
+        protocol = context.get("protocol");
         String token = context.get("authoration");
         if (null == token) {
             return GET_MEP_TOKEN_FAILED;
@@ -79,7 +81,7 @@ public class UpdateRegisteredService2Mep {
         headers.set("X-AppinstanceID", context.get("mepInstanceId"));
         String body = mockMepUpdateReq();
         HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);
-        String url = "https://".concat(hostIp).concat("/mep/mec_service_mgmt/v1/applications/")
+        String url = protocol.concat(hostIp).concat("/mep/mec_service_mgmt/v1/applications/")
             .concat(context.get("mepInstanceId")).concat("/services/".concat(context.get("serInstanceId")));
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.PUT, requestEntity, String.class);

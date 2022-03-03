@@ -38,6 +38,8 @@ public class UnregisterService2Mep {
 
     private static final String MEP_HOST_IP_IS_NULL = "mep host ip is empty.";
 
+    private static String protocol;
+
     private static RestTemplate restTemplate = new RestTemplate();
 
     /**
@@ -53,6 +55,7 @@ public class UnregisterService2Mep {
             return SUCCESS;
         }
         String ip = context.get("mepHostIp");
+        protocol = context.get("protocol");
         if (StringUtils.isEmpty(ip)) {
             LOGGER.error(MEP_HOST_IP_IS_NULL);
             //ignore
@@ -74,7 +77,7 @@ public class UnregisterService2Mep {
         headers.set("Authorization", "Bearer ".concat(context.get("authoration")));
         headers.set("X-AppinstanceID", context.get("mepInstanceId"));
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
-        String url = "https://".concat(hostIp).concat("/mep/mec_service_mgmt/v1/applications/")
+        String url = protocol.concat(hostIp).concat("/mep/mec_service_mgmt/v1/applications/")
             .concat(context.get("mepInstanceId")).concat("/services/".concat(serInstanceId));
         try {
             ResponseEntity<String> response = restTemplate

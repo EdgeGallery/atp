@@ -32,6 +32,7 @@ import org.edgegallery.atp.schedule.testcase.executor.TestCaseExecutor;
 import org.edgegallery.atp.schedule.testcase.executor.TestCaseExecutorFactory;
 import org.edgegallery.atp.utils.SignatureValidation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -48,6 +49,9 @@ public class TestCaseManagerImpl {
 
     @Autowired
     UrlConfig urlConfig;
+
+    @Value("${server.ssl.enabled}")
+    boolean sslEnable;
 
     @Async("taskExecutor")
     public void executeTestCase(TaskRequest task, String filePath) {
@@ -109,6 +113,8 @@ public class TestCaseManagerImpl {
             context.put(Constant.APPO_SERVER_ADDRESS, urlConfig.getAppo());
             context.put(Constant.INVENTORY_SERVER_ADDRESS, urlConfig.getInventory());
             context.put(Constant.APPSTORE_SERSVER_ADDRESS, urlConfig.getAppstore());
+            String protocol = sslEnable ? "https://" : "http://";
+            context.put("protocol", protocol);
             //signature verify
             context.put(Constant.SIGNATURE_RESULT, SignatureValidation.verify(filePath));
         }
