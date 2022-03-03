@@ -44,6 +44,8 @@ public class SecondaryRegisterService2Mep {
 
     private static final String MEP_HOST_IP_IS_NULL = "mep host ip is empty.";
 
+    private static String protocol;
+
     private static RestTemplate restTemplate = new RestTemplate();
 
     /**
@@ -55,6 +57,7 @@ public class SecondaryRegisterService2Mep {
      */
     public String execute(String filePath, Map<String, String> context) {
         String ip = context.get("mepHostIp");
+        protocol = context.get("protocol");
         if (StringUtils.isEmpty(ip)) {
             LOGGER.error(MEP_HOST_IP_IS_NULL);
             //ignore
@@ -87,7 +90,7 @@ public class SecondaryRegisterService2Mep {
         headers.set("Authorization", "Bearer ".concat(token));
         String body = mockMepRegisterReq();
         HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);
-        String url = "https://".concat(hostIp)
+        String url = protocol.concat(hostIp)
             .concat("/mep/mec_service_mgmt/v1/applications/5abe4782-2c70-4e47-9a4e-0ee3a1a0fd1f/services");
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);

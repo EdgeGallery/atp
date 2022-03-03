@@ -54,6 +54,8 @@ public class RegisterService2Mep {
 
     private static RestTemplate restTemplate = new RestTemplate();
 
+    private static String protocol;
+
     /**
      * execute test case.
      *
@@ -63,12 +65,15 @@ public class RegisterService2Mep {
      */
     public String execute(String filePath, Map<String, String> context) {
         String ip = context.get("mepHostIp");
+        protocol = context.get("protocol");
+        LOGGER.info("protocol: {}", protocol);
         if (StringUtils.isEmpty(ip)) {
             LOGGER.error(MEP_HOST_IP_IS_NULL);
             //ignore
             return SUCCESS;
         }
         String hostIp = ip.concat(":30443");
+
         String token = getMepToken(hostIp);
         if (null == token) {
             return GET_MEP_TOKEN_FAILED;
@@ -89,7 +94,7 @@ public class RegisterService2Mep {
         String body = mockMepRegisterReq();
         HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);
         context.put("mepInstanceId", "5abe4782-2c70-4e47-9a4e-0ee3a1a0fd1f");
-        String url = "https://".concat(hostIp).concat("/mep/mec_service_mgmt/v1/applications/")
+        String url = protocol.concat(hostIp).concat("/mep/mec_service_mgmt/v1/applications/")
             .concat(context.get("mepInstanceId")).concat("/services");
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
@@ -119,7 +124,7 @@ public class RegisterService2Mep {
         headers.set("Host", hostIp);
         HttpEntity<String> request = new HttpEntity<>(headers);
 
-        String url = "https://".concat(hostIp).concat("/mep/token");
+        String url = protocol.concat(hostIp).concat("/mep/token");
         LOGGER.warn("get mep token URL: {}", url);
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
