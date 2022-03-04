@@ -115,9 +115,10 @@ public class SignatureValidation {
         }
 
         String signStr = new String(signData).trim();
+        //signature value is null return success, adapter for developer platform.
         if (StringUtils.isEmpty(signStr)) {
-            LOGGER.error("signature value is null.");
-            return false;
+            LOGGER.warn("signature value is null.");
+            return true;
         }
         return signedDataVerify(signStr.getBytes(StandardCharsets.UTF_8));
     }
