@@ -22,6 +22,7 @@
         <artifactId>eg-parent</artifactId>
         <version>1.0.0</version>
     </parent>
+
     <groupId>com.huawei</groupId>
     <artifactId>atp</artifactId>
     <version>0.0.1-SNAPSHOT</version>
@@ -35,7 +36,6 @@
             <dependency>
                 <groupId>org.apache.servicecomb</groupId>
                 <artifactId>java-chassis-dependencies-springboot2</artifactId>
-                <version>1.3.6</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.springframework.boot</groupId>
@@ -207,7 +207,6 @@
         <dependency>
             <groupId>com.netflix.servo</groupId>
             <artifactId>servo-core</artifactId>
-            <version>0.13.2</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security.oauth.boot</groupId>
