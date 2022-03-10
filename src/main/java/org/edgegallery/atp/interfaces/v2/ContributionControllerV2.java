@@ -37,7 +37,6 @@ import org.edgegallery.atp.model.contribution.Contribution;
 import org.edgegallery.atp.model.task.IdList;
 import org.edgegallery.atp.service.ContributionService;
 import org.edgegallery.atp.utils.CommonUtil;
-import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -113,7 +112,7 @@ public class ContributionControllerV2 {
     })
     @PreAuthorize("hasRole('ATP_ADMIN')")
     public ResponseEntity<PageResult<Contribution>> queryAllContribution(
-        @ApiParam(value = "contribution name") @Length(max = Constant.LENGTH_64) @QueryParam("name") String name,
+        @ApiParam(value = "contribution name") @Size(max = Constant.LENGTH_64) @QueryParam("name") String name,
         @ApiParam(value = "limit") @QueryParam("limit") @NotNull int limit,
         @ApiParam(value = "offset") @QueryParam("offset") @NotNull int offset) {
         return ResponseEntity.ok(contributionService.getAllByPagination(name, limit, offset));

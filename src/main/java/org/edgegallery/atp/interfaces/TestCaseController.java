@@ -33,7 +33,6 @@ import org.edgegallery.atp.model.testsuite.TestSuiteIdList;
 import org.edgegallery.atp.service.TestCaseService;
 import org.edgegallery.atp.utils.CommonUtil;
 import org.edgegallery.atp.utils.exception.FileNotExistsException;
-import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -76,9 +75,9 @@ public class TestCaseController {
     })
     @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<List<TestCase>> getAllTestCases(
-        @QueryParam("type") @Length(max = Constant.LENGTH_64) String type,
-        @QueryParam("locale") @Length(max = Constant.LENGTH_64) String locale,
-        @QueryParam("name") @Length(max = Constant.LENGTH_64) String name,
+        @QueryParam("type") @Size(max = Constant.LENGTH_64) String type,
+        @QueryParam("locale") @Size(max = Constant.LENGTH_64) String locale,
+        @QueryParam("name") @Size(max = Constant.LENGTH_64) String name,
         @QueryParam("testSuiteIdList") TestSuiteIdList testSuiteIds) {
         return ResponseEntity
             .ok(testCaseService.getAllTestCases(type, locale, name, testSuiteIds.getTestSuiteIdList()));
