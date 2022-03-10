@@ -27,16 +27,8 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>1.8</java.version>
         <maven.test.skip>false</maven.test.skip>
         <maven.test.failure.ignore>false</maven.test.failure.ignore>
-        <netty.version>4.1.72.Final</netty.version>
-        <org.springframework.version>5.2.19.RELEASE</org.springframework.version>
-        <org.springframework.security>5.3.13.RELEASE</org.springframework.security>
-        <org.springframework.boot>2.3.3.RELEASE</org.springframework.boot>
-        <org.apache.logging.log4j>2.17.1</org.apache.logging.log4j>
-        <spring-security-oauth2-autoconfigure.version>2.2.2.RELEASE</spring-security-oauth2-autoconfigure.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -250,7 +242,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-websocket</artifactId>
-            <version>2.1.18.RELEASE</version>
             <exclusions>
                 <exclusion>
                     <artifactId>spring-messaging</artifactId>
@@ -265,7 +256,6 @@
         <dependency>
             <groupId>org.springframework.security.oauth</groupId>
             <artifactId>spring-security-oauth2</artifactId>
-            <version>2.3.8.RELEASE</version>
             <exclusions>
                 <exclusion>
                     <artifactId>spring-core</artifactId>
@@ -305,7 +295,6 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-websocket</artifactId>
-            <version>${org.springframework.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -350,7 +339,6 @@
         <dependency>
             <artifactId>spring-jcl</artifactId>
             <groupId>org.springframework</groupId>
-            <version>${org.springframework.version}</version>
         </dependency>
         <dependency>
             <artifactId>spring-tx</artifactId>
@@ -590,7 +578,6 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.7</version>
             <scope>compile</scope>
         </dependency>
         <!-- JSON -->
