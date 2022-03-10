@@ -36,7 +36,6 @@ import org.edgegallery.atp.model.testscenario.TestScenario;
 import org.edgegallery.atp.model.testscenario.testcase.AllTestScenarios;
 import org.edgegallery.atp.service.TestScenarioService;
 import org.edgegallery.atp.utils.CommonUtil;
-import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -196,8 +195,8 @@ public class TestScenarioControllerV2 {
     })
     @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<PageResult<TestScenario>> queryAllTestScenario(
-        @ApiParam(value = "locale language") @Length(max = Constant.LENGTH_64) @QueryParam("locale") String locale,
-        @ApiParam(value = "test scenario name") @Length(max = Constant.LENGTH_64) @QueryParam("name") String name,
+        @ApiParam(value = "locale language") @Size(max = Constant.LENGTH_64) @QueryParam("locale") String locale,
+        @ApiParam(value = "test scenario name") @Size(max = Constant.LENGTH_64) @QueryParam("name") String name,
         @ApiParam(value = "limit") @QueryParam("limit") @NotNull int limit,
         @ApiParam(value = "offset") @QueryParam("offset") @NotNull int offset) {
         return ResponseEntity.ok(testScenarioService.queryAllTestScenarioByPagination(locale, name, limit, offset));

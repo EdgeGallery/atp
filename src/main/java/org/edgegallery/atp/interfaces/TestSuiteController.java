@@ -31,7 +31,6 @@ import org.edgegallery.atp.model.testscenario.TestScenarioIds;
 import org.edgegallery.atp.model.testsuite.TestSuite;
 import org.edgegallery.atp.service.TestSuiteService;
 import org.edgegallery.atp.utils.CommonUtil;
-import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -170,10 +169,10 @@ public class TestSuiteController {
             @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
     @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<List<TestSuite>> queryAllTestSuite(
-            @ApiParam(value = "locale language") @Length(max = Constant.LENGTH_64) @QueryParam("locale") String locale,
-            @ApiParam(value = "test Suite name") @Length(max = Constant.LENGTH_64) @QueryParam("name") String name,
-            @ApiParam(value = "test scenario id list belongs to test suite")
-            @QueryParam("scenarioIdList") TestScenarioIds scenarioIdList) {
+        @ApiParam(value = "locale language") @Size(max = Constant.LENGTH_64) @QueryParam("locale") String locale,
+        @ApiParam(value = "test Suite name") @Size(max = Constant.LENGTH_64) @QueryParam("name") String name,
+        @ApiParam(value = "test scenario id list belongs to test suite") @QueryParam("scenarioIdList")
+            TestScenarioIds scenarioIdList) {
         return ResponseEntity.ok(testSuiteService.queryAllTestSuite(locale, name, scenarioIdList.getScenarioIdList()));
     }
 }

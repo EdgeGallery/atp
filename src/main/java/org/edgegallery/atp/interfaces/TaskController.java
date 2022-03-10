@@ -35,7 +35,6 @@ import org.edgegallery.atp.model.task.TestCaseStatusReq;
 import org.edgegallery.atp.service.TaskService;
 import org.edgegallery.atp.utils.CommonUtil;
 import org.edgegallery.atp.utils.exception.FileNotExistsException;
-import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -115,10 +114,10 @@ public class TaskController {
     })
     @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<List<TaskRequest>> getAllTasks(
-        @QueryParam("appName") @Length(max = Constant.LENGTH_64) String appName,
-        @QueryParam("status") @Length(max = Constant.LENGTH_64) String status,
-        @QueryParam("providerId") @Length(max = Constant.LENGTH_64) String providerId,
-        @QueryParam("appVersion") @Length(max = Constant.LENGTH_64) String appVersion) {
+        @QueryParam("appName") @Size(max = Constant.LENGTH_64) String appName,
+        @QueryParam("status") @Size(max = Constant.LENGTH_64) String status,
+        @QueryParam("providerId") @Size(max = Constant.LENGTH_64) String providerId,
+        @QueryParam("appVersion") @Size(max = Constant.LENGTH_64) String appVersion) {
         return taskService.getAllTasks(null, appName, status, providerId, appVersion);
     }
 

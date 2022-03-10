@@ -22,6 +22,7 @@ import io.swagger.annotations.ApiResponses;
 import java.io.FileNotFoundException;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
@@ -33,7 +34,6 @@ import org.edgegallery.atp.model.config.Config;
 import org.edgegallery.atp.model.config.ConfigBase;
 import org.edgegallery.atp.service.ConfigService;
 import org.edgegallery.atp.utils.exception.FileNotExistsException;
-import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -160,8 +160,8 @@ public class ConfigController {
     public ResponseEntity<PageResult<Config>> queryAllConfigs(
         @ApiParam(value = "limit") @QueryParam("limit") @NotNull int limit,
         @ApiParam(value = "offset") @QueryParam("offset") @NotNull int offset,
-        @ApiParam(value = "locale language") @Length(max = Constant.LENGTH_64) @QueryParam("locale") String locale,
-        @ApiParam(value = "config name") @Length(max = Constant.LENGTH_64) @QueryParam("name") String name) {
+        @ApiParam(value = "locale language") @Size(max = Constant.LENGTH_64) @QueryParam("locale") String locale,
+        @ApiParam(value = "config name") @Size(max = Constant.LENGTH_64) @QueryParam("name") String name) {
         return ResponseEntity.ok(configService.queryAllConfigs(limit, offset, locale, name));
     }
 }

@@ -33,7 +33,6 @@ import org.edgegallery.atp.model.testscenario.TestScenario;
 import org.edgegallery.atp.model.testscenario.testcase.AllTestScenarios;
 import org.edgegallery.atp.service.TestScenarioService;
 import org.edgegallery.atp.utils.CommonUtil;
-import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -159,19 +158,21 @@ public class TestScenarioController {
 
     /**
      * query all test scenario.
-     * 
+     *
      * @param locale locale
      * @param name name
      * @return test scenario list
      */
     @GetMapping(value = "/testscenarios", produces = MediaType.APPLICATION_JSON)
     @ApiOperation(value = "get all test scenarios.", response = TestScenario.class)
-    @ApiResponses(value = {@ApiResponse(code = 404, message = "microservice not found", response = String.class),
-            @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)})
+    @ApiResponses(value = {
+        @ApiResponse(code = 404, message = "microservice not found", response = String.class),
+        @ApiResponse(code = 500, message = "resource grant " + "error", response = String.class)
+    })
     @PreAuthorize("hasRole('ATP_GUEST') || hasRole('ATP_TENANT') || hasRole('ATP_ADMIN')")
     public ResponseEntity<List<TestScenario>> queryAllTestScenario(
-            @ApiParam(value = "locale language") @Length(max = Constant.LENGTH_64) @QueryParam("locale") String locale,
-            @ApiParam(value = "test scenario name") @Length(max = Constant.LENGTH_64) @QueryParam("name") String name) {
+        @ApiParam(value = "locale language") @Size(max = Constant.LENGTH_64) @QueryParam("locale") String locale,
+        @ApiParam(value = "test scenario name") @Size(max = Constant.LENGTH_64) @QueryParam("name") String name) {
         return ResponseEntity.ok(testScenarioService.queryAllTestScenario(locale, name));
     }
 
